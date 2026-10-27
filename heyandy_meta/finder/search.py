@@ -11,6 +11,7 @@ from typing import Callable, Protocol
 from ..models.common import Mask
 from ..robot.body import Body, Frame
 from .geometry import LITE, Camera, Sighting, merge, pixel_to_angles
+from .names import also
 
 VIEWS = ((18.0, 15.0), (-18.0, 15.0), (55.0, 15.0), (-55.0, 15.0))  # yaw, pitch; the middle first; about 190 degrees
 BEHIND = ((110.0, 15.0), (-110.0, 15.0))  # turning the base; only when the front sweep finds nothing
@@ -125,9 +126,24 @@ class Finder:
         return self.body.capture()
 
     def _masks(self, frame: Frame, label: str) -> list[Mask]:
-        return [m for m in self.segmenter.find(frame, label) if m.score is None or m.score >= self.min_score]
+        """SAM 3.1 asked for the thing and a couple of close names ("cup": also "mug"), in one request if it can."""
+        many, names = getattr(self.segmenter, "find_many", None), also(label)
+        found = [m for ms in many(frame, names).values() for m in ms] if many and len(names) > 1 \
+            else self.segmenter.find(frame, label)
+        for m in found:
+            m.label = label
+        return [m for m in _dedupe(found) if m.score is None or m.score >= self.min_score]
 
     def _cam(self, frame: Frame) -> Camera:
         if (frame.width, frame.height) == (self.cam.width, self.cam.height):
             return self.cam
         return self.cam.scaled(frame.width, frame.height)
+
+
+def _dedupe(masks: list[Mask]) -> list[Mask]:
+    """The same thing found under two names: keep the more confident mask."""
+    out: list[Mask] = []
+    for m in sorted(masks, key=lambda m: -(m.score if m.score is not None else 0.5)):
+        if not any(abs(m.center[0] - o.center[0]) < 12 and abs(m.center[1] - o.center[1]) < 12 for o in out):
+            out.append(m)
+    return out

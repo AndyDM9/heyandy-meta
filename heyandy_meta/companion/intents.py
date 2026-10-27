@@ -7,6 +7,8 @@ import datetime as dt
 import re
 from dataclasses import dataclass
 
+from ..finder.names import snap
+
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
 FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced)\s+"
                   + THING
@@ -118,7 +120,7 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
             thing, place = (PLACE.split(_thing(m), maxsplit=1) + [""])[:2]  # "keys in the kitchen": thing, hint
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())
                     if w not in FILLER]
-            return Intent(kind, thing=thing.strip(), text=t, hint=kind == "find" and len(rest) >= 2)
+            return Intent(kind, thing=snap(thing.strip()), text=t, hint=kind == "find" and len(rest) >= 2)
     if WORLD.search(t):
         return Intent("world", text=t)
     return Intent("chat", text=t)

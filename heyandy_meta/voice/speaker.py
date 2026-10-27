@@ -8,7 +8,7 @@ SENTENCE = re.compile(r"(?<=[.!?])\s+")
 class Speaker:
     def __init__(self, voice, play, rate: int = 16000):
         self.voice, self.play, self.rate = voice, play, rate
-        self.first_sound = 0.0  # time.monotonic() when the last thing said started playing
+        self.started: list[float] = []  # time.monotonic() when each recent thing said started playing
 
     def __call__(self, text: str) -> None:
         first = True
@@ -16,5 +16,9 @@ class Speaker:
             if sentence.strip():
                 audio = self.voice.speak(sentence, rate=self.rate)
                 if first:
-                    self.first_sound, first = time.monotonic(), False
+                    self.started, first = (self.started + [time.monotonic()])[-8:], False
                 self.play(audio, self.rate)
+
+    def first_after(self, t: float) -> float | None:
+        """When Andy first made a sound after time t (e.g. the end of what the person said)."""
+        return next((s for s in self.started if s >= t), None)

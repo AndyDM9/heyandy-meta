@@ -21,9 +21,9 @@ class VoiceLoop:
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
         text = " ".join(text.split())
-        called = WAKE.match(text)
+        called = WAKE.match(text) or _soft_wake(text)
         if not text or (not called and self._clock() > self.awake_until):
-            return None
+            return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
         with getattr(self.andy, "lock", _NoLock()):
             if called and voice_yaw is not None:
@@ -50,8 +50,19 @@ class VoiceLoop:
                 self.utterance_end = time.monotonic() - endpointer.end_silence_s
                 text = voice.transcribe(utterance)
                 reply = self.heard(text, yaw)
-                if self.on_heard:
+                if reply is not None and self.on_heard:  # only what was for Andy
                     self.on_heard(text, reply)
+
+
+SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)
+
+
+def _soft_wake(text: str):
+    """"Andy" is often heard as "and": count it only when what follows is a clear request, not chat."""
+    from ..companion.intents import parse
+
+    m = SOFT.match(text)
+    return m if m and parse(text[m.end():]).kind not in ("chat", "world") else None
 
 
 class _NoLock:

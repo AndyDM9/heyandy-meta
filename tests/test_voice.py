@@ -95,3 +95,11 @@ def test_the_name_as_speech_to_text_writes_it(heard):
     a = Andy()
     VoiceLoop(a).heard(heard)
     assert [h.lower().strip(" ?") for h in a.heard] == ["where are my keys"]
+
+
+def test_and_counts_as_andy_only_before_a_clear_request():
+    a = Andy()
+    loop = VoiceLoop(a)
+    assert loop.heard("and can you find the watch") == "ok" and a.heard == ["can you find the watch"]
+    a2 = Andy()
+    assert VoiceLoop(a2).heard("and you good morning") is None and a2.heard == []

@@ -94,10 +94,10 @@ def main() -> None:
         from .voice.local import LocalVoice
         from .voice.loop import VoiceLoop
 
-        def shown(text, reply):
-            first = getattr(andy.body._say, "first_sound", 0.0) - loop.utterance_end
-            print(f"\nheard> {text}" + (f"\nandy> {reply}  [first word {first:.1f}s after you stopped]" if reply
-                                         else "  (not for Andy)"), flush=True)
+        def shown(text, reply):  # only speech for Andy reaches here
+            first = getattr(andy.body._say, "first_after", lambda t: None)(loop.utterance_end)
+            wait = f"  [first word {first - loop.utterance_end:.1f}s after you stopped]" if first else ""
+            print(f"\nheard> {text}\nandy> {reply}{wait}", flush=True)
 
         loop = VoiceLoop(andy, on_heard=shown)
         threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), Endpointer(), stop),
