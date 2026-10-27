@@ -132,19 +132,22 @@ same page on sample data (pick a scene at the top). Or locally, with no robot: `
 ## Measured so far
 
 **Simulated scorecard** (`evals/sim.py`, seeded rooms; the camera model is the robot's, robot time is estimated from what
-was measured on it, and the noise is stated in the results). The fixed sweep runs on every plain request; Muse Glimmer
-plans the search, on this computer, when the person gives a hint.
+was measured on it, and the noise is stated in the results). The fixed sweep runs on every plain request; an agent plans
+the search when the person gives a hint: Muse Glimmer on this computer, or Muse Spark through the Model API.
 
-| Room | Fixed sweep (100 each) | Glimmer plans (20 each) |
-|---|---|---|
-| The thing in front | 96 found, 0 wrong, ~8 s | 19 found, 0 wrong, ~15 s |
-| Behind the robot, with a hint | 92, 0 wrong, 6.2 looks | **20, 0 wrong, 3.5 looks** |
-| A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong |
-| Not there at all | 100 said so | 20 said so (capped at 10 looks) |
-| Two look-alikes, "the blue one" | 80, **20 wrong** | **20, 0 wrong** |
+| Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
+|---|---|---|---|
+| The thing in front | 96 found, 0 wrong | 19, 0 wrong | 19, 0 wrong |
+| Behind the robot, with a hint | 92, 0 wrong, 6.2 looks | **20**, 0 wrong, 3.9 looks | **20**, 0 wrong, 3.2 looks |
+| A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | **20**, 0 wrong |
+| Not there at all | 100 said so | 20 said so | 20 said so |
+| Two look-alikes, "the blue one" | 80, **20 wrong** | 17, 1 wrong | 16, 1 wrong |
+| Planning time (model only) | none | 7 to 24 s | **3 to 9 s** |
 
-Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Glimmer
-is slower (its thinking adds 7 to 16 s), so plain requests keep the fast sweep. Results: `evals/results/`.
+Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. The
+agents' scores are after the tool fixes of October 27 (no repeat looks; compare points at once); before them, Spark found
+only 12 look-alikes and 14 TV cases (`evals/results/*-before-tool-fixes.json`). Glimmer's times in this run were slowed by
+the robot sharing its GPU; with 20 rooms a scenario, a few points either way is noise. Results: `evals/results/`.
 
 **On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included;
 pointing within about 3 degrees after the head's correction. The physical scorecard (`evals/physical.py`) comes next.
