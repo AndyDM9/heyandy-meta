@@ -11,6 +11,10 @@ trademark application.
 3. **The TV shows the picture it saw them in,** with the mask drawn. The picture is kept in memory only, never saved.
 4. **Muse Spark plans the search; Muse Glimmer works offline.** Muse Spark plans through the Meta Model API. Muse Glimmer
    runs on the computer beside the robot, so the robot keeps working with no internet.
+5. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
+   described. A picture of your glasses on the TV isn't mistaken for your glasses.
+6. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+   the robot. Muse Spark in the cloud only ever gets words: labels, directions and plan steps.
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
@@ -58,22 +62,29 @@ trademark application.
   - See [docs/crisis-protocol.md](docs/crisis-protocol.md).
 - **Next:** voice, and the before/after evaluation.
 
-## Run the tests
+## Run it
 ```bash
 uv sync --extra dev && uv run pytest -q   # no network calls: the model clients are tested against stand-ins
+uv run python -m heyandy_meta             # talk to Andy by keyboard, in a pretend living room; TV at 127.0.0.1:8765
 ```
+The models on this computer (Glimmer on GPU 0, SAM 3.1 on GPU 1, two 24 GB cards) are set up by
+`scripts/setup-local-models.sh` and run as the user services in `deploy/`. Muse Spark is used when `MODEL_API_KEY` is set
+and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
 
 ## Layout
 ```
-heyandy_meta/models/   Muse Spark and SAM 3.1 (Model API) and Muse Glimmer (local) clients
+heyandy_meta/app.py    one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
+heyandy_meta/models/   Muse Spark (Model API), Muse Glimmer and SAM 3.1 (on this computer) clients
 heyandy_meta/agent/    Muse Spark's search tools and planning loop
-heyandy_meta/finder/   the search, and from a SAM 3.1 mask to where the head looks
+heyandy_meta/finder/   the search, from a SAM 3.1 mask to where the head looks, and Glimmer's picture checks
 heyandy_meta/memory/   object memory: where watched things were last seen
 heyandy_meta/robot/    the body interface, the Reachy Mini adapter, and a simulated room for tests
 heyandy_meta/screen/   the TV page
 heyandy_meta/router.py who answers a turn: the device or the cloud
 heyandy_meta/budget.py the hard cap on Model API spend
 heyandy_meta/companion/ facing the person, reminders, answers with sources, AI disclosure and the crisis protocol
+local/sam_server.py    SAM 3.1 from the open weights, served on 127.0.0.1 only
+scripts/, deploy/      setting up and running the models on this computer
 config/                config.example.yaml (no secrets)
 docs/                  the build plan, the hackathon's rules, research
 tests/
@@ -84,7 +95,8 @@ tests/
 - **SAM 3.1 frames are sent as base64 data URLs,** which another participant has confirmed work; our first call checks it.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
-- **There is no real robot body or voice yet,** and no measurements: the search runs only in the simulated room.
+- **There is no real robot body or voice yet.** The search runs in the simulated room; SAM 3.1 and Glimmer are measured
+  on the GPUs (see `docs/research.md` §8), but not yet on the robot's camera.
 
 ## Licence
 Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.

@@ -12,6 +12,7 @@ from ..robot.body import Body, Frame
 from .geometry import LITE, Camera, Sighting, merge, pixel_to_angles
 
 VIEWS = ((55.0, 15.0), (18.0, 15.0), (-18.0, 15.0), (-55.0, 15.0))  # yaw, pitch; together about 190 degrees
+BEHIND = ((110.0, 15.0), (-110.0, 15.0))  # turning the base; only when the front sweep finds nothing
 
 
 class Segmenter(Protocol):
@@ -37,6 +38,7 @@ class Finder:
     segmenter: Segmenter
     cam: Camera = LITE
     views: tuple = VIEWS
+    behind: tuple = BEHIND
     min_score: float = 0.3
     closer_looks: int = 2
     confirm_within_px: float = 0.15  # a close-up's mask must be this near the centre (fraction of frame width)
@@ -44,18 +46,18 @@ class Finder:
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
-        """The fixed search: the remembered place, then a sweep, then up to two closer looks."""
+        """The fixed search: the remembered place, then a sweep with up to two closer looks, then behind."""
         self.looks = 0
         if last_seen is not None:
             found = self.confirm(label, *last_seen)
             if found:
                 found.remembered = True
                 return self.point(found)
-        places = self.scan(label, self.views)
-        for place in places[: self.closer_looks]:
-            found = self.confirm(label, place.yaw, place.pitch)
-            if found:
-                return self.point(found)
+        for views in (self.views, self.behind):
+            for place in self.scan(label, views)[: self.closer_looks]:
+                found = self.confirm(label, place.yaw, place.pitch)
+                if found:
+                    return self.point(found)
         return None
 
     def scan(self, label: str, views) -> list[Sighting]:

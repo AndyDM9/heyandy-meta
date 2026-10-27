@@ -81,4 +81,4 @@ def test_the_finder_drives_the_adapter_like_any_body():
             return []
 
     assert Finder(b, Nothing()).find("glasses") is None
-    assert [m[0][1] for m in robot.moves] == [55.0, 18.0, -18.0, -55.0]
+    assert [m[0][1] for m in robot.moves] == [55.0, 18.0, -18.0, -55.0, 55.0, -55.0]  # then behind: head at 55, base turns

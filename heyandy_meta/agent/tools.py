@@ -31,7 +31,7 @@ class Judge(Protocol):
     def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None: ...
 
 
-def _side(yaw: float) -> str:
+def side(yaw: float) -> str:
     if abs(yaw) < 10:
         return "straight ahead"
     side = "left" if yaw > 0 else "right"
@@ -99,7 +99,7 @@ class SearchTools:
         if last is None:
             return f"I have no recent sighting of the {obj}."
         self.candidates["remembered"] = last
-        return f"Last seen {_side(last[0])}. Place 'remembered'; check it with look_closer."
+        return f"Last seen {side(last[0])}. Place 'remembered'; check it with look_closer."
 
     def _look(self, object, views) -> str:
         obj = self._object(object)
@@ -114,7 +114,7 @@ class SearchTools:
         for s in found[:5]:
             pid = str(len(self.candidates) + 1)
             self.candidates[pid] = (s.yaw, s.pitch)
-            lines.append(f"place {pid}: {_side(s.yaw)}, confidence {s.score:.2f}, seen in {s.views} view(s)")
+            lines.append(f"place {pid}: {side(s.yaw)}, confidence {s.score:.2f}, seen in {s.views} view(s)")
         return "Possible " + obj + ": " + "; ".join(lines)
 
     def _closer(self, object, place) -> str:
@@ -127,7 +127,7 @@ class SearchTools:
         if found is None:
             return f"Looked closer at place {place}: {self.finder.why or 'not there'}."
         self.confirmed[place] = found
-        return f"Confirmed: the {obj} is at place {place}, {_side(found.yaw)}."
+        return f"Confirmed: the {obj} is at place {place}, {side(found.yaw)}."
 
     def _compare(self, object, description, places) -> str:
         obj = self._object(object)
@@ -155,7 +155,7 @@ class SearchTools:
                 self.confirmed.pop(p)  # only the one that fits may be pointed at
         if i is None:
             return f"Compared places {', '.join(seen)}: none looks like '{description.strip()}'. Ask the person."
-        return f"Place {seen[i]} fits '{description.strip()}' and is confirmed, {_side(self.confirmed[seen[i]].yaw)}."
+        return f"Place {seen[i]} fits '{description.strip()}' and is confirmed, {side(self.confirmed[seen[i]].yaw)}."
 
     def _point(self, place) -> str:
         found = self.confirmed.get(place)
@@ -165,5 +165,5 @@ class SearchTools:
         if self.places:
             self.places.saw(found.label, found.yaw, found.pitch)
         if not found.reachable:
-            return f"I can't turn far enough to point; it's {_side(found.yaw)}. Tell the person."
-        return f"Pointing at the {found.label}, {_side(found.yaw)}."
+            return f"I can't turn far enough to point; it's {side(found.yaw)}. Tell the person."
+        return f"Pointing at the {found.label}, {side(found.yaw)}."

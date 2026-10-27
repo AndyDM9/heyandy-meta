@@ -37,6 +37,8 @@ class ScreenState:
             self.caption, self.source, self.reason = text, source, reason
 
     def found(self, found: Found, words: str) -> None:
+        if not found.frame.image:  # the pretend room has no camera: words only
+            return
         with self._lock:
             self._picture = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS)
 
