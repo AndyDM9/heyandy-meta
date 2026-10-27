@@ -14,6 +14,7 @@ from meta_sam_parser import (
 
 from ..budget import SAM_PER_IMAGE, Budget
 from .common import Mask
+from .retry import with_retry
 
 BASE_URL = "https://api.meta.ai/v1"
 
@@ -72,8 +73,8 @@ def request(image: bytes, query: str, mime: str = "image/jpeg") -> dict:
 
 class Sam31Segmenter:
     def __init__(self, client=None, api_key_env: str = "MODEL_API_KEY", base_url: str = BASE_URL,
-                 budget: Budget | None = None):
-        self._client, self.budget = client, budget or Budget()
+                 budget: Budget | None = None, sleep=time.sleep):
+        self._client, self.budget, self._sleep = client, budget or Budget(), sleep
         self._api_key_env, self._base_url = api_key_env, base_url
         self.last_latency_s = 0.0
 
@@ -93,8 +94,11 @@ class Sam31Segmenter:
         image = getattr(frame, "image", frame)
         self.budget.check(SAM_PER_IMAGE)
         start = time.monotonic()
-        with self.client.responses.stream(**request(image, query)) as stream:
-            text = stream.get_final_response().output_text or ""
+        def call():
+            with self.client.responses.stream(**request(image, query)) as stream:
+                return stream.get_final_response().output_text or ""
+
+        text = with_retry(call, sleep=self._sleep)
         self.last_latency_s = time.monotonic() - start
         self.budget.record("sam-3.1", SAM_PER_IMAGE)
         return parse(text, query)

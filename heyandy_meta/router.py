@@ -1,13 +1,14 @@
 """Who answers a turn: Glimmer on the device, or Muse Spark in the cloud.
 
 The device answers by default. A turn goes to the cloud only when it looks like it needs more thought and the
-robot is online. If the cloud is refused (no budget, or paid calls switched off), the device answers instead of
-the robot going quiet.
+robot is online. If the cloud is refused (no budget, or paid calls switched off) or keeps failing, the device
+answers instead of the robot going quiet.
 """
 from dataclasses import dataclass
 
 from .budget import BudgetExceeded
 from .models.common import Chat, Reply
+from .models.retry import CloudUnavailable
 
 THINKING_WORDS = ("explain", "why", "compare", "research", "how does", "what does")
 
@@ -42,4 +43,6 @@ class Router:
                 return self.cloud.chat(prompt)
             except BudgetExceeded as refused:
                 self.last = Decision("device", f"cloud refused: {refused}")
+            except CloudUnavailable as down:
+                self.last = Decision("device", f"cloud unavailable: {down}")
         return self.device.chat(prompt)

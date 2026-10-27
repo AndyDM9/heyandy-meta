@@ -1,8 +1,10 @@
 """Muse Spark plans a search with the tools, within a hard limit on calls and under the spend cap."""
 import json
+import time
 from dataclasses import dataclass, field
 
 from ..budget import Budget, chat_cost
+from ..models.retry import with_retry
 from .tools import SPECS, VIEWS, SearchTools
 
 SYSTEM = ("You are Andy, a small tabletop robot helping someone find a lost object in the room. Use the tools: "
@@ -20,13 +22,14 @@ class Plan:
 
 
 def plan_search(client, request: str, tools: SearchTools, model: str = "muse-spark-1.3",
-                budget: Budget | None = None, max_calls: int = 12, max_tokens: int = 400) -> Plan:
+                budget: Budget | None = None, max_calls: int = 12, max_tokens: int = 400, sleep=time.sleep) -> Plan:
     budget = budget or Budget()
     messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": request}]
     plan = Plan(reply="")
     while True:
         budget.check(chat_cost(model, sum(len(str(m.get("content") or "")) for m in messages) // 2 + 500, max_tokens))
-        out = client.chat.completions.create(model=model, messages=messages, tools=SPECS, max_tokens=max_tokens)
+        out = with_retry(lambda: client.chat.completions.create(model=model, messages=messages, tools=SPECS,
+                                                                max_tokens=max_tokens), sleep=sleep)
         usage = getattr(out, "usage", None)
         budget.record(model, chat_cost(model, getattr(usage, "prompt_tokens", 0) or 0,
                                        getattr(usage, "completion_tokens", 0) or 0))
