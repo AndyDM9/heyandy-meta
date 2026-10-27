@@ -96,7 +96,7 @@ def main() -> None:
 
         def shown(text, reply):
             if reply is None:  # not for Andy: only how many words, never what was said
-                print(f"(heard {text} words, not for Andy)", flush=True)
+                print(f"(heard {text}; not for Andy)", flush=True)
                 return
             first = getattr(andy.body._say, "first_after", lambda t: None)(loop.utterance_end)
             wait = f"  [first word {first - loop.utterance_end:.1f}s after you stopped]" if first else ""

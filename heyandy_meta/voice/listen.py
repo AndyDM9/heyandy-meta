@@ -14,7 +14,7 @@ class Endpointer:
     ratio: float = 2.5  # this many times the noise floor counts as speech
     min_speech_s: float = 0.25
     end_silence_s: float = 0.55
-    max_s: float = 15.0
+    max_s: float = 8.0  # a request is a sentence or two; longer means the room never went quiet
     pre_roll_s: float = 0.3
     floor: float = 0.01
     _buf: list = field(default_factory=list)
@@ -34,7 +34,8 @@ class Endpointer:
         dur = len(chunk) / self.rate
         rms = float(np.sqrt(np.mean(chunk ** 2))) if len(chunk) else 0.0
         loud = rms > self.floor * self.ratio
-        speech = bool(speech_flag) or loud
+        # The microphone's own detector can stay on with motor hum or a TV; it counts only with some sound behind it.
+        speech = loud or (bool(speech_flag) and rms > self.floor * 1.5)
         if not self._buf:
             if not speech:
                 self.floor = 0.95 * self.floor + 0.05 * max(rms, 1e-4)  # learn the room while quiet

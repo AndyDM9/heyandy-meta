@@ -11,8 +11,10 @@ import time
 log = logging.getLogger(__name__)
 
 # "Andy" as speech-to-text writes it: the name, and what it was heard as on 2026-10-27 ("and they", "earndy").
-WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay)\s+)?"
-                  r"(?:andy|andi|andie|andee|endy|earndy|handy|annie|and he|and they)\b[\s,.!?]*", re.I)
+NAME = r"(?:andy|andi|andie|andee|endy|earndy|handy|annie)"
+WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay)\s+)?(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
+# The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.
+LATER = re.compile(r"\b(?:(?:hey|hi|hello|ok|okay)\s+)?" + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
 
 
 class VoiceLoop:
@@ -26,7 +28,7 @@ class VoiceLoop:
         text = " ".join(text.split())
         if _looping(text):
             return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
-        called = WAKE.match(text) or _soft_wake(text)
+        called = WAKE.match(text) or _soft_wake(text) or _last(LATER.finditer(text))
         if not text or (not called and self._clock() > self.awake_until):
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
@@ -68,7 +70,9 @@ class VoiceLoop:
                     log.warning("a turn failed: %s: %s", type(e).__name__, e)
                     continue
                 if self.on_heard:  # what wasn't for Andy is reported by its length only, never its words
-                    self.on_heard(text if reply is not None else len(text.split()), reply)
+                    self.on_heard(text if reply is not None else
+                                  f"{len(text.split())} words in {len(utterance) / endpointer.rate:.1f}s, room level "
+                                  f"{endpointer.floor:.3f}", reply)
 
 
 def _looping(text: str) -> bool:
@@ -77,6 +81,13 @@ def _looping(text: str) -> bool:
         return False
     grams = [" ".join(words[i:i + 3]) for i in range(len(words) - 2)]
     return max(grams.count(g) for g in set(grams)) >= 4 or len(set(words)) / len(words) < 0.35
+
+
+def _last(matches):
+    m = None
+    for m in matches:
+        pass
+    return m
 
 
 SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)

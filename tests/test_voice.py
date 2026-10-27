@@ -38,10 +38,11 @@ def test_a_click_is_not_speech():
 
 
 def test_the_microphones_own_detector_counts_too():
+    """...but only with some sound behind it: alone (motor hum, a TV) it could hold a stretch open for ever."""
     ep = Endpointer()
     for c in chunks(1.0, 0):
         ep.feed(c)
-    out = [u for c in chunks(0.5, 0, 1) if (u := ep.feed(c, True)) is not None]
+    out = [u for c in chunks(0.5, 0.021, 1) if (u := ep.feed(c, True)) is not None]  # soft speech: the detector decides
     out += [u for c in chunks(1.0, 0, 2) if (u := ep.feed(c, False)) is not None]
     assert len(out) == 1
 
@@ -114,3 +115,17 @@ def test_looping_speech_to_text_is_dropped():
     loop.awake_until = float("inf")
     assert loop.heard("the state of " * 12) is None and a.heard == []
     assert loop.heard("and the remote, is it on the sofa or by the window or under the cushion") == "ok"
+
+
+def test_the_name_later_in_a_long_stretch_still_counts():
+    a = Andy()
+    assert VoiceLoop(a).heard("so we went there yesterday and it was fine andy how are you") == "ok"
+    assert a.heard == ["how are you"]
+
+
+def test_a_stretch_is_cut_at_eight_seconds():
+    ep = Endpointer()
+    for c in chunks(1.0, 0):
+        ep.feed(c)
+    out = [u for c in chunks(12.0, 0.3, 1) if (u := ep.feed(c)) is not None]
+    assert out and len(out[0]) / RATE == pytest.approx(8.0, abs=0.4)
