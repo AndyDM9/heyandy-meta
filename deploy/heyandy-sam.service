@@ -1,0 +1,11 @@
+[Unit]
+Description=HeyAndy: SAM 3.1 open weights on GPU 1 (this computer only)
+
+[Service]
+Environment=CUDA_VISIBLE_DEVICES=1
+Environment=PYTHONWARNINGS=ignore
+ExecStart=%h/opt/sam3/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/sam_server.py --checkpoint %h/models/sam3.1/sam3.1_multiplex.pt
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

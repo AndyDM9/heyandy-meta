@@ -8,8 +8,13 @@ cloud_model:
   base_url: https://api.meta.ai/v1
   api_key_env: MODEL_API_KEY
 vision:
-  model: sam-3.1           # through the Model API; open weights on GPU 1 when offline
+  where: local             # local: SAM 3.1 open weights (local/sam_server.py, GPU 1). api: only for the simulation
+                           # and staged scenes; Meta can't turn off data retention for hackathon credits
+  local_endpoint: http://127.0.0.1:8090
+  model: sam-3.1           # the Model API's name, when where: api
   mask_encoding: one_bit
+picture_checks:            # Glimmer's perception encoder (A1, A2); refused unless the endpoint is local
+  endpoint: http://127.0.0.1:8080/v1
 router:
   long_chars: 400          # longer turns go to the cloud when online
 budget:

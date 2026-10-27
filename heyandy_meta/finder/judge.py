@@ -9,14 +9,12 @@ steps aside and the finder carries on with SAM 3.1 alone, rather than the robot 
 """
 import base64
 import io
-import ipaddress
 import re
-from urllib.parse import urlparse
 
 from openai import APIError
 from PIL import Image
 
-from ..models.common import Mask
+from ..models.common import Mask, is_local
 from ..robot.body import Frame
 
 SYSTEM = ("Reasoning effort: low. You look at pictures from a small home robot's camera and answer in one word or "
@@ -25,17 +23,6 @@ SYSTEM = ("Reasoning effort: low. You look at pictures from a small home robot's
 
 class NotLocal(ValueError):
     pass
-
-
-def is_local(url: str) -> bool:
-    host = urlparse(url).hostname or ""
-    if host == "localhost":
-        return True
-    try:
-        ip = ipaddress.ip_address(host)
-    except ValueError:
-        return False
-    return ip.is_loopback or ip.is_private
 
 
 def crop(jpeg: bytes, box: tuple[int, int, int, int], context: float = 3.0, min_side: int = 256,
@@ -79,6 +66,7 @@ class GlimmerJudge:
         try:
             out = self.client.chat.completions.create(
                 model=self.model, max_tokens=self.max_tokens,
+                extra_body={"chat_template_kwargs": {"reasoning_strength": "low"}},
                 messages=[{"role": "system", "content": SYSTEM}, {"role": "user", "content": content}])
         except APIError:
             self.unavailable += 1

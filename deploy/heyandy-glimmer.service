@@ -1,0 +1,16 @@
+[Unit]
+Description=HeyAndy: Muse Glimmer 30B on GPU 0 (llama.cpp server, this computer only)
+
+[Service]
+Environment=CUDA_VISIBLE_DEVICES=0
+Environment=LD_LIBRARY_PATH=%h/opt/llama.cpp-b11936/cudart-llama-b11936-bin-ubuntu-cuda-13.4-x64:%h/opt/llama.cpp-b11936/llama-b11936
+ExecStart=%h/opt/llama.cpp-b11936/llama-b11936/llama-server \
+  -m %h/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf \
+  --mmproj %h/models/muse-glimmer/mmproj-Muse-Glimmer-30B-Q4_K_M.gguf \
+  -md %h/models/muse-glimmer/dflash-Muse-Glimmer-30B-Q4_K_M.gguf -ngld 99 \
+  -a muse-glimmer-30B -ngl 99 -c 65536 -np 2 --host 127.0.0.1 --port 8080 \
+  --jinja --temp 1.0 --top-p 0.95 --top-k 64 --reasoning-budget 1024 --no-webui
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

@@ -228,3 +228,23 @@ points at physical objects. Alexa Together was discontinued May 21, 2025.
   ([speech-to-text](https://dev.meta.ai/docs/speech-to-text)).
 - **Gaps:** there's **no text-to-speech**, so the voice is an open model on GPU 1. Muse Wonder's "Active Memory" isn't
   documented for the API, so our own opt-in memory store stays.
+
+## 8. The local models, measured (2026-10-27, evening)
+
+Both 3090s were freed for this entry (the founder's call); our earlier prototype's services are stopped, the robot untouched.
+Set up by `scripts/setup-local-models.sh`; run as the user units in `deploy/`.
+
+- **Muse Glimmer 30B** on GPU 0: llama.cpp **b11936** (official CUDA 13.4 build, digests checked), Q4_K_M with the
+  perception encoder and the DFlash drafter (auto-detected as `draft-dflash`), `-c 65536 -np 2` (32,768 a slot).
+  21.9 GB. A short spoken turn: **first word 1.06 s**, done 1.44 s (36 reasoning chunks at "Reasoning effort: low").
+  The Day 0 gate was 0.8 s, so it's slightly over; the voice loop should start speaking on the first sentence.
+- **Picture checks** (A1, A2) through Glimmer: about 860 prompt tokens for a crop, about 70 reasoning tokens,
+  **2.4 to 3.5 s** a check. A staged test: the truck photo read as REAL; the same photo shown on a drawn TV read as
+  PICTURE; "the wheel under the cab" picked the right one of two.
+- **SAM 3.1** open weights on GPU 1: Meta's `sam3` at `f1647e8`, `sam3.1_multiplex.pt`, through the official
+  `build_sam3_multiplex_video_predictor` with a one-frame session. About 6 GB. **0.27 to 0.34 s a frame** (1800×1200).
+  "wheel": 4 found, scores 0.95; "truck": 0.875; "glasses", "person": none (correct).
+  - Two things that didn't work, for the record: loading the 3.1 checkpoint into `build_sam3_image_model` (the
+    single-image path) gives zero detections even with all detector weights loaded; and `start_session` at this commit
+    passes `offload_state_to_cpu`, which the 3.1 model's `init_state` rejects. `local/sam_server.py` registers the
+    session directly.

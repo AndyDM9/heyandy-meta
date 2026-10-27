@@ -7,7 +7,8 @@ from openai import APIConnectionError
 from PIL import Image
 
 from heyandy_meta.agent.tools import SearchTools
-from heyandy_meta.finder.judge import GlimmerJudge, NotLocal, crop, is_local
+from heyandy_meta.finder.judge import GlimmerJudge, NotLocal, crop
+from heyandy_meta.models.common import is_local
 from heyandy_meta.finder.search import Finder
 from heyandy_meta.models.common import Mask
 from heyandy_meta.robot.body import Frame

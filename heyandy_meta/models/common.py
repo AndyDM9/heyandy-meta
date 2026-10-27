@@ -1,6 +1,20 @@
 """What every model here returns."""
+import ipaddress
 from dataclasses import dataclass
 from typing import Protocol
+from urllib.parse import urlparse
+
+
+def is_local(url: str) -> bool:
+    """This computer or the home network: where pictures from a home may go."""
+    host = urlparse(url).hostname or ""
+    if host == "localhost":
+        return True
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return ip.is_loopback or ip.is_private
 
 
 @dataclass
