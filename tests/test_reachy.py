@@ -40,7 +40,8 @@ class SaggingReachy(FakeReachy):
 
 def body(robot=None, **kw):
     robot = robot or FakeReachy()
-    return ReachyBody(robot, pose=lambda yaw, pitch: ("pose", round(yaw, 2), round(pitch, 2)), sleep=lambda s: None, **kw), robot
+    return ReachyBody(robot, pose=lambda yaw, pitch, roll=0.0: ("pose", round(yaw, 2), round(pitch, 2)), sleep=lambda s: None,
+                      **kw), robot
 
 
 def test_jpeg_size():
@@ -112,3 +113,11 @@ def test_the_finder_drives_the_adapter_like_any_body():
 
     assert Finder(b, Nothing()).find("glasses") is None
     assert [m[0][1] for m in robot.moves] == [18.0, -18.0, 30.0, -30.0, 30.0, -30.0]  # the base makes up the rest
+
+
+@pytest.mark.parametrize("name", ["listening", "thinking", "found", "nod"])
+def test_gestures_never_swing_the_base_back(name):
+    b, robot = body()
+    b.look(100.0, 10.0)
+    b.gesture(name)
+    assert all(math.degrees(m[1]) == pytest.approx(70.0) for m in robot.moves)  # the base stays turned

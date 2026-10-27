@@ -51,7 +51,8 @@ SPECS = [
             "views": {"type": "array", "items": {"type": "string", "enum": list(VIEWS)}}},
             "required": ["object", "views"]}}},
     {"type": "function", "function": {
-        "name": "look_closer", "description": "Turn straight at a numbered place (or 'remembered') and check the object is really there.",
+        "name": "look_closer", "description": "Turn straight at a numbered place (or 'remembered') and check the object "
+        "is really there. If it is, the robot points at it and the search is done.",
         "parameters": {"type": "object", "properties": {"object": {"type": "string"}, "place": {"type": "string"}},
                        "required": ["object", "place"]}}},
     {"type": "function", "function": {
@@ -77,6 +78,12 @@ class SearchTools:
     candidates: dict[str, tuple[float, float]] = field(default_factory=dict)
     confirmed: dict[str, Found] = field(default_factory=dict)
     pointed: Found | None = None
+    auto_point: bool = True  # a confirmed closer look points at once: one model call fewer
+
+    def specs(self) -> list[dict]:
+        """The tools to offer: recall only when something is being watched."""
+        watching = bool(self.places and self.places.watching())
+        return [s for s in SPECS if watching or s["function"]["name"] != "recall"]
 
     def call(self, name: str, args: dict) -> str:
         handler = {"recall": self._recall, "look": self._look, "look_closer": self._closer, "compare": self._compare,
@@ -127,6 +134,8 @@ class SearchTools:
         if found is None:
             return f"Looked closer at place {place}: {self.finder.why or 'not there'}."
         self.confirmed[place] = found
+        if self.auto_point:
+            return "Confirmed. " + self._point(place)
         return f"Confirmed: the {obj} is at place {place}, {side(found.yaw)}."
 
     def _compare(self, object, description, places) -> str:

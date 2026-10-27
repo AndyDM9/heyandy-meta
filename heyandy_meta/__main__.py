@@ -60,8 +60,8 @@ def build(args) -> Andy:
         room = Room(list(LIVING_ROOM))
         body, segmenter, judge = SimBody(room), SimSegmenter(room), SimJudge(room)
         body.say = lambda text: None  # the console prints instead
-    return Andy(body, segmenter, device, places, reminders, ScreenState(), cloud, spark, judge, budget,
-                online=not args.offline)
+    return Andy(body, segmenter, device, places, reminders, ScreenState(), cloud, spark, judge,
+                glimmer=None if args.no_local_agent else device.client, budget=budget, online=not args.offline)
 
 
 def main() -> None:
@@ -69,6 +69,7 @@ def main() -> None:
     ap.add_argument("--robot", action="store_true", help="drive the Reachy Mini (default: a pretend living room)")
     ap.add_argument("--offline", action="store_true", help="act as if the network is down")
     ap.add_argument("--no-cloud", action="store_true", help="never call the Model API")
+    ap.add_argument("--no-local-agent", action="store_true", help="don't let Glimmer plan searches (fixed sweep only)")
     ap.add_argument("--glimmer", default="http://127.0.0.1:8080/v1")
     ap.add_argument("--sam", default="http://127.0.0.1:8090")
     ap.add_argument("--voice", action="store_true", help="listen and speak through the robot (needs --robot)")

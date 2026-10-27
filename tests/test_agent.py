@@ -45,10 +45,11 @@ def test_a_good_plan_finds_and_points():
         [("point", {"place": "1"})],
         "There they are, on the right.")
     plan = plan_search(spark, "I think I left my reading glasses by the TV on the right", tools)
-    assert plan.reply == "There they are, on the right."
-    assert [s[0] for s in plan.steps] == ["look", "look_closer", "point"]
+    assert plan.reply == ""  # done at the point; Andy's words are written from the tools' results
+    assert [s[0] for s in plan.steps] == ["look", "look_closer"]
+    assert plan.steps[1][2].startswith("Confirmed. Pointing at the reading glasses")
     assert tools.pointed.yaw == pytest.approx(-50.0, abs=0.5)
-    assert spark.requests[0]["tools"][0]["function"]["name"] == "recall"
+    assert "recall" not in [t["function"]["name"] for t in spark.requests[0]["tools"]]  # nothing is watched
 
 
 def test_pointing_without_looking_closer_is_refused():
@@ -109,3 +110,11 @@ def test_each_model_call_is_charged():
     tools, _ = setup(Thing("keys", 20.0, 20.0))
     plan_search(ScriptedSpark([("look", {"object": "keys", "views": ["left"]})], "Found."), "keys?", tools, budget=budget)
     assert budget.spent() == pytest.approx(2 * (800 * 1.25 + 60 * 4.25) / 1e6)
+
+
+def test_recall_is_offered_only_when_something_is_watched(tmp_path):
+    places = Places(tmp_path / "p.json")
+    tools, _ = setup(places=places)
+    assert "recall" not in [t["function"]["name"] for t in tools.specs()]
+    places.watch("keys")
+    assert "recall" in [t["function"]["name"] for t in tools.specs()]

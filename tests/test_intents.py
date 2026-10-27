@@ -53,6 +53,7 @@ def test_questions_about_the_world_and_conversation():
 
 @pytest.mark.parametrize("heard, kind, thing", [
     ("where am i reading glasses", "find", "reading glasses"),
+    ("wears the cup", "find", "cup"),
     ("andy where are my keys", "find", "keys"),
     ("keep an eye on my phone please", "watch", "phone")])
 def test_what_speech_to_text_hears(heard, kind, thing):
@@ -68,3 +69,12 @@ def test_spoken_times(heard, when):
     i = parse(heard, NOW)
     at = dt.datetime.fromtimestamp(i.at)
     assert i.kind == "remind" and i.text and (at.hour, at.minute) == when
+
+
+@pytest.mark.parametrize("text, hint", [
+    ("where are my glasses", False), ("Andy, where are my reading glasses please?", False),
+    ("where are my glasses, I think I left them by the TV", True), ("I lost my keys in the kitchen", True),
+    ("have you seen my phone? it was on the sofa", True), ("where is the blue mug", False)])
+def test_a_hint_is_more_than_what_to_find(text, hint):
+    i = parse(text, NOW)
+    assert i.kind == "find" and i.hint is hint

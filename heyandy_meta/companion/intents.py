@@ -8,7 +8,8 @@ import re
 from dataclasses import dataclass
 
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
-FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find)\s+" + THING
+FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced)\s+"
+                  + THING
                   + r"(?:\s+(?:is|are|went|go|gone))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
@@ -34,6 +35,7 @@ class Intent:
     text: str = ""  # a reminder's words, or the original request
     at: float = 0.0  # a reminder's time, epoch seconds
     daily: bool = False
+    hint: bool = False  # the person said more than what to find ("by the TV", "I had them in the kitchen")
 
 
 def _thing(m: re.Match) -> str:
@@ -78,6 +80,9 @@ def _reminder_words(text: str) -> str:
     return " ".join(text.strip(" ,.!?").split())
 
 
+PLACE = re.compile(r"\s+(?=(?:in|on|by|near|next to|under|behind|beside|at|from|with|in front of)\s)")
+FILLER = {"andy", "hey", "hi", "ok", "okay", "please", "um", "uh", "so", "i", "can't", "cannot", "can", "you", "think",
+          "again", "now", "for", "me", "the", "my", "a", "do", "did", "have", "has", "it", "is", "are", "they", "them"}
 HOURS = {w: i for i, w in enumerate(
     "one two three four five six seven eight nine ten eleven twelve".split(), 1)}
 MINUTES = {"o'clock": 0, "oclock": 0, "fifteen": 15, "thirty": 30, "forty five": 45, "forty-five": 45}
@@ -90,6 +95,7 @@ def normalise(text: str) -> str:
     t = re.sub(r"\b([ap])\.? ?m\b\.?", r"\1m", t, flags=re.I)
     t = SPOKEN_AT.sub(lambda m: f"at {HOURS[m.group(1).lower()]}:{MINUTES.get((m.group(2) or 'oclock').lower(), 0):02d}", t)
     # Heard again and again for "where are my" (Omnilingual ASR, all sizes, 2026-10-27).
+    t = re.sub(r"\bwears (the|my|our)\b", r"where's \1", t, flags=re.I)
     return re.sub(r"\bwhere (?:am i|are i|am my|r my)\b", "where are my", t, flags=re.I)
 
 
@@ -109,7 +115,10 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
     for kind, rx in (("forget", FORGET), ("watch", WATCH), ("find", FIND)):
         m = rx.search(t)
         if m:
-            return Intent(kind, thing=_thing(m), text=t)
+            thing, place = (PLACE.split(_thing(m), maxsplit=1) + [""])[:2]  # "keys in the kitchen": thing, hint
+            rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())
+                    if w not in FILLER]
+            return Intent(kind, thing=thing.strip(), text=t, hint=kind == "find" and len(rest) >= 2)
     if WORLD.search(t):
         return Intent("world", text=t)
     return Intent("chat", text=t)

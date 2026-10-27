@@ -7,7 +7,9 @@ speaks, the microphone is ignored so it doesn't answer itself.
 import re
 import time
 
-WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay)\s+)?(?:andy|andi|andie|handy|and he)\b[\s,.!?]*", re.I)
+# "Andy" as speech-to-text writes it: the name, and what it was heard as on 2026-10-27 ("and they", "earndy").
+WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay)\s+)?"
+                  r"(?:andy|andi|andie|andee|endy|earndy|handy|annie|and he|and they)\b[\s,.!?]*", re.I)
 
 
 class VoiceLoop:
@@ -26,6 +28,8 @@ class VoiceLoop:
         with getattr(self.andy, "lock", _NoLock()):
             if called and voice_yaw is not None:
                 self.andy.body.look(voice_yaw, 5.0, precise=False)  # turn towards whoever spoke
+            if called and hasattr(self.andy.body, "gesture"):
+                self.andy.body.gesture("listening")
             if rest.strip(" ,.!?"):
                 reply = self.andy.hear(rest)
             else:

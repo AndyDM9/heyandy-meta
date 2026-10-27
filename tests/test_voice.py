@@ -87,3 +87,11 @@ def test_the_speaker_says_one_sentence_at_a_time():
 def test_speech_stays_on_this_computer():
     with pytest.raises(NotLocal):
         LocalVoice("https://api.meta.ai/v1")
+
+
+@pytest.mark.parametrize("heard", ["andy where are my keys", "and they where are my keys", "earndy, where are my keys",
+                                   "Hey Andy! Where are my keys?", "ok andi where are my keys"])
+def test_the_name_as_speech_to_text_writes_it(heard):
+    a = Andy()
+    VoiceLoop(a).heard(heard)
+    assert [h.lower().strip(" ?") for h in a.heard] == ["where are my keys"]

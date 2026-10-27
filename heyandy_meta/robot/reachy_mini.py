@@ -50,7 +50,7 @@ class ReachyBody:
         if pose is None:
             from reachy_mini.utils import create_head_pose
 
-            pose = lambda yaw, pitch: create_head_pose(yaw=yaw, pitch=pitch, degrees=True)  # noqa: E731
+            pose = lambda yaw, pitch, roll=0.0: create_head_pose(yaw=yaw, pitch=pitch, roll=roll, degrees=True)  # noqa: E731
         self.robot, self.reach, self.head_yaw, self.tolerance = robot, reach, head_yaw, tolerance
         self.max_deg_s, self.settle_s = max_deg_s, settle_s
         self._pose, self._say, self._sleep = pose, say, sleep
@@ -119,6 +119,25 @@ class ReachyBody:
     def say(self, text: str) -> None:
         if self._say:
             self._say(text)
+
+    UPRIGHT = [-0.1745, 0.1745]  # antennas, radians: Pollen's resting position, about 10 degrees apart
+
+    def gesture(self, name: str) -> None:
+        """Small body language: listening, thinking, found, nod. The base always stays where it is
+        (goto_target's body_yaw defaults to 0, which would swing it back to the middle)."""
+        head, pitch, base = self._sent
+        go = lambda duration, **kw: self.robot.goto_target(body_yaw=math.radians(base), duration=duration, **kw)  # noqa: E731
+        if name == "listening":
+            go(0.3, antennas=self.UPRIGHT)
+        elif name == "thinking":
+            go(0.5, head=self._pose(head, pitch - 4.0, 8.0), antennas=[-0.7, 0.25])
+        elif name == "found":
+            for _ in range(2):
+                go(0.15, antennas=[-0.6, 0.6])
+                go(0.15, antennas=self.UPRIGHT)
+        elif name == "nod":
+            go(0.25, head=self._pose(head, pitch + 8.0))
+            go(0.25, head=self._pose(head, pitch))
 
     # --- the speaker and the microphone array (16 kHz) ---
 

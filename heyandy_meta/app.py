@@ -52,6 +52,7 @@ class Andy:
     cloud: Chat | None = None  # Muse Spark for conversation
     spark: object | None = None  # the Model API client, for planning searches and web answers (words only)
     judge: object | None = None  # Glimmer's picture checks, on this computer
+    glimmer: object | None = None  # the local llama-server client, for Glimmer planning searches itself
     budget: Budget = field(default_factory=Budget)
     online: bool = True
     clock: object = time.time
@@ -81,7 +82,7 @@ class Andy:
     def _answer(self, text: str) -> str:
         i = parse(text, _now(self.clock))
         if i.kind == "find":
-            return self.find(i.thing, text)
+            return self.find(i.thing, text, i.hint)
         if i.kind == "watch":
             self.places.watch(i.thing)
             return (f"I'll keep an eye on your {i.thing}. I only remember where I last saw {_it(i.thing)}, "
@@ -130,24 +131,42 @@ class Andy:
         self.screen.answered(ans.text, ans.sources, "cloud", self._reason)
         return ans.spoken
 
-    def find(self, thing: str, request: str) -> str:
+    def planners(self) -> list[tuple]:
+        """Who can plan a search with the tools, best first: Muse Spark online, then Muse Glimmer on this computer."""
+        out = []
+        if self.online and self.spark is not None:
+            out.append((self.spark, "muse-spark-1.3", True, "cloud", "search planned by Muse Spark; pictures checked here"))
+        if self.glimmer is not None:
+            out.append((self.glimmer, "muse-glimmer-30B", False, "device", "search planned by Muse Glimmer on this computer"))
+        return out
+
+    def gesture(self, name: str) -> None:
+        g = getattr(self.body, "gesture", None)
+        if g:
+            g(name)
+
+    def find(self, thing: str, request: str, hint: bool = False) -> str:
+        """A plain "where are my keys" gets the fast fixed sweep; a request with a hint gets an agent that uses it."""
         self.screen.clear()
         self.screen.timer_start()
+        self.gesture("thinking")
+        self.say("Let me look.")  # answer at once: a search takes a few seconds
         found, words = None, ""
-        if self.online and self.spark is not None:
+        for client, model, paid, source, reason in (self.planners() if hint else []):
             tools = SearchTools(self.finder, self.places, self.judge)
             try:
-                plan = plan_search(self.spark, request, tools, budget=self.budget)
+                plan = plan_search(client, request, tools, model=model, budget=self.budget, paid=paid)
             except CLOUD_TROUBLE as e:
-                self.screen.step(f"the cloud planner is unavailable ({type(e).__name__}); searching on my own")
-            else:
-                for tool, args, result in plan.steps:
-                    self.screen.step(f"{tool}: {result}")
-                found, words = tools.pointed, plan.reply
-                self._source, self._reason = "cloud", "search planned by Muse Spark; pictures checked here"
-                if found is None:
-                    self.screen.timer_stop()
-                    return words or self._not_found(thing)
+                self.screen.step(f"{model} is unavailable ({type(e).__name__})")
+                continue
+            for tool, args, result in plan.steps:
+                self.screen.step(f"{tool}: {result}")
+            found, words = tools.pointed, ""  # found: Andy's words come from the tools, never the model's guesses
+            self._source, self._reason = source, reason
+            if found is None:
+                self.screen.timer_stop()
+                return plan.reply or self._not_found(thing)
+            break
         if found is None:
             self._source, self._reason = "device", "fixed search on this computer"
             last = self.places.last_seen(thing)
@@ -158,6 +177,7 @@ class Andy:
         if found is None:
             return self._not_found(thing)
         self.places.saw(found.label, found.yaw, found.pitch)
+        self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
         return words

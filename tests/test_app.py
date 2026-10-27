@@ -81,8 +81,8 @@ def test_the_cloud_plans_the_search_with_words_only(tmp_path):
         [("point", {"place": "1"})],
         "There they are, on your right.")
     a, _, _ = andy(Thing("glasses", -50.0, 20.0), spark=spark, tmp_path=tmp_path)
-    assert a.hear("where are my glasses").endswith("There they are, on your right.")
-    assert a.screen.source == "cloud" and len(a.screen.snapshot()["steps"]) == 3
+    assert a.hear("where are my glasses, I think I left them by the TV").endswith("I see your glasses, to my right.")
+    assert a.screen.source == "cloud" and len(a.screen.snapshot()["steps"]) == 2  # look, then look closer and point
     for req in spark.requests:  # nothing but text goes up
         assert all(isinstance(m.get("content"), str) for m in req["messages"])
 
@@ -93,7 +93,7 @@ def test_when_the_cloud_planner_fails_the_robot_searches_on_its_own(tmp_path):
             CloudUnavailable("down", ["r1"]))))
 
     a, _, _ = andy(Thing("glasses", -48.0, 22.0), spark=Down(), tmp_path=tmp_path)
-    assert a.hear("where are my glasses").endswith("I see your glasses, to my right.")
+    assert a.hear("where are my glasses, I think I left them by the TV").endswith("I see your glasses, to my right.")
     assert a.screen.source == "device"
 
 
@@ -139,3 +139,26 @@ def test_a_missed_reminder_is_mentioned_next_time(tmp_path):
 def test_plain_answers(tmp_path, text, words):
     a, _, _ = andy(tmp_path=tmp_path)
     assert words in a.hear(text)
+
+
+def test_offline_with_a_hint_glimmer_plans_the_search_on_this_computer(tmp_path):
+    glimmer = ScriptedSpark(
+        [("look", {"object": "glasses", "views": ["far right"]})],
+        [("look_closer", {"object": "glasses", "place": "1"})],
+        [("point", {"place": "1"})],
+        "Found them, on your right.")
+    a, _, _ = andy(Thing("glasses", -50.0, 20.0), online=False, tmp_path=tmp_path)
+    a.glimmer = glimmer
+    assert a.hear("where are my glasses, I had them by the TV on the right").endswith("I see your glasses, to my right.")
+    assert a.screen.source == "device" and "Glimmer" in a.screen.reason
+    assert glimmer.requests[0]["model"] == "muse-glimmer-30B"
+    assert glimmer.requests[0]["messages"][0]["content"].startswith("Reasoning effort: low.")
+    assert not (tmp_path / "logs").exists()  # nothing spent
+
+
+def test_a_plain_request_gets_the_fast_sweep_even_with_planners(tmp_path):
+    glimmer = ScriptedSpark()
+    a, _, _ = andy(Thing("keys", 15.0, 28.0), tmp_path=tmp_path)
+    a.glimmer = glimmer
+    assert a.hear("where are my keys").endswith("I see your keys, a little to my left.")
+    assert glimmer.requests == []

@@ -22,6 +22,7 @@ import torchaudio
 
 MAX_SECONDS = 30  # Omnilingual ASR's CTC models take clips under 40 s
 VOICE = "am_michael"
+LANG = "eng_Latn"
 
 
 def load(asr_card: str):
@@ -31,7 +32,7 @@ def load(asr_card: str):
     return ASRInferencePipeline(model_card=asr_card, device="cuda"), KPipeline(lang_code="a", repo_id="hexgrad/Kokoro-82M")
 
 
-def serve(asr, tts, host: str, port: int) -> None:
+def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
     lock = threading.Lock()  # one GPU
 
     class Handler(BaseHTTPRequestHandler):
@@ -47,9 +48,13 @@ def serve(asr, tts, host: str, port: int) -> None:
                 audio = torch.from_numpy(np.frombuffer(self.rfile.read(n), dtype="<f4").copy())
                 if rate != 16000:
                     audio = torchaudio.functional.resample(audio, rate, 16000)
+                peak = float(audio.abs().max()) if audio.numel() else 0.0
+                if peak > 1e-4:
+                    audio = audio * (0.9 / peak)  # a voice across the room arrives quiet; even it out
                 start = time.monotonic()
                 with lock:
-                    text = asr.transcribe([{"waveform": audio.numpy(), "sample_rate": 16000}], batch_size=1)[0]
+                    kw = {"lang": [LANG]} if "LLM" in asr_card else {}  # CTC models can't be told the language
+                    text = asr.transcribe([{"waveform": audio.numpy(), "sample_rate": 16000}], batch_size=1, **kw)[0]
                 return self._json(200, {"text": text.strip(), "seconds": round(time.monotonic() - start, 3)})
             if self.path == "/speak":
                 try:
@@ -93,7 +98,7 @@ def serve(asr, tts, host: str, port: int) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--asr", default="omniASR_CTC_3B_v2")  # 5.0% WER on our clips, 0.03 s; 1B: 6.1%
+    ap.add_argument("--asr", default="omniASR_LLM_1B_v2")  # told the language; see research.md section 10
     ap.add_argument("--port", type=int, default=8092)
     args = ap.parse_args()
-    serve(*load(args.asr), "127.0.0.1", args.port)
+    serve(*load(args.asr), args.asr, "127.0.0.1", args.port)

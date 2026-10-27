@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 
 from ..budget import Budget, chat_cost
 from ..models.retry import with_retry
-from .tools import SPECS, VIEWS, SearchTools
+from .tools import VIEWS, SearchTools
 
 SYSTEM = ("You are Andy, a small tabletop robot helping someone find a lost object in the room. Use the tools: "
           "recall first if the object might be watched, then look in the likeliest views (use what the person said), "
@@ -23,17 +23,24 @@ class Plan:
 
 
 def plan_search(client, request: str, tools: SearchTools, model: str = "muse-spark-1.3",
-                budget: Budget | None = None, max_calls: int = 12, max_tokens: int = 400, sleep=time.sleep) -> Plan:
+                budget: Budget | None = None, max_calls: int = 12, max_tokens: int = 400, sleep=time.sleep,
+                paid: bool = True) -> Plan:
+    """paid=False: a model on this computer (Muse Glimmer), which costs nothing and reasons briefly."""
     budget = budget or Budget()
-    messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": request}]
+    system = SYSTEM if paid else "Reasoning effort: low. " + SYSTEM
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": request}]
     plan = Plan(reply="")
     while True:
-        budget.check(chat_cost(model, sum(len(str(m.get("content") or "")) for m in messages) // 2 + 500, max_tokens))
-        out = with_retry(lambda: client.chat.completions.create(model=model, messages=messages, tools=SPECS,
-                                                                max_tokens=max_tokens), sleep=sleep)
+        if paid:
+            budget.check(chat_cost(model, sum(len(str(m.get("content") or "")) for m in messages) // 2 + 500,
+                                   max_tokens))
+        out = with_retry(lambda: client.chat.completions.create(model=model, messages=messages, tools=tools.specs(),
+                                                                max_tokens=max_tokens if paid else 1024),
+                         sleep=sleep)
         usage = getattr(out, "usage", None)
-        budget.record(model, chat_cost(model, getattr(usage, "prompt_tokens", 0) or 0,
-                                       getattr(usage, "completion_tokens", 0) or 0))
+        if paid:
+            budget.record(model, chat_cost(model, getattr(usage, "prompt_tokens", 0) or 0,
+                                           getattr(usage, "completion_tokens", 0) or 0))
         msg = out.choices[0].message
         calls = getattr(msg, "tool_calls", None) or []
         if not calls:
@@ -56,6 +63,8 @@ def plan_search(client, request: str, tools: SearchTools, model: str = "muse-spa
                 result = tools.call(c.function.name, args if isinstance(args, dict) else {})
             plan.steps.append((c.function.name, args, result))
             messages.append({"role": "tool", "tool_call_id": c.id, "content": result})
+        if tools.pointed:  # done: what Andy says is written from the tools' results, not by the model
+            return plan
 
 
 def _fallback(tools: SearchTools) -> str:
