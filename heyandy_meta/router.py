@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from .budget import BudgetExceeded
 from .models.common import Chat, Reply
+from .models.openai_chat import sentences
 from .models.retry import CloudUnavailable
 
 THINKING_WORDS = ("explain", "why", "compare", "research", "how does", "what does")
@@ -46,3 +47,23 @@ class Router:
             except CloudUnavailable as down:
                 self.last = Decision("device", f"cloud unavailable: {down}")
         return self.device.chat(prompt, history)
+
+    def stream(self, prompt: str, online: bool = True, history=()):
+        """Like answer(), sentence by sentence: the device streams as it writes; the cloud's answer comes whole.
+        Afterwards, self.last says who answered and why."""
+        self.last = decide(prompt, online)
+        if self.last.where == "cloud":
+            try:
+                text = self.cloud.chat(prompt, history).text
+            except BudgetExceeded as refused:
+                self.last = Decision("device", f"cloud refused: {refused}")
+            except CloudUnavailable as down:
+                self.last = Decision("device", f"cloud unavailable: {down}")
+            else:
+                yield from sentences(text)
+                return
+        live = getattr(self.device, "stream", None)
+        if live:
+            yield from live(prompt, history)
+        else:
+            yield from sentences(self.device.chat(prompt, history).text)

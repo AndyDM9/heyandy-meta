@@ -32,6 +32,8 @@ from .robot.body import Body
 from .screen.state import ScreenState
 
 GLANCE_EVERY_S = 5 * 60
+HONEST = ("I can't do that from a chat. Say it to me directly, like: Andy, remind me in ten minutes to stretch, or: "
+          "Andy, where are my keys?")
 ANSWER_WITHIN_S = 60  # how long Andy's question ("remind you about what, and when?") waits for the answer
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
@@ -90,11 +92,15 @@ class Andy:
             self._last_turn = self.clock()
             self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
-            self._pointed = False
+            self._pointed, self._said = False, []
             self.screen.doing("Thinking", "Looking at you")
-            reply = respond(text, self._answer, self.disclosure)
-            self.face_person_to_speak()
-            self.say(reply)
+            reply = respond(text, self._answer, self.disclosure, opening=self._say_now)
+            rest = reply
+            for part in self._said:  # what was already said as it came (the opening, streamed sentences)
+                rest = rest.removeprefix(part).lstrip()
+            if rest:
+                self.face_person_to_speak()
+                self.say(rest)
             self.refresh_panels()
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
             self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
@@ -191,18 +197,30 @@ class Andy:
             return self.look_up(text)
         return self.talk(text)
 
+    def _say_now(self, part: str) -> None:
+        """Say part of this turn's reply as soon as it's ready (the hear() at the end says only the rest)."""
+        self.face_person_to_speak()
+        self.say(part.strip())
+        self._said.append(part.strip())
+
     def talk(self, text: str) -> str:
+        """Conversation, spoken sentence by sentence as the model writes it. Each sentence is checked first: one that
+        claims an action the robot's own code didn't take stops the answer and is replaced with how to ask for it."""
+        parts = []
         try:
-            reply = self.router.answer(text, self.online, self.history)
+            for sentence in self.router.stream(text, self.online, self.history):
+                self._source, self._reason = self.router.last.where, self.router.last.reason  # known once it answers
+                if CLAIMS.search(sentence):
+                    self._reason += "; a promise the model can't keep was replaced"
+                    parts.append(HONEST)
+                    break
+                parts.append(sentence)
+                self._say_now(sentence)
         except APIError:
-            return "I'm having trouble thinking just now. Could you say that again in a minute?"
-        self._source, self._reason = reply.source, self.router.last.reason
-        self.screen.used("Muse Spark" if reply.source == "cloud" else "Muse Glimmer", reply.source)
-        if CLAIMS.search(reply.text):
-            self._reason += "; a promise the model can't keep was replaced"
-            return ("I can't do that from a chat. Say it to me directly, like: Andy, remind me in ten minutes to "
-                    "stretch, or: Andy, where are my keys?")
-        return reply.text
+            parts.append("I'm having trouble thinking just now. Could you say that again in a minute?")
+        if self._source:
+            self.screen.used("Muse Spark" if self._source == "cloud" else "Muse Glimmer", self._source)
+        return " ".join(parts)
 
     def look_up(self, question: str) -> str:
         if not self.online or self.spark is None:

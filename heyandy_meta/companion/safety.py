@@ -40,9 +40,13 @@ class Disclosure:
         return ""
 
 
-def respond(text: str, answer, disclosure: Disclosure) -> str:
-    """The one entry point for a spoken turn: the crisis reply bypasses the model; otherwise the model answers."""
+def respond(text: str, answer, disclosure: Disclosure, opening=None) -> str:
+    """The one entry point for a spoken turn: the crisis reply bypasses the model; otherwise the model answers.
+    opening, if given, is handed the AI disclosure before the answer is made, so it can be said at once."""
     if crisis(text):
         disclosure.last_said = disclosure.last_turn = disclosure._clock()
         return CRISIS_REPLY
-    return disclosure.prefix() + answer(text)
+    prefix = disclosure.prefix()
+    if prefix and opening:
+        opening(prefix)
+    return prefix + answer(text)

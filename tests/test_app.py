@@ -115,7 +115,7 @@ def test_a_reminder_is_delivered_in_person(tmp_path):
     assert "remind you" in a.hear("remind me in 10 minutes to check the oven")
     clock.t += 9 * 60
     a.tick()
-    assert not any("check the oven" in s for s in said(body)[1:])
+    assert not any("You asked me to remind you" in s for s in said(body))
     clock.t += 2 * 60
     a.tick()
     assert said(body)[-1].endswith("You asked me to remind you: check the oven")

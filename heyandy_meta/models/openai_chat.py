@@ -1,4 +1,5 @@
 """One chat call to any OpenAI-compatible endpoint: the Meta Model API or a local llama.cpp/Ollama server."""
+import re
 import time
 
 from .common import Reply
@@ -25,3 +26,37 @@ def chat(client, model: str, prompt: str, source: str, max_tokens: int = 600, sl
     usage = getattr(out, "usage", None)
     return Reply(text=out.choices[0].message.content or "", source=source, latency_s=time.monotonic() - start,
                  tokens_in=getattr(usage, "prompt_tokens", 0) or 0, tokens_out=getattr(usage, "completion_tokens", 0) or 0)
+
+
+SENTENCE_END = re.compile(r"[.!?]['\")]*\s+")  # a full stop followed by a space: "3.5" and "Dr.X" don't end one
+
+
+def stream(client, model: str, prompt: str, history=(), max_tokens: int = 600, sleep=time.sleep):
+    """The answer sentence by sentence, as it's written, so Andy can start speaking before it's finished."""
+    messages = [{"role": "system", "content": SYSTEM}]
+    for said, answered in history:
+        messages += [{"role": "user", "content": said}, {"role": "assistant", "content": answered}]
+    chunks = with_retry(lambda: client.chat.completions.create(
+        model=model, messages=messages + [{"role": "user", "content": prompt}], max_tokens=max_tokens, stream=True,
+    ), sleep=sleep)
+    buf = ""
+    for chunk in chunks:
+        delta = chunk.choices[0].delta.content if chunk.choices else None
+        if not delta:
+            continue  # the model's thinking comes as reasoning_content, never spoken
+        buf += delta
+        while m := SENTENCE_END.search(buf):
+            sentence, buf = buf[:m.end()].strip(), buf[m.end():]
+            if sentence:
+                yield sentence
+    if buf.strip():
+        yield buf.strip()
+
+
+def sentences(text: str) -> list[str]:
+    """A whole text, split the same way as a stream."""
+    out, rest = [], text.strip() + " "
+    while m := SENTENCE_END.search(rest):
+        out.append(rest[:m.end()].strip())
+        rest = rest[m.end():]
+    return out + ([rest.strip()] if rest.strip() else [])

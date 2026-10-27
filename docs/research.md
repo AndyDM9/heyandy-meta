@@ -306,3 +306,6 @@ Each of these came from the founder talking to the robot; the fixes are in the c
 - **"Andy" buried in a long stretch:** with the room never quiet, utterances ran 15 s; the name now counts anywhere,
   stretches end at 8 s, and the microphone's detector counts only with sound behind it.
 - **Privacy:** speech not for Andy is dropped and logged only as its length and the room level.
+- **Streaming (later that evening):** the AI opening is said while the model thinks, and Glimmer's answer is spoken
+  sentence by sentence as it's written; each sentence passes the false-promise check before it's said. First sound
+  after the words are understood: **0.97 s, 0.69 s, 0.97 s** on three turns on the robot (was 1.7 to 2.8 s).

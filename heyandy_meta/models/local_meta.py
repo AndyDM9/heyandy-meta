@@ -1,6 +1,6 @@
 """Muse Glimmer on the computer beside the robot, through llama.cpp's or Ollama's OpenAI-compatible server."""
 from .common import Reply
-from .openai_chat import chat
+from .openai_chat import chat, stream
 
 
 class GlimmerModel:
@@ -17,3 +17,7 @@ class GlimmerModel:
 
     def chat(self, prompt: str, history=()) -> Reply:
         return chat(self.client, self.model, prompt, source="device", history=history)
+
+    def stream(self, prompt: str, history=()):
+        """Sentence by sentence, as Glimmer writes them."""
+        return stream(self.client, self.model, prompt, history)
