@@ -78,10 +78,17 @@ def main() -> None:
     ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
     ap.add_argument("--data", default="~/.local/share/heyandy-meta")
     ap.add_argument("--tv-port", type=int, default=8765)
+    ap.add_argument("--tv-host", default="127.0.0.1",
+                    help="where the TV page listens: this computer only (default), or a home-network address for a "
+                         "smart TV; never a public one")
     args = ap.parse_args()
     andy = build(args)
-    serve(andy.screen, port=args.tv_port)
-    print(f"TV page: http://127.0.0.1:{args.tv_port}  ·  Muse Spark: {'on' if andy.spark else 'off'}  ·  "
+    from .models.common import is_local
+
+    if not is_local(f"http://{args.tv_host}"):
+        raise SystemExit(f"--tv-host must be this computer or a home-network address, not {args.tv_host}")
+    serve(andy.screen, host=args.tv_host, port=args.tv_port)
+    print(f"TV page: http://{args.tv_host}:{args.tv_port}  ·  Muse Spark: {'on' if andy.spark else 'off'}  ·  "
           f"{'robot' if args.robot else 'pretend living room'}  ·  Ctrl-D to quit")
     stop = threading.Event()
 
