@@ -2,7 +2,12 @@
 
 A direction is split between the head (up to ``head_yaw`` either way) and a turn of the base, sent as one smooth
 move. Moves are slow enough to be gentle (about 70 degrees a second at most), and every direction is clamped to the
-body's reach first. The split and the base turn are untested on the robot until Day 2.
+body's reach first.
+
+Measured on the Lite (2026-10-27): the base turns where it's told (39.6 for 40 degrees), but the head falls short and
+sags (asked for 55 it reached 40.5; asked for 0 it sat 2 to 5 degrees off). So the head takes only small turns, the
+adapter reads back where the head really is after each move, corrects once if it's more than ``tolerance`` off,
+and frames carry the measured direction, not the commanded one.
 """
 import math
 import struct
@@ -29,51 +34,87 @@ def jpeg_size(data: bytes) -> tuple[int, int]:
     raise ValueError("not a JPEG with a frame header")
 
 
+def _yaw_pitch(pose) -> tuple[float, float]:
+    """Yaw (left positive) and pitch (down positive) in degrees from a 4x4 head pose."""
+    return math.degrees(math.atan2(pose[1][0], pose[0][0])), math.degrees(math.asin(-max(-1.0, min(1.0, pose[2][0]))))
+
+
 class ReachyBody:
-    def __init__(self, robot=None, reach: Reach = Reach(), head_yaw: float = 55.0, max_deg_s: float = 70.0,
-                 settle_s: float = 0.3, pose=None, say=None, sleep=time.sleep):
+    def __init__(self, robot=None, reach: Reach = Reach(), head_yaw: float = 30.0, max_deg_s: float = 70.0,
+                 settle_s: float = 0.3, tolerance: float = 1.5, pose=None, say=None, sleep=time.sleep):
         if robot is None:
             from reachy_mini import ReachyMini
 
-            robot = ReachyMini(automatic_body_yaw=False)
+            # Never media_backend="no_media": it makes the daemon release the camera and audio for everyone.
+            robot = ReachyMini(automatic_body_yaw=False, connection_mode="localhost_only").__enter__()
         if pose is None:
             from reachy_mini.utils import create_head_pose
 
             pose = lambda yaw, pitch: create_head_pose(yaw=yaw, pitch=pitch, degrees=True)  # noqa: E731
-        self.robot, self.reach, self.head_yaw = robot, reach, head_yaw
+        self.robot, self.reach, self.head_yaw, self.tolerance = robot, reach, head_yaw, tolerance
         self.max_deg_s, self.settle_s = max_deg_s, settle_s
         self._pose, self._say, self._sleep = pose, say, sleep
-        self.yaw = self.pitch = 0.0
+        self.yaw = self.pitch = 0.0  # where the head is looking, measured when the robot can tell us
+        self._sent = (0.0, 0.0, 0.0)  # the last head yaw, pitch and base yaw sent
 
     def split(self, yaw: float) -> tuple[float, float]:
         """(head yaw, base yaw) for a direction: the head turns first, the base makes up the rest."""
         head = max(-self.head_yaw, min(self.head_yaw, yaw))
         return head, yaw - head
 
-    def look(self, yaw: float, pitch: float) -> None:
+    def measured(self) -> tuple[float, float] | None:
+        """Where the head really looks: its yaw on the body plus the base's yaw, and its pitch."""
+        if not hasattr(self.robot, "get_current_head_pose"):
+            return None
+        head_yaw, pitch = _yaw_pitch(self.robot.get_current_head_pose())
+        base = math.degrees(self.robot.get_current_joint_positions()[0][0])
+        return head_yaw + base, pitch
+
+    def _send(self, head: float, pitch: float, base: float, duration: float) -> None:
+        self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=duration)
+        self._sent = (head, pitch, base)
+
+    def look(self, yaw: float, pitch: float, precise: bool = True) -> None:
         yaw, pitch = self.reach.clamp(yaw, pitch)
         travel = max(abs(yaw - self.yaw), abs(pitch - self.pitch))
         head, base = self.split(yaw)
-        self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base),
-                               duration=max(0.6, travel / self.max_deg_s))
-        self.yaw, self.pitch = yaw, pitch
+        self._send(head, pitch, base, max(0.6, travel / self.max_deg_s))
         self._sleep(self.settle_s)  # let the camera stop moving before a frame is read
+        now = self.measured()
+        if precise and now and max(abs(yaw - now[0]), abs(pitch - now[1])) > self.tolerance:
+            # One correction, on the head only (the base is accurate), at most 15 degrees each way.
+            fix = lambda err: max(-15.0, min(15.0, err))  # noqa: E731
+            self._send(max(-60.0, min(60.0, head + fix(yaw - now[0]))), pitch + fix(pitch - now[1]), base, 0.4)
+            self._sleep(self.settle_s)
+            now = self.measured()
+        self.yaw, self.pitch = now or (yaw, pitch)
+
+    def _next_frame(self, wait_s: float = 2.0) -> bytes | None:
+        """The camera hands over each frame once; wait briefly for a new one."""
+        for _ in range(max(1, int(wait_s / 0.05))):
+            data = self.robot.media.get_frame_jpeg()
+            if data:
+                return data
+            self._sleep(0.05)
+        return None
 
     def capture(self) -> Frame:
-        data = self.robot.media.get_frame_jpeg()
+        stale = self._next_frame()  # this one may be from before the move finished
+        data = self._next_frame(0.5) or stale
         if not data:
             raise RuntimeError("the camera returned no frame")
+        now = self.measured()  # the head may still have been settling: say where it was for this frame
+        if now:
+            self.yaw, self.pitch = now
         w, h = jpeg_size(data)
         return Frame(data, w, h, self.yaw, self.pitch)
 
     def point(self, yaw: float, pitch: float) -> None:
         """Point with the head: face the thing, dip once towards it, and hold."""
         self.look(yaw, pitch)
-        yaw, pitch = self.reach.clamp(yaw, pitch)
-        head, base = self.split(yaw)
-        dip = min(pitch + 6.0, self.reach.pitch_down)
-        self.robot.goto_target(head=self._pose(head, dip), body_yaw=math.radians(base), duration=0.4)
-        self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=0.4)
+        head, sent_pitch, base = self._sent
+        self._send(head, min(sent_pitch + 6.0, self.reach.pitch_down + 10.0), base, 0.4)
+        self._send(head, sent_pitch, base, 0.4)
 
     def say(self, text: str) -> None:
         if self._say:

@@ -16,7 +16,7 @@ def face_person(body: Body, segmenter: Segmenter, views=VIEWS, min_score: float 
     for yaw, pitch in (here, *[v for v in views if v != here]):
         if not body.reach.allows(yaw, pitch):
             continue
-        body.look(yaw, pitch)
+        body.look(yaw, pitch, precise=False)
         frame = body.capture()
         people = [m for m in segmenter.find(frame, "person") if m.score is None or m.score >= min_score]
         if not people:

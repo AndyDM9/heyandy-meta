@@ -248,3 +248,23 @@ Set up by `scripts/setup-local-models.sh`; run as the user units in `deploy/`.
     single-image path) gives zero detections even with all detector weights loaded; and `start_session` at this commit
     passes `offload_state_to_cpu`, which the 3.1 model's `init_state` rejects. `local/sam_server.py` registers the
     session directly.
+
+## 9. The Reachy Mini Lite, measured (2026-10-27, evening)
+
+The founder handed over the robot. Pollen's daemon (`reachy-mini` 1.12.0rc1, the version this repo pins as the `robot`
+extra) keeps running; our code connects to it as a client, and the SDK is imported only in `robot/reachy_mini.py`.
+No camera frame was saved or looked at by anyone: frames went only to local SAM 3.1 and Glimmer, and only numbers were
+logged.
+
+- **Never use `media_backend="no_media"`:** it makes the daemon *release* the camera and audio for every client (it
+  happened once; `POST /api/media/acquire` gave them back).
+- **The base is accurate; the head isn't.** Commanded vs reached, read back from the joints: base 40 -> 39.6; head yaw
+  10 -> 4.7, 30 -> 25.3, 55 -> 40.5, 0 -> -1.8 to -5.0 (it doesn't return to the same place); pitch sags 2 to 5 degrees.
+  A 6.8 degree measured turn moved a monitor 128 px, against 133 predicted by the published focal length, so the
+  camera model is right and the error is the head's.
+- **So the adapter is closed-loop:** the head takes at most 30 degrees and the base the rest; after a precise move it
+  reads the pose back and corrects once; every frame carries the *measured* direction. Afterwards: within 1.4 degrees
+  at +/-110 (mostly base), and within about 3 degrees with the head alone, inside the 6 degree pointing tolerance.
+- **Speed.** A find was 14.7 s (looks 9.9 s, SAM 3.1 1.6 s, Glimmer's check 2.0 s). Sweep looks no longer correct
+  themselves (the frame says where it was taken), a confident sighting (0.75+) gets its closer look at once, and the
+  sweep starts in the middle: **7.5 s** for a cup, 8.2 s for a keyboard, with the TV-picture check included.

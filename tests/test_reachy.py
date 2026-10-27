@@ -25,8 +25,21 @@ class FakeReachy:
         self.moves.append((head, body_yaw, duration))
 
 
-def body(**kw):
-    robot = FakeReachy()
+class SaggingReachy(FakeReachy):
+    """Like the Lite measured on 2026-10-27: the head reaches three quarters of a yaw and sags 3 degrees; the base is exact."""
+
+    def get_current_head_pose(self):
+        _, yaw, pitch = self.moves[-1][0]
+        y, p = math.radians(yaw * 0.75), math.radians(pitch + 3.0)
+        return [[math.cos(y) * math.cos(p), -math.sin(y), 0, 0], [math.sin(y) * math.cos(p), math.cos(y), 0, 0],
+                [-math.sin(p), 0, math.cos(p), 0], [0, 0, 0, 1]]
+
+    def get_current_joint_positions(self):
+        return [self.moves[-1][1]] + [0.0] * 6, [0.0, 0.0]
+
+
+def body(robot=None, **kw):
+    robot = robot or FakeReachy()
     return ReachyBody(robot, pose=lambda yaw, pitch: ("pose", round(yaw, 2), round(pitch, 2)), sleep=lambda s: None, **kw), robot
 
 
@@ -38,25 +51,42 @@ def test_jpeg_size():
 
 def test_small_turns_are_the_head_alone():
     b, robot = body()
-    b.look(30.0, 15.0)
+    b.look(25.0, 15.0)
     head, base, duration = robot.moves[-1]
-    assert head == ("pose", 30.0, 15.0) and base == 0.0 and duration == pytest.approx(0.6)
+    assert head == ("pose", 25.0, 15.0) and base == 0.0 and duration == pytest.approx(0.6)
 
 
 def test_past_the_head_the_base_makes_up_the_rest():
     b, robot = body()
     b.look(74.0, 20.0)
     head, base, _ = robot.moves[-1]
-    assert head == ("pose", 55.0, 20.0)
-    assert math.degrees(base) == pytest.approx(19.0)
+    assert head == ("pose", 30.0, 20.0)
+    assert math.degrees(base) == pytest.approx(44.0)
 
 
 def test_directions_are_clamped_and_moves_stay_gentle():
     b, robot = body(reach=Reach(yaw=60.0, pitch_down=30.0))
     b.look(-170.0, 80.0)
     head, base, duration = robot.moves[-1]
-    assert head == ("pose", -55.0, 30.0) and math.degrees(base) == pytest.approx(-5.0)
+    assert head == ("pose", -30.0, 30.0) and math.degrees(base) == pytest.approx(-30.0)
     assert duration == pytest.approx(60.0 / 70.0)  # 60 degrees at 70 degrees a second
+
+
+def test_a_sagging_head_is_measured_and_corrected_once():
+    b, robot = body(SaggingReachy())
+    b.look(20.0, 10.0)
+    assert len(robot.moves) == 2  # the move, then one correction
+    assert robot.moves[1][0][1] > 20.0 and robot.moves[1][0][2] < 10.0  # aim past the shortfall, above the sag
+    assert abs(b.yaw - 20.0) < 1.5 and abs(b.pitch - 10.0) < 1.5
+    f = b.capture()
+    assert (f.yaw, f.pitch) == (b.yaw, b.pitch)  # the frame carries where the head really was
+
+
+def test_the_base_is_trusted_and_only_the_head_is_corrected():
+    b, robot = body(SaggingReachy())
+    b.look(70.0, 15.0)
+    bases = [round(math.degrees(m[1]), 3) for m in robot.moves]
+    assert bases == [40.0, 40.0]
 
 
 def test_capture_reports_where_the_head_was():
@@ -70,7 +100,7 @@ def test_point_faces_then_dips_once_and_holds():
     b, robot = body()
     b.point(20.0, 10.0)
     heads = [m[0] for m in robot.moves]
-    assert heads == [("pose", 20.0, 10.0), ("pose", 20.0, 16.0), ("pose", 20.0, 10.0)]
+    assert heads == [("pose", 20.0, 10.0), ("pose", 20.0, 16.0), ("pose", 20.0, 10.0)]  # no read-back: no correction
 
 
 def test_the_finder_drives_the_adapter_like_any_body():
@@ -81,4 +111,4 @@ def test_the_finder_drives_the_adapter_like_any_body():
             return []
 
     assert Finder(b, Nothing()).find("glasses") is None
-    assert [m[0][1] for m in robot.moves] == [55.0, 18.0, -18.0, -55.0, 55.0, -55.0]  # then behind: head at 55, base turns
+    assert [m[0][1] for m in robot.moves] == [18.0, -18.0, 30.0, -30.0, 30.0, -30.0]  # the base makes up the rest

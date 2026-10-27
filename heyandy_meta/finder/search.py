@@ -4,6 +4,7 @@ Each step is a direction for the body and a frame for SAM 3.1. A sighting only b
 centred look confirms it; one look is never enough. The frame it was confirmed in is returned in memory, for the
 TV, and never saved.
 """
+import math
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
@@ -11,7 +12,7 @@ from ..models.common import Mask
 from ..robot.body import Body, Frame
 from .geometry import LITE, Camera, Sighting, merge, pixel_to_angles
 
-VIEWS = ((55.0, 15.0), (18.0, 15.0), (-18.0, 15.0), (-55.0, 15.0))  # yaw, pitch; together about 190 degrees
+VIEWS = ((18.0, 15.0), (-18.0, 15.0), (55.0, 15.0), (-55.0, 15.0))  # yaw, pitch; the middle first; about 190 degrees
 BEHIND = ((110.0, 15.0), (-110.0, 15.0))  # turning the base; only when the front sweep finds nothing
 
 
@@ -41,21 +42,40 @@ class Finder:
     behind: tuple = BEHIND
     min_score: float = 0.3
     closer_looks: int = 2
+    sure: float = 0.75  # a sighting this confident gets its closer look at once, before the sweep goes on
     confirm_within_px: float = 0.15  # a close-up's mask must be this near the centre (fraction of frame width)
     check: Callable[[Frame, Mask], bool] | None = None  # optional second opinion, e.g. "is this on a screen?"
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
-        """The fixed search: the remembered place, then a sweep with up to two closer looks, then behind."""
+        """The fixed search: the remembered place, then a sweep, then behind. A confident sighting is checked as soon
+        as it's seen; otherwise the likeliest places get a closer look after the sweep, up to ``closer_looks``."""
         self.looks = 0
         if last_seen is not None:
             found = self.confirm(label, *last_seen)
             if found:
                 found.remembered = True
                 return self.point(found)
+        tried: list[Sighting] = []
+
+        def try_(place: Sighting) -> Found | None:
+            if len(tried) >= self.closer_looks + 2 or any(
+                    math.hypot(place.yaw - t.yaw, place.pitch - t.pitch) <= 6.0 for t in tried):
+                return None  # a place already looked at closely, or enough closer looks for one search
+            tried.append(place)
+            return self.confirm(label, place.yaw, place.pitch)
+
         for views in (self.views, self.behind):
-            for place in self.scan(label, views)[: self.closer_looks]:
-                found = self.confirm(label, place.yaw, place.pitch)
+            sightings: list[Sighting] = []
+            for view in views:
+                sightings += self._sightings(label, *view)
+                for place in merge(sightings):
+                    if place.score >= self.sure:
+                        found = try_(place)
+                        if found:
+                            return self.point(found)
+            for place in merge(sightings)[: self.closer_looks]:
+                found = try_(place)
                 if found:
                     return self.point(found)
         return None
@@ -64,13 +84,15 @@ class Finder:
         """Look in each view and return the places where the thing might be, likeliest first."""
         sightings = []
         for yaw, pitch in views:
-            if not self.body.reach.allows(yaw, pitch):
-                continue
-            frame = self._look(yaw, pitch)
-            for m in self._masks(frame, label):
-                y, p = pixel_to_angles(*m.center, frame.yaw, frame.pitch, self._cam(frame))
-                sightings.append(Sighting(y, p, m.score if m.score is not None else 0.5))
+            sightings += self._sightings(label, yaw, pitch)
         return merge(sightings)
+
+    def _sightings(self, label: str, yaw: float, pitch: float) -> list[Sighting]:
+        if not self.body.reach.allows(yaw, pitch):
+            return []
+        frame = self._look(yaw, pitch, precise=False)  # the frame says where it was taken; no need to be exact
+        return [Sighting(*pixel_to_angles(*m.center, frame.yaw, frame.pitch, self._cam(frame)),
+                         m.score if m.score is not None else 0.5) for m in self._masks(frame, label)]
 
     def confirm(self, label: str, yaw: float, pitch: float) -> Found | None:
         """Look straight at a place; it counts only if the thing is near the centre of that frame."""
@@ -97,8 +119,8 @@ class Finder:
 
     looks: int = 0
 
-    def _look(self, yaw: float, pitch: float) -> Frame:
-        self.body.look(yaw, pitch)
+    def _look(self, yaw: float, pitch: float, precise: bool = True) -> Frame:
+        self.body.look(yaw, pitch, precise)
         self.looks += 1
         return self.body.capture()
 

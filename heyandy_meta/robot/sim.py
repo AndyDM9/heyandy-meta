@@ -45,7 +45,7 @@ class SimBody:
         self.yaw = self.pitch = 0.0
         self.log: list[tuple] = []
 
-    def look(self, yaw: float, pitch: float) -> None:
+    def look(self, yaw: float, pitch: float, precise: bool = True) -> None:
         self.yaw, self.pitch = self.reach.clamp(yaw, pitch)
         self.log.append(("look", round(self.yaw, 2), round(self.pitch, 2)))
 

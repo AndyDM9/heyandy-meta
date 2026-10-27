@@ -1,7 +1,7 @@
 [project]
 name = "heyandy-meta"
 version = "0.0.1"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
     "openai>=1.60",               # the Meta Model API and local llama.cpp/Ollama are OpenAI-compatible
@@ -11,6 +11,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest"]
+robot = [
+    "reachy-mini==1.12.0rc1",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

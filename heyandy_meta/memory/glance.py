@@ -15,7 +15,7 @@ def glance(body: Body, segmenter: Segmenter, places: Places, views=VIEWS, min_sc
     for yaw, pitch in views:
         if not body.reach.allows(yaw, pitch):
             continue
-        body.look(yaw, pitch)
+        body.look(yaw, pitch, precise=False)
         frame = body.capture()
         for label in labels:
             for m in segmenter.find(frame, label):
