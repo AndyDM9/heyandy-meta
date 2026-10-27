@@ -51,7 +51,11 @@ def show(state: ScreenState, scene: str) -> None:
     state.clear()
     state.new_turn()
     state.reminder_next("Call Sam", time.time() + 25 * 60)
-    state.keeping(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right"])
+    state.keeping(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",
+                   "remote: seen 25 minutes ago, behind me on my left"],
+                  [{"label": "keys", "yaw": 48.0, "pitch": 20.0, "ago_s": 7300},
+                   {"label": "glasses", "yaw": -22.0, "pitch": 14.0, "ago_s": 600},
+                   {"label": "remote", "yaw": 125.0, "pitch": 26.0, "ago_s": 1500}])
     state.doing("Waiting")
     state.said("")
     if scene == "finding":
@@ -96,7 +100,8 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("Omnilingual ASR (hearing)", "device")
         state.used("Muse Image", "cloud")
     elif scene == "memory":
-        state.remember_list(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right"])
+        state.remember_list(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",
+                             "remote: seen 25 minutes ago, behind me on my left"])
         state.said("I'm keeping an eye on your keys and your glasses. It's on the screen.", "device")
         state.doing("Speaking", "Looking at you")
     elif scene == "help":

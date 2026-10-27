@@ -38,6 +38,7 @@ class ScreenState:
         self.looking_for = ""  # "your cup", while a search runs and after
         self.next_reminder: tuple[str, float] | None = None  # (the person's words, when), epoch seconds
         self.watching: list[str] = []  # what Andy keeps an eye on, and where it last saw each
+        self.watching_map: list[dict] = []  # the same as directions, for the TV's map
         self._help_until = 0.0
         self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
         self._drawing: tuple[bytes, str, str, float] | None = None  # (WebP, what was asked, where it's saved, until)
@@ -55,9 +56,9 @@ class ScreenState:
         with self._lock:
             self.next_reminder = (text, at) if text else None
 
-    def keeping(self, lines: list[str]) -> None:
+    def keeping(self, lines: list[str], where: list[dict] | None = None) -> None:
         with self._lock:
-            self.watching = list(lines)
+            self.watching, self.watching_map = list(lines), list(where or [])
 
     def drawn(self, image: bytes, prompt: str, saved: str) -> None:
         with self._lock:
@@ -130,7 +131,8 @@ class ScreenState:
                    "models": [{"name": n, "where": w, "times": t} for n, (w, t) in self.models.items()],
                    "state": self.state, "head": self.head, "looking_for": self.looking_for,
                    "next": {"text": self.next_reminder[0], "at": self.next_reminder[1]} if self.next_reminder else None,
-                   "watching": list(self.watching), "help": self._clock() < self._help_until,
+                   "watching": list(self.watching), "map": list(self.watching_map),
+                   "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None}
             if self._drawing and self._clock() >= self._drawing[3]:
                 self._drawing = None

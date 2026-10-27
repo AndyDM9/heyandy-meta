@@ -79,6 +79,18 @@
   .steps li::marker { color: var(--accent); font-weight: 750; }
   .answer { font-size: 2.4rem; font-weight: 650; line-height: 1.25; }
   .sources { margin-top: 1.4rem; display: grid; gap: 0.5rem; font-size: 1.4rem; color: var(--muted); }
+  .dial { display: block; width: 100%; max-width: 13rem; margin: 0.4rem auto 0; overflow: visible; }
+  .side ul.compact { gap: 0.35rem; margin-top: 0.4rem; }
+  .side ul.compact li { font-size: 1.4rem; }
+  .side ul.compact li span { display: inline; font-size: 1.25rem; }
+  .dial.big { max-width: 28rem; margin: 0; }
+  .dial .ring { fill: none; stroke: var(--muted); stroke-width: 0.6; opacity: 0.5; }
+  .dial .front { fill: var(--muted); font-size: 9px; text-anchor: middle; }
+  .dial .dot { fill: var(--accent); }
+  .dial .name { fill: var(--ink); font-size: 11px; font-weight: 700; }
+  .dial:not(.big) .name { font-size: 16px; }
+  .dial:not(.big) .front { font-size: 12px; }
+  .memory { display: grid; grid-template-columns: 28rem 1fr; gap: 2.5rem; align-items: center; }
   .drawing { display: grid; gap: 0.8rem; justify-items: start; min-height: 0; height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
   .drawing img { max-width: 100%; height: 100%; object-fit: contain; object-position: left top; border-radius: 1.4rem; display: block; min-height: 0; }
   .drawing small { font-size: 1.3rem; color: var(--muted); }
@@ -205,12 +217,41 @@
       const when = el("div", null, "when"); when.append(at + " · ", el("b", until(t)));
       $("next").replaceChildren(el("h2", s.next.text), when);
     } else $("next").replaceChildren(el("h2", "No reminders"), el("div", "“Andy, remind me at 3 pm to call Sam.”", "when"));
-    const list = el("ul");
-    for (const line of s.watching || []) {
+    const seen = (s.map || []).some(p => p.yaw !== undefined);
+    const list = el("ul", null, seen ? "compact" : "");
+    for (const line of s.watching || []) {  // beside the map, only when; the map shows where
       const [what, where] = line.split(": ");
-      const li = el("li", what[0].toUpperCase() + what.slice(1)); li.append(el("span", where)); list.append(li);
+      const li = el("li", what[0].toUpperCase() + what.slice(1));
+      li.append(el("span", seen ? " · " + where.split(",")[0] : where)); list.append(li);
     }
-    $("watching").replaceChildren(list.children.length ? list : el("div", "Nothing yet. “Andy, keep an eye on my keys.”", "when"));
+    $("watching").replaceChildren(...(list.children.length ? (seen ? [dial(s.map), list] : [list])
+                                     : [el("div", "Nothing yet. “Andy, keep an eye on my keys.”", "when")]));
+  }
+  // What Andy remembers, as a map around it: front is up, left is left; lower (nearer) things sit closer in;
+  // older sightings fade. Directions are where the head looked, so this is a dial, not a floor plan.
+  function dial(places, big) {
+    const svg = document.createElementNS(svgNS, "svg"), R = 82;
+    svg.setAttribute("viewBox", "-110 -110 220 220"); svg.setAttribute("class", "dial" + (big ? " big" : ""));
+    svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Where Andy last saw the things it keeps an eye on");
+    const add = (tag, attrs, text) => { const e = document.createElementNS(svgNS, tag);
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text) e.textContent = text; svg.append(e); return e; };
+    add("circle", { cx: 0, cy: 0, r: R, class: "ring" }); add("circle", { cx: 0, cy: 0, r: R / 2, class: "ring" });
+    add("text", { x: 0, y: -R - 6, class: "front" }, "front");
+    add("rect", { x: -9, y: -7, width: 18, height: 14, rx: 7, fill: "var(--accent)" });  // Andy
+    add("circle", { cx: -3.5, cy: 0, r: 2.2, fill: "var(--panel)" }); add("circle", { cx: 3.5, cy: 0, r: 2.2, fill: "var(--panel)" });
+    for (const p of places || []) {
+      if (p.yaw === undefined) continue;
+      const a = p.yaw * Math.PI / 180, r = R * (0.95 - 0.5 * Math.min(Math.max(p.pitch, 0), 35) / 35);
+      const x = -r * Math.sin(a), y = -r * Math.cos(a);
+      const g = document.createElementNS(svgNS, "g");
+      g.setAttribute("opacity", p.ago_s < 600 ? 1 : p.ago_s < 7200 ? 0.75 : 0.5); svg.append(g);
+      const dot = document.createElementNS(svgNS, "circle");
+      dot.setAttribute("cx", x); dot.setAttribute("cy", y); dot.setAttribute("r", 5.5); dot.setAttribute("class", "dot"); g.append(dot);
+      const t = document.createElementNS(svgNS, "text");
+      t.setAttribute("x", x + (x < -40 ? -9 : 9)); t.setAttribute("y", y + 4); t.setAttribute("class", "name");
+      t.setAttribute("text-anchor", x < -40 ? "end" : "start"); t.textContent = p.label; g.append(t);
+    }
+    return svg;
   }
   function zoom(p) {  // about four times the thing's size, at least a third of the frame, in the frame's shape
     const [l, t, r, b] = p.box, aspect = p.width / p.height;
@@ -272,7 +313,8 @@
         body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
       } else if (s.memory) {
         kicker = "What I remember"; title = s.memory.length ? "Where I last saw things" : "Nothing yet";
-        body.replaceChildren(steps(s.memory, "ul"));
+        const box = el("div", null, "memory"); box.append(dial(s.map, true), steps(s.memory, "ul"));
+        body.replaceChildren(s.memory.length ? box : steps(s.memory, "ul"));
       } else {
         kicker = "Try asking";
         const t = el("div", TRY[Math.floor(Date.now() / 20000) % TRY.length], "try");

@@ -168,7 +168,7 @@ class Andy:
             self.screen.reminder_next(up[0].text, up[0].at)
         else:
             self.screen.reminder_next(None)
-        self.screen.keeping(self._memory())
+        self.screen.keeping(self._memory(), self._memory_map())
 
     def _answer(self, text: str) -> str:
         i = parse(text, _now(self.clock))
@@ -400,6 +400,15 @@ class Andy:
             last, at = self.places.last_seen(label, now=self.clock()), self.places.seen_at(label)
             lines.append(f"{label}: " + (f"seen {_ago(self.clock() - at)}, {side(last[0])}" if last else "not seen yet"))
         return lines
+
+    def _memory_map(self) -> list[dict]:
+        """For the TV's map: where each watched thing was last seen, and how long ago (none: not seen yet)."""
+        out = []
+        for label in self.places.watching():
+            last, at = self.places.last_seen(label, now=self.clock()), self.places.seen_at(label)
+            out.append({"label": label, "yaw": last[0], "pitch": last[1], "ago_s": round(self.clock() - at)}
+                       if last else {"label": label})
+        return out
 
     # --- between turns ---
 
