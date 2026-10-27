@@ -1,0 +1,88 @@
+# Submission text (draft, for the form on November 4)
+
+*About 1,000 words. Fill in the [brackets] on the day; check every number against `evals/results/` first.*
+
+---
+
+**Andy: a tabletop robot that finds what you've lost, points at it, and keeps your private life private.**
+
+HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link] · Live screen: huggingface.co/spaces/heyandy-ai/andy · Code: github.com/AndyDM9/heyandy-meta
+
+**Before this week:** a Reachy Mini Lite robot, and our earlier prototype, our earlier robot built before this event (not in this
+repository; its results are our baseline). **Everything below was built this week, on Meta's models.**
+
+## The problem
+
+People who live at home lose the same few things every day: glasses, keys, the phone, the remote. A phone app can't look
+for them; a camera that streams the living room to the cloud is a camera most people won't have. Andy is a small robot
+that sits on the table, looks around the room for you, points at the thing, and keeps everything it sees and hears in
+the house.
+
+## What it does, in the room
+
+- **"Andy, where are my glasses?"** Andy turns towards your voice, says "Let me look", sweeps the room with its head
+  (and its base, past the head's reach), looks closer at the likeliest place, and points. The TV beside it shows the
+  picture it saw them in, with SAM 3.1's outline.
+- **It isn't fooled by pictures.** A pair of glasses on the TV screen or in a photo is checked and skipped.
+- **"The blue mug, next to the laptop."** With look-alikes in view, Andy compares them and points at the one you meant.
+- **"I left my keys behind you, on the left."** With a hint, an agent plans the search with the robot's tools and goes
+  straight there.
+- **"Andy, follow the mug."** Its eyes follow a thing as you move it around the table, until you say "stop".
+- **"Keep an eye on my keys."** While idle, Andy glances around now and then and remembers where the things you chose
+  were last seen: a label, a direction and a time, never a picture. "What do you remember?" puts it on the TV.
+- **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it in your
+  own words. If you're out, it tries again and tells you later.
+- **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
+  the links on the TV. **Conversation** follows on without repeating its name.
+- **It's never frozen:** it breathes, its antennas listen and think, its head moves with its words, and it keeps its
+  eyes on you while it talks.
+
+## Meta's models, and where each one runs
+
+| Model | Where | What it does |
+|---|---|---|
+| **SAM 3.1** (open weights, `sam3.1_multiplex.pt`) | GPU 1, on the computer beside the robot | Finds things in camera frames (several per frame for the idle glance), finds the person for reminders, follows a moving thing |
+| **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
+| **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language |
+| **Muse Spark 1.3** (Model API) | The cloud, **words only** | Plans hinted searches when online; web answers with sources; harder conversation |
+| *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice; Meta has no open text-to-speech model |
+
+**Pictures and voice from a home never leave it.** Meta can't turn off data retention for hackathon credits (Meta's
+answer in office hours), so the camera and microphone only ever reach models on the computer beside the robot; Muse
+Spark gets words. Unplug the network and Andy carries on: the TV says "Offline", Glimmer plans and talks, SAM 3.1 sees.
+Every turn, the TV lists which models worked on it and where.
+
+## Technical depth (what was hard)
+
+- **A closed-loop head.** Measured on the robot, the base turns where it's told (39.6 for 40 degrees) but the head falls
+  short and sags (asked for 55, it reached 40.5). The adapter gives the head small turns, reads the pose back, corrects
+  once, and every frame carries the *measured* direction: pointing within about 3 degrees.
+- **SAM 3.1 served locally** with Meta's `sam3` code (two quirks in it worked around and documented), about 0.3 s a
+  frame; several things per frame share one encoding.
+- **Agents that can't move the robot by themselves.** Muse Spark and Glimmer plan with named views and numbered places,
+  never motor values; every argument is checked in code; a search stops at ten looks; and Andy's words about what it
+  found are written from the tools' results, never the model's (Glimmer once invented "on the floor").
+- **Speech that's fast enough to talk to:** Omnilingual ASR and Kokoro on GPU 1, the robot's microphone array for the
+  voice's direction, answers spoken sentence by sentence as Glimmer writes them: the first word [0.7 to 1 s] after Andy
+  understands you.
+- **Never a false promise:** a chat model can't claim to set a reminder or watch something; code checks every sentence
+  before it's said.
+
+## Measured
+
+*Simulated scorecard (seeded rooms with the robot's camera model and measured timings; noise stated):* with look-alikes
+described, the fixed sweep pointed at the wrong one 20 times in 100; **Glimmer's plan: 20 of 20, none wrong**. Things
+behind the robot: **20 of 20 in 3.5 looks** (fixed sweep: 92 of 100 in 6.2). Nothing there: no false finds.
+*On the robot:* a cup in 7.5 s and a keyboard in 8.2 s, the screen check included; [the physical scorecard: N of M].
+Every result, failures included: `evals/results/`.
+
+## Safety and honesty
+
+Andy says it's an AI at the start of a conversation and every three hours; crisis words get the 988 line and nothing
+from a model; no medical or medication advice; it never asks for money or passwords. Speech that isn't for Andy is
+dropped and never shown or kept. The Model API spend has a hard cap in code.
+
+## What's next
+
+Our own robot body (in design), the same software behind the same body interface; more languages (Omnilingual ASR
+already hears them); and the physical scorecard in more homes.

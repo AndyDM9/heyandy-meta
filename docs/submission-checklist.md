@@ -13,7 +13,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 **On November 4, in this order**
 1. [ ] The video: 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
        where anyone can watch it signed out.
-2. [ ] The README: the video at the top, the measured results, what was pre-existing, the limits.
+2. [ ] The README: the video at the top, the measured results, what was pre-existing, the limits; refresh the
+       "What's new here" list (it dates from October 27 morning). The form text: `docs/submission.md`.
 3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
        (`git log -p | grep -E "MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}"` finds nothing). Never rewrite the history: its
        dates show the work was done during the event.
