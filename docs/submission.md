@@ -38,6 +38,10 @@ the house.
   saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
   the links on the TV. **Conversation** follows on without repeating its name.
+- **More than one thing at once:** "Find my glasses, and remind me at 5 to clean them." An agent (Muse Spark, or
+  Glimmer offline) gets all of Andy's abilities as tools and does them in order; the robot moves, the reminder is
+  set, and Andy says what was done. **"Good morning, Andy"** gets a short briefing: the weather, today's reminders,
+  and where your things are.
 - **It's never frozen:** it breathes, its antennas listen and think, its head moves with its words, and it keeps its
   eyes on you while it talks.
 

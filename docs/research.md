@@ -342,3 +342,13 @@ about $0.02 a run; results in `evals/results/smoke-model-api-*.json`):
 - **The TV's memory map:** watched things at the direction they were last seen, nearer when lower, fading with age.
 - **Muse Spark rescored after the tool fixes** (no repeat looks; compare points): TV pictures 14 -> 20/20, behind
   18 -> 20/20, look-alikes 12 -> 16/20 (one wrong point), model time 3 to 9 s a search.
+
+## 15. One agent over all of Andy's abilities (2026-10-27, night)
+
+Muse Spark (Glimmer offline) gets the robot's abilities as tools: find, follow, look and tell, keep an eye on,
+forget, what I remember, set and list reminders, draw, look up. Each tool is the same code as the simple path, so it
+moves the body, checks its arguments and speaks its own acknowledgements; the model only sees their words. On the
+robot with Muse Spark: "find the cup and remind me in two minutes to drink some water" -> find (searched, pointed),
+set_reminder (set): "I see your cup straight ahead! Your reminder is set for 7:45 to drink some water." in 19.8 s.
+"Good morning, Andy" -> a briefing in 13.3 s. Without a home town the weather came back for three other cities, so
+Andy now asks where the person lives unless `--home` / `HEYANDY_HOME` says.

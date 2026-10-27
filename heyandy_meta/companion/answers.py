@@ -59,11 +59,14 @@ def _citations(response) -> list[tuple[str, str]]:
 
 
 def ask(client, question: str, model: str = "muse-spark-1.3", budget: Budget | None = None,
-        max_tokens: int = 2000, sleep=time.sleep) -> Answer:
+        max_tokens: int = 2000, sleep=time.sleep, home: str = "") -> Answer:
     budget = budget or Budget()
     budget.check(chat_cost(model, 6000, max_tokens) + 2 * WEB_SEARCH)  # it may search and then open a page
     response = with_retry(lambda: client.responses.create(
-        model=model, instructions=INSTRUCTIONS, input=question, tools=[{"type": "web_search"}],
+        model=model, instructions=INSTRUCTIONS + (f" The person lives in {home}." if home else
+                                                  " If the question depends on where they live, say you need to "
+                                                  "know their town first."),
+        input=question, tools=[{"type": "web_search"}],
         max_output_tokens=max_tokens, reasoning={"effort": "low"}), sleep=sleep)
     usage = getattr(response, "usage", None)
     searches = sum(1 for item in getattr(response, "output", None) or [] if getattr(item, "type", "") == "web_search_call")

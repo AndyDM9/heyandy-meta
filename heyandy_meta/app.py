@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 
 from openai import APIError
 
+from .agent.assistant import MORNING, Assistant, needs_agent
 from .agent.loop import plan_search
 from .agent.tools import SearchTools, side
 from .budget import Budget, BudgetExceeded
@@ -64,6 +65,7 @@ class Andy:
     spark: object | None = None  # the Model API client, for planning searches and web answers (words only)
     judge: object | None = None  # Glimmer's picture checks, on this computer
     glimmer: object | None = None  # the local llama-server client, for Glimmer planning searches itself
+    home: str = ""  # where the person lives ("Miami, Florida"), for the weather and anything local; never guessed
     vision_where: str = "device"  # "cloud" only for a staged scene, where the finder uses SAM 3.1 through the API
     budget: Budget = field(default_factory=Budget)
     online: bool = True
@@ -83,6 +85,8 @@ class Andy:
         self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
         self.following = False
         self._drawing = None  # the last picture Muse Image made, to refine
+        self._briefed = None  # the day of the last morning briefing
+        self.assistant = Assistant(self)
         self._stop_following = threading.Event()
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
@@ -175,6 +179,13 @@ class Andy:
         if self._asked and i.kind == "chat" and self.clock() - self._asked[1] <= ANSWER_WITHIN_S:
             i = parse(self._asked[0] + " " + text, _now(self.clock))  # the answer to Andy's question
         self._asked = None
+        today = _now(self.clock).date()
+        brief = bool(MORNING.search(text)) and self._briefed != today
+        if brief or needs_agent(text):
+            done = self.agent(text, brief)
+            if done is not None:
+                self._briefed = today if brief else self._briefed
+                return done
         if i.kind == "find":
             return self.find(i.thing, text, i.hint)
         if i.kind == "follow":
@@ -249,7 +260,7 @@ class Andy:
         self.say("Let me look that up.")  # a web answer takes a few seconds
         self.screen.doing("Working", "Looking it up")
         try:
-            ans = answers.ask(self.spark, question, budget=self.budget)
+            ans = answers.ask(self.spark, question, budget=self.budget, home=self.home)
         except CLOUD_TROUBLE:
             self._source, self._reason = "device", "the web search didn't answer"
             return "I couldn't look that up just now. Please try again in a little while."
@@ -327,6 +338,28 @@ class Andy:
         words = words or self._found_words(found)
         self.screen.found(found, words)
         return words
+
+    def agent(self, request: str, brief: bool = False) -> str | None:
+        """Several things at once, or the morning briefing: an agent plans over all of Andy's abilities. Muse Spark
+        online, Muse Glimmer on this computer otherwise; None if neither can (the simple paths take over)."""
+        brains = []
+        if self.online and self.spark is not None:
+            brains.append((self.spark, "muse-spark-1.3", True, "cloud"))
+        if self.glimmer is not None:
+            brains.append((self.glimmer, "muse-glimmer-30B", False, "device"))
+        for client, model, paid, where in brains:
+            try:
+                turn = self.assistant.run(client, request, model, paid, self.budget, brief=brief)
+            except CLOUD_TROUBLE:
+                continue
+            for tool, _args, result in turn.steps:
+                self.screen.step(f"{tool}: {result}")
+            name = "Muse Spark" if paid else "Muse Glimmer"
+            self.screen.used(f"{name} (agent)", where, turn.calls)
+            self._source = where
+            self._reason = f"{name} planned it with Andy's abilities ({len(turn.steps)} steps)"
+            return turn.reply or "Done."
+        return None
 
     def follow(self, thing: str, seconds: float = 30.0) -> str:
         """Find the thing, then follow it with the eyes as it's moved, until "stop" (said any time) or 30 s."""
