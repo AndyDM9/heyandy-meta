@@ -28,8 +28,9 @@ class VoiceLoop:
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
         with getattr(self.andy, "lock", _NoLock()):
-            if voice_yaw is not None:
-                self.andy.person_yaw = voice_yaw
+            if voice_yaw is not None:  # the voice gives the direction; keep the last seen face's height
+                before = getattr(self.andy, "person", None)
+                self.andy.person = (voice_yaw, before[1] if before else -5.0)
             if called and voice_yaw is not None:
                 self.andy.body.look(voice_yaw, 5.0, precise=False)  # turn towards whoever spoke
             if called and hasattr(self.andy.body, "gesture"):

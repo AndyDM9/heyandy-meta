@@ -72,7 +72,9 @@ class Andy:
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
         self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
-        self.person_yaw: float | None = None  # where the person's voice last came from, to face them when talking
+        self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
+        self._pointed = False  # this turn pointed at something
+        self.hold_point_s = 1.2 if hasattr(self.body, "motion") else 0.0  # the real robot holds a point a moment
         self._last_turn = float("-inf")
 
     # --- a turn ---
@@ -85,13 +87,26 @@ class Andy:
             self._last_turn = self.clock()
             self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
+            self._pointed = False
             reply = respond(text, self._answer, self.disclosure)
-            self.say(reply)  # still facing the thing, if it was a find: the head points while it speaks
-            if self.person_yaw is not None and abs(getattr(self.body, "yaw", 0.0) - self.person_yaw) > 10:
-                self.body.look(self.person_yaw, 5.0, precise=False)  # then turns back to the person
+            self.face_person_to_speak()
+            self.say(reply)
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
             self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
             return reply
+
+    def face_person_to_speak(self) -> None:
+        """Speak to the person, not to the thing: after pointing, hold it a moment, then turn to them."""
+        if self.person is None:
+            return
+        yaw, pitch = self.person
+        if abs(getattr(self.body, "yaw", yaw) - yaw) > 8 or abs(getattr(self.body, "pitch", pitch) - pitch) > 8:
+            if self._pointed:
+                time.sleep(self.hold_point_s)
+            self.body.look(yaw, pitch, precise=False)
+        face = getattr(self.body, "face", None)
+        if face:
+            face(yaw, pitch)  # and keep easing towards them while talking
 
     def say(self, text: str) -> None:
         self.body.say(text)
@@ -217,6 +232,7 @@ class Andy:
         if found is None:
             return self._not_found(thing)
         self.places.saw(found.label, found.yaw, found.pitch, when=self.clock())
+        self._pointed = True
         self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
@@ -270,7 +286,7 @@ class Andy:
         finally:
             self.gesture("idle")
         if direction:
-            self.person_yaw = direction[0]
+            self.person = direction
         return direction
 
 

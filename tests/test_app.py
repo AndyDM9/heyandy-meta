@@ -216,3 +216,22 @@ def test_the_chat_model_cannot_promise_what_it_cannot_do(tmp_path, model_said):
     a.device.text = model_said
     reply = a.hear("can you help me later")
     assert "Say it to me directly" in reply and "promise" in a.screen.reason
+
+
+def test_after_pointing_andy_turns_to_the_person_to_speak(tmp_path):
+    a, body, _ = andy(Thing("keys", -40.0, 20.0), tmp_path=tmp_path)
+    a.person = (10.0, -5.0)
+    a.hear("where are my keys")
+    moves = [e for e in body.log if e[0] in ("point", "look", "say")]
+    i_point = max(i for i, e in enumerate(moves) if e[0] == "point")
+    i_face = next(i for i, e in enumerate(moves) if i > i_point and e[0] == "look")
+    i_say = next(i for i, e in enumerate(moves) if i > i_point and e[0] == "say")
+    assert i_face < i_say and moves[i_face][1:] == (10.0, -5.0)
+
+
+def test_upward_looks_at_a_face_are_softened():
+    from heyandy_meta.companion.attention import soften_look_up
+
+    assert soften_look_up(10.0) == 10.0  # down: as it is
+    assert soften_look_up(-10.0) == pytest.approx(-6.0)
+    assert soften_look_up(-40.0) == -12.0  # never more than 12 degrees up

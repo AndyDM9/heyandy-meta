@@ -90,5 +90,5 @@ def test_follow_face_eases_towards_a_face_in_view():
     faced = []
     body.face = lambda yaw, pitch: faced.append((yaw, pitch))
     d = follow_face(body, SimSegmenter(room))
-    assert d == pytest.approx((10.0, -5.0), abs=0.5) and faced == [d]
+    assert d == pytest.approx((10.0, -3.0), abs=0.5) and faced == [d]  # 5 degrees up, softened to 3
     assert follow_face(SimBody(Room([])), SimSegmenter(Room([]))) is None

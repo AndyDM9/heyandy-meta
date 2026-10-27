@@ -25,7 +25,7 @@ VOICE = "am_michael"
 LANG = "eng_Latn"
 
 
-def louder(audio: np.ndarray, target_db: float = -18.0) -> np.ndarray:
+def louder(audio: np.ndarray, target_db: float = -21.0) -> np.ndarray:  # -18 was "a little loud" (founder)
     """Kokoro speaks at about -28 dBFS: bring it up to target_db (RMS), with a soft limiter so peaks never clip."""
     rms = float(np.sqrt(np.mean(audio ** 2))) if audio.size else 0.0
     if rms < 1e-5:

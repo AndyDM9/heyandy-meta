@@ -8,6 +8,14 @@ from ..finder.search import VIEWS, Segmenter
 from ..robot.body import Body
 
 FACE_FROM_TOP = 0.18  # a face sits about this far down a standing or seated person's mask
+# Looking up at a face from a desk tips the head far back, which reads as staring at the ceiling, not at the person
+# (founder, 2026-10-27). Eye contact reads well with the head only slightly raised: take part of an upward look, capped.
+LOOK_UP_SHARE, LOOK_UP_CAP = 0.6, -12.0
+
+
+def soften_look_up(pitch: float) -> float:
+    """Pitch is positive down; an upward look is eased and capped."""
+    return pitch if pitch >= 0 else max(LOOK_UP_CAP, LOOK_UP_SHARE * pitch)
 
 
 def face_person(body: Body, segmenter: Segmenter, views=VIEWS, min_score: float = 0.4) -> tuple[float, float] | None:
@@ -24,7 +32,8 @@ def face_person(body: Body, segmenter: Segmenter, views=VIEWS, min_score: float 
         nearest = max(people, key=lambda m: m.area)  # the biggest mask is usually the closest person
         left, top, right, bottom = nearest.box
         x, y = (left + right) / 2, top + FACE_FROM_TOP * (bottom - top)
-        direction = pixel_to_angles(x, y, frame.yaw, frame.pitch)
+        yaw, pitch = pixel_to_angles(x, y, frame.yaw, frame.pitch)
+        direction = (yaw, soften_look_up(pitch))
         body.look(*direction)
         return direction
     return None
@@ -38,6 +47,7 @@ def follow_face(body, segmenter, min_score: float = 0.4) -> tuple[float, float] 
     if not faces:
         return None
     nearest = max(faces, key=lambda m: m.area)
-    direction = pixel_to_angles(*nearest.center, frame.yaw, frame.pitch)
+    yaw, pitch = pixel_to_angles(*nearest.center, frame.yaw, frame.pitch)
+    direction = (yaw, soften_look_up(pitch))
     body.face(*direction)
     return direction
