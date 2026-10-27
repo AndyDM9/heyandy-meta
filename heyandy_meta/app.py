@@ -69,6 +69,7 @@ class Andy:
         self.router = Router(self.device, self.cloud or NoCloud())
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()
+        self.screen.online = self.online
         self.refresh_panels()
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
@@ -137,6 +138,10 @@ class Andy:
                 self.screen.doing(*before)
             else:
                 self.screen.doing("Waiting")
+
+    def set_online(self, online: bool) -> None:
+        """The network came or went: the TV says so, and the cloud is only tried while it's there."""
+        self.online = self.screen.online = online
 
     def refresh_panels(self) -> None:
         """The screen's side cards: the next reminder, and what Andy is keeping an eye on."""

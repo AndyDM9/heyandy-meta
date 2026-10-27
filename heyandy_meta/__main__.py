@@ -90,6 +90,10 @@ def main() -> None:
             andy.tick()
 
     threading.Thread(target=ticks, daemon=True).start()
+    if not args.offline:  # follow the real network: unplug it and Andy carries on, on this computer
+        from .network import watch
+
+        threading.Thread(target=watch, args=(andy.set_online, stop), daemon=True).start()
     if args.voice and args.robot:
         from .voice.listen import Endpointer
         from .voice.local import LocalVoice
