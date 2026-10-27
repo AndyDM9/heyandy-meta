@@ -184,7 +184,7 @@ class Andy:
         self.screen.used("Muse Glimmer (picture check)", "device", getattr(self.judge, "calls", 0) - checks)
         if found is None:
             return self._not_found(thing)
-        self.places.saw(found.label, found.yaw, found.pitch)
+        self.places.saw(found.label, found.yaw, found.pitch, when=self.clock())
         self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
@@ -204,8 +204,8 @@ class Andy:
     def _memory(self) -> list[str]:
         lines = []
         for label in self.places.watching():
-            last = self.places.last_seen(label)
-            lines.append(f"{label}: " + (f"last seen {side(last[0])}" if last else "not seen yet"))
+            last, at = self.places.last_seen(label, now=self.clock()), self.places.seen_at(label)
+            lines.append(f"{label}: " + (f"seen {_ago(self.clock() - at)}, {side(last[0])}" if last else "not seen yet"))
         return lines
 
     # --- between turns ---
@@ -233,6 +233,16 @@ def _now(clock):
 def _join(items: list[str]) -> str:
     items = [f"your {x}" for x in items]
     return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def _ago(seconds: float) -> str:
+    minutes = int(seconds // 60)
+    if minutes < 1:
+        return "just now"
+    if minutes < 60:
+        return f"{minutes} minute{'s' * (minutes != 1)} ago"
+    hours = minutes // 60
+    return f"{hours} hour{'s' * (hours != 1)} ago"
 
 
 def _it(thing: str) -> str:

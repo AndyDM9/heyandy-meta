@@ -172,3 +172,12 @@ def test_the_tv_shows_which_models_worked_on_a_turn(tmp_path):
     assert models["Muse Glimmer (picture check)"][0] == "device"
     a.hear("tell me a joke")
     assert [m["name"] for m in a.screen.snapshot()["models"]] == ["Muse Glimmer"]  # a new turn starts afresh
+
+
+def test_what_i_remember_says_when_and_where(tmp_path):
+    a, _, clock = andy(Thing("keys", 40.0, 20.0), tmp_path=tmp_path)
+    a.hear("keep an eye on my keys")
+    a.hear("where are my keys")
+    clock.t += 2 * 3600 + 60
+    a.hear("what do you remember")
+    assert a.screen.snapshot()["memory"] == ["keys: seen 2 hours ago, to my left"]

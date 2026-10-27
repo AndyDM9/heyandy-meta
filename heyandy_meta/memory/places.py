@@ -38,6 +38,10 @@ class Places:
         self._save()
         return True
 
+    def seen_at(self, label: str) -> float | None:
+        s = self._data["seen"].get(label)
+        return s["at"] if s else None
+
     def last_seen(self, label: str, now: float | None = None) -> tuple[float, float] | None:
         s = self._data["seen"].get(label)
         if s is None or (now or time.time()) - s["at"] > self.max_age_s:
