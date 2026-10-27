@@ -23,6 +23,11 @@ class Endpointer:
     _silence_s: float = 0.0
     _len_s: float = 0.0
 
+    @property
+    def active(self) -> bool:
+        """Someone is speaking right now (an utterance has started and not yet ended)."""
+        return bool(self._buf)
+
     def feed(self, chunk: np.ndarray, speech_flag: bool | None = None) -> np.ndarray | None:
         """Add mono samples; returns a finished utterance, or None."""
         chunk = np.asarray(chunk, dtype=np.float32)

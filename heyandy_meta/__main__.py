@@ -100,8 +100,27 @@ def main() -> None:
             print(f"\nheard> {text}\nandy> {reply}{wait}", flush=True)
 
         loop = VoiceLoop(andy, on_heard=shown)
-        threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), Endpointer(), stop),
+        ears = Endpointer()
+        threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), ears, stop),
                          daemon=True).start()
+
+        def keep_eyes_on_the_person():  # during a conversation: SAM 3.1 finds the face about once a second
+            from .companion.attention import follow_face
+
+            while not stop.wait(1.0):
+                talking = time.monotonic() <= loop.awake_until or ears.active
+                if not talking or andy.body.motion.mode == "searching" or not andy.lock.acquire(blocking=False):
+                    continue
+                try:
+                    found = follow_face(andy.body, andy.segmenter)
+                    if found:
+                        andy.person_yaw = found[0]
+                except Exception:  # noqa: BLE001 - a missed glance is fine; the next one comes in a second
+                    pass
+                finally:
+                    andy.lock.release()
+
+        threading.Thread(target=keep_eyes_on_the_person, daemon=True).start()
         print("Listening: say \"Andy, ...\"")
     if args.voice and not sys.stdin.isatty():
         stop.wait()  # voice only: no keyboard attached

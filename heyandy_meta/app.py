@@ -72,6 +72,7 @@ class Andy:
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
         self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
+        self.person_yaw: float | None = None  # where the person's voice last came from, to face them when talking
         self._last_turn = float("-inf")
 
     # --- a turn ---
@@ -85,7 +86,9 @@ class Andy:
             self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
             reply = respond(text, self._answer, self.disclosure)
-            self.say(reply)
+            self.say(reply)  # still facing the thing, if it was a find: the head points while it speaks
+            if self.person_yaw is not None and abs(getattr(self.body, "yaw", 0.0) - self.person_yaw) > 10:
+                self.body.look(self.person_yaw, 5.0, precise=False)  # then turns back to the person
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
             self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
             return reply
@@ -178,9 +181,15 @@ class Andy:
         self.finder.looks = 0
         self.say("Let me look.")  # answer at once: a search takes a few seconds
         self.gesture("thinking")
+        try:
+            return self._find(thing, request, hint, checks)
+        finally:
+            self.gesture("idle")
+
+    def _find(self, thing: str, request: str, hint: bool, checks: int) -> str:
         found, words = None, ""
         for client, model, paid, source, reason in (self.planners() if hint else []):
-            tools = SearchTools(self.finder, self.places, self.judge)
+            tools = SearchTools(self.finder, self.places, self.judge, on_tool=self._tool_moves)
             try:
                 plan = plan_search(client, request, tools, model=model, budget=self.budget, paid=paid)
             except CLOUD_TROUBLE as e:
@@ -199,6 +208,7 @@ class Andy:
             self._source, self._reason = "device", "fixed search on this computer"
             last = self.places.last_seen(thing)
             self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting"))
+            self.gesture("searching")
             found = self.finder.find(thing, last)
             self.screen.step(f"looked {self.finder.looks} times" + (f"; {self.finder.why}" if self.finder.why else ""))
         self.screen.timer_stop()
@@ -211,6 +221,10 @@ class Andy:
         words = words or self._found_words(found)
         self.screen.found(found, words)
         return words
+
+    def _tool_moves(self, starting: bool) -> None:
+        """Still while a tool looks; thinking while the model decides what to do next."""
+        self.gesture("searching" if starting else "thinking")
 
     def _found_words(self, f: Found) -> str:
         where = side(f.yaw)
@@ -240,10 +254,24 @@ class Andy:
     def _tick(self) -> None:
         now = self.clock()
         for r in self.reminders.due(now):
-            self.reminders.deliver(r, lambda: face_person(self.body, self.segmenter), self.say, now)
+            self.reminders.deliver(r, self._find_person, self.say, now)
         if self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
-            glance(self.body, self.segmenter, self.places)
+            self.gesture("searching")
+            try:
+                glance(self.body, self.segmenter, self.places)
+            finally:
+                self.gesture("idle")
+
+    def _find_person(self):
+        self.gesture("searching")
+        try:
+            direction = face_person(self.body, self.segmenter)
+        finally:
+            self.gesture("idle")
+        if direction:
+            self.person_yaw = direction[0]
+        return direction
 
 
 def _now(clock):

@@ -28,6 +28,8 @@ class VoiceLoop:
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
         with getattr(self.andy, "lock", _NoLock()):
+            if voice_yaw is not None:
+                self.andy.person_yaw = voice_yaw
             if called and voice_yaw is not None:
                 self.andy.body.look(voice_yaw, 5.0, precise=False)  # turn towards whoever spoke
             if called and hasattr(self.andy.body, "gesture"):
@@ -46,8 +48,13 @@ class VoiceLoop:
 
     def run(self, mic, voice, endpointer, stop) -> None:
         """Listen until ``stop`` is set: mic yields (samples, speech_flag, voice_yaw); quiet while Andy speaks."""
+        gesture = getattr(self.andy.body, "gesture", None)
+        hearing = False
         for samples, flag, yaw in mic(stop):
             utterance = endpointer.feed(samples, flag)
+            if gesture and endpointer.active != hearing and self._clock() <= self.awake_until:
+                hearing = endpointer.active
+                gesture("listening" if hearing else "idle")  # attentive while a follow-up is spoken
             if utterance is not None:
                 self.utterance_end = time.monotonic() - endpointer.end_silence_s
                 text = voice.transcribe(utterance)

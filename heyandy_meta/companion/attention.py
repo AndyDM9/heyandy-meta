@@ -28,3 +28,16 @@ def face_person(body: Body, segmenter: Segmenter, views=VIEWS, min_score: float 
         body.look(*direction)
         return direction
     return None
+
+
+def follow_face(body, segmenter, min_score: float = 0.4) -> tuple[float, float] | None:
+    """One look at where the head already faces: if a face is in view, ease the head towards it (no move of its
+    own; the body language keeps going). Returns the face's direction, or None. The frame is dropped at once."""
+    frame = body.capture()
+    faces = [m for m in segmenter.find(frame, "face") if m.score is None or m.score >= min_score]
+    if not faces:
+        return None
+    nearest = max(faces, key=lambda m: m.area)
+    direction = pixel_to_angles(*nearest.center, frame.yaw, frame.pitch)
+    body.face(*direction)
+    return direction

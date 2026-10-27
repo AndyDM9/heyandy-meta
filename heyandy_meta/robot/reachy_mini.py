@@ -11,9 +11,11 @@ and frames carry the measured direction, not the commanded one.
 """
 import math
 import struct
+import threading
 import time
 
 from .body import Frame, Reach
+from .motion import Motion, Pose
 
 
 def jpeg_size(data: bytes) -> tuple[int, int]:
@@ -41,14 +43,19 @@ def _yaw_pitch(pose) -> tuple[float, float]:
 
 class ReachyBody:
     def __init__(self, robot=None, reach: Reach = Reach(), head_yaw: float = 30.0, max_deg_s: float = 70.0,
-                 settle_s: float = 0.3, tolerance: float = 1.5, pose=None, say=None, sleep=time.sleep):
+                 settle_s: float = 0.3, tolerance: float = 1.5, pose=None, say=None, sleep=time.sleep,
+                 alive: bool | None = None):
+        alive = robot is None if alive is None else alive
         if robot is None:
             from reachy_mini import ReachyMini
 
             # Never media_backend="no_media": it makes the daemon release the camera and audio for everyone.
             robot = ReachyMini(automatic_body_yaw=False, connection_mode="localhost_only").__enter__()
+        self._full_pose = None
         if pose is None:
             from reachy_mini.utils import create_head_pose
+
+            self._full_pose = create_head_pose  # with x, y, z: for the speech-driven sway
 
             pose = lambda yaw, pitch, roll=0.0: create_head_pose(yaw=yaw, pitch=pitch, roll=roll, degrees=True)  # noqa: E731
         self.robot, self.reach, self.head_yaw, self.tolerance = robot, reach, head_yaw, tolerance
@@ -56,6 +63,12 @@ class ReachyBody:
         self._pose, self._say, self._sleep = pose, say, sleep
         self.yaw = self.pitch = 0.0  # where the head is looking, measured when the robot can tell us
         self._sent = (0.0, 0.0, 0.0)  # the last head yaw, pitch and base yaw sent
+        self.motion = Motion()
+        self._moving = threading.RLock()  # one sender at a time: a move, or the body-language loop
+        self._gaze: tuple[float, float] | None = None  # a direction to ease the head towards (the person's face)
+        self._stop = threading.Event()
+        if alive and self._full_pose is not None:
+            threading.Thread(target=self._live, daemon=True, name="body-language").start()
 
     def split(self, yaw: float) -> tuple[float, float]:
         """(head yaw, base yaw) for a direction: the head turns first, the base makes up the rest."""
@@ -71,10 +84,46 @@ class ReachyBody:
         return head_yaw + base, pitch
 
     def _send(self, head: float, pitch: float, base: float, duration: float) -> None:
-        self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=duration)
+        with self._moving:
+            self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=duration)
+            self._sent = (head, pitch, base)
+
+    def _live(self, hz: float = 50.0) -> None:
+        """The body-language loop: between moves, send the base pose plus Motion's layers, 50 times a second."""
+        period = 1.0 / hz
+        while not self._stop.is_set():
+            start = time.monotonic()
+            if self.motion.mode != "searching" and self._moving.acquire(blocking=False):
+                try:
+                    self._ease(period)
+                    head, pitch, base = self._sent
+                    p = self.motion.pose(start, Pose(yaw=head, pitch=pitch))
+                    self.robot.set_target(head=self._full_pose(z=p.z, roll=p.roll, pitch=p.pitch, yaw=p.yaw, degrees=True),
+                                          antennas=list(p.antennas), body_yaw=math.radians(base))
+                except Exception:  # noqa: BLE001 - a dropped tick is harmless; the loop must not die
+                    pass
+                finally:
+                    self._moving.release()
+            time.sleep(max(0.0, period - (time.monotonic() - start)))
+
+    def _ease(self, dt: float, max_deg_s: float = 40.0) -> None:
+        """Turn the head smoothly towards the gaze direction, within the head's own range (the base stays)."""
+        if self._gaze is None:
+            return
+        head, pitch, base = self._sent
+        want = max(-self.head_yaw, min(self.head_yaw, self._gaze[0] - base))
+        step = max_deg_s * dt
+        head += max(-step, min(step, want - head))
+        pitch += max(-step, min(step, self._gaze[1] - pitch))
         self._sent = (head, pitch, base)
+        self.yaw, self.pitch = head + base, pitch
+
+    def face(self, yaw: float, pitch: float) -> None:
+        """Keep looking towards a direction (a person's face) without stopping the body language."""
+        self._gaze = self.reach.clamp(yaw, pitch)
 
     def look(self, yaw: float, pitch: float, precise: bool = True) -> None:
+        self._gaze = None
         yaw, pitch = self.reach.clamp(yaw, pitch)
         travel = max(abs(yaw - self.yaw), abs(pitch - self.pitch))
         head, base = self.split(yaw)
@@ -120,24 +169,22 @@ class ReachyBody:
         if self._say:
             self._say(text)
 
-    UPRIGHT = [-0.1745, 0.1745]  # antennas, radians: Pollen's resting position, about 10 degrees apart
+    def _sway(self, offsets) -> None:
+        """Pollen's wobbler turns the speech being played into small head offsets; the loop adds them."""
+        self.motion.speech = tuple(offsets)
 
     def gesture(self, name: str) -> None:
-        """Small body language: listening, thinking, found, nod. The base always stays where it is
-        (goto_target's body_yaw defaults to 0, which would swing it back to the middle)."""
-        head, pitch, base = self._sent
-        go = lambda duration, **kw: self.robot.goto_target(body_yaw=math.radians(base), duration=duration, **kw)  # noqa: E731
-        if name == "listening":
-            go(0.3, antennas=self.UPRIGHT)
-        elif name == "thinking":
-            go(0.5, head=self._pose(head, pitch - 4.0, 8.0), antennas=[-0.7, 0.25])
-        elif name == "found":
-            for _ in range(2):
-                go(0.15, antennas=[-0.6, 0.6])
-                go(0.15, antennas=self.UPRIGHT)
+        """Body language (robot/motion.py): idle, listening, thinking, searching (holds still), found (an antenna
+        wiggle), nod. A nod is a move of its own; the base always stays where it is (goto_target's body_yaw
+        defaults to 0, which would swing it back to the middle)."""
+        if name == "found":
+            self.motion.wiggle(time.monotonic())
         elif name == "nod":
-            go(0.25, head=self._pose(head, pitch + 8.0))
-            go(0.25, head=self._pose(head, pitch))
+            head, pitch, base = self._sent
+            self._send(head, pitch + 8.0, base, 0.25)
+            self._send(head, pitch, base, 0.25)
+        else:
+            self.motion.set_mode(name)
 
     # --- the speaker and the microphone array (16 kHz) ---
 
@@ -145,13 +192,17 @@ class ReachyBody:
         """Play mono float samples through the robot's speaker and wait until they're done."""
         if not getattr(self, "_playing", False):
             self.robot.media.start_playing()
+            if self._full_pose is not None:
+                self.robot.media.enable_wobbling(self._sway)  # Pollen's speech-driven head motion
             self._playing = True
-        self.speaking = True
+        self.speaking, before = True, self.motion.mode
+        self.motion.set_mode("speaking")
         try:
             self.robot.media.push_audio_sample(samples)
             self._sleep(len(samples) / rate)
         finally:
             self.speaking = False
+            self.motion.set_mode("idle" if before in ("speaking", "listening") else before)
             self._quiet_until = time.monotonic() + 0.4  # the room's echo of Andy's own voice
 
     def listen(self, stop, poll_s: float = 0.02):

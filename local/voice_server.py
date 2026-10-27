@@ -25,6 +25,15 @@ VOICE = "am_michael"
 LANG = "eng_Latn"
 
 
+def louder(audio: np.ndarray, target_db: float = -18.0) -> np.ndarray:
+    """Kokoro speaks at about -28 dBFS: bring it up to target_db (RMS), with a soft limiter so peaks never clip."""
+    rms = float(np.sqrt(np.mean(audio ** 2))) if audio.size else 0.0
+    if rms < 1e-5:
+        return audio
+    gain = min(10 ** (target_db / 20) / rms, 8.0)
+    return (0.95 * np.tanh(gain * audio / 0.95)).astype(np.float32)
+
+
 def load(asr_card: str):
     from kokoro import KPipeline
     from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
@@ -72,6 +81,7 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                 audio = np.concatenate(parts) if parts else np.zeros(0, np.float32)
                 if rate != 24000 and audio.size:
                     audio = torchaudio.functional.resample(torch.from_numpy(audio), 24000, rate).numpy()
+                audio = louder(audio)
                 data = audio.astype("<f4").tobytes()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/octet-stream")

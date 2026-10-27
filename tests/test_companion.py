@@ -79,3 +79,16 @@ def test_the_file_holds_only_words_times_and_state(tmp_path):
     assert set(saved) == {"id", "text", "at", "daily", "tries", "next_try", "state"}
     assert oct((tmp_path / "r.json").stat().st_mode)[-3:] == "600"
     assert Reminders(tmp_path / "r.json").upcoming()[0].text == "call Anna"
+
+
+def test_follow_face_eases_towards_a_face_in_view():
+    from heyandy_meta.companion.attention import follow_face
+    from heyandy_meta.robot.sim import Room, SimBody, SimSegmenter, Thing
+
+    room = Room([Thing("face", 10.0, -5.0, size_px=120)])
+    body = SimBody(room)
+    faced = []
+    body.face = lambda yaw, pitch: faced.append((yaw, pitch))
+    d = follow_face(body, SimSegmenter(room))
+    assert d == pytest.approx((10.0, -5.0), abs=0.5) and faced == [d]
+    assert follow_face(SimBody(Room([])), SimSegmenter(Room([]))) is None

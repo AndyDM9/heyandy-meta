@@ -19,7 +19,8 @@ def tiny_jpeg(w=1920, h=1080):
 class FakeReachy:
     def __init__(self):
         self.moves = []
-        self.media = SimpleNamespace(get_frame_jpeg=lambda: tiny_jpeg())
+        self.media = SimpleNamespace(get_frame_jpeg=lambda: tiny_jpeg(), start_playing=lambda: None,
+                                     push_audio_sample=lambda s: None)
 
     def goto_target(self, head=None, body_yaw=None, duration=0.5, **kw):
         self.moves.append((head, body_yaw, duration))
@@ -115,9 +116,30 @@ def test_the_finder_drives_the_adapter_like_any_body():
     assert [m[0][1] for m in robot.moves] == [18.0, -18.0, 30.0, -30.0, 30.0, -30.0]  # the base makes up the rest
 
 
-@pytest.mark.parametrize("name", ["listening", "thinking", "found", "nod"])
+@pytest.mark.parametrize("name", ["listening", "thinking", "found", "nod", "searching", "idle"])
 def test_gestures_never_swing_the_base_back(name):
     b, robot = body()
     b.look(100.0, 10.0)
     b.gesture(name)
     assert all(math.degrees(m[1]) == pytest.approx(70.0) for m in robot.moves)  # the base stays turned
+
+
+def test_gestures_set_the_body_language_mode():
+    b, _ = body()
+    b.gesture("listening")
+    assert b.motion.mode == "listening"
+    b.play([0.0] * 160)
+    assert b.motion.mode == "idle"  # after speaking, back to idle
+
+
+def test_facing_eases_the_head_within_its_range():
+    b, _ = body()
+    b.look(0.0, 10.0)
+    b.face(20.0, 5.0)
+    for _ in range(100):
+        b._ease(0.02)
+    assert b._sent[0] == pytest.approx(20.0) and b._sent[1] == pytest.approx(5.0)
+    b.face(80.0, 5.0)
+    for _ in range(100):
+        b._ease(0.02)
+    assert b._sent[0] == pytest.approx(30.0)  # the head's share; turning further is a move of its own

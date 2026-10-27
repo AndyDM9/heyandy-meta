@@ -79,6 +79,7 @@ class SearchTools:
     confirmed: dict[str, Found] = field(default_factory=dict)
     pointed: Found | None = None
     auto_point: bool = True  # a confirmed closer look points at once: one model call fewer
+    on_tool: object = None  # told True before a tool runs and False after (the body holds still while it looks)
     max_looks: int = 10  # frames a search may take; the simulated scorecard's absent rooms took 22 without it
 
     def __post_init__(self):
@@ -97,10 +98,15 @@ class SearchTools:
                    "point": self._point}.get(name)
         if handler is None:
             return f"refused: there is no tool called {name!r}"
+        if self.on_tool:
+            self.on_tool(True)
         try:
             return handler(**args)
         except TypeError:
             return f"refused: wrong arguments for {name}"
+        finally:
+            if self.on_tool:
+                self.on_tool(False)
 
     def _object(self, obj) -> str | None:
         return obj.strip().lower() if isinstance(obj, str) and OBJECT.match(obj.strip()) else None
