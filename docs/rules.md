@@ -119,8 +119,13 @@ the last full day for submission questions.
 
 > Correction: building period is officially after the kickoff session!
 
-**Public code** (the FAQ): "Yes. Your repository must be publicly accessible." *When* isn't stated. We've asked in
-#questions whether it may stay private until we submit.
+**Public code** (the FAQ): "Yes. Your repository must be publicly accessible."
+- **When, answered in #questions** (2026-10-27, an automated reply from the Cerebral Valley app): "Yes. The repo only has
+  to be public at submission — it must be publicly accessible for judges, and private repos with judge access are not
+  accepted. Keep everything the app needs to run in one public repo when you submit."
+- **For us:** the repo stays private until November 4, then goes public before we submit. Everything the robot needs to
+  run is in this one repository. The models are downloaded from their public pages; our earlier prototype is needed only to
+  reproduce the baseline, not to run the robot.
 
 **Spend limits** (the FAQ): "Don't assume a 'Spend Limit' notification automatically stops billing." That's why our
 code has its own hard cap (`heyandy_meta/budget.py`).
