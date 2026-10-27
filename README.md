@@ -124,6 +124,7 @@ by Andy itself: the TV asks nothing of anyone outside the house.
 |---|---|
 | ![Finding](docs/images/tv-finding.png) | ![An answer with sources](docs/images/tv-answer.png) |
 | ![At night](docs/images/tv-found-night.png) | ![What can I ask?](docs/images/tv-help.png) |
+| ![A picture from your words, by Muse Image](docs/images/tv-drawing.png) | ![What Andy remembers](docs/images/tv-memory.png) |
 
 **Try it in your browser:** [huggingface.co/spaces/heyandy-ai/andy](https://huggingface.co/spaces/heyandy-ai/andy), the
 same page on sample data (pick a scene at the top). Or locally, with no robot: `uv run python scripts/demo_screen.py
