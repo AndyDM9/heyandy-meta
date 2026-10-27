@@ -12,11 +12,12 @@ class MuseSparkModel:
     name = "muse-spark"
 
     def __init__(self, model: str = "muse-spark-1.3", client=None, api_key_env: str = "MODEL_API_KEY",
-                 base_url: str = BASE_URL, budget: Budget | None = None, max_tokens: int = 300):
+                 base_url: str = BASE_URL, budget: Budget | None = None, max_tokens: int = 1500,
+                 reasoning_effort: str = "minimal"):
         if "contributor" in model:
             raise ValueError("Contributor-tier models are not allowed: Meta may train on their inputs")
         self.model, self._client = model, client
-        self.budget, self.max_tokens = budget or Budget(), max_tokens
+        self.budget, self.max_tokens, self.reasoning_effort = budget or Budget(), max_tokens, reasoning_effort
         self._api_key_env, self._base_url = api_key_env, base_url
 
     @property
@@ -34,6 +35,7 @@ class MuseSparkModel:
         words = len(prompt) + sum(len(a) + len(b) for a, b in history)
         worst = chat_cost(self.model, words // 2 + 200, self.max_tokens)  # generous token guess, before the call
         self.budget.check(worst)
-        reply = chat(self.client, self.model, prompt, source="cloud", max_tokens=self.max_tokens, history=history)
+        reply = chat(self.client, self.model, prompt, source="cloud", max_tokens=self.max_tokens, history=history,
+                     reasoning_effort=self.reasoning_effort)  # measured: 116 thinking tokens and 2.7 s, against 550
         self.budget.record(self.model, chat_cost(self.model, reply.tokens_in, reply.tokens_out) if reply.tokens_in else worst)
         return reply

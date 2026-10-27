@@ -48,7 +48,7 @@ def main() -> None:
     args = ap.parse_args()
     budget = Budget()
     before = budget.spent()
-    spark = MuseSparkModel(budget=budget, max_tokens=120)
+    spark = MuseSparkModel(budget=budget)
     results = []
     step("muse-spark chat", results, lambda: spark.chat("In one short sentence: what is a tabletop robot?").text)
 
@@ -61,7 +61,7 @@ def main() -> None:
     step("muse-spark plans a search with tools", results, plan)
 
     def web():
-        a = answers.ask(spark.client, "When is the next full moon?", budget=budget)
+        a = answers.ask(spark.client, "What is the weather forecast for Miami tomorrow?", budget=budget)
         return {"answer": a.text, "sources": a.sources[:3]}
 
     step("muse-spark web search with sources", results, web)

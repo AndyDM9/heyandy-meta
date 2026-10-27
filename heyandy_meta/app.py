@@ -237,6 +237,8 @@ class Andy:
         if not self.online or self.spark is None:
             self._source, self._reason = "device", "offline: no web search"
             return "I can't look things up right now, because I'm not connected."
+        self.say("Let me look that up.")  # a web answer takes a few seconds
+        self.screen.doing("Working", "Looking it up")
         try:
             ans = answers.ask(self.spark, question, budget=self.budget)
         except CLOUD_TROUBLE:

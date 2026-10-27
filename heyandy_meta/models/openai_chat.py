@@ -14,14 +14,16 @@ SYSTEM = ("Reasoning effort: low. You are Andy, a small tabletop robot in someon
 
 
 def chat(client, model: str, prompt: str, source: str, max_tokens: int = 600, sleep=time.sleep,
-         history=()) -> Reply:
-    """history: the conversation so far, as (what the person said, what Andy said) pairs, oldest first."""
+         history=(), reasoning_effort: str | None = None) -> Reply:
+    """history: the conversation so far, as (what the person said, what Andy said) pairs, oldest first.
+    reasoning_effort: the Model API's setting (Muse Spark thinks hard by default: 550 tokens for one sentence)."""
     start = time.monotonic()
     messages = [{"role": "system", "content": SYSTEM}]
     for said, answered in history:
         messages += [{"role": "user", "content": said}, {"role": "assistant", "content": answered}]
+    extra = {"reasoning_effort": reasoning_effort} if reasoning_effort else {}
     out = with_retry(lambda: client.chat.completions.create(
-        model=model, messages=messages + [{"role": "user", "content": prompt}], max_tokens=max_tokens,
+        model=model, messages=messages + [{"role": "user", "content": prompt}], max_tokens=max_tokens, **extra,
     ), sleep=sleep)
     usage = getattr(out, "usage", None)
     return Reply(text=out.choices[0].message.content or "", source=source, latency_s=time.monotonic() - start,

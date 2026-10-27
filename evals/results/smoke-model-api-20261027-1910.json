@@ -1,0 +1,51 @@
+{
+ "when": "2026-10-27T19:10:25-0400",
+ "spent_usd": 0.011,
+ "steps": [
+  {
+   "step": "muse-spark chat",
+   "ok": true,
+   "seconds": 2.07,
+   "result": ""
+  },
+  {
+   "step": "muse-spark plans a search with tools",
+   "ok": true,
+   "seconds": 5.63,
+   "result": {
+    "steps": [],
+    "pointed": false,
+    "calls": 1
+   }
+  },
+  {
+   "step": "muse-spark web search with sources",
+   "ok": true,
+   "seconds": 3.44,
+   "result": {
+    "answer": "",
+    "sources": []
+   }
+  },
+  {
+   "step": "sam-3.1 through the API: 'mug'",
+   "ok": true,
+   "seconds": 3.75,
+   "result": [
+    {
+     "box": [
+      1010,
+      470,
+      1201,
+      641
+     ],
+     "score": 0.8865247964859009,
+     "center": [
+      1089,
+      555
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,68 @@
+{
+ "when": "2026-10-27T19:12:25-0400",
+ "spent_usd": 0.0199,
+ "steps": [
+  {
+   "step": "muse-spark chat",
+   "ok": true,
+   "seconds": 1.31,
+   "result": "A tabletop robot is a small robot that sits on a table and talks with you."
+  },
+  {
+   "step": "muse-spark plans a search with tools",
+   "ok": true,
+   "seconds": 2.35,
+   "result": {
+    "steps": [
+     [
+      "look",
+      {
+       "object": "reading glasses",
+       "views": [
+        "right"
+       ]
+      }
+     ],
+     [
+      "look_closer",
+      {
+       "object": "reading glasses",
+       "place": "1"
+      }
+     ]
+    ],
+    "pointed": true,
+    "calls": 2
+   }
+  },
+  {
+   "step": "muse-spark web search with sources",
+   "ok": true,
+   "seconds": 3.76,
+   "result": {
+    "answer": "Tomorrow in Miami should be warm around 28 degrees and overcast with patchy rain nearby",
+    "sources": []
+   }
+  },
+  {
+   "step": "sam-3.1 through the API: 'mug'",
+   "ok": true,
+   "seconds": 1.41,
+   "result": [
+    {
+     "box": [
+      1010,
+      470,
+      1201,
+      641
+     ],
+     "score": 0.8865247964859009,
+     "center": [
+      1089,
+      555
+     ]
+    }
+   ]
+  }
+ ]
+}

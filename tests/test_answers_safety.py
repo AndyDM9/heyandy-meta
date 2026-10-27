@@ -73,3 +73,18 @@ def test_says_its_an_ai_at_the_start_and_every_three_hours():
     assert reply.startswith(DISCLOSURE)
     t[0] += 31 * 60
     assert respond("back again", lambda s: "ok", d).startswith(DISCLOSURE)  # a new conversation
+
+
+def test_only_the_final_answer_is_spoken_not_the_commentary():
+    from types import SimpleNamespace as NS
+
+    from heyandy_meta.companion.answers import ask
+
+    cite = NS(type="url_citation", url="https://www.weather.gov/mia", title="Miami forecast")
+    resp = NS(output_text="I'll get the forecast.Sunny, 84.", usage=None, output=[
+        NS(type="message", phase="commentary", content=[NS(text="I'll get the forecast.", annotations=[])]),
+        NS(type="web_search_call"), NS(type="web_search_call"),
+        NS(type="message", phase=None, content=[NS(text="Sunny tomorrow, high of 84.", annotations=[cite])])])
+    client = NS(responses=NS(create=lambda **kw: resp))
+    a = ask(client, "weather tomorrow?")
+    assert a.text == "Sunny tomorrow, high of 84." and a.sources == [("Miami forecast", "https://www.weather.gov/mia")]

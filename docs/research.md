@@ -316,3 +316,19 @@ Each of these came from the founder talking to the robot; the fixes are in the c
 taken as the same mug (so a look-alike nearby isn't swapped in), and the head eases after it through the body-language
 loop; past the head's 25 degrees the base turns. "Stop" reaches it without waiting for the turn's lock. On the robot:
 **about 2.4 frames a second** (22 SAM 3.1 frames, find included, over an 8 s follow).
+
+## 13. Muse Spark and SAM 3.1 live through the Model API (2026-10-27, night)
+
+The founder chose to use billing before the hackathon credits arrive. First calls (`scripts/smoke_model_api.py`,
+about $0.02 a run; results in `evals/results/smoke-model-api-*.json`):
+
+- **Muse Spark thinks at length by default:** 550 reasoning tokens for a one-sentence answer, so a 120-token limit
+  returned nothing. `reasoning_effort`: minimal 116 tokens, 2.7 s; low 315; medium 510. Andy uses **minimal** for
+  conversation (1.1 to 1.3 s) and **low** for planning searches and web answers, with room to answer.
+- **Planning a search with the tools works:** "reading glasses by the TV on the right" -> look right, look closer
+  (confirmed and pointed) in 2 calls, 2.4 to 5.8 s.
+- **Web search answers arrive in phases:** "commentary" messages while it works ("I'll get Miami's forecast for
+  tomorrow.") and a final message with `url_citation` annotations. Andy speaks only the final one. Asked to cite and to
+  use US units: "mostly sunny with a high near 84 degrees Fahrenheit ... according to forecast.weather.gov", 5 to 9 s,
+  so Andy says "Let me look that up" first. Not every answer comes with a citation.
+- **SAM 3.1 through the API** takes a base64 data URL (open since day one): the drawn mug at 0.89, 1.4 to 3.8 s.

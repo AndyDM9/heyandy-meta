@@ -25,7 +25,7 @@ def test_each_call_is_recorded_at_list_price():
 
 
 def test_the_cap_refuses_before_sending():
-    budget = Budget(cap_usd=0.002)
+    budget = Budget(cap_usd=0.008)  # room for one call's worst case (1,500 tokens out), not two
     client = FakeClient()
     MuseSparkModel(client=client, budget=budget).chat("hello")
     with pytest.raises(BudgetExceeded):
