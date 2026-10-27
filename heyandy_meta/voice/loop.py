@@ -4,8 +4,11 @@ Only speech that starts with "Andy" (or "hey Andy") is answered; after an answer
 ``follow_up_s``. When called, Andy turns towards the voice first, using the microphone array's direction. While it
 speaks, the microphone is ignored so it doesn't answer itself.
 """
+import logging
 import re
 import time
+
+log = logging.getLogger(__name__)
 
 # "Andy" as speech-to-text writes it: the name, and what it was heard as on 2026-10-27 ("and they", "earndy").
 WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay)\s+)?"
@@ -58,10 +61,14 @@ class VoiceLoop:
                 gesture("listening" if hearing else "idle")  # attentive while a follow-up is spoken
             if utterance is not None:
                 self.utterance_end = time.monotonic() - endpointer.end_silence_s
-                text = voice.transcribe(utterance)
-                reply = self.heard(text, yaw)
-                if reply is not None and self.on_heard:  # only what was for Andy
-                    self.on_heard(text, reply)
+                try:
+                    text = voice.transcribe(utterance)
+                    reply = self.heard(text, yaw)
+                except Exception as e:  # noqa: BLE001 - one bad turn must not leave Andy deaf
+                    log.warning("a turn failed: %s: %s", type(e).__name__, e)
+                    continue
+                if self.on_heard:  # what wasn't for Andy is reported by its length only, never its words
+                    self.on_heard(text if reply is not None else len(text.split()), reply)
 
 
 def _looping(text: str) -> bool:

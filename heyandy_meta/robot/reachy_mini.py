@@ -62,6 +62,7 @@ class ReachyBody:
         self.max_deg_s, self.settle_s = max_deg_s, settle_s
         self._pose, self._say, self._sleep = pose, say, sleep
         self.yaw = self.pitch = 0.0  # where the head is looking, measured when the robot can tell us
+        self.speaking = False  # Andy's voice is playing
         self._sent = (0.0, 0.0, 0.0)  # the last head yaw, pitch and base yaw sent
         self.motion = Motion()
         self._moving = threading.RLock()  # one sender at a time: a move, or the body-language loop

@@ -94,7 +94,10 @@ def main() -> None:
         from .voice.local import LocalVoice
         from .voice.loop import VoiceLoop
 
-        def shown(text, reply):  # only speech for Andy reaches here
+        def shown(text, reply):
+            if reply is None:  # not for Andy: only how many words, never what was said
+                print(f"(heard {text} words, not for Andy)", flush=True)
+                return
             first = getattr(andy.body._say, "first_after", lambda t: None)(loop.utterance_end)
             wait = f"  [first word {first - loop.utterance_end:.1f}s after you stopped]" if first else ""
             print(f"\nheard> {text}\nandy> {reply}{wait}", flush=True)
@@ -104,27 +107,32 @@ def main() -> None:
         threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), ears, stop),
                          daemon=True).start()
 
-        def keep_eyes_on_the_person():  # during a conversation: SAM 3.1 finds the face about once a second
+        def look_at_the_person():
+            """During a conversation: SAM 3.1 finds the face and the head eases towards it."""
             from .companion.attention import follow_face
 
+            speaking = getattr(andy.body, "speaking", False)
+            talking = time.monotonic() <= loop.awake_until or ears.active or speaking
+            if not talking or andy.body.motion.mode == "searching":
+                return
+            # While Andy speaks its turn holds the lock, and that's exactly when to keep its eyes on the person:
+            # speaking moves nothing but the body language, so the camera is free.
+            if not speaking and not andy.lock.acquire(blocking=False):
+                return
+            try:
+                found = follow_face(andy.body, andy.segmenter)
+                if found:
+                    andy.person = found
+            finally:
+                if not speaking:
+                    andy.lock.release()
+
+        def keep_eyes_on_the_person():  # about once a second
             while not stop.wait(1.0):
-                talking = time.monotonic() <= loop.awake_until or ears.active or andy.body.speaking
-                if not talking or andy.body.motion.mode == "searching":
-                    continue
-                # While Andy speaks its turn holds the lock, and that's exactly when to keep its eyes on the person:
-                # speaking moves nothing but the body language, so the camera is free.
-                speaking = andy.body.speaking
-                if not speaking and not andy.lock.acquire(blocking=False):
-                    continue
                 try:
-                    found = follow_face(andy.body, andy.segmenter)
-                    if found:
-                        andy.person = found
-                except Exception:  # noqa: BLE001 - a missed glance is fine; the next one comes in a second
+                    look_at_the_person()
+                except Exception:  # noqa: BLE001 - a missed glance is fine; the eyes must never stop for good
                     pass
-                finally:
-                    if not speaking:
-                        andy.lock.release()
 
         threading.Thread(target=keep_eyes_on_the_person, daemon=True).start()
         print("Listening: say \"Andy, ...\"")
