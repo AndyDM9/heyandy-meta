@@ -76,21 +76,24 @@ and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
 
 ## Layout
 ```
-heyandy_meta/app.py    one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
-heyandy_meta/models/   Muse Spark (Model API), Muse Glimmer and SAM 3.1 (on this computer) clients
-heyandy_meta/agent/    Muse Spark's search tools and planning loop
-heyandy_meta/finder/   the search, from a SAM 3.1 mask to where the head looks, and Glimmer's picture checks
-heyandy_meta/memory/   object memory: where watched things were last seen
-heyandy_meta/robot/    the body interface, the Reachy Mini adapter, and a simulated room for tests
-heyandy_meta/screen/   the TV page
-heyandy_meta/router.py who answers a turn: the device or the cloud
-heyandy_meta/budget.py the hard cap on Model API spend
-heyandy_meta/companion/ facing the person, reminders, answers with sources, AI disclosure and the crisis protocol
-local/                 SAM 3.1, and hearing and speaking, served on 127.0.0.1 only
-heyandy_meta/voice/    listening for "Andy", cutting speech into turns, and Andy's voice
-scripts/, deploy/      setting up and running the models on this computer
-config/                config.example.yaml (no secrets)
-docs/                  the build plan, the hackathon's rules, research
+heyandy_meta/app.py        one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
+heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol
+heyandy_meta/finder/       the search, from a SAM 3.1 mask to where the head looks; Glimmer's picture checks; names
+heyandy_meta/agent/        the search tools and the planning loop (Muse Spark online, Muse Glimmer on this computer)
+heyandy_meta/memory/       where watched things were last seen, and the idle glance
+heyandy_meta/voice/        listening for "Andy", cutting speech into turns, Andy's voice
+heyandy_meta/robot/        the body interface, the Reachy Mini adapter (the only Pollen SDK import), body language,
+                           and a simulated room for tests
+heyandy_meta/screen/       the TV page
+heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimmer, SAM 3.1 (both on this computer)
+heyandy_meta/router.py     who answers a turn: the device or the cloud
+heyandy_meta/network.py    whether the cloud is reachable right now
+heyandy_meta/budget.py     the hard cap on Model API spend
+local/                     SAM 3.1, and hearing and speaking, served on 127.0.0.1 only
+evals/                     the simulated and physical scorecards, and their results
+scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
+config/                    config.example.yaml (no secrets)
+docs/                      the build plan, the hackathon's rules, research, the video plan, open weights
 tests/
 ```
 
@@ -142,12 +145,14 @@ is slower (its thinking adds 7 to 16 s), so plain requests keep the fast sweep. 
 pointing within about 3 degrees after the head's correction. The physical scorecard (`evals/physical.py`) comes next.
 
 ## What doesn't work yet
-- **No live model call has been made yet.** The first paid calls wait for the hackathon credits.
-- **SAM 3.1 frames are sent as base64 data URLs,** which another participant has confirmed work; our first call checks it.
+- **Muse Spark hasn't made a live call yet.** It waits for the hackathon credits; until then Andy runs entirely on this
+  computer (Glimmer plans hinted searches and talks; SAM 3.1 sees; Omnilingual ASR hears).
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
-- **The robot has been tried, not yet scored.** It finds real things in about 8 s and speaks; listening to a real voice,
-  and the scored before/after runs, come next (see `docs/research.md` §8 to §10).
+- **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
+  and held conversations (first word 0.7 to 1 s after it understands); the scored runs come next
+  (`docs/research.md` sections 8 to 11).
+- **English only** for now: Omnilingual ASR can hear far more languages, but Kokoro speaks English here.
 
 ## Licence
 Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
