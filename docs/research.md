@@ -80,8 +80,11 @@ Docs: [overview](https://dev.meta.ai/docs/overview), [quickstart](https://dev.me
   - Claim by November 4, 9 PM ET, through the form in the October 26 email.
   - A card is required.
   - Set a spend limit on Billing.
-- ⚠ **Unknown: data retention** for API inputs on the Standard tier. Ask in office hours before sending pictures of a
-  home.
+- **Data retention, answered** by Connor (Meta) in #office-hours, 2026-10-27, 11:01 AM ET: "there is a ZDR option,
+  but it's usually applied for large businesses, and couldn't be enabled for the $150 token credit… If you're concerned
+  about sharing real homes with our platform, you may want to create a simulated home environment for development and
+  demo purposes." **So:** frames sent to the API are kept under normal terms, and pictures from a real home must not
+  go there.
 
 ## 3. SAM 3.1
 
