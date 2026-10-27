@@ -15,6 +15,10 @@ personal in view). The TV page is screen-recorded at the same time.
 | 2:15–2:40 | The scorecard (sim and physical), the open-weights check | The numbers, failures included. Every Meta model and where it runs: Muse Glimmer, SAM 3.1, Omnilingual ASR on our hardware; Muse Spark in the cloud for words only. |
 | 2:40–3:00 | Robot close-up | What's next (our own robot design, as a silhouette only), and the one-line ask. |
 
+**Recording the TV:** start `uv run --with playwright python scripts/record_tv.py --seconds 120 --out
+film/tv-take1.webm` just before each take, and line it up with the camera footage in the edit (Andy's first word is an
+easy sync point). `film/` is never committed.
+
 **Rules for filming:** no Meta logos; no music we don't own; subtitles burned in; no condition names and no health,
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never
 shown beyond a silhouette.

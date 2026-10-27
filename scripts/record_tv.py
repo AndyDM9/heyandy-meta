@@ -1,5 +1,6 @@
 """Record the TV page to a video, for the demo film: what Andy's screen showed, beside the footage of the robot.
 
+    uv run --with playwright playwright install ffmpeg      # once: Playwright's own ffmpeg, in the user cache
     uv run --with playwright python scripts/record_tv.py --seconds 90 --out film/tv-take1.webm
 
 For filming in the staged room only: the recording keeps whatever the TV shows (the found picture, captions). It
