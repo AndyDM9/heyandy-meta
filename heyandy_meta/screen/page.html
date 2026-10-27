@@ -7,9 +7,9 @@
 <style>
   /* Andy's TV: read from across a room. Frosted panels over slow colour that follows the time of day; every text
      colour at least 7:1 against its panel (tests/test_screen.py); the typeface is served by Andy itself. */
-  @font-face { font-family: "Atkinson Next"; src: url("/fonts/AtkinsonHyperlegibleNext.ttf") format("truetype");
+  @font-face { font-family: "Atkinson Next"; src: url("fonts/AtkinsonHyperlegibleNext.ttf") format("truetype");
                font-weight: 200 800; font-display: block; }
-  @font-face { font-family: "Atkinson Mono"; src: url("/fonts/AtkinsonHyperlegibleMono.ttf") format("truetype");
+  @font-face { font-family: "Atkinson Mono"; src: url("fonts/AtkinsonHyperlegibleMono.ttf") format("truetype");
                font-weight: 200 800; font-display: block; }
   :root {
     --ink: {{day_ink}}; --muted: {{day_muted}}; --accent: {{day_accent}}; --cloud: {{day_cloud}};
@@ -185,6 +185,7 @@
     const date = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
     $("date").replaceChildren(part[0].toUpperCase() + part.slice(1) + ", ", el("b", time), ", " + date);
   }
+  function nextAt(n) { return n.at || Date.now() / 1000 + n.in_s; }  // a saved sample counts from now
   function until(at) {
     const m = Math.round((at * 1000 - Date.now()) / 60000);
     if (m <= 0) return "now";
@@ -193,8 +194,9 @@
   }
   function side(s) {
     if (s.next) {
-      const at = new Date(s.next.at * 1000).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
-      const when = el("div", null, "when"); when.append(at + " · ", el("b", until(s.next.at)));
+      const t = nextAt(s.next);
+      const at = new Date(t * 1000).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
+      const when = el("div", null, "when"); when.append(at + " · ", el("b", until(t)));
       $("next").replaceChildren(el("h2", s.next.text), when);
     } else $("next").replaceChildren(el("h2", "No reminders"), el("div", "“Andy, remind me at 3 pm to call Sam.”", "when"));
     const list = el("ul");
@@ -293,7 +295,9 @@
     if (s.demo && !scenes) { scenes = s.demo; demoBar(); }
   }
   async function tick() {
-    try { render(await (await fetch("/state.json" + (scenes ? "?scene=" + scene() : ""), { cache: "no-store" })).json()); } catch (e) {}
+    // A static copy (the public Space) reads saved sample scenes; the robot's TV asks its own server.
+    const url = window.HEYANDY_STATIC ? `scenes/${scene() || "idle"}.json` : "/state.json" + (scenes ? "?scene=" + scene() : "");
+    try { render(await (await fetch(url, { cache: "no-store" })).json()); } catch (e) {}
     setTimeout(tick, 400);
   }
   clock(); setInterval(clock, 1000); tick();

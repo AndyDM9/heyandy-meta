@@ -56,6 +56,7 @@ def show(state: ScreenState, scene: str) -> None:
     if scene == "finding":
         state.looking("mug")
         state.timer_start()
+        state._timer = (time.monotonic() - 3.2, None)  # a search a few seconds in, for the picture
         state.said("Let me look.", "device", "fixed search on this computer")
         state.doing("Working", "Looking around the room")
         state.step("recall: no recent sighting")
