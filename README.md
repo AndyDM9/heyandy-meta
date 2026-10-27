@@ -94,6 +94,26 @@ docs/                  the build plan, the hackathon's rules, research
 tests/
 ```
 
+## Measured so far
+
+**Simulated scorecard** (`evals/sim.py`, seeded rooms; the camera model is the robot's, robot time is estimated from what
+was measured on it, and the noise is stated in the results). The fixed sweep runs on every plain request; Muse Glimmer
+plans the search, on this computer, when the person gives a hint.
+
+| Room | Fixed sweep (100 each) | Glimmer plans (20 each) |
+|---|---|---|
+| The thing in front | 96 found, 0 wrong, ~8 s | 19 found, 0 wrong, ~15 s |
+| Behind the robot, with a hint | 92, 0 wrong, 6.2 looks | **20, 0 wrong, 3.5 looks** |
+| A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong |
+| Not there at all | 100 said so | 20 said so (capped at 10 looks) |
+| Two look-alikes, "the blue one" | 80, **20 wrong** | **20, 0 wrong** |
+
+Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Glimmer
+is slower (its thinking adds 7 to 16 s), so plain requests keep the fast sweep. Results: `evals/results/`.
+
+**On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included;
+pointing within about 3 degrees after the head's correction. The physical scorecard (`evals/physical.py`) comes next.
+
 ## What doesn't work yet
 - **No live model call has been made yet.** The first paid calls wait for the hackathon credits.
 - **SAM 3.1 frames are sent as base64 data URLs,** which another participant has confirmed work; our first call checks it.
