@@ -44,7 +44,8 @@ trademark application.
   - It shows Andy's words as large captions, and who answered and why: the device or the cloud.
   - The picture stays in memory for two minutes, is never saved, and no requests are logged.
   - Every text colour is at least 7:1 contrast, which the tests check.
-- **Next:** the Reachy Mini body, voice, and the before/after evaluation.
+- **The Reachy Mini adapter,** the only module that imports Pollen's SDK: it splits a direction between the head (±55°) and a turn of the base, moves gently, and reads JPEG frames. It's tested against a stand-in robot; the real robot comes on Day 2.
+- **Next:** voice, and the before/after evaluation.
 
 ## Run the tests
 ```bash
@@ -57,7 +58,7 @@ heyandy_meta/models/   Muse Spark and SAM 3.1 (Model API) and Muse Glimmer (loca
 heyandy_meta/agent/    Muse Spark's search tools and planning loop
 heyandy_meta/finder/   the search, and from a SAM 3.1 mask to where the head looks
 heyandy_meta/memory/   object memory: where watched things were last seen
-heyandy_meta/robot/    the body interface, and a simulated room for tests
+heyandy_meta/robot/    the body interface, the Reachy Mini adapter, and a simulated room for tests
 heyandy_meta/screen/   the TV page
 heyandy_meta/router.py who answers a turn: the device or the cloud
 heyandy_meta/budget.py the hard cap on Model API spend
