@@ -286,3 +286,23 @@ Audio from a home is as private as its pictures, so hearing and speaking run her
   looks. Andy turns towards whoever says its name. Its echo cancellation is good enough that Andy's own voice, played
   from its speaker, didn't register at all (levels 0.011 to 0.023, no speech flag), so it can't answer itself.
 - **Wake word:** only speech starting with "Andy" ("hey Andy") is answered; follow-ups within 20 s need no name.
+
+## 11. Talking with Andy on the robot: what the founder's tests found (2026-10-27, evening)
+
+Each of these came from the founder talking to the robot; the fixes are in the commits of that evening.
+
+- **Mixed scripts:** the CTC model wrote a real voice as Arabic and Latin letters; the language-aware LLM 1B fixed it.
+- **"Cup" heard as "cop"**, and a coffee mug isn't always a "cup" to SAM: names snap to the nearest everyday thing,
+  and each search asks SAM for close names in the same request.
+- **A false promise:** "until minutes" (for "in two minutes") left the reminder without a time; the answer to Andy's
+  question then went to the chat model, which said "Got it, I'll remind you" with nothing set. Andy's questions now
+  take the next answer, and code replaces any chat reply that claims an action.
+- **Quiet, still and looking up:** speech raised to -21 dBFS; a 50 Hz body-language loop (breathing, listening,
+  thinking, speaking with Pollen's wobbler, a found-wiggle) between moves; upward looks at a face softened to 60%,
+  capped at 12 degrees.
+- **Slow answers:** 8.5 s to the first word, from two blocking head turns and a tracker holding the turn. Now the head
+  turns while the answer is made: **2.6 s, 1.9 s, 1.3 s** to the first word on three live turns (end of speech
+  0.55 s, ASR about 0.2 s, Glimmer about 1.5 s; its reasoning can't be capped per request).
+- **"Andy" buried in a long stretch:** with the room never quiet, utterances ran 15 s; the name now counts anywhere,
+  stretches end at 8 s, and the microphone's detector counts only with sound behind it.
+- **Privacy:** speech not for Andy is dropped and logged only as its length and the room level.
