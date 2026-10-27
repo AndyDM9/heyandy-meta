@@ -352,3 +352,39 @@ robot with Muse Spark: "find the cup and remind me in two minutes to drink some 
 set_reminder (set): "I see your cup straight ahead! Your reminder is set for 7:45 to drink some water." in 19.8 s.
 "Good morning, Andy" -> a briefing in 13.3 s. Without a home town the weather came back for three other cities, so
 Andy now asks where the person lives unless `--home` / `HEYANDY_HOME` says.
+
+## 16. What's missing, and what would be new (research, 2026-10-27, night)
+
+A survey of products, research and needs (sources below; the robots' own claims are theirs, not tested here).
+
+- **Products:** Samsung put Ballie on hold indefinitely (January 2026); Amazon dropped Astro for business (2024); ElliQ
+  does reminders, calls and conversation but nothing with objects; of 200+ community Reachy Mini apps, none searches for
+  objects and points, or is made for older adults. Moxie robots stopped working when their maker's servers shut (January
+  2025), which is why Andy works offline.
+- **Research gaps Andy can close:** MIT's DAAAM lists *when things moved* and *how sure the robot is* as open problems;
+  FARM found people describe places by what's near them ("left of the poster"), improving search 164%; OK-Robot's top
+  real-home failure was picking the wrong object from memory (9.3% of tries).
+- **Needs:** 12.1% of people 65+ have trouble seeing words and letters (Census); older adults would rather a robot than a
+  person handle objects and keep track of information (Smarr et al.); the camera is the main privacy worry about home
+  robots; ElliQ reviewers dislike interruptions ("nagging"); in Apple's ELEGNT study older participants liked
+  expressive motion less.
+- **Ranked ideas:** (1) when did it move, and what's it near, in words, with how long ago; (2) "this one is mine" (a
+  local reference picture); (3) several things tracked at once with SAM 3.1's Object Multiplex (a shell game); (4) read
+  and act (left out: our earlier prototype has a letter reader, and medical papers slide into advice); (5) a privacy receipt on
+  the TV; (6) Muse Wonder working a browser on the TV. Also: a quiet mode and calmer motion.
+- **Avoid:** medical papers, safety monitoring (stove, falls), companionship framing, describing without acting, cloud
+  voice outside a staged scene, claims about Glimmer fine-tuning on 24 GB or running Muse Spark Open locally, unlabelled
+  sped-up footage.
+
+Sources: androidauthority.com/samsung-ballie-robot-shelved-indefinitely-3630980 ·
+engadget.com/amazon-pulls-the-plug-on-the-business-version-of-its-astro-robot-193907015.html ·
+theseniorlist.com/aging-in-place/elliq · pollen-robotics.com/reachy-mini/community ·
+axios.com/2024/12/10/moxie-kids-robot-shuts-down · arxiv.org/abs/2401.12202 (OK-Robot) · arxiv.org/abs/2309.16650
+(ConceptGraphs) · thenextweb.com/news/mit-daaam-robot-long-term-memory-objects · arxiv.org/abs/2606.15476 (FARM) ·
+access-board.gov/research/communication/variable-message-signing/influence-visual-impairments ·
+pmc.ncbi.nlm.nih.gov/articles/PMC8374875 · ar5iv.labs.arxiv.org/html/2302.12686 (Smarr et al.) ·
+homes.luddy.indiana.edu/selmas/CaineSabanovic-HRI2012.pdf · ncbi.nlm.nih.gov/pmc/articles/PMC10252978 ·
+thomasnet.com/insights/companion-robots-for-elderly-get-mixed-reviews ·
+venturebeat.com/ai/apples-elegnt-framework-could-make-home-robots-feel-less-like-machines-and-more-like-companions ·
+arxiv.org/abs/2511.16719 (SAM 3) · dev.meta.ai/docs/sam/segmenting · dev.meta.ai/docs/computer-use ·
+dev.meta.ai/docs/muse-glimmer/prompting · techcrunch.com/2024/02/09/how-to-fake-a-robotics-demo-for-fun-and-profit
