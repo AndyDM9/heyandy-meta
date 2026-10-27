@@ -49,3 +49,22 @@ def test_questions_about_the_world_and_conversation():
     assert parse("When does the library open on Saturday?", NOW).kind == "world"
     assert parse("Tell me a joke", NOW).kind == "chat"
     assert parse("What are my reminders?", NOW).kind == "reminders"
+
+
+@pytest.mark.parametrize("heard, kind, thing", [
+    ("where am i reading glasses", "find", "reading glasses"),
+    ("andy where are my keys", "find", "keys"),
+    ("keep an eye on my phone please", "watch", "phone")])
+def test_what_speech_to_text_hears(heard, kind, thing):
+    i = parse(heard, NOW)
+    assert (i.kind, i.thing) == (kind, thing)
+
+
+@pytest.mark.parametrize("heard, when", [
+    ("remind me at three p m to call sam", (15, 0)), ("remind me at three pm to call sam", (15, 0)),
+    ("remind me at 3 p m to call sam", (15, 0)), ("remind me at four thirty to take the bins out", (16, 30)),
+    ("remind me in ten minutes to check the oven", (14, 40))])
+def test_spoken_times(heard, when):
+    i = parse(heard, NOW)
+    at = dt.datetime.fromtimestamp(i.at)
+    assert i.kind == "remind" and i.text and (at.hour, at.minute) == when

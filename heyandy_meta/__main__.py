@@ -1,13 +1,15 @@
 """Run Andy from a keyboard: type what you'd say, read what Andy says, watch the TV page.
 
     uv run python -m heyandy_meta                 # a pretend living room, no robot
-    uv run python -m heyandy_meta --robot         # the Reachy Mini, local SAM 3.1 and Glimmer (Day 2)
+    uv run python -m heyandy_meta --robot         # the Reachy Mini, local SAM 3.1 and Glimmer
+    uv run python -m heyandy_meta --robot --voice # ... and talk to it: "Andy, where are my glasses?"
 
 The TV page is at http://127.0.0.1:8765. Muse Spark is used when MODEL_API_KEY is set and HEYANDY_PAID_CALLS=1;
 otherwise everything runs on this computer.
 """
 import argparse
 import os
+import sys
 import threading
 import time
 
@@ -49,6 +51,11 @@ def build(args) -> Andy:
         from .robot.reachy_mini import ReachyBody
 
         body, segmenter, judge = ReachyBody(), LocalSam31(args.sam), GlimmerJudge(endpoint=args.glimmer)
+        if args.voice:
+            from .voice.local import LocalVoice
+            from .voice.speaker import Speaker
+
+            body._say = Speaker(LocalVoice(args.voice_url, voice=args.voice_name), body.play)
     else:
         room = Room(list(LIVING_ROOM))
         body, segmenter, judge = SimBody(room), SimSegmenter(room), SimJudge(room)
@@ -64,6 +71,9 @@ def main() -> None:
     ap.add_argument("--no-cloud", action="store_true", help="never call the Model API")
     ap.add_argument("--glimmer", default="http://127.0.0.1:8080/v1")
     ap.add_argument("--sam", default="http://127.0.0.1:8090")
+    ap.add_argument("--voice", action="store_true", help="listen and speak through the robot (needs --robot)")
+    ap.add_argument("--voice-url", default="http://127.0.0.1:8092")
+    ap.add_argument("--voice-name", default="am_michael", help="a Kokoro voice")
     ap.add_argument("--data", default="~/.local/share/heyandy-meta")
     ap.add_argument("--tv-port", type=int, default=8765)
     args = ap.parse_args()
@@ -78,6 +88,22 @@ def main() -> None:
             andy.tick()
 
     threading.Thread(target=ticks, daemon=True).start()
+    if args.voice and args.robot:
+        from .voice.listen import Endpointer
+        from .voice.local import LocalVoice
+        from .voice.loop import VoiceLoop
+
+        def shown(text, reply):
+            first = getattr(andy.body._say, "first_sound", 0.0) - loop.utterance_end
+            print(f"\nheard> {text}" + (f"\nandy> {reply}  [first word {first:.1f}s after you stopped]" if reply
+                                         else "  (not for Andy)"), flush=True)
+
+        loop = VoiceLoop(andy, on_heard=shown)
+        threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), Endpointer(), stop),
+                         daemon=True).start()
+        print("Listening: say \"Andy, ...\"")
+    if args.voice and not sys.stdin.isatty():
+        stop.wait()  # voice only: no keyboard attached
     try:
         while True:
             text = input("you> ").strip()

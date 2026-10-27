@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # The models that run on this computer, in user space (nothing system-wide):
 #   GPU 0: Muse Glimmer 30B (Q4_K_M + perception encoder + DFlash drafter) on llama.cpp's server
-#   GPU 1: SAM 3.1 from the open weights (facebook/sam3.1, gated: request access first) via local/sam_server.py
+#   GPU 1: SAM 3.1 from the open weights (facebook/sam3.1, gated: request access first) via local/sam_server.py,
+#          and hearing and speaking (Meta's Omnilingual ASR, Kokoro-82M) via local/voice_server.py
 # Needs: an NVIDIA driver for CUDA 13, uv, gh (or curl), and `hf auth login` for SAM 3.1.
 set -euo pipefail
 OPT=${OPT:-$HOME/opt}
@@ -35,4 +36,20 @@ git -C "$OPT/sam3" checkout -q "$SAM3"
   && VIRTUAL_ENV=.venv uv pip install -q -e . pillow einops pycocotools psutil opencv-python-headless)
 uv run -q --no-project --with huggingface_hub hf download facebook/sam3.1 --local-dir "$MODELS/sam3.1"
 
-echo "Done. Start them: systemctl --user link $(pwd)/deploy/heyandy-*.service && systemctl --user start heyandy-glimmer heyandy-sam"
+# Voice: Omnilingual ASR (Apache-2.0; fairseq2 pins torch 2.8 and NumPy 1) and Kokoro-82M (Apache-2.0)
+V="$OPT/voice"
+(mkdir -p "$V" && cd "$V" && uv venv -q -p 3.12 .venv \
+  && VIRTUAL_ENV=.venv uv pip install -q omnilingual-asr "kokoro>=0.9.4" soundfile \
+  && VIRTUAL_ENV=.venv uv pip install -q "torchaudio==2.8.0" --index-url https://download.pytorch.org/whl/cu128 \
+       --extra-index-url https://pypi.org/simple \
+  && VIRTUAL_ENV=.venv uv pip install -q "pyarrow<21" \
+       "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" \
+  && .venv/bin/python -c "
+from huggingface_hub import hf_hub_download
+for f in ['config.json', 'kokoro-v1_0.pth'] + [f'voices/{v}.pt' for v in ['am_michael', 'af_heart', 'bf_emma', 'bm_george']]:
+    hf_hub_download('hexgrad/Kokoro-82M', f)
+from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
+ASRInferencePipeline(model_card='omniASR_CTC_3B_v2', device='cpu')  # downloads the checkpoint (12 GB) once
+")
+
+echo "Done. Start them: systemctl --user link $(pwd)/deploy/heyandy-*.service && systemctl --user start heyandy-glimmer heyandy-sam heyandy-voice"

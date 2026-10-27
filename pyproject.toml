@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "numpy"]  # numpy: the voice code, which on the robot comes with the robot extra
 robot = [
     "reachy-mini==1.12.0rc1",
 ]

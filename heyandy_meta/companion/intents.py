@@ -78,9 +78,24 @@ def _reminder_words(text: str) -> str:
     return " ".join(text.strip(" ,.!?").split())
 
 
+HOURS = {w: i for i, w in enumerate(
+    "one two three four five six seven eight nine ten eleven twelve".split(), 1)}
+MINUTES = {"o'clock": 0, "oclock": 0, "fifteen": 15, "thirty": 30, "forty five": 45, "forty-five": 45}
+SPOKEN_AT = re.compile(r"\bat (" + "|".join(HOURS) + r")(?: (" + "|".join(MINUTES) + r"))?\b", re.I)
+
+
+def normalise(text: str) -> str:
+    """Speech-to-text output, made readable for the rules: "at three thirty p m" -> "at 3:30 pm"."""
+    t = " ".join(text.strip().split())
+    t = re.sub(r"\b([ap])\.? ?m\b\.?", r"\1m", t, flags=re.I)
+    t = SPOKEN_AT.sub(lambda m: f"at {HOURS[m.group(1).lower()]}:{MINUTES.get((m.group(2) or 'oclock').lower(), 0):02d}", t)
+    # Heard again and again for "where are my" (Omnilingual ASR, all sizes, 2026-10-27).
+    return re.sub(r"\bwhere (?:am i|are i|am my|r my)\b", "where are my", t, flags=re.I)
+
+
 def parse(text: str, now: dt.datetime | None = None) -> Intent:
     now = now or dt.datetime.now()
-    t = " ".join(text.strip().split())
+    t = normalise(text)
     if REMIND.search(t):
         when = parse_time(t, now)
         words = _reminder_words(when[1]) if when else ""

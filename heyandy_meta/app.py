@@ -7,6 +7,7 @@ Glimmer unless it needs more thought. When the cloud is refused or unreachable, 
 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
+import threading
 import time
 from dataclasses import dataclass, field
 
@@ -61,15 +62,17 @@ class Andy:
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()
         self._source = self._reason = ""
+        self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
 
     # --- a turn ---
 
     def hear(self, text: str) -> str:
-        self.reminders.mention_missed(self.say)
-        self._source = self._reason = ""
-        reply = respond(text, self._answer, self.disclosure)
-        self.say(reply)
-        return reply
+        with self.lock:
+            self.reminders.mention_missed(self.say)
+            self._source = self._reason = ""
+            reply = respond(text, self._answer, self.disclosure)
+            self.say(reply)
+            return reply
 
     def say(self, text: str) -> None:
         self.body.say(text)
@@ -181,6 +184,10 @@ class Andy:
 
     def tick(self) -> None:
         """Deliver reminders that are due, and glance around now and then for watched things."""
+        with self.lock:
+            self._tick()
+
+    def _tick(self) -> None:
         now = self.clock()
         for r in self.reminders.due(now):
             self.reminders.deliver(r, lambda: face_person(self.body, self.segmenter), self.say, now)

@@ -268,3 +268,21 @@ logged.
 - **Speed.** A find was 14.7 s (looks 9.9 s, SAM 3.1 1.6 s, Glimmer's check 2.0 s). Sweep looks no longer correct
   themselves (the frame says where it was taken), a confident sighting (0.75+) gets its closer look at once, and the
   sweep starts in the middle: **7.5 s** for a cup, 8.2 s for a keyboard, with the TV-picture check included.
+
+## 10. Voice, on this computer (2026-10-27, evening)
+
+Audio from a home is as private as its pictures, so hearing and speaking run here too (`local/voice_server.py`, GPU 1).
+
+- **Hearing: Meta's Omnilingual ASR** (Apache-2.0, open weights; facebookresearch/omnilingual-asr 0.2.0). On 30 clips
+  (10 requests x 3 Kokoro voices, light noise added): CTC 1B v2 6.1% word errors, 0.024 s a clip, 2.1 GB; LLM 1B v2 5.6%,
+  0.18 s, 4.8 GB; **CTC 3B v2 5.0%, 0.03 s, 6.3 GB: chosen.** Most "errors" were formatting ("3 p m"); the one real one
+  in every size was "where are my" heard as "where am i", which `companion/intents.normalise` maps back, along with
+  spoken times ("at three thirty p m" -> "at 3:30 pm").
+  - Setup notes: fairseq2 pins torch 2.8 and NumPy 1, so torchaudio must be 2.8.0 and pyarrow below 21.
+- **Speaking: Kokoro-82M** (Apache-2.0; Meta has no text-to-speech model). 4.5 s of speech made in 0.044 s once warm.
+  Voice `am_michael`. Andy speaks sentence by sentence through the robot's own speaker.
+- **The robot's microphone array** (16 kHz, stereo) gives a speech flag and a direction. Pollen's
+  `examples/sound_doa.py`: the voice is at (sin a, cos a) in the head's frame, so 90 - a degrees left of where the head
+  looks. Andy turns towards whoever says its name. Its echo cancellation is good enough that Andy's own voice, played
+  from its speaker, didn't register at all (levels 0.011 to 0.023, no speech flag), so it can't answer itself.
+- **Wake word:** only speech starting with "Andy" ("hey Andy") is answered; follow-ups within 20 s need no name.

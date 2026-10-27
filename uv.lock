@@ -882,6 +882,8 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pytest" },
 ]
 robot = [
@@ -891,6 +893,7 @@ robot = [
 [package.metadata]
 requires-dist = [
     { name = "meta-sam-parser", specifier = "==0.1.0" },
+    { name = "numpy", marker = "extra == 'dev'" },
     { name = "openai", specifier = ">=1.60" },
     { name = "pillow", specifier = ">=10" },
     { name = "pytest", marker = "extra == 'dev'" },

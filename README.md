@@ -13,8 +13,11 @@ trademark application.
    runs on the computer beside the robot, so the robot keeps working with no internet.
 5. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
-6. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
-   the robot. Muse Spark in the cloud only ever gets words: labels, directions and plan steps.
+6. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+   Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
+7. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+   the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
+   steps.
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
@@ -83,7 +86,8 @@ heyandy_meta/screen/   the TV page
 heyandy_meta/router.py who answers a turn: the device or the cloud
 heyandy_meta/budget.py the hard cap on Model API spend
 heyandy_meta/companion/ facing the person, reminders, answers with sources, AI disclosure and the crisis protocol
-local/sam_server.py    SAM 3.1 from the open weights, served on 127.0.0.1 only
+local/                 SAM 3.1, and hearing and speaking, served on 127.0.0.1 only
+heyandy_meta/voice/    listening for "Andy", cutting speech into turns, and Andy's voice
 scripts/, deploy/      setting up and running the models on this computer
 config/                config.example.yaml (no secrets)
 docs/                  the build plan, the hackathon's rules, research
@@ -95,8 +99,8 @@ tests/
 - **SAM 3.1 frames are sent as base64 data URLs,** which another participant has confirmed work; our first call checks it.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
-- **There is no real robot body or voice yet.** The search runs in the simulated room; SAM 3.1 and Glimmer are measured
-  on the GPUs (see `docs/research.md` §8), but not yet on the robot's camera.
+- **The robot has been tried, not yet scored.** It finds real things in about 8 s and speaks; listening to a real voice,
+  and the scored before/after runs, come next (see `docs/research.md` §8 to §10).
 
 ## Licence
 Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.

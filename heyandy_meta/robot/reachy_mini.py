@@ -119,3 +119,47 @@ class ReachyBody:
     def say(self, text: str) -> None:
         if self._say:
             self._say(text)
+
+    # --- the speaker and the microphone array (16 kHz) ---
+
+    def play(self, samples, rate: int = 16000) -> None:
+        """Play mono float samples through the robot's speaker and wait until they're done."""
+        if not getattr(self, "_playing", False):
+            self.robot.media.start_playing()
+            self._playing = True
+        self.speaking = True
+        try:
+            self.robot.media.push_audio_sample(samples)
+            self._sleep(len(samples) / rate)
+        finally:
+            self.speaking = False
+            self._quiet_until = time.monotonic() + 0.4  # the room's echo of Andy's own voice
+
+    def listen(self, stop, poll_s: float = 0.02):
+        """Yield (mono samples, speech detected, direction of the voice as a yaw) until ``stop`` is set.
+
+        Nothing is yielded while Andy is speaking, so it never hears itself. The direction comes from the microphone
+        array: an angle a in the head's frame points at (sin a, cos a), so the voice is 90 - a degrees to the left of
+        where the head looks (Pollen's examples/sound_doa.py).
+        """
+        import numpy as np
+
+        media = self.robot.media
+        media.start_recording()
+        try:
+            while not stop.is_set():
+                chunks = []
+                # Each pull waits up to 20 ms and 10 ms chunks keep arriving, so take about 100 ms at a time.
+                while len(chunks) < 10 and (c := media.get_audio_sample()) is not None:
+                    chunks.append(c)
+                if chunks and not getattr(self, "speaking", False) and time.monotonic() >= getattr(self, "_quiet_until", 0):
+                    audio = np.concatenate(chunks)
+                    mono = audio.mean(axis=1) if audio.ndim == 2 else audio
+                    doa = media.get_DoA()
+                    flag = bool(doa and doa[1])
+                    yaw = self.yaw + 90.0 - math.degrees(doa[0]) if flag else None
+                    yield mono, flag, yaw
+                if not chunks:
+                    self._sleep(poll_s)
+        finally:
+            media.stop_recording()

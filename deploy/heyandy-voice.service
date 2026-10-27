@@ -1,0 +1,12 @@
+[Unit]
+Description=HeyAndy: hearing (Omnilingual ASR) and speaking (Kokoro-82M) on GPU 1 (this computer only)
+
+[Service]
+Environment=CUDA_VISIBLE_DEVICES=1
+Environment=PYTHONWARNINGS=ignore
+Environment=HF_HUB_OFFLINE=1
+ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
