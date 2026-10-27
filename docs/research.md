@@ -179,3 +179,43 @@ From our earlier prototype (public, Apache-2.0), read on 2026-10-27. Its finder 
 - **Body:** a Reachy Mini Lite on USB to the desktop. The robot runs SDK `reachy-mini==1.12.0rc1`.
 - **Desktop:** 2× RTX 3090, 24 GB each. Both were in use by our earlier prototype on October 27: 21.7 GB and 7.2 GB.
 - **No Jetson** is owned yet.
+
+## 7. A physical companion: what older adults use, competitors, rules (read 2026-10-27)
+
+**What gets used** (strongest evidence first):
+- **Answers to questions** (news, weather, facts) is the use that held steady in a 3-week, 7-home Echo Dot study,
+  while music and reminders faded ([Pradhan, Lazar & Findlater 2020](https://thatlab.umd.edu/papers/2020_UseOf.pdf)).
+- In the Michigan poll (2,883 adults 50+, Feb 2025), 80% of voice-assistant users said it helps them live
+  independently at home, and 92% want to know whether information comes from a person or an AI
+  ([NPHA 2025](https://ihpi.umich.edu/national-poll-healthy-aging/national-findings/how-older-adults-use-and-think-about-ai)).
+- **Reminders** are wanted, but use stays low when people don't trust them to fire (Pradhan). In Smarr et al.
+  (2014), older adults accepted reminders from a robot but wanted a person to decide about medication.
+- **Finding things:** small evidence (a 2026 interview study of 4 people aged 70–90, [arXiv 2603.14182](https://arxiv.org/pdf/2603.14182)),
+  and no competitor does it.
+
+**Competitors.** ElliQ (about $40 a month), Alexa+, Gemini for Home and Ollie talk, remind and answer. None finds or
+points at physical objects. Alexa Together was discontinued May 21, 2025.
+
+**US rules for companion chatbots.** A conversational robot with memory is likely in scope.
+- **California SB 243** (in effect Jan 1, 2026) requires:
+  - a clear notice that it's an AI;
+  - a published crisis protocol that refers people to crisis services.
+- **New York** (in effect Nov 5, 2025) requires:
+  - saying it's an AI at the start and at least every three hours;
+  - efforts to detect self-harm and refer people to help.
+- The FDA's general-wellness guidance (Jan 6, 2026) keeps products outside device rules if they make no
+  diagnose-or-treat claims.
+
+**What this means for Andy:**
+- It says it's an AI, out loud, at the start and every three hours.
+- It has a short published crisis protocol: it gives the 988 line and never counsels.
+- No health, medication, mood or wellbeing features or claims.
+- Memory is opt-in, visible and deletable.
+
+**From Meta's API for companion functions:**
+- **Muse Spark's `web_search` tool:** $2.50 per 1,000 searches plus tokens. It returns `url_citation`
+  annotations, which give the sources ([search grounding](https://dev.meta.ai/docs/search-grounding)).
+- **Muse Voice Transcribe:** detects when someone stops speaking, labels speakers, and can be primed with names
+  ([speech-to-text](https://dev.meta.ai/docs/speech-to-text)).
+- **Gaps:** there's **no text-to-speech**, so the voice is an open model on GPU 1. Muse Wonder's "Active Memory" isn't
+  documented for the API, so our own opt-in memory store stays.
