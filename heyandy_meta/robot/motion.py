@@ -38,6 +38,7 @@ class Motion:
     listen_spread: float = 0.25
     think_lean: float = 0.35
     think_roll: float = 6.0
+    liveliness: float = 1.0  # "move less": every layer scaled down (older participants liked calmer motion: ELEGNT)
     mode: str = "idle"
     speech: tuple = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)  # Pollen's wobbler: x, y, z (m), roll, pitch, yaw (rad)
     _weights: dict = field(default_factory=lambda: {m: 0.0 for m in MODES})
@@ -65,20 +66,21 @@ class Motion:
     def pose(self, now: float, base: Pose) -> Pose:
         """Where to send the head and antennas at time ``now``, around ``base``."""
         w = self._fade(now)
-        alive = 1.0 - w["searching"]
+        k = self.liveliness
+        alive = (1.0 - w["searching"]) * k
         phase = math.sin(2 * math.pi * self.breathe_hz * now)
         out = Pose(base.yaw, base.pitch + alive * self.breathe_pitch * phase, base.roll,
                    base.z + alive * self.breathe_z * phase, base.antennas)
         right, left = base.antennas
         b = alive * self.breathe_antennas * phase  # mirrored: both out, both in
         right, left = right - b, left + b
-        spread = w["listening"] * self.listen_spread
+        spread = w["listening"] * self.listen_spread * k
         right, left = right - spread, left + spread
-        lean = w["thinking"] * self.think_lean * math.sin(2 * math.pi * 0.35 * now)  # both to one side, slowly
+        lean = w["thinking"] * self.think_lean * k * math.sin(2 * math.pi * 0.35 * now)  # both to one side, slowly
         right, left = right + lean, left + lean
-        out.roll += w["thinking"] * self.think_roll
+        out.roll += w["thinking"] * self.think_roll * k
         if w["speaking"]:
-            x, y, z, roll, pitch, yaw = self.speech
+            x, y, z, roll, pitch, yaw = (v * k for v in self.speech)
             out.yaw += w["speaking"] * math.degrees(yaw)
             out.pitch += w["speaking"] * math.degrees(pitch)
             out.roll += w["speaking"] * math.degrees(roll)
@@ -86,7 +88,7 @@ class Motion:
             swing = w["speaking"] * 4.0 * pitch
             right, left = right - swing, left + swing
         if now < self._wiggle_until:
-            k = 0.3 * math.sin(2 * math.pi * 3.0 * now)
-            right, left = right + k, left + k
+            wag = 0.3 * k * math.sin(2 * math.pi * 3.0 * now)
+            right, left = right + wag, left + wag
         out.antennas = (max(-1.2, min(0.6, right)), max(-0.6, min(1.2, left)))
         return out

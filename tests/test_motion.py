@@ -59,3 +59,10 @@ def test_antennas_stay_inside_their_range():
 def test_unknown_mode_is_refused():
     with pytest.raises(ValueError):
         Motion().set_mode("dance")
+
+
+def test_move_less_scales_every_layer_down():
+    lively, calm = Motion(), Motion(liveliness=0.3)
+    a, b = run(lively, 0, 10), run(calm, 0, 10)
+    swing = lambda ps: max(p.pitch for p in ps) - min(p.pitch for p in ps)  # noqa: E731
+    assert swing(b) == pytest.approx(0.3 * swing(a), rel=0.05)

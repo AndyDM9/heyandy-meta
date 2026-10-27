@@ -35,6 +35,14 @@ VOICE = {  # how Andy speaks, set by voice and remembered
     "slower": re.compile(r"\b(?:(?:speak |talk )?(?:more )?slow(?:er|ly)|slow down|too fast)\b", re.I),
     "faster": re.compile(r"\b(?:(?:speak |talk )?(?:a bit |a little )?faster|speed up|too slow(?:ly)?)\b", re.I),
 }
+QUIET = re.compile(r"\b(?:be quiet|quiet mode|leave me alone|(?:do not|don'?t) disturb(?: me)?|give me some peace|"
+                   r"stop looking around)\b", re.I)
+UNQUIET = re.compile(r"\b(?:you can (?:talk|look around|move) again|quiet mode off|stop being quiet|you can go back to "
+                     r"normal)\b", re.I)
+MOTION = {"less": re.compile(r"\b(?:move less|calm down|less movement|keep (?:still|stiller)|stop moving (?:so much|around)"
+                             r"|stay (?:still|stiller))\b", re.I),
+          "more": re.compile(r"\b(?:move more|more movement|be (?:more )?lively|livelier)\b", re.I)}
+QUIET_FOR = re.compile(r"\bfor (?P<n>\d+|an?|one|two|three|half an) (?P<unit>minutes?|hours?)\b", re.I)
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
@@ -53,7 +61,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # voice | find | follow | watch | forget | remember | reminders | remind | describe | draw | help | world
+    kind: str  # quiet | unquiet | motion | voice | find | follow | watch | forget | remember | reminders | remind | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -127,6 +135,17 @@ def normalise(text: str) -> str:
 def parse(text: str, now: dt.datetime | None = None) -> Intent:
     now = now or dt.datetime.now()
     t = normalise(text)
+    if UNQUIET.search(t):
+        return Intent("unquiet", text=t)
+    if QUIET.search(t):
+        m = QUIET_FOR.search(t)
+        n = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "half an": 0.5}.get(m.group("n").lower(), None) if m else None
+        n = n if n is not None else (float(m.group("n")) if m else 1.0)
+        hours = n if not m or m.group("unit").lower().startswith("hour") else n / 60
+        return Intent("quiet", text=t, at=hours * 3600)
+    for name, rx in MOTION.items():
+        if rx.search(t):
+            return Intent("motion", thing=name, text=t)
     for name, rx in VOICE.items():
         if rx.search(t):
             return Intent("voice", thing=name, text=t)

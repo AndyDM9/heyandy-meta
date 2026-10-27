@@ -145,7 +145,7 @@ def main() -> None:
             talking = time.monotonic() <= loop.awake_until or ears.active or getattr(andy.body, "speaking", False)
             # Never during a search (it needs the camera and a still head); never waiting on a turn either: reading a
             # frame and easing the gaze don't get in the way of anything else.
-            if not talking or andy.body.motion.mode in ("searching", "thinking") or andy.following:
+            if not talking or andy.body.motion.mode in ("searching", "thinking") or andy.following or andy.quiet():
                 return
             found = follow_face(andy.body, andy.segmenter)
             if found:

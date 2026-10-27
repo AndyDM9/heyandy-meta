@@ -40,6 +40,7 @@ class ScreenState:
         self.watching: list[str] = []  # what Andy keeps an eye on, and where it last saw each
         self.watching_map: list[dict] = []  # the same as directions, for the TV's map
         self._help_until = 0.0
+        self.quiet_text = ""  # "Quiet until 9:40", while Andy keeps quiet
         self._notice: tuple[str, float] | None = None  # a short notice ("Volume ●●●●○○○"), and until when
         self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
         self._drawing: tuple[bytes, str, str, float] | None = None  # (WebP, what was asked, where it's saved, until)
@@ -70,6 +71,10 @@ class ScreenState:
     def drawing_bytes(self) -> bytes | None:
         with self._lock:
             return self._drawing[0] if self._drawing else None
+
+    def quiet(self, text: str) -> None:
+        with self._lock:
+            self.quiet_text = text
 
     def notice(self, text: str, seconds: float = 6.0) -> None:
         """A change shown briefly, like a TV's own volume bar, then gone."""
@@ -140,6 +145,7 @@ class ScreenState:
                    "watching": list(self.watching), "map": list(self.watching_map),
                    "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None,
+                   "quiet": self.quiet_text,
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else ""}
             if self._drawing and self._clock() >= self._drawing[3]:
                 self._drawing = None

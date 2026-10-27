@@ -143,6 +143,7 @@
       </div>
       <div class="badges">
         <span class="badge" id="notice" role="status" hidden></span>
+        <span class="badge" id="quiet" hidden></span>
         <span class="badge" id="offline" hidden>Offline: working on this computer</span>
         <span class="badge" id="private"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>Pictures and voice stay on this computer</span>
         <span class="badge" id="staged" hidden>Staged scene: camera pictures go to Meta's Model API</span>
@@ -166,7 +167,7 @@
 <nav id="demo" hidden aria-label="Sample scenes"></nav>
 <div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?">
   <h1>What can I ask Andy?</h1>
-  <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”.</div>
+  <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
     <div><h3>Find things</h3><p>“Andy, where are my glasses?”</p><p>“Andy, the blue mug, next to the laptop.”</p><p>“Andy, follow the mug.” (then move it; say “stop”)</p></div>
     <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p></div>
@@ -346,6 +347,7 @@
     $("state").textContent = s.state; $("head").textContent = s.head;
     $("offline").hidden = s.online;
     $("notice").hidden = !s.notice; $("notice").textContent = s.notice || "";
+    $("quiet").hidden = !s.quiet; $("quiet").textContent = s.quiet || "";
     $("private").hidden = s.staged; $("staged").hidden = !s.staged;
     side(s); card(s); models(s.models);
     $("why").textContent = s.reason ? "Why: " + s.reason : "";

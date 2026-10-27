@@ -322,3 +322,32 @@ def test_a_voice_change_shows_briefly_on_the_tv(tmp_path):
     assert a.screen.snapshot()["notice"] == "Volume ●●●●●○○ · Speed ●●●●○○○"
     a.screen._clock = lambda: 10 ** 12  # much later
     assert a.screen.snapshot()["notice"] == ""
+
+
+def test_quiet_time_means_no_glances_and_reminders_without_searching(tmp_path):
+    a, body, clock = andy(Thing("person", 0.0, -5.0, size_px=300), Thing("keys", 20.0, 20.0), tmp_path=tmp_path)
+    a.hear("keep an eye on my keys")
+    a.hear("remind me in ten minutes to check the oven")
+    assert "keep quiet until" in a.hear("Andy, be quiet for an hour")
+    assert a.screen.snapshot()["quiet"].startswith("Quiet until")
+    body.log.clear()
+    clock.t += 11 * 60
+    a.tick()
+    assert not [e for e in body.log if e[0] in ("look", "capture")]  # no glance, no search for the person
+    assert any("check the oven" in e[1] for e in body.log if e[0] == "say")  # but the reminder was said
+    clock.t += 60 * 60
+    a.tick()
+    assert a.screen.snapshot()["quiet"] == "" and not a.quiet()
+
+
+def test_quiet_can_end_early_and_motion_is_remembered(tmp_path):
+    from heyandy_meta.companion.intents import parse
+
+    assert parse("Andy, do not disturb me for 30 minutes").at == 1800
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.hear("be quiet")
+    assert a.hear("you can talk again") == "Okay, I'm back to normal." and not a.quiet()
+    assert a.hear("move less") == "Like this?" and a.liveliness == 0.65
+    b, _, _ = andy(tmp_path=tmp_path)
+    b.load_voice()
+    assert b.liveliness == 0.65

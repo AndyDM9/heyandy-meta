@@ -90,6 +90,8 @@ class Andy:
         self.assistant = Assistant(self)
         self.voice = None  # the voice server client (speed, loudness), when Andy speaks out loud
         self._last_said = ""  # for "say that again"
+        self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
+        self.liveliness = 1.0  # "move less": how much body language
         self._stop_following = threading.Event()
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
@@ -193,6 +195,15 @@ class Andy:
                 return done
         if i.kind == "voice":
             return self.adjust_voice(i.thing)
+        if i.kind == "quiet":
+            return self.be_quiet(i.at)
+        if i.kind == "unquiet":
+            self.quiet_until = 0.0
+            self.screen.quiet("")
+            self._set_liveliness(self.liveliness)
+            return "Okay, I'm back to normal."
+        if i.kind == "motion":
+            return self.adjust_motion(i.thing)
         if i.kind == "find":
             return self.find(i.thing, text, i.hint)
         if i.kind == "follow":
@@ -374,17 +385,48 @@ class Andy:
         bar = lambda n: "●" * n + "○" * (7 - n)  # noqa: E731
         return f"Volume {bar(loud)} · Speed {bar(speed)}"
 
+    def be_quiet(self, seconds: float) -> str:
+        """No initiatives of Andy's own (glances, looking for the person, turning to faces), calm and still, until
+        then; it still answers when called, and reminds without searching the room."""
+        self.quiet_until = self.clock() + seconds
+        until = spoken_time(self.quiet_until)
+        self.screen.quiet(f"Quiet until {until}")
+        self._set_liveliness(0.3)
+        return f"Okay, I'll keep quiet until {until}. I'll still answer if you call me."
+
+    def quiet(self) -> bool:
+        return self.clock() < self.quiet_until
+
+    def adjust_motion(self, what: str) -> str:
+        new = round(max(0.3, self.liveliness - 0.35) if what == "less" else min(1.0, self.liveliness + 0.35), 2)
+        if new == self.liveliness:
+            return "I'm as still as I go." if what == "less" else "That's as lively as I get."
+        self.liveliness = new
+        self._set_liveliness(new)
+        self.save_voice()
+        return "Like this?"
+
+    def _set_liveliness(self, value: float) -> None:
+        motion = getattr(self.body, "motion", None)
+        if motion is not None:
+            motion.liveliness = value
+
     def save_voice(self) -> None:
+        path = self.places.path.parent / "voice.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        saved = {"liveliness": self.liveliness}
         if self.voice is not None:
-            path = self.places.path.parent / "voice.json"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps({"speed": self.voice.speed, "loudness": self.voice.loudness}))
+            saved.update(speed=self.voice.speed, loudness=self.voice.loudness)
+        path.write_text(json.dumps(saved))
 
     def load_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
-        if self.voice is not None and path.exists():
+        if path.exists():
             saved = json.loads(path.read_text())
-            self.voice.speed, self.voice.loudness = saved.get("speed", 1.0), saved.get("loudness", -21.0)
+            if self.voice is not None:
+                self.voice.speed, self.voice.loudness = saved.get("speed", 1.0), saved.get("loudness", -21.0)
+            self.liveliness = saved.get("liveliness", 1.0)
+            self._set_liveliness(self.liveliness)
 
     def agent(self, request: str, brief: bool = False) -> str | None:
         """Several things at once, or the morning briefing: an agent plans over all of Andy's abilities. Muse Spark
@@ -537,9 +579,13 @@ class Andy:
 
     def _tick(self) -> None:
         now = self.clock()
-        for r in self.reminders.due(now):
-            self.reminders.deliver(r, self._find_person, self.say, now)
-        if self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
+        if self.quiet_until and not self.quiet():  # quiet time is over
+            self.quiet_until = 0.0
+            self.screen.quiet("")
+            self._set_liveliness(self.liveliness)
+        for r in self.reminders.due(now):  # asked for, so said even in quiet time; but without searching the room
+            self.reminders.deliver(r, (lambda: True) if self.quiet() else self._find_person, self.say, now)
+        if not self.quiet() and self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
             self.gesture("searching")
             self.screen.doing("Working", "Glancing around the room")
