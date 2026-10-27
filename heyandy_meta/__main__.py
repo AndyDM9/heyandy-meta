@@ -111,21 +111,14 @@ def main() -> None:
             """During a conversation: SAM 3.1 finds the face and the head eases towards it."""
             from .companion.attention import follow_face
 
-            speaking = getattr(andy.body, "speaking", False)
-            talking = time.monotonic() <= loop.awake_until or ears.active or speaking
-            if not talking or andy.body.motion.mode == "searching":
+            talking = time.monotonic() <= loop.awake_until or ears.active or getattr(andy.body, "speaking", False)
+            # Never during a search (it needs the camera and a still head); never waiting on a turn either: reading a
+            # frame and easing the gaze don't get in the way of anything else.
+            if not talking or andy.body.motion.mode in ("searching", "thinking"):
                 return
-            # While Andy speaks its turn holds the lock, and that's exactly when to keep its eyes on the person:
-            # speaking moves nothing but the body language, so the camera is free.
-            if not speaking and not andy.lock.acquire(blocking=False):
-                return
-            try:
-                found = follow_face(andy.body, andy.segmenter)
-                if found:
-                    andy.person = found
-            finally:
-                if not speaking:
-                    andy.lock.release()
+            found = follow_face(andy.body, andy.segmenter)
+            if found:
+                andy.person = found
 
         def keep_eyes_on_the_person():  # about once a second
             while not stop.wait(1.0):

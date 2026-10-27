@@ -95,6 +95,20 @@ class Andy:
             self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
             return reply
 
+    def turn_to_person(self, yaw: float, pitch: float | None = None) -> None:
+        """Turn towards the person without waiting: within the head's reach the body-language loop eases the head
+        there; further round, the turn runs on its own thread. Either way the answer is being made meanwhile."""
+        pitch = pitch if pitch is not None else (self.person[1] if self.person else -5.0)
+        self.person = (yaw, pitch)
+        face = getattr(self.body, "face", None)
+        base = getattr(self.body, "_sent", (0.0, 0.0, 0.0))[2]
+        if face and abs(yaw - base) <= getattr(self.body, "head_yaw", 30.0):
+            face(yaw, pitch)
+        elif face:
+            threading.Thread(target=self.body.look, args=(yaw, pitch), kwargs={"precise": False}, daemon=True).start()
+        else:
+            self.body.look(yaw, pitch, precise=False)
+
     def face_person_to_speak(self) -> None:
         """Speak to the person, not to the thing: after pointing, hold it a moment, then turn to them."""
         if self.person is None:

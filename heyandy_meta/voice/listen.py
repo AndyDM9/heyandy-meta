@@ -13,7 +13,7 @@ class Endpointer:
     rate: int = 16000
     ratio: float = 2.5  # this many times the noise floor counts as speech
     min_speech_s: float = 0.25
-    end_silence_s: float = 0.7
+    end_silence_s: float = 0.55
     max_s: float = 15.0
     pre_roll_s: float = 0.3
     floor: float = 0.01

@@ -34,8 +34,8 @@ class VoiceLoop:
             if voice_yaw is not None:  # the voice gives the direction; keep the last seen face's height
                 before = getattr(self.andy, "person", None)
                 self.andy.person = (voice_yaw, before[1] if before else -5.0)
-            if called and voice_yaw is not None:
-                self.andy.body.look(voice_yaw, 5.0, precise=False)  # turn towards whoever spoke
+            if called and voice_yaw is not None:  # turn towards whoever spoke, while the answer is being made
+                self.andy.turn_to_person(voice_yaw)
             if called and hasattr(self.andy.body, "gesture"):
                 self.andy.body.gesture("listening")
             if rest.strip(" ,.!?"):

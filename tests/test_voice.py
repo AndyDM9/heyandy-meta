@@ -58,6 +58,9 @@ class Andy:
     def say(self, text):
         self.said.append(text)
 
+    def turn_to_person(self, yaw, pitch=None):
+        self.body.look(yaw, 5.0)
+
 
 def test_only_speech_for_andy_is_answered_and_follow_ups_need_no_name():
     t = [0.0]
