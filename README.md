@@ -34,40 +34,33 @@ trademark application.
 - **Third-party open source**, used under its licences: Pollen Robotics' Reachy Mini SDK, simulation scene and published
   camera calibration; llama.cpp; Meta's `meta-sam-parser`.
 
-**What's new here, as it's built** (progress in [docs/build-plan.md](docs/build-plan.md)):
-- **Model clients:** Muse Spark and SAM 3.1 through the Meta Model API, and Muse Glimmer locally.
-- **A hard spending cap,** because Meta's Billing "spend limit" only sends an email.
-- **SAM 3.1 masks turned into head angles,** and sightings merged across views.
-- **The search:**
-  - It sweeps four views, looks closer, and points only after a centred second look confirms the thing.
-  - The base turns for things past the head's reach.
-  - If something is out of any reach, the robot says so instead of pointing wrong.
-  - It's tested in a simulated room.
-- **Object memory (opt-in):** an idle glance notes where chosen things are, as label, direction and time, never a
-  picture. "Where are my keys?" then goes straight there.
-- **Muse Spark plans the search through tools:**
-  - The tools are recall, look (in named views, with the noun phrase it chooses for SAM 3.1), look closer, and point.
-  - Every argument is checked in code. Pointing is refused until a closer look confirms.
-  - A run is limited to 12 calls and stays under the spend cap.
-  - The model never sends angles or motor values.
-- **The TV page** (this computer only, read-only):
-  - It shows the picture the thing was confirmed in, zoomed to it, with SAM 3.1's outline drawn on.
-  - It shows Andy's words as large captions, and who answered and why: the device or the cloud.
-  - The picture stays in memory for two minutes, is never saved, and no requests are logged.
-  - Beside the picture: a timer for each find, Andy's plan step by step, "What I remember", and the sources of an
-    answer.
-  - Every text colour is at least 7:1 contrast, which the tests check.
-- **The Reachy Mini adapter,** the only module that imports Pollen's SDK: it splits a direction between the head (±55°) and a turn of the base, moves gently, and reads JPEG frames. It's tested against a stand-in robot; the real robot comes on Day 2.
-- **The companion in the room:**
-  - Andy turns to face the person: it finds "person" with SAM 3.1 and keeps nothing about who.
-  - Reminders are delivered in person: at the time, Andy turns to find you and says your own words. If nobody's there,
-    it tries again, then mentions it later.
-  - Answers come with sources from Muse Spark's web search.
-- **Says it's an AI, and a crisis protocol:**
-  - Andy says "I'm Andy, an AI robot" at the start and every three hours.
-  - Self-harm words get a fixed reply with the 988 line, before any model sees them, and Andy never counsels.
-  - See [docs/crisis-protocol.md](docs/crisis-protocol.md).
-- **Next:** voice, and the before/after evaluation.
+**What's new here,** all built during the event (the day-by-day record: [docs/build-plan.md](docs/build-plan.md) and
+[docs/research.md](docs/research.md)):
+- **On the Reachy Mini Lite:** a closed-loop adapter (the only module that imports Pollen's SDK). The head falls short and
+  sags, so it reads the pose back, corrects once, and every frame carries the measured direction; the base turns past
+  the head's reach. Body language in a 50 Hz loop: breathing, listening, thinking, moving with its own words, a
+  found-wiggle; it keeps its eyes on the person.
+- **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame), Muse Glimmer on
+  llama.cpp, Omnilingual ASR; with `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
+- **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
+  sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;
+  close names in one request ("cup" also finds the mug).
+- **Agents that plan the search with the robot's tools:** Muse Spark online, Muse Glimmer on this computer, with the
+  same checked tools (named views and numbered places, never motor values), ten looks at most, no repeat looks, and
+  Andy's words written from the tools' results, never the model's.
+- **Following:** "Andy, follow the mug": the eyes follow it as it's moved, about 2.4 frames a second.
+- **Memory:** an opt-in idle glance notes where chosen things are (label, direction, time; never a picture).
+- **Voice on this computer:** Omnilingual ASR and Kokoro, the robot's microphone array (and the voice's direction),
+  "Andy" as the wake word with its common mishearings, answers spoken sentence by sentence: the first word about a
+  second after Andy understands.
+- **Reminders delivered in person,** with Andy's questions taking the next answer.
+- **Muse Spark** for web answers with their sources (US units, only the final answer spoken) and harder conversation;
+  **Muse Image** for pictures from the person's words, shown on the TV and saved.
+- **Safety in code:** "I'm an AI" at the start and every three hours; a crisis reply with the 988 line before any model
+  sees the words ([docs/crisis-protocol.md](docs/crisis-protocol.md)); no false promises (a chat reply that claims an
+  action is replaced); speech not for Andy is dropped; a hard cap on Model API spend.
+- **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
+- **Scorecards:** a simulated one (fixed sweep, Glimmer and Spark planners, seeded rooms) and a physical one.
 
 ## Run it
 ```bash
