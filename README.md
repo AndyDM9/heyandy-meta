@@ -43,6 +43,8 @@ trademark application.
   - It shows the picture the thing was confirmed in, zoomed to it, with SAM 3.1's outline drawn on.
   - It shows Andy's words as large captions, and who answered and why: the device or the cloud.
   - The picture stays in memory for two minutes, is never saved, and no requests are logged.
+  - Beside the picture: a timer for each find, Andy's plan step by step, "What I remember", and the sources of an
+    answer.
   - Every text colour is at least 7:1 contrast, which the tests check.
 - **The Reachy Mini adapter,** the only module that imports Pollen's SDK: it splits a direction between the head (±55°) and a turn of the base, moves gently, and reads JPEG frames. It's tested against a stand-in robot; the real robot comes on Day 2.
 - **The companion in the room:**

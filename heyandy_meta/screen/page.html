@@ -19,11 +19,16 @@
   figcaption { font-size: 3vw; font-weight: 700; color: var(--accent); }
   #caption { font-size: 3.4vw; font-weight: 600; min-height: 2.6em; }
   #why { font-size: 1.6vw; color: var(--muted); }
+  #side { display: grid; gap: 1vw; align-content: start; font-size: 1.7vw; color: var(--muted); min-width: 0; }
+  #side h2 { margin: 0; font-size: 1.4vw; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  #side ol, #side ul { margin: 0; padding-left: 1.2em; display: grid; gap: 0.4vw; color: var(--text); }
+  #timer { font: 700 3.2vw/1 ui-monospace, monospace; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stage { display: grid; grid-template-columns: 1fr minmax(0, 28vw); gap: 2vw; min-height: 0; }
 </style>
 </head>
 <body>
 <header><span>Andy, a robot</span><span id="offline" hidden>Offline: working on this computer</span><span id="badge" class="badge" hidden></span></header>
-<main id="main"></main>
+<div class="stage"><main id="main"></main><aside id="side" aria-live="polite"></aside></div>
 <footer><div id="caption" aria-live="polite"></div><div id="why"></div></footer>
 <script>
   const $ = (id) => document.getElementById(id);
@@ -39,7 +44,26 @@
     const y = Math.min(Math.max((t + b) / 2 - h / 2, 0), p.height - h);
     return [x, y, w, h].map(Math.round);
   }
+  function list(tag, items) {
+    const el = document.createElement(tag);
+    for (const it of items) { const li = document.createElement("li"); li.textContent = it; el.append(li); }
+    return el;
+  }
+  function side(s) {
+    const aside = $("side");
+    aside.replaceChildren();
+    if (s.seconds !== null) {
+      const t = document.createElement("div"); t.id = "timer";
+      t.textContent = s.seconds.toFixed(1) + " s" + (s.running ? "" : " ✓");
+      aside.append(t);
+    }
+    const add = (title, el) => { const h = document.createElement("h2"); h.textContent = title; aside.append(h, el); };
+    if (s.steps && s.steps.length) add("Andy's plan", list("ol", s.steps));
+    if (s.memory) add("What I remember", list("ul", s.memory.length ? s.memory : ["Nothing yet."]));
+    if (s.sources && s.sources.length) add("Sources", list("ul", s.sources.map(x => x.title + " · " + new URL(x.url).hostname.replace(/^www\./, ""))));
+  }
   function render(s) {
+    side(s);
     $("caption").textContent = s.caption || "";
     $("offline").hidden = s.online;
     const b = $("badge");

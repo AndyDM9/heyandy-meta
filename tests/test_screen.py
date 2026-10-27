@@ -73,3 +73,25 @@ def test_served_on_this_computer_only_and_read_only():
             urllib.request.urlopen(urllib.request.Request(base + "/state.json", data=b"{}", method="POST"))
     finally:
         server.shutdown()
+
+
+def test_timer_plan_memory_and_sources():
+    clock = Clock()
+    s = ScreenState(clock)
+    s.timer_start()
+    s.step("look: right, far right")
+    clock.t += 2.4
+    s.step("look closer: place 1")
+    snap = s.snapshot()
+    assert snap["running"] and snap["seconds"] == 2.4 and snap["steps"] == ["look: right, far right", "look closer: place 1"]
+    clock.t += 1.0
+    s.timer_stop()
+    clock.t += 5.0
+    assert s.snapshot()["seconds"] == 3.4 and not s.snapshot()["running"]
+    s.remember_list(["keys: to my right, 12 minutes ago"])
+    s.answered("Open Saturday.", [("Market hours", "https://www.townmarket.org/hours")])
+    snap = s.snapshot()
+    assert snap["memory"] == ["keys: to my right, 12 minutes ago"]
+    assert snap["sources"] == [{"title": "Market hours", "url": "https://www.townmarket.org/hours"}]
+    s.clear()
+    assert s.snapshot()["steps"] == [] and s.snapshot()["seconds"] is None

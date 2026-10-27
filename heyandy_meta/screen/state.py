@@ -27,6 +27,10 @@ class ScreenState:
         self.source, self.reason = "", ""
         self.online = True
         self._picture: _Picture | None = None
+        self.sources: list[tuple[str, str]] = []  # (title, url) under an answer
+        self.steps: list[str] = []  # the plan as it happens: "look: right, far right"
+        self.memory: list[str] | None = None  # shown while "what do you remember?" is answered
+        self._timer: tuple[float, float | None] | None = None  # (started, stopped)
 
     def said(self, text: str, source: str = "", reason: str = "") -> None:
         with self._lock:
@@ -38,14 +42,40 @@ class ScreenState:
 
     def clear(self) -> None:
         with self._lock:
-            self._picture = None
+            self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
+
+    def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
+        with self._lock:
+            self.caption, self.source, self.reason, self.sources = text, source, reason, list(sources)[:3]
+
+    def step(self, line: str) -> None:
+        with self._lock:
+            self.steps = (self.steps + [line])[-6:]
+
+    def remember_list(self, lines: list[str]) -> None:
+        with self._lock:
+            self.memory = list(lines)
+
+    def timer_start(self) -> None:
+        with self._lock:
+            self._timer, self.steps = (self._clock(), None), []
+
+    def timer_stop(self) -> None:
+        with self._lock:
+            if self._timer and self._timer[1] is None:
+                self._timer = (self._timer[0], self._clock())
 
     def snapshot(self) -> dict:
         with self._lock:
             if self._picture and self._clock() >= self._picture.until:
                 self._picture = None
             out = {"caption": self.caption, "source": self.source, "reason": self.reason, "online": self.online,
-                   "picture": None}
+                   "picture": None, "sources": [{"title": a, "url": b} for a, b in self.sources],
+                   "steps": list(self.steps), "memory": self.memory, "seconds": None, "running": False}
+            if self._timer:
+                start, stop = self._timer
+                out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
+                out["running"] = stop is None
             p = self._picture
             if p:
                 f, m = p.found, p.found.mask
