@@ -98,6 +98,7 @@ def normalise(text: str) -> str:
     t = SPOKEN_AT.sub(lambda m: f"at {HOURS[m.group(1).lower()]}:{MINUTES.get((m.group(2) or 'oclock').lower(), 0):02d}", t)
     # Heard again and again for "where are my" (Omnilingual ASR, all sizes, 2026-10-27).
     t = re.sub(r"\bwears (the|my|our)\b", r"where's \1", t, flags=re.I)
+    t = re.sub(r"\buntil (minutes|hours)\b", r"in two \1", t, flags=re.I)  # "in two" heard as "until"
     return re.sub(r"\bwhere (?:am i|are i|am my|r my)\b", "where are my", t, flags=re.I)
 
 

@@ -21,6 +21,8 @@ class VoiceLoop:
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
         text = " ".join(text.split())
+        if _looping(text):
+            return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
         called = WAKE.match(text) or _soft_wake(text)
         if not text or (not called and self._clock() > self.awake_until):
             return None  # not for Andy: dropped, never shown or kept
@@ -52,6 +54,14 @@ class VoiceLoop:
                 reply = self.heard(text, yaw)
                 if reply is not None and self.on_heard:  # only what was for Andy
                     self.on_heard(text, reply)
+
+
+def _looping(text: str) -> bool:
+    words = text.lower().split()
+    if len(words) < 12:
+        return False
+    grams = [" ".join(words[i:i + 3]) for i in range(len(words) - 2)]
+    return max(grams.count(g) for g in set(grams)) >= 4 or len(set(words)) / len(words) < 0.35
 
 
 SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)

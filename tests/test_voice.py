@@ -103,3 +103,11 @@ def test_and_counts_as_andy_only_before_a_clear_request():
     assert loop.heard("and can you find the watch") == "ok" and a.heard == ["can you find the watch"]
     a2 = Andy()
     assert VoiceLoop(a2).heard("and you good morning") is None and a2.heard == []
+
+
+def test_looping_speech_to_text_is_dropped():
+    a = Andy()
+    loop = VoiceLoop(a)
+    loop.awake_until = float("inf")
+    assert loop.heard("the state of " * 12) is None and a.heard == []
+    assert loop.heard("and the remote, is it on the sofa or by the window or under the cushion") == "ok"

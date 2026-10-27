@@ -192,3 +192,27 @@ def test_a_conversation_is_remembered_for_a_while_then_forgotten(tmp_path):
     clock.t += 31 * 60
     a.hear("Hello again")
     assert a.device.history == []
+
+
+def test_andys_question_takes_the_next_answer(tmp_path):
+    a, _, clock = andy(tmp_path=tmp_path)
+    assert "What should I remind you about" in a.hear("remind me to stretch")  # no time heard
+    assert "remind you at" in a.hear("in two minutes to stretch")
+    assert [r.text for r in a.reminders.upcoming()] == ["stretch"]
+
+
+def test_until_minutes_is_in_two_minutes(tmp_path):
+    a, _, clock = andy(tmp_path=tmp_path)
+    a.hear("remind me until minutes to stretch")
+    r = a.reminders.upcoming()[0]
+    assert r.text == "stretch" and r.at - clock.t == pytest.approx(120, abs=1)
+
+
+@pytest.mark.parametrize("model_said", ["Got it. I'll remind you to stretch in two minutes.",
+                                        "I'm still keeping an eye on the cup. I will watch it for you.",
+                                        "Sure, I'll look for your keys now."])
+def test_the_chat_model_cannot_promise_what_it_cannot_do(tmp_path, model_said):
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.device.text = model_said
+    reply = a.hear("can you help me later")
+    assert "Say it to me directly" in reply and "promise" in a.screen.reason

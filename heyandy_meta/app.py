@@ -7,6 +7,7 @@ Glimmer unless it needs more thought. When the cloud is refused or unreachable, 
 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
+import re
 import threading
 import time
 from dataclasses import dataclass, field
@@ -31,6 +32,10 @@ from .robot.body import Body
 from .screen.state import ScreenState
 
 GLANCE_EVERY_S = 5 * 60
+ANSWER_WITHIN_S = 60  # how long Andy's question ("remind you about what, and when?") waits for the answer
+# A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
+CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
+                    r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
 HISTORY_TURNS, HISTORY_FORGET_S = 4, 30 * 60  # a conversation: its last few exchanges, forgotten after 30 quiet minutes
 CLOUD_TROUBLE = (BudgetExceeded, CloudUnavailable, APIError, RuntimeError)  # RuntimeError: no key set
 
@@ -66,6 +71,7 @@ class Andy:
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
+        self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
         self._last_turn = float("-inf")
 
     # --- a turn ---
@@ -90,6 +96,9 @@ class Andy:
 
     def _answer(self, text: str) -> str:
         i = parse(text, _now(self.clock))
+        if self._asked and i.kind == "chat" and self.clock() - self._asked[1] <= ANSWER_WITHIN_S:
+            i = parse(self._asked[0] + " " + text, _now(self.clock))  # the answer to Andy's question
+        self._asked = None
         if i.kind == "find":
             return self.find(i.thing, text, i.hint)
         if i.kind == "watch":
@@ -112,6 +121,7 @@ class Andy:
             return "Your reminders: " + "; ".join(f"at {spoken_time(r.at)}, {r.text}" for r in up) + "."
         if i.kind == "remind":
             if not i.text:
+                self._asked = ("remind me", self.clock())
                 return "What should I remind you about, and when?"
             r = self.reminders.add(i.text, i.at, i.daily, now=self.clock())
             return f"I'll remind you {'every day ' if r.daily else ''}at {spoken_time(r.at)}: {r.text}."
@@ -126,6 +136,10 @@ class Andy:
             return "I'm having trouble thinking just now. Could you say that again in a minute?"
         self._source, self._reason = reply.source, self.router.last.reason
         self.screen.used("Muse Spark" if reply.source == "cloud" else "Muse Glimmer", reply.source)
+        if CLAIMS.search(reply.text):
+            self._reason += "; a promise the model can't keep was replaced"
+            return ("I can't do that from a chat. Say it to me directly, like: Andy, remind me in ten minutes to "
+                    "stretch, or: Andy, where are my keys?")
         return reply.text
 
     def look_up(self, question: str) -> str:
