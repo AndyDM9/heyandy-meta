@@ -79,6 +79,13 @@ class SearchTools:
     confirmed: dict[str, Found] = field(default_factory=dict)
     pointed: Found | None = None
     auto_point: bool = True  # a confirmed closer look points at once: one model call fewer
+    max_looks: int = 10  # frames a search may take; the simulated scorecard's absent rooms took 22 without it
+
+    def __post_init__(self):
+        self._start = self.finder.looks
+
+    def _looks_left(self) -> int:
+        return self.max_looks - (self.finder.looks - self._start)
 
     def specs(self) -> list[dict]:
         """The tools to offer: recall only when something is being watched."""
@@ -114,7 +121,10 @@ class SearchTools:
             return "refused: the object must be a short plain noun phrase"
         if not isinstance(views, list) or not views or any(v not in VIEWS for v in views):
             return f"refused: views must be chosen from {list(VIEWS)}"
-        found = self.finder.scan(obj, [VIEWS[v] for v in dict.fromkeys(views)])
+        if self._looks_left() < 1:
+            return "refused: you've looked enough for one search. Stop, and tell the person you couldn't find it."
+        views = list(dict.fromkeys(views))[: self._looks_left()]
+        found = self.finder.scan(obj, [VIEWS[v] for v in views])
         if not found:
             return f"No {obj} seen in: {', '.join(views)}."
         lines = []
@@ -130,6 +140,8 @@ class SearchTools:
             return "refused: the object must be a short plain noun phrase"
         if place not in self.candidates:
             return f"refused: no place {place!r}; places so far: {list(self.candidates) or 'none'}"
+        if self._looks_left() < 1:
+            return "refused: you've looked enough for one search. Stop, and tell the person you couldn't find it."
         found = self.finder.confirm(obj, *self.candidates[place])
         if found is None:
             return f"Looked closer at place {place}: {self.finder.why or 'not there'}."
@@ -148,6 +160,8 @@ class SearchTools:
             return f"refused: give 2 to 4 places from {list(self.candidates) or 'none'}"
         if self.judge is None:
             return "I can't compare pictures right now; look_closer at the likeliest place instead."
+        if self._looks_left() < 1:
+            return "refused: you've looked enough for one search. Stop, and tell the person you couldn't find it."
         seen, notes = [], []
         for p in dict.fromkeys(places):
             found = self.finder.confirm(obj, *self.candidates[p])

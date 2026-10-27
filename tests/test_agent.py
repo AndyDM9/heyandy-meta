@@ -118,3 +118,12 @@ def test_recall_is_offered_only_when_something_is_watched(tmp_path):
     assert "recall" not in [t["function"]["name"] for t in tools.specs()]
     places.watch("keys")
     assert "recall" in [t["function"]["name"] for t in tools.specs()]
+
+
+def test_a_search_stops_after_ten_looks():
+    tools, body = setup()  # nothing in the room
+    every = ["far left", "left", "right", "far right", "behind left", "behind right", "floor in front"]
+    spark = ScriptedSpark(*[[("look", {"object": "keys", "views": every})]] * 3, "I couldn't find them.")
+    plan = plan_search(spark, "find my keys", tools)
+    assert sum(1 for e in body.log if e[0] == "capture") == 10
+    assert plan.steps[-1][2].startswith("refused: you've looked enough")
