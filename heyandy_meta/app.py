@@ -277,7 +277,7 @@ class Andy:
                 continue
             finally:
                 self.finder.on_look = on_look
-            for tool, args, result in plan.steps:
+            for tool, _args, result in plan.steps:
                 self.screen.step(f"{tool}: {result}")
             found, words = tools.pointed, ""  # found: Andy's words come from the tools, never the model's guesses
             self.screen.used(("Muse Spark" if paid else "Muse Glimmer") + " (plans)", source, plan.calls)

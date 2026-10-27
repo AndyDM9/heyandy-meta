@@ -87,7 +87,7 @@ def test_recall_goes_to_the_remembered_place_first(tmp_path):
         [("look_closer", {"object": "keys", "place": "remembered"})],
         [("point", {"place": "remembered"})],
         "On the right, where you left them.")
-    plan = plan_search(spark, "where are my keys", tools)
+    plan_search(spark, "where are my keys", tools)
     assert sum(1 for e in body.log if e[0] == "capture") == 1  # one look, no sweep
 
 

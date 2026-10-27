@@ -10,10 +10,17 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "numpy"]  # numpy: the voice code, which on the robot comes with the robot extra
+dev = ["pytest", "numpy", "ruff"]  # numpy: the voice code (on the robot it comes with the robot extra)
 robot = [
     "reachy-mini==1.12.0rc1",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["F", "E9", "B"]  # real mistakes: undefined names, unused imports and variables, likely bugs
+ignore = ["B008", "B905"]  # frozen dataclass defaults are safe; zip lengths are equal by construction

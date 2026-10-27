@@ -28,7 +28,7 @@ class VoiceLoop:
         text = " ".join(text.split())
         if _looping(text):
             return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
-        called = WAKE.match(text) or _soft_wake(text) or _last(LATER.finditer(text))
+        called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
         if not text or (not called and self._clock() > self.awake_until):
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
@@ -84,13 +84,6 @@ def _looping(text: str) -> bool:
         return False
     grams = [" ".join(words[i:i + 3]) for i in range(len(words) - 2)]
     return max(grams.count(g) for g in set(grams)) >= 4 or len(set(words)) / len(words) < 0.35
-
-
-def _last(matches):
-    m = None
-    for m in matches:
-        pass
-    return m
 
 
 SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)
