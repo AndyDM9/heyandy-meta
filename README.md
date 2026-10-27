@@ -17,9 +17,11 @@ trademark application.
    second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
 7. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
    saved to your Pictures folder to print or share. "Make it sunset" changes it.
-8. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+8. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
+   at the table) and Glimmer says what it sees, on the computer beside the robot.
+9. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-9. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+10. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
    the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
    steps.
 

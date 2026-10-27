@@ -97,6 +97,11 @@ class SimJudge:
                 return t
         return None
 
+    def describe(self, frame: Frame, where: str = "", box=None) -> str | None:
+        self.calls += 1
+        seen = [t.label for t in self.room.things if self.room.where_in_frame(t, frame.yaw, frame.pitch)]
+        return ("I see " + " and ".join(f"a {x}" for x in seen) + ".") if seen else "I don't see anything in particular."
+
     def real(self, frame: Frame, mask: Mask) -> bool:
         self.calls += 1
         t = self._thing(frame, mask)

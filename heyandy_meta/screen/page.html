@@ -168,7 +168,7 @@
   <div class="cols">
     <div><h3>Find things</h3><p>“Andy, where are my glasses?”</p><p>“Andy, the blue mug, next to the laptop.”</p><p>“Andy, follow the mug.” (then move it; say “stop”)</p></div>
     <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p></div>
-    <div><h3>Talk, look up, make</h3><p>“Andy, how are you?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
+    <div><h3>Talk, look, make</h3><p>“Andy, what am I holding?” · “What's on the table?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
 </div></div>
 <script>
@@ -176,7 +176,7 @@
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   const svgNS = "http://www.w3.org/2000/svg";
   const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
-               "“Andy, draw me a picture of a cat in a sunny garden.”",
+               "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”",
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).

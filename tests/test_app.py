@@ -266,3 +266,19 @@ def test_a_staged_scene_sends_the_finders_frames_to_the_api_and_says_so(tmp_path
     assert api.calls > 0 and a.segmenter is local  # only the finder; the glance and the face tracker stay local
     snap = a.screen.snapshot()
     assert snap["staged"] is True and {m["name"]: m["where"] for m in snap["models"]}["SAM 3.1"] == "cloud"
+
+
+@pytest.mark.parametrize("said, place", [("Andy, what am I holding?", ""), ("what's on the table?", "table"),
+                                         ("what is this", ""), ("what do you see", "")])
+def test_what_am_i_holding_is_a_request_to_look_and_tell(said, place):
+    from heyandy_meta.companion.intents import parse
+
+    i = parse(said)
+    assert (i.kind, i.thing) == ("describe", place)
+
+
+def test_andy_looks_and_says_what_it_sees(tmp_path):
+    a, body, _ = andy(Thing("mug", 0.0, 28.0), tmp_path=tmp_path)
+    assert a.hear("what's on the table?").endswith("I see a mug.")
+    assert ("look", 0.0, 28.0) in body.log  # it looked down at the table
+    assert {m["name"]: m["where"] for m in a.screen.snapshot()["models"]}["Muse Glimmer (looks)"] == "device"

@@ -21,6 +21,10 @@ SYSTEM = ("Reasoning effort: low. You look at pictures from a small home robot's
           "one number, nothing else.")
 
 
+DESCRIBE = ("Say in one or two short spoken sentences what you see{where}. Plain words, no lists. If it's a medicine "
+            "or a document, say only what kind of thing it is, never what to do with it.")
+
+
 class NotLocal(ValueError):
     pass
 
@@ -38,6 +42,15 @@ def crop(jpeg: bytes, box: tuple[int, int, int, int], context: float = 3.0, min_
         part = part.resize((max_side, max_side))
     out = io.BytesIO()
     part.save(out, "JPEG", quality=85)
+    return out.getvalue()
+
+
+def shrink(jpeg: bytes, max_side: int = 1024) -> bytes:
+    """A whole frame, smaller: Glimmer's encoder doesn't need 1080p to say what's on a table, and it's much faster."""
+    img = Image.open(io.BytesIO(jpeg)).convert("RGB")
+    img.thumbnail((max_side, max_side))
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=85)
     return out.getvalue()
 
 
@@ -86,6 +99,11 @@ class GlimmerJudge:
         picture = "PICTURE" in words and "REAL" not in words
         self.why = "a picture on a screen or in a photo" if picture else ""
         return not picture
+
+    def describe(self, frame: Frame, where: str = "", box=None) -> str | None:
+        """What's in view ("in the person's hands", "on the table"), in a sentence or two; None if Glimmer is away."""
+        image = crop(frame.image, box, context=1.6, min_side=448, max_side=1024) if box else shrink(frame.image)
+        return self._ask([{"type": "text", "text": DESCRIBE.format(where=f" {where}" if where else "")}, _image(image)])
 
     def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None:
         """The index of the one that fits the description, or None if none does (or Glimmer can't be reached)."""

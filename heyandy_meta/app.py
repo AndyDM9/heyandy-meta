@@ -27,7 +27,7 @@ from .companion.safety import DISCLOSURE, Disclosure, respond
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
 from .memory.places import Places
-from .models.common import Chat, Reply
+from .models.common import Chat, Mask, Reply
 from .models.retry import CloudUnavailable
 from .router import Router
 from .robot.body import Body
@@ -203,6 +203,8 @@ class Andy:
                 return "What should I remind you about, and when?"
             r = self.reminders.add(i.text, i.at, i.daily, now=self.clock())
             return f"I'll remind you {'every day ' if r.daily else ''}at {spoken_time(r.at)}: {r.text}."
+        if i.kind == "describe":
+            return self.describe(i.thing, holding="hold" in text.lower() or bool(re.search(r"\bthis\b", text, re.I)))
         if i.kind == "draw":
             return self.draw(i.text)
         if self._drawing and time.time() - self._drawing.made < REFINE_WITHIN_S and REFINE.search(text):
@@ -375,6 +377,42 @@ class Andy:
         self.screen.drawn(drawing.image, drawing.prompt, f"Saved in Pictures, Andy, as {path.name}")
         return ("Here it is, on the screen. I've changed it." if refine else "Here's your picture, on the screen.") + \
             " I've saved it in your Pictures folder. You can ask me to change it."
+
+    def describe(self, place: str = "", holding: bool = False) -> str:
+        """"What am I holding?", "what's on the table?": look, then Glimmer says what it sees, on this computer."""
+        judge = getattr(self.judge, "describe", None)
+        if judge is None:
+            return "I can't describe things right now."
+        self.say("Let me see.")
+        self.screen.doing("Working", "Looking")
+        box, where = None, f"on the {place}" if place else ""
+        try:
+            self.gesture("searching")
+            if holding:  # face the person, then look a little lower, at their hands
+                yaw, pitch = self.person or (getattr(self.body, "yaw", 0.0), 0.0)
+                self.body.look(yaw, min(pitch + 18.0, 30.0))
+                frame = self.body.capture()
+                hands = [m for m in self.segmenter.find(frame, "hand") if m.score is None or m.score >= 0.4]
+                if hands:  # around both hands: what's held is between them
+                    box = (min(m.box[0] for m in hands), min(m.box[1] for m in hands),
+                           max(m.box[2] for m in hands), max(m.box[3] for m in hands))
+                where = "in the person's hands"
+            else:
+                if place:  # tables and the floor are below eye level
+                    self.body.look(getattr(self.body, "yaw", 0.0), 28.0)
+                frame = self.body.capture()
+            seen = judge(frame, where, box)
+        finally:
+            self.gesture("idle")
+            self.screen.doing("Waiting")
+        self.screen.used("SAM 3.1", "device", 1 if holding else 0)
+        self.screen.used("Muse Glimmer (looks)", "device")
+        self._source, self._reason = "device", "Glimmer looked, on this computer"
+        if box and frame.image:
+            self.screen.found(Found("what you're holding", self.body.yaw, self.body.pitch, 1.0, frame,
+                                    Mask("what you're holding", box, None, ((box[0] + box[2]) / 2, (box[1] + box[3]) / 2))),
+                              seen or "")
+        return seen or "I couldn't get a good look. Could you hold it a little closer to me?"
 
     def stop_following(self) -> None:
         self._stop_following.set()

@@ -332,3 +332,13 @@ about $0.02 a run; results in `evals/results/smoke-model-api-*.json`):
   use US units: "mostly sunny with a high near 84 degrees Fahrenheit ... according to forecast.weather.gov", 5 to 9 s,
   so Andy says "Let me look that up" first. Not every answer comes with a citation.
 - **SAM 3.1 through the API** takes a base64 data URL (open since day one): the drawn mug at 0.89, 1.4 to 3.8 s.
+
+## 14. Looking and telling, and the memory map (2026-10-27, night)
+
+- **"What's on the desk?"** on the robot: "On the desk there is a white keyboard and a phone resting on some papers. A
+  mug and a monitor are up behind it." Glimmer on this computer; 20.7 s with the full 1080p frame, **12.2 to 12.6 s**
+  with the frame shrunk to 1024 px first (Andy says "Let me see" at once). "What am I holding?" faces the person, looks
+  lower, and crops around the hands SAM 3.1 finds.
+- **The TV's memory map:** watched things at the direction they were last seen, nearer when lower, fading with age.
+- **Muse Spark rescored after the tool fixes** (no repeat looks; compare points): TV pictures 14 -> 20/20, behind
+  18 -> 20/20, look-alikes 12 -> 16/20 (one wrong point), model time 3 to 9 s a search.

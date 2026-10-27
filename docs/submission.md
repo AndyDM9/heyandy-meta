@@ -32,6 +32,8 @@ the house.
   were last seen: a label, a direction and a time, never a picture. "What do you remember?" puts it on the TV.
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it in your
   own words. If you're out, it tries again and tells you later.
+- **"Andy, what am I holding?" / "What's on the table?"** Andy looks at your hands (found with SAM 3.1) or down at
+  the table, and Glimmer says what it sees, all on the computer beside the robot.
 - **"Andy, draw me a lighthouse at dawn."** Muse Image paints it from the person's words; it fills the TV and is
   saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing

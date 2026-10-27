@@ -140,3 +140,12 @@ def test_compare_without_a_judge_says_so():
     tools.judge = None
     assert "can't compare" in tools.call("compare", {"object": "mug", "description": "blue",
                                                     "places": list(tools.candidates)})
+
+
+def test_describe_asks_glimmer_about_the_view_or_a_crop():
+    g = Glimmer("A blue mug with a handle.", "A laptop and a mug.")
+    judge = GlimmerJudge(client=g)
+    assert judge.describe(FRAME, "in the person's hands", MUG.box) == "A blue mug with a handle."
+    assert "in the person's hands" in g.requests[0]["messages"][1]["content"][0]["text"]
+    assert judge.describe(FRAME, "on the table") == "A laptop and a mug."
+    assert "never what to do with it" in g.requests[1]["messages"][1]["content"][0]["text"]
