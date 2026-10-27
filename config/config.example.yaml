@@ -1,0 +1,17 @@
+# Copy to config/config.yaml. No secrets here; set MODEL_API_KEY in your environment.
+local_model:
+  backend: llamacpp        # llamacpp | ollama, both OpenAI-compatible
+  model: "muse-glimmer-30B"   # llama-server -a alias; Muse Glimmer 30B Q4_K_M on GPU 0
+  endpoint: http://127.0.0.1:8080/v1   # Ollama: http://127.0.0.1:11434/v1
+cloud_model:
+  model: muse-spark-1.3    # Standard tier only; never the -contributor models (Meta may train on their inputs)
+  base_url: https://api.meta.ai/v1
+  api_key_env: MODEL_API_KEY
+vision:
+  model: sam-3.1           # through the Model API; open weights on GPU 1 when offline
+  mask_encoding: one_bit
+router:
+  long_chars: 400          # longer turns go to the cloud when online
+budget:
+  cap_usd: 140             # hard cap below the $150 credits; paid calls need HEYANDY_PAID_CALLS=1
+  ledger: logs/spend.jsonl

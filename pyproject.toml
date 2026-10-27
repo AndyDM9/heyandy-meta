@@ -1,0 +1,15 @@
+[project]
+name = "heyandy-meta"
+version = "0.0.1"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    "openai>=1.60",               # the Meta Model API and local llama.cpp/Ollama are OpenAI-compatible
+    "meta-sam-parser==0.1.0",     # Meta's SAM 3.1 output parser (SAM License)
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
