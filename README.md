@@ -15,9 +15,11 @@ trademark application.
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
 6. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
    second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
-7. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+7. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
+   saved to your Pictures folder to print or share. "Make it sunset" changes it.
+8. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-8. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+9. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
    the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
    steps.
 

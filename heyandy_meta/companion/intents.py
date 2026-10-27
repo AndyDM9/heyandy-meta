@@ -13,6 +13,12 @@ THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
 FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced)\s+"
                   + THING
                   + r"(?:\s+(?:is|are|went|go|gone))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
+DRAW = re.compile(r"\b(?:draw|paint|sketch|make|create)\s+(?:me\s+|us\s+)?(?:a\s+|an\s+)?"
+                  r"(?:(?:picture|drawing|painting|sketch|image)\s+of\s+)?(?P<what>.{3,200}?)[.!?]*$", re.I)
+DRAW_START = re.compile(r"\b(?:draw|paint|sketch)\b|\b(?:make|create)\s+(?:me\s+|us\s+)?(?:a\s+)?"
+                        r"(?:picture|drawing|painting|image)\b", re.I)
+REFINE = re.compile(r"^\W*(?:(?:now|and|ok|okay)\s+)?(?:make (?:it|him|her|them|the)|add|change|turn (?:it|the)|put|give "
+                    r"(?:it|him|her)|without|remove|more|less)\b", re.I)
 FOLLOW = re.compile(r"\b(?:follow|track)\s+" + THING + r"(?:\s+with your eyes)?(?:\?|$|[,.!]| please)", re.I)
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
@@ -34,7 +40,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # find | follow | watch | forget | remember | reminders | remind | help | world | chat
+    kind: str  # find | follow | watch | forget | remember | reminders | remind | draw | help | world | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
     at: float = 0.0  # a reminder's time, epoch seconds
@@ -124,6 +130,10 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())
                     if w not in FILLER]
             return Intent(kind, thing=snap(thing.strip()), text=t, hint=kind == "find" and len(rest) >= 2)
+    if DRAW_START.search(t):
+        m = DRAW.search(t[DRAW_START.search(t).start():])
+        if m:
+            return Intent("draw", text=m.group("what").strip())
     if HELP.search(t):
         return Intent("help", text=t)
     if WORLD.search(t):

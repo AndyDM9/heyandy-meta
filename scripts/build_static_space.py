@@ -46,6 +46,7 @@ def main() -> None:
     readme = readme.replace("sdk: docker\napp_port: 7860\n", "sdk: static\napp_file: index.html\n")
     (OUT / "README.md").write_text(readme)
     shutil.copy(ROOT / "LICENSE", OUT / "LICENSE")
+    shutil.copy(ROOT / "docs" / "images" / "sample-drawing.webp", OUT / "drawing.webp")  # the "A picture" scene
     for f in OUT.rglob("*"):
         if f.is_file() and f.suffix in (".html", ".json", ".md") and KEYS.search(f.read_text(errors="ignore")):
             raise SystemExit(f"something that looks like a key is in {f}; stopping")

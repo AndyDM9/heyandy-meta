@@ -5,7 +5,7 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: idle, finding, found, answer, memory, help.
+Scenes: idle, finding, found, answer, drawing, memory, help.
 """
 import argparse
 import functools
@@ -24,7 +24,8 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("idle", "finding", "found", "answer", "memory", "help")
+SCENES = ("idle", "finding", "found", "answer", "drawing", "memory", "help")
+SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 
 
 @functools.lru_cache(maxsize=1)
@@ -86,6 +87,14 @@ def show(state: ScreenState, scene: str) -> None:
         state.doing("Speaking", "Looking at you")
         state.used("Omnilingual ASR (hearing)", "device")
         state.used("Muse Spark + web search", "cloud")
+    elif scene == "drawing":
+        state.drawn(SAMPLE_DRAWING.read_bytes(), "a lighthouse at dawn, in soft watercolor",
+                    "Saved in Pictures, Andy, as andy-2026-10-27-191724.webp")
+        state.said("Here's your picture, on the screen. I've saved it in your Pictures folder.", "cloud",
+                   "a picture from your words (Muse Image)")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
+        state.used("Muse Image", "cloud")
     elif scene == "memory":
         state.remember_list(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right"])
         state.said("I'm keeping an eye on your keys and your glasses. It's on the screen.", "device")

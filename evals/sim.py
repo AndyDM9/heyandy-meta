@@ -7,6 +7,7 @@ computer to plan every search, exactly as on the robot.
 
     uv run python -m evals.sim --trials 100                      # the fixed sweep
     uv run python -m evals.sim --policy glimmer --trials 20      # Glimmer plans (needs heyandy-glimmer running)
+    uv run python -m evals.sim --policy spark --trials 20        # Muse Spark plans (Model API; about $0.5, capped)
 
 Scenarios:
   front      one thing somewhere in front (within 55 degrees), sometimes low on the table or floor
@@ -159,7 +160,10 @@ def run(scenario: str, seed: int, policy: str, client=None) -> Trial:
 
         client.chat.completions.create = timed
         try:
-            plan = plan_search(client, request, tools, model="muse-glimmer-30B", paid=False)
+            if policy == "spark":
+                plan = plan_search(client, request, tools)  # Muse Spark 1.3 through the Model API, under the cap
+            else:
+                plan = plan_search(client, request, tools, model="muse-glimmer-30B", paid=False)
         finally:
             client.chat.completions.create = create
         pointed = tools.pointed
@@ -194,12 +198,18 @@ def summary(trials: list[Trial]) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--policy", choices=["fixed", "glimmer"], default="fixed")
+    ap.add_argument("--policy", choices=["fixed", "glimmer", "spark"], default="fixed")
     ap.add_argument("--trials", type=int, default=30)
     ap.add_argument("--scenarios", default=",".join(SCENARIOS))
     ap.add_argument("--out", default="evals/results")
     args = ap.parse_args()
     client = None
+    if args.policy == "spark":
+        import os
+
+        from openai import OpenAI
+
+        client = OpenAI(base_url="https://api.meta.ai/v1", api_key=os.environ["MODEL_API_KEY"])
     if args.policy == "glimmer":
         from openai import OpenAI
 

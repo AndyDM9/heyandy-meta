@@ -48,6 +48,8 @@ def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes:
                 if scenes:
                     snap["demo"] = list(scenes)
                 self._send(200, "application/json", json.dumps(snap).encode())
+            elif url.path == "/drawing.webp" and state.drawing_bytes():
+                self._send(200, "image/webp", state.drawing_bytes())
             elif url.path.startswith("/fonts/") and url.path[7:] in FONTS:  # served here: the TV asks nobody else
                 self._send(200, FONTS[url.path[7:]], files(__package__).joinpath("fonts", url.path[7:]).read_bytes(),
                            cache="max-age=86400")

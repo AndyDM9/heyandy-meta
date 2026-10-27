@@ -32,6 +32,8 @@ the house.
   were last seen: a label, a direction and a time, never a picture. "What do you remember?" puts it on the TV.
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it in your
   own words. If you're out, it tries again and tells you later.
+- **"Andy, draw me a lighthouse at dawn."** Muse Image paints it from the person's words; it fills the TV and is
+  saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
   the links on the TV. **Conversation** follows on without repeating its name.
 - **It's never frozen:** it breathes, its antennas listen and think, its head moves with its words, and it keeps its
@@ -45,6 +47,7 @@ the house.
 | **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
 | **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language |
 | **Muse Spark 1.3** (Model API) | The cloud, **words only** | Plans hinted searches when online; web answers with sources; harder conversation |
+| **Muse Image 1.0** (Model API) | The cloud, **words only** | Pictures from the person's words, refined over turns |
 | *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice; Meta has no open text-to-speech model |
 
 **Pictures and voice from a home never leave it.** Meta can't turn off data retention for hackathon credits (Meta's

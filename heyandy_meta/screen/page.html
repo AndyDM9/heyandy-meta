@@ -66,9 +66,10 @@
   .side li { font-size: 1.6rem; font-weight: 650; }
   .side li span { display: block; font-size: 1.3rem; font-weight: 500; color: var(--muted); }
 
-  #card { position: relative; display: grid; grid-template-rows: auto 1fr auto; min-height: 0; overflow: hidden; }
+  #card { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; overflow: hidden; }
   #card h1 { margin: 0.35rem 0 1rem; font-size: 3.3rem; font-weight: 750; line-height: 1.12; }
-  #body { min-height: 0; display: grid; align-content: start; }
+  #body { min-height: 0; display: grid; align-content: start; overflow: hidden; }
+  #body:has(.drawing) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.45fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   figure { margin: 0; min-height: 0; }
   figure svg { width: 100%; height: auto; max-height: 30rem; border-radius: 1.4rem; display: block; }
@@ -78,6 +79,9 @@
   .steps li::marker { color: var(--accent); font-weight: 750; }
   .answer { font-size: 2.4rem; font-weight: 650; line-height: 1.25; }
   .sources { margin-top: 1.4rem; display: grid; gap: 0.5rem; font-size: 1.4rem; color: var(--muted); }
+  .drawing { display: grid; gap: 0.8rem; justify-items: start; min-height: 0; height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
+  .drawing img { max-width: 100%; height: 100%; object-fit: contain; object-position: left top; border-radius: 1.4rem; display: block; min-height: 0; }
+  .drawing small { font-size: 1.3rem; color: var(--muted); }
   .try { align-self: center; font-size: 3.4rem; font-weight: 650; line-height: 1.2; }
   .try small { display: block; margin-top: 1.2rem; font-size: 1.5rem; font-weight: 500; color: var(--muted); }
   .does { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
@@ -152,7 +156,7 @@
   <div class="cols">
     <div><h3>Find things</h3><p>“Andy, where are my glasses?”</p><p>“Andy, the blue mug, next to the laptop.”</p><p>“Andy, follow the mug.” (then move it; say “stop”)</p></div>
     <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p></div>
-    <div><h3>Talk and look up</h3><p>“Andy, how are you?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, forget my keys.”</p></div>
+    <div><h3>Talk, look up, make</h3><p>“Andy, how are you?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
 </div></div>
 <script>
@@ -160,10 +164,12 @@
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   const svgNS = "http://www.w3.org/2000/svg";
   const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
+               "“Andy, draw me a picture of a cat in a sunny garden.”",
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", answer: "An answer", memory: "Memory", help: "What can I ask?" };
+  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", answer: "An answer", drawing: "A picture",
+                  memory: "Memory", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   function demoBar() {
@@ -230,7 +236,18 @@
   function card(s) {
     const body = $("body");
     let kicker, title = "";
-    if (s.picture) {
+    if (s.drawing) {
+      kicker = "A picture for you"; title = s.drawing.prompt[0].toUpperCase() + s.drawing.prompt.slice(1);
+      const key = "drawing:" + s.drawing.v;
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const box = el("div", null, "drawing"), img = el("img");
+        img.src = (window.HEYANDY_STATIC ? "drawing.webp" : "/drawing.webp") + "?v=" + s.drawing.v;
+        img.alt = "A picture of " + s.drawing.prompt;
+        box.append(img, el("small", s.drawing.saved + " · Made by Muse Image from your words only"));
+        body.replaceChildren(box);
+      }
+    } else if (s.picture) {
       kicker = "Found"; title = s.picture.words;
       const key = s.picture.src.length + ":" + s.picture.box.join(",");
       if (key !== pictureKey) {

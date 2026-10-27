@@ -11,6 +11,7 @@ from ..finder.search import Found
 
 PICTURE_SECONDS = 120
 HELP_SECONDS = 60
+DRAWING_SECONDS = 10 * 60
 
 
 @dataclass
@@ -39,6 +40,8 @@ class ScreenState:
         self.watching: list[str] = []  # what Andy keeps an eye on, and where it last saw each
         self._help_until = 0.0
         self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
+        self._drawing: tuple[bytes, str, str, float] | None = None  # (WebP, what was asked, where it's saved, until)
+        self.drawings = 0  # a version for the page, so it fetches each new picture once
 
     def doing(self, state: str, head: str = "") -> None:
         with self._lock:
@@ -55,6 +58,16 @@ class ScreenState:
     def keeping(self, lines: list[str]) -> None:
         with self._lock:
             self.watching = list(lines)
+
+    def drawn(self, image: bytes, prompt: str, saved: str) -> None:
+        with self._lock:
+            self._picture, self.sources, self.steps, self.memory, self._timer, self.looking_for = None, [], [], None, None, ""
+            self._drawing = (image, prompt, saved, self._clock() + DRAWING_SECONDS)
+            self.drawings += 1
+
+    def drawing_bytes(self) -> bytes | None:
+        with self._lock:
+            return self._drawing[0] if self._drawing else None
 
     def show_help(self) -> None:
         with self._lock:
@@ -84,7 +97,7 @@ class ScreenState:
     def clear(self) -> None:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
-            self.looking_for, self._help_until = "", 0.0
+            self.looking_for, self._help_until, self._drawing = "", 0.0, None
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
@@ -118,7 +131,11 @@ class ScreenState:
                    "state": self.state, "head": self.head, "looking_for": self.looking_for,
                    "next": {"text": self.next_reminder[0], "at": self.next_reminder[1]} if self.next_reminder else None,
                    "watching": list(self.watching), "help": self._clock() < self._help_until,
-                   "staged": self.staged}
+                   "staged": self.staged, "drawing": None}
+            if self._drawing and self._clock() >= self._drawing[3]:
+                self._drawing = None
+            if self._drawing:
+                out["drawing"] = {"v": self.drawings, "prompt": self._drawing[1], "saved": self._drawing[2]}
             if self._timer:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)

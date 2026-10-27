@@ -19,8 +19,9 @@ from .agent.tools import SearchTools, side
 from .budget import Budget, BudgetExceeded
 from .companion import answers
 from .companion.attention import face_person
+from .companion import pictures
 from .companion.follow import follow
-from .companion.intents import parse
+from .companion.intents import REFINE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import DISCLOSURE, Disclosure, respond
 from .finder.search import Finder, Found, Segmenter
@@ -35,7 +36,8 @@ from .screen.state import ScreenState
 GLANCE_EVERY_S = 5 * 60
 HONEST = ("I can't do that from a chat. Say it to me directly, like: Andy, remind me in ten minutes to stretch, or: "
           "Andy, where are my keys?")
-ANSWER_WITHIN_S = 60  # how long Andy's question ("remind you about what, and when?") waits for the answer
+ANSWER_WITHIN_S = 60
+REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten minutes  # how long Andy's question ("remind you about what, and when?") waits for the answer
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
                     r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
@@ -80,6 +82,7 @@ class Andy:
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
         self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
         self.following = False
+        self._drawing = None  # the last picture Muse Image made, to refine
         self._stop_following = threading.Event()
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
@@ -200,6 +203,10 @@ class Andy:
                 return "What should I remind you about, and when?"
             r = self.reminders.add(i.text, i.at, i.daily, now=self.clock())
             return f"I'll remind you {'every day ' if r.daily else ''}at {spoken_time(r.at)}: {r.text}."
+        if i.kind == "draw":
+            return self.draw(i.text)
+        if self._drawing and time.time() - self._drawing.made < REFINE_WITHIN_S and REFINE.search(text):
+            return self.draw(text, refine=True)
         if i.kind == "help":
             self.screen.show_help()
             return ("I can find things and point at them, keep an eye on things, remind you, and look things up. "
@@ -346,6 +353,28 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def draw(self, what: str, refine: bool = False) -> str:
+        """A picture from the person's words, with Muse Image (words only leave the house); shown and saved."""
+        if not self.online or self.spark is None:
+            self._source, self._reason = "device", "pictures need the Model API"
+            return "I can only make pictures when I'm connected."
+        self.say("Let me draw that. It takes a little while." if not refine else "Let me change it.")
+        self.screen.doing("Working", "Drawing")
+        try:
+            drawing = pictures.draw(self.spark, what, self._drawing if refine else None, budget=self.budget)
+        except (*CLOUD_TROUBLE, pictures.NoPicture):
+            self._source, self._reason = "device", "the picture didn't come back"
+            return "I couldn't make that picture just now. Please try again in a little while."
+        finally:
+            self.screen.doing("Waiting")
+        self._drawing = drawing
+        path = pictures.save(drawing)
+        self._source, self._reason = "cloud", "a picture from your words (Muse Image)"
+        self.screen.used("Muse Image", "cloud")
+        self.screen.drawn(drawing.image, drawing.prompt, f"Saved in Pictures, Andy, as {path.name}")
+        return ("Here it is, on the screen. I've changed it." if refine else "Here's your picture, on the screen.") + \
+            " I've saved it in your Pictures folder. You can ask me to change it."
 
     def stop_following(self) -> None:
         self._stop_following.set()

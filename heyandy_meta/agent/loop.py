@@ -31,12 +31,12 @@ def plan_search(client, request: str, tools: SearchTools, model: str = "muse-spa
     system = SYSTEM if paid else "Reasoning effort: low. " + SYSTEM
     messages = [{"role": "system", "content": system}, {"role": "user", "content": request}]
     plan = Plan(reply="")
+    # Muse Spark reasons at length by default: "low" keeps a plan step to a few seconds, with room to answer.
+    extra = {"reasoning_effort": "low"} if paid else {}
     while True:
         if paid:
             budget.check(chat_cost(model, sum(len(str(m.get("content") or "")) for m in messages) // 2 + 500,
                                    max_tokens))
-        # Muse Spark reasons at length by default: "low" keeps a plan step to a few seconds, with room to answer.
-        extra = {"reasoning_effort": "low"} if paid else {}
         out = with_retry(lambda: client.chat.completions.create(model=model, messages=messages, tools=tools.specs(),
                                                                 max_tokens=max_tokens, **extra), sleep=sleep)
         usage = getattr(out, "usage", None)
