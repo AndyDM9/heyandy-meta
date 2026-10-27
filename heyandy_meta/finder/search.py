@@ -43,27 +43,33 @@ class Finder:
     check: Callable[[Frame, Mask], bool] | None = None  # optional second opinion, e.g. "is this on a screen?"
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
+        """The fixed search: the remembered place, then a sweep, then up to two closer looks."""
         self.looks = 0
         if last_seen is not None:
-            found = self._confirm(label, *last_seen)
+            found = self.confirm(label, *last_seen)
             if found:
                 found.remembered = True
-                return self._point(found)
+                return self.point(found)
+        places = self.scan(label, self.views)
+        for place in places[: self.closer_looks]:
+            found = self.confirm(label, place.yaw, place.pitch)
+            if found:
+                return self.point(found)
+        return None
+
+    def scan(self, label: str, views) -> list[Sighting]:
+        """Look in each view and return the places where the thing might be, likeliest first."""
         sightings = []
-        for yaw, pitch in self.views:
+        for yaw, pitch in views:
             if not self.body.reach.allows(yaw, pitch):
                 continue
             frame = self._look(yaw, pitch)
             for m in self._masks(frame, label):
                 y, p = pixel_to_angles(*m.center, frame.yaw, frame.pitch, self._cam(frame))
                 sightings.append(Sighting(y, p, m.score if m.score is not None else 0.5))
-        for place in merge(sightings)[: self.closer_looks]:
-            found = self._confirm(label, place.yaw, place.pitch)
-            if found:
-                return self._point(found)
-        return None
+        return merge(sightings)
 
-    def _confirm(self, label: str, yaw: float, pitch: float) -> Found | None:
+    def confirm(self, label: str, yaw: float, pitch: float) -> Found | None:
         """Look straight at a place; it counts only if the thing is near the centre of that frame."""
         frame = self._look(yaw, pitch)
         cam = self._cam(frame)
@@ -78,10 +84,12 @@ class Finder:
         y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)
 
-    def _point(self, found: Found) -> Found:
+    def point(self, found: Found) -> Found:
         found.reachable = self.body.reach.allows(found.yaw, found.pitch)
         self.body.point(found.yaw, found.pitch)  # the body clamps an unreachable direction to its limit
         return found
+
+    looks: int = 0
 
     def _look(self, yaw: float, pitch: float) -> Frame:
         self.body.look(yaw, pitch)

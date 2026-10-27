@@ -34,7 +34,12 @@ trademark application.
   - It's tested in a simulated room.
 - **Object memory (opt-in):** an idle glance notes where chosen things are, as label, direction and time, never a
   picture. "Where are my keys?" then goes straight there.
-- **Next:** the Reachy Mini body, voice, Muse Spark planning the search, and the before/after evaluation.
+- **Muse Spark plans the search through tools:**
+  - The tools are recall, look (in named views, with the noun phrase it chooses for SAM 3.1), look closer, and point.
+  - Every argument is checked in code. Pointing is refused until a closer look confirms.
+  - A run is limited to 12 calls and stays under the spend cap.
+  - The model never sends angles or motor values.
+- **Next:** the Reachy Mini body, voice, and the before/after evaluation.
 
 ## Run the tests
 ```bash
@@ -44,6 +49,7 @@ uv sync --extra dev && uv run pytest -q   # no network calls: the model clients 
 ## Layout
 ```
 heyandy_meta/models/   Muse Spark and SAM 3.1 (Model API) and Muse Glimmer (local) clients
+heyandy_meta/agent/    Muse Spark's search tools and planning loop
 heyandy_meta/finder/   the search, and from a SAM 3.1 mask to where the head looks
 heyandy_meta/memory/   object memory: where watched things were last seen
 heyandy_meta/robot/    the body interface, and a simulated room for tests

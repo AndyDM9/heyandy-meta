@@ -1,0 +1,120 @@
+"""The tools Muse Spark may use to plan a search. They name views and places, never angles or motor values.
+
+Every argument is checked here, in code: an unknown view, place or tool, or an odd object name, is refused with a
+reason the model can read, and nothing moves.
+"""
+import re
+from dataclasses import dataclass, field
+
+from ..finder.search import Finder, Found
+from ..memory.places import Places
+
+VIEWS = {  # name -> (yaw, pitch); the names are what the model sees
+    "far left": (55.0, 15.0),
+    "left": (18.0, 15.0),
+    "right": (-18.0, 15.0),
+    "far right": (-55.0, 15.0),
+    "behind left": (110.0, 15.0),
+    "behind right": (-110.0, 15.0),
+    "floor in front": (0.0, 32.0),
+}
+OBJECT = re.compile(r"^[a-zA-Z][a-zA-Z '\-]{0,39}$")  # a short noun phrase for SAM 3.1
+
+
+def _side(yaw: float) -> str:
+    if abs(yaw) < 10:
+        return "straight ahead"
+    side = "left" if yaw > 0 else "right"
+    if abs(yaw) > 90:
+        return f"behind me on my {side}"
+    return f"to my {side}" if abs(yaw) > 35 else f"a little to my {side}"
+
+
+SPECS = [
+    {"type": "function", "function": {
+        "name": "recall", "description": "Where a watched object was last seen, if the person asked the robot to keep an eye on it.",
+        "parameters": {"type": "object", "properties": {"object": {"type": "string"}}, "required": ["object"]}}},
+    {"type": "function", "function": {
+        "name": "look", "description": "Turn to one or more views and look for an object. Returns numbered places where it might be.",
+        "parameters": {"type": "object", "properties": {
+            "object": {"type": "string", "description": "A short noun phrase, e.g. 'reading glasses' or 'glasses case'."},
+            "views": {"type": "array", "items": {"type": "string", "enum": list(VIEWS)}}},
+            "required": ["object", "views"]}}},
+    {"type": "function", "function": {
+        "name": "look_closer", "description": "Turn straight at a numbered place (or 'remembered') and check the object is really there.",
+        "parameters": {"type": "object", "properties": {"object": {"type": "string"}, "place": {"type": "string"}},
+                       "required": ["object", "place"]}}},
+    {"type": "function", "function": {
+        "name": "point", "description": "Point at a place that look_closer confirmed. Only confirmed places can be pointed at.",
+        "parameters": {"type": "object", "properties": {"place": {"type": "string"}}, "required": ["place"]}}},
+]
+
+
+@dataclass
+class SearchTools:
+    finder: Finder
+    places: Places | None = None
+    candidates: dict[str, tuple[float, float]] = field(default_factory=dict)
+    confirmed: dict[str, Found] = field(default_factory=dict)
+    pointed: Found | None = None
+
+    def call(self, name: str, args: dict) -> str:
+        handler = {"recall": self._recall, "look": self._look, "look_closer": self._closer, "point": self._point}.get(name)
+        if handler is None:
+            return f"refused: there is no tool called {name!r}"
+        try:
+            return handler(**args)
+        except TypeError:
+            return f"refused: wrong arguments for {name}"
+
+    def _object(self, obj) -> str | None:
+        return obj.strip().lower() if isinstance(obj, str) and OBJECT.match(obj.strip()) else None
+
+    def _recall(self, object) -> str:
+        obj = self._object(object)
+        if obj is None:
+            return "refused: the object must be a short plain noun phrase"
+        last = self.places.last_seen(obj) if self.places else None
+        if last is None:
+            return f"I have no recent sighting of the {obj}."
+        self.candidates["remembered"] = last
+        return f"Last seen {_side(last[0])}. Place 'remembered'; check it with look_closer."
+
+    def _look(self, object, views) -> str:
+        obj = self._object(object)
+        if obj is None:
+            return "refused: the object must be a short plain noun phrase"
+        if not isinstance(views, list) or not views or any(v not in VIEWS for v in views):
+            return f"refused: views must be chosen from {list(VIEWS)}"
+        found = self.finder.scan(obj, [VIEWS[v] for v in dict.fromkeys(views)])
+        if not found:
+            return f"No {obj} seen in: {', '.join(views)}."
+        lines = []
+        for s in found[:5]:
+            pid = str(len(self.candidates) + 1)
+            self.candidates[pid] = (s.yaw, s.pitch)
+            lines.append(f"place {pid}: {_side(s.yaw)}, confidence {s.score:.2f}, seen in {s.views} view(s)")
+        return "Possible " + obj + ": " + "; ".join(lines)
+
+    def _closer(self, object, place) -> str:
+        obj = self._object(object)
+        if obj is None:
+            return "refused: the object must be a short plain noun phrase"
+        if place not in self.candidates:
+            return f"refused: no place {place!r}; places so far: {list(self.candidates) or 'none'}"
+        found = self.finder.confirm(obj, *self.candidates[place])
+        if found is None:
+            return f"Looked closer at place {place}: no {obj} there."
+        self.confirmed[place] = found
+        return f"Confirmed: the {obj} is at place {place}, {_side(found.yaw)}."
+
+    def _point(self, place) -> str:
+        found = self.confirmed.get(place)
+        if found is None:
+            return f"refused: place {place!r} isn't confirmed; use look_closer first"
+        self.pointed = self.finder.point(found)
+        if self.places:
+            self.places.saw(found.label, found.yaw, found.pitch)
+        if not found.reachable:
+            return f"I can't turn far enough to point; it's {_side(found.yaw)}. Tell the person."
+        return f"Pointing at the {found.label}, {_side(found.yaw)}."
