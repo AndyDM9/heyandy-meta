@@ -2,10 +2,13 @@
 
     uv run python scripts/demo_screen.py found        # then open http://127.0.0.1:8765
     uv run python scripts/demo_screen.py --cycle      # every scene in turn, 8 s each
+    python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
+                                                                         # a scene; nothing they do reaches anyone else
 
 Scenes: idle, finding, found, answer, memory, help.
 """
 import argparse
+import functools
 import io
 import sys
 import time
@@ -24,6 +27,7 @@ from heyandy_meta.screen.state import ScreenState  # noqa: E402
 SCENES = ("idle", "finding", "found", "answer", "memory", "help")
 
 
+@functools.lru_cache(maxsize=1)
 def sample_frame() -> tuple[bytes, Mask]:
     """A drawn table with a blue mug on it, at the camera's 1920x1080, and the mug's outline."""
     img = Image.new("RGB", (1920, 1080), (196, 184, 168))
@@ -95,9 +99,22 @@ def main() -> None:
     ap.add_argument("scene", nargs="?", default="found", choices=SCENES)
     ap.add_argument("--cycle", action="store_true")
     ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--host", default="127.0.0.1")
+    ap.add_argument("--public", action="store_true", help="the hosted demo: per-visitor scenes, framed only by huggingface.co")
     args = ap.parse_args()
     state = ScreenState()
-    serve(state, port=args.port)
+    if args.public:
+        def snapshot(scene):
+            st = ScreenState()
+            show(st, scene)
+            return st.snapshot()
+
+        serve(state, host=args.host, port=args.port, frame_ancestors="https://huggingface.co https://*.hf.space",
+              scenes={name: functools.partial(snapshot, name) for name in SCENES})
+        print(f"public demo on http://{args.host}:{args.port}")
+        while True:
+            time.sleep(3600)
+    serve(state, host=args.host, port=args.port)
     print(f"http://127.0.0.1:{args.port}  ·  Ctrl-C to stop")
     try:
         while True:

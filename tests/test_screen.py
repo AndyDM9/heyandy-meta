@@ -132,3 +132,19 @@ def test_the_typeface_is_served_by_andy_itself():
         assert "fonts.googleapis" not in page() and "http" not in page().split("<script>")[0].replace("http://www.w3.org", "")
     finally:
         srv.shutdown()
+
+
+def test_the_public_demo_gives_each_visitor_their_own_scene():
+    import json as _json
+
+    calls = []
+    srv = serve(ScreenState(), port=0, scenes={"found": lambda: calls.append("found") or {"caption": "found it"},
+                                                "idle": lambda: {"caption": ""}})
+    try:
+        url = f"http://127.0.0.1:{srv.server_port}/state.json"
+        a = _json.load(urllib.request.urlopen(url + "?scene=found"))
+        assert a["caption"] == "found it" and a["demo"] == ["found", "idle"] and calls == ["found"]
+        b = _json.load(urllib.request.urlopen(url + "?scene=nonsense"))  # anything else: the shared, read-only state
+        assert b["demo"] == ["found", "idle"] and "caption" in b
+    finally:
+        srv.shutdown()

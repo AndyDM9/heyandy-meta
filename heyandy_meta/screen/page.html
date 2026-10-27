@@ -102,6 +102,13 @@
   #help h3 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
   #help p { margin: 0 0 0.9rem; font-size: 1.75rem; }
 
+  #demo { position: fixed; top: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem;
+          align-items: center; padding: 0.45rem 0.8rem; border-radius: 99rem; background: var(--solid); font-size: 1.15rem;
+          box-shadow: 0 0.3rem 1.2rem rgba(0, 0, 0, 0.18); z-index: 5; }
+  #demo b { color: var(--muted); font-weight: 600; margin: 0 0.4rem; white-space: nowrap; }
+  #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
+                 padding: 0.2rem 0.8rem; cursor: pointer; }
+  #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
   @media (prefers-reduced-motion: reduce) { .scene i { animation: none; } #captions { transition: none; } }
 </style>
 </head>
@@ -138,6 +145,7 @@
   </main>
   <div id="captions" aria-live="polite"></div>
 </div>
+<nav id="demo" hidden aria-label="Sample scenes"></nav>
 <div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?">
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud.</div>
@@ -154,6 +162,19 @@
   const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
+  // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
+  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", answer: "An answer", memory: "Memory", help: "What can I ask?" };
+  let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
+  function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
+  function demoBar() {
+    const nav = $("demo"); nav.hidden = false; nav.replaceChildren(el("b", "Sample data · scenes:"));
+    for (const name of [...scenes, "auto"]) {
+      const b = el("button", NAMES[name] || "In turn");
+      b.setAttribute("aria-pressed", String(name === (chosen || "auto")));
+      b.onclick = () => { chosen = name === "auto" ? null : name; pictureKey = ""; demoBar(); };
+      nav.append(b);
+    }
+  }
 
   function partOfDay(h) { return h < 5 || h >= 21 ? "night" : h < 12 ? "morning" : h < 17 ? "afternoon" : "evening"; }
   function clock() {
@@ -269,9 +290,10 @@
     $("captions").textContent = s.caption;  // Andy's words only, never the person's
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
     $("help").hidden = !s.help;
+    if (s.demo && !scenes) { scenes = s.demo; demoBar(); }
   }
   async function tick() {
-    try { render(await (await fetch("/state.json", { cache: "no-store" })).json()); } catch (e) {}
+    try { render(await (await fetch("/state.json" + (scenes ? "?scene=" + scene() : ""), { cache: "no-store" })).json()); } catch (e) {}
     setTimeout(tick, 400);
   }
   clock(); setInterval(clock, 1000); tick();

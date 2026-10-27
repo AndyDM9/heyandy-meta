@@ -1,6 +1,7 @@
 """Serve the TV page on this computer only. It reads the screen state; nothing on the network can change it."""
 import json
 import threading
+from urllib.parse import parse_qs, urlsplit
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib.resources import files
 
@@ -30,17 +31,25 @@ def page() -> str:
     return html.replace("{{outline}}", OUTLINE)
 
 
-def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765) -> ThreadingHTTPServer:
+def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes: dict | None = None,
+          frame_ancestors: str = "'none'") -> ThreadingHTTPServer:
+    """The TV page and its state, read-only. scenes (the public demo only): name -> a snapshot made on request, so
+    each visitor picks a scene for themselves and nobody can change what anyone else sees."""
     body = page().encode()
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            if self.path == "/":
+            url = urlsplit(self.path)
+            if url.path == "/":
                 self._send(200, "text/html; charset=utf-8", body)
-            elif self.path == "/state.json":
-                self._send(200, "application/json", json.dumps(state.snapshot()).encode())
-            elif self.path.startswith("/fonts/") and self.path[7:] in FONTS:  # served here: the TV asks nobody else
-                self._send(200, FONTS[self.path[7:]], files(__package__).joinpath("fonts", self.path[7:]).read_bytes(),
+            elif url.path == "/state.json":
+                pick = parse_qs(url.query).get("scene", [""])[0]
+                snap = scenes[pick]() if scenes and pick in scenes else state.snapshot()
+                if scenes:
+                    snap["demo"] = list(scenes)
+                self._send(200, "application/json", json.dumps(snap).encode())
+            elif url.path.startswith("/fonts/") and url.path[7:] in FONTS:  # served here: the TV asks nobody else
+                self._send(200, FONTS[url.path[7:]], files(__package__).joinpath("fonts", url.path[7:]).read_bytes(),
                            cache="max-age=86400")
             else:
                 self._send(404, "text/plain", b"not found")
@@ -49,6 +58,8 @@ def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765) -> Thre
             self.send_response(code)
             self.send_header("Content-Type", kind)
             self.send_header("Cache-Control", cache)
+            self.send_header("Content-Security-Policy", f"frame-ancestors {frame_ancestors}")
+            self.send_header("X-Content-Type-Options", "nosniff")
             self.end_headers()
             self.wfile.write(data)
 
