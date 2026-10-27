@@ -309,3 +309,10 @@ Each of these came from the founder talking to the robot; the fixes are in the c
 - **Streaming (later that evening):** the AI opening is said while the model thinks, and Glimmer's answer is spoken
   sentence by sentence as it's written; each sentence passes the false-promise check before it's said. First sound
   after the words are understood: **0.97 s, 0.69 s, 0.97 s** on three turns on the robot (was 1.7 to 2.8 s).
+
+## 12. Following a thing with the eyes (2026-10-27, night)
+
+"Andy, follow the mug": find it, then each frame SAM 3.1 (local) finds the mug, the mask nearest the last position is
+taken as the same mug (so a look-alike nearby isn't swapped in), and the head eases after it through the body-language
+loop; past the head's 25 degrees the base turns. "Stop" reaches it without waiting for the turn's lock. On the robot:
+**about 2.4 frames a second** (22 SAM 3.1 frames, find included, over an 8 s follow).

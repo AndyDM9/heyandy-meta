@@ -115,11 +115,13 @@ class Finder:
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)
 
     def point(self, found: Found) -> Found:
+        self.last_found = found
         found.reachable = self.body.reach.allows(found.yaw, found.pitch)
         self.body.point(found.yaw, found.pitch)  # the body clamps an unreachable direction to its limit
         return found
 
     looks: int = 0
+    last_found: Found | None = None
 
     def _look(self, yaw: float, pitch: float, precise: bool = True) -> Frame:
         if self.on_look:

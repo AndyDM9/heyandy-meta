@@ -13,9 +13,11 @@ trademark application.
    runs on the computer beside the robot, so the robot keeps working with no internet.
 5. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
-6. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+6. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
+   second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
+7. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-7. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+8. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
    the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
    steps.
 

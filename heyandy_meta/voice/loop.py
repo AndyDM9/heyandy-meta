@@ -26,6 +26,9 @@ class VoiceLoop:
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
         text = " ".join(text.split())
+        if getattr(self.andy, "following", False) and STOP.search(text):
+            self.andy.stop_following()  # no lock: the follow holds it, and this must reach it at once
+            return "Stopped."
         if _looping(text):
             return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
         called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
@@ -86,6 +89,7 @@ def _looping(text: str) -> bool:
     return max(grams.count(g) for g in set(grams)) >= 4 or len(set(words)) / len(words) < 0.35
 
 
+STOP = re.compile(r"\b(?:stop|enough|that's enough|okay thanks|thank you)\b", re.I)
 SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)
 
 

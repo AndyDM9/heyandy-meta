@@ -19,6 +19,7 @@ from .agent.tools import SearchTools, side
 from .budget import Budget, BudgetExceeded
 from .companion import answers
 from .companion.attention import face_person
+from .companion.follow import follow
 from .companion.intents import parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import DISCLOSURE, Disclosure, respond
@@ -78,6 +79,8 @@ class Andy:
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
         self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
+        self.following = False
+        self._stop_following = threading.Event()
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
         self.hold_point_s = 1.2 if hasattr(self.body, "motion") else 0.0  # the real robot holds a point a moment
@@ -171,6 +174,8 @@ class Andy:
         self._asked = None
         if i.kind == "find":
             return self.find(i.thing, text, i.hint)
+        if i.kind == "follow":
+            return self.follow(i.thing)
         if i.kind == "watch":
             self.places.watch(i.thing)
             return (f"I'll keep an eye on your {i.thing}. I only remember where I last saw {_it(i.thing)}, "
@@ -311,6 +316,37 @@ class Andy:
         words = words or self._found_words(found)
         self.screen.found(found, words)
         return words
+
+    def follow(self, thing: str, seconds: float = 30.0) -> str:
+        """Find the thing, then follow it with the eyes as it's moved, until "stop" (said any time) or 30 s."""
+        self.finder.last_found = None
+        self.find(thing, f"where is the {thing}")
+        found = self.finder.last_found
+        if found is None:
+            return self._not_found(thing)
+        self._stop_following.clear()
+        self.following = True
+        self.say(f"Following your {thing}. Say stop when you're done.")
+        self.screen.doing("Following", f"Your {thing}")
+        frames = [0]
+
+        def seen(frame, mask, yaw, pitch):
+            frames[0] += 1
+            self.screen.found(Found(thing, yaw, pitch, mask.score or 0.5, frame, mask, frames[0]),
+                              f"Following your {thing}")
+
+        try:
+            why = follow(self.body, self.finder.segmenter, thing, (found.yaw, found.pitch), seen,
+                         self._stop_following.is_set, seconds)
+        finally:
+            self.following = False
+            self.screen.doing("Waiting")
+        self.screen.used("SAM 3.1", self.vision_where, frames[0])
+        return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
+                f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def stop_following(self) -> None:
+        self._stop_following.set()
 
     def _tool_moves(self, starting: bool) -> None:
         """Still while a tool looks; thinking while the model decides what to do next."""

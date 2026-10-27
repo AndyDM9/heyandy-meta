@@ -128,3 +128,10 @@ def test_a_stretch_is_cut_at_eight_seconds():
         ep.feed(c)
     out = [u for c in chunks(12.0, 0.3, 1) if (u := ep.feed(c)) is not None]
     assert out and len(out[0]) / RATE == pytest.approx(8.0, abs=0.4)
+
+
+def test_stop_reaches_a_follow_at_once():
+    a = Andy()
+    a.following, stopped = True, []
+    a.stop_following = lambda: stopped.append(True)
+    assert VoiceLoop(a).heard("stop") == "Stopped." and stopped == [True] and a.heard == []
