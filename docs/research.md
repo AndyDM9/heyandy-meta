@@ -98,6 +98,12 @@ Docs: [overview](https://dev.meta.ai/docs/overview), [quickstart](https://dev.me
   - Parse with `pip install meta-sam-parser`
     ([client libraries](https://dev.meta.ai/docs/sam/client-libraries)).
   - Price: $2.50 per 1,000 images; $0.20 per 1,000 video frames.
+  - **Base64 data URLs work** for `input_image` (another participant succeeded with them; hackathon #questions,
+    2026-10-27).
+  - ⚠ **Intermittent `404 model_not_found` on new accounts**, for both `sam-3.1` and `muse-spark-1.3` (#questions,
+    Oct 26–27). One participant saw about half their Spark calls fail, and most SAM calls. Meta (Oct 27, 11:07 AM):
+    "no known routing issue", and it asked for request IDs. Our clients retry twice, keep the request IDs, then fall back
+    to the device.
 - **What 3.1 adds over SAM 3** (released November 19, 2025): SAM 3.1 (March 27, 2026) adds *Object Multiplex*, joint
   tracking of many objects in video, about 7x faster at 128 objects on an H100. The image detector is unchanged.
   Source: [RELEASE_SAM3p1.md](https://github.com/facebookresearch/sam3/blob/main/RELEASE_SAM3p1.md).

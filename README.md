@@ -69,7 +69,9 @@ tests/
 
 ## What doesn't work yet
 - **No live model call has been made yet.** The first paid calls wait for the hackathon credits.
-- **SAM 3.1 frames are sent as data URLs.** That the API accepts them gets checked on the first call.
+- **SAM 3.1 frames are sent as base64 data URLs,** which another participant has confirmed work; our first call checks it.
+- **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
+  investigating). Calls retry twice, then the robot answers on the device.
 - **There is no real robot body or voice yet,** and no measurements: the search runs only in the simulated room.
 
 ## Licence
