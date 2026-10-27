@@ -47,6 +47,7 @@ class Finder:
     confirm_within_px: float = 0.15  # a close-up's mask must be this near the centre (fraction of frame width)
     check: Callable[[Frame, Mask], bool] | None = None  # optional second opinion, e.g. "is this on a screen?"
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
+    on_look: Callable[[float, float], None] | None = None  # told each direction as the head turns (the TV's progress)
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
         """The fixed search: the remembered place, then a sweep, then behind. A confident sighting is checked as soon
@@ -121,6 +122,8 @@ class Finder:
     looks: int = 0
 
     def _look(self, yaw: float, pitch: float, precise: bool = True) -> Frame:
+        if self.on_look:
+            self.on_look(yaw, pitch)
         self.body.look(yaw, pitch, precise)
         self.looks += 1
         return self.body.capture()

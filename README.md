@@ -94,6 +94,33 @@ docs/                  the build plan, the hackathon's rules, research
 tests/
 ```
 
+## The screen beside Andy
+
+A TV or monitor beside the robot shows, in large type read from across a room:
+- **the day and time;**
+- **what Andy is doing, and what its head is turned to** ("Pointing · At your mug");
+- **the next reminder,** with how long until it;
+- **what Andy keeps an eye on,** with where and when each was last seen;
+- **what Andy found:** the picture it saw it in, with SAM 3.1's outline (kept in memory for two minutes, never saved);
+  the plan step by step; the time it took;
+- **answers with their sources;**
+- **which Meta models worked on this turn,** on this computer or in the cloud (words only);
+- **captions of Andy's words** (never the person's).
+
+"Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every
+text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (made for low vision) served
+by Andy itself: the TV asks nothing of anyone outside the house.
+
+![Found: the picture with the mug outlined, the plan, the time and the models used](docs/images/tv-found.png)
+
+| | |
+|---|---|
+| ![Finding](docs/images/tv-finding.png) | ![An answer with sources](docs/images/tv-answer.png) |
+| ![At night](docs/images/tv-found-night.png) | ![What can I ask?](docs/images/tv-help.png) |
+
+See it on sample data, with no robot: `uv run python scripts/demo_screen.py --cycle`, then open http://127.0.0.1:8765.
+The picture in these is drawn by the script, not taken in a home.
+
 ## Measured so far
 
 **Simulated scorecard** (`evals/sim.py`, seeded rooms; the camera model is the robot's, robot time is estimated from what

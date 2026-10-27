@@ -5,127 +5,274 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Andy</title>
 <style>
-  :root { --bg: {{bg}}; --text: {{text}}; --muted: {{muted}}; --accent: {{accent}}; --cloud: {{cloud}}; --outline: {{outline}}; }
+  /* Andy's TV: read from across a room. Frosted panels over slow colour that follows the time of day; every text
+     colour at least 7:1 against its panel (tests/test_screen.py); the typeface is served by Andy itself. */
+  @font-face { font-family: "Atkinson Next"; src: url("/fonts/AtkinsonHyperlegibleNext.ttf") format("truetype");
+               font-weight: 200 800; font-display: block; }
+  @font-face { font-family: "Atkinson Mono"; src: url("/fonts/AtkinsonHyperlegibleMono.ttf") format("truetype");
+               font-weight: 200 800; font-display: block; }
+  :root {
+    --ink: {{day_ink}}; --muted: {{day_muted}}; --accent: {{day_accent}}; --cloud: {{day_cloud}};
+    --panel: {{day_panel}}; --solid: {{day_solid}}; --caption-bg: {{day_caption_bg}}; --caption: {{day_caption}};
+    --bg1: {{day_bg1}}; --bg2: {{day_bg2}}; --bg3: {{day_bg3}}; --outline: {{outline}};
+  }
+  :root[data-part="morning"] { --bg1: {{morning_bg1}}; --bg3: {{morning_bg3}}; }
+  :root[data-part="evening"] { --bg1: {{evening_bg1}}; --bg3: {{evening_bg3}}; }
+  :root[data-part="night"] {
+    --ink: {{night_ink}}; --muted: {{night_muted}}; --accent: {{night_accent}}; --cloud: {{night_cloud}};
+    --panel: {{night_panel}}; --solid: {{night_solid}}; --caption-bg: {{night_caption_bg}}; --caption: {{night_caption}};
+    --bg1: {{night_bg1}}; --bg2: {{night_bg2}}; --bg3: {{night_bg3}};
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 500 2.4vw/1.35 system-ui, sans-serif;
-         height: 100vh; display: grid; grid-template-rows: auto 1fr auto; padding: 2.5vw 3vw; gap: 2vw; }
-  header { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
-  .badge { border: 0.2vw solid currentColor; border-radius: 99px; padding: 0.3vw 1.2vw; font-size: 1.8vw; }
-  .badge.cloud { color: var(--cloud); } .badge.device { color: var(--accent); }
+  html { font-size: calc(100vw / 120); }  /* 16 px on a 1920 px TV, and in proportion on any other */
+  body {
+    margin: 0; height: 100vh; overflow: hidden; color: var(--ink); background: var(--bg2);
+    font: 500 1.5rem/1.3 "Atkinson Next", system-ui, sans-serif; font-variant-numeric: tabular-nums;
+  }
+  .scene { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; overflow: hidden; background: var(--bg2); }
+  .scene i { position: absolute; width: 70vw; height: 70vw; border-radius: 50%; filter: blur(8vw); opacity: 0.9; }
+  .scene i:nth-child(1) { background: var(--bg1); left: -20vw; top: -30vw; animation: drift 90s ease-in-out infinite alternate; }
+  .scene i:nth-child(2) { background: var(--bg3); right: -25vw; bottom: -35vw; animation: drift 120s ease-in-out infinite alternate-reverse; }
+  @keyframes drift { to { transform: translate(8vw, 6vw); } }
+  .stage { height: 100vh; padding: 3.75rem 5rem 3.25rem; display: grid; gap: 1.75rem; grid-template-rows: auto 1fr auto; }
+  .panel { background: var(--panel); border-radius: 2rem; padding: 1.75rem 2.25rem;
+           box-shadow: 0 0.6rem 2.4rem rgba(16, 36, 29, 0.10), inset 0 0 0 0.1rem rgba(255, 255, 255, 0.55);
+           backdrop-filter: blur(1.5rem) saturate(1.2); }
+  :root[data-part="night"] .panel { box-shadow: 0 0.6rem 2.4rem rgba(0, 0, 0, 0.35), inset 0 0 0 0.1rem rgba(255, 255, 255, 0.06); }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
+  #day { font-size: 6.6rem; font-weight: 800; letter-spacing: -0.02em; line-height: 0.95; }
+  #date { font-size: 2.6rem; margin-top: 0.6rem; }
+  #date b { font-weight: 750; }
+  .right { display: grid; gap: 0.9rem; justify-items: end; }
+  #pill { display: flex; align-items: center; gap: 1.1rem; padding: 1rem 2rem 1rem 1.25rem; border-radius: 99rem; }
+  #pill svg { width: 3.6rem; height: 3.6rem; color: var(--accent); flex: none; }
+  #state { font-size: 2.2rem; font-weight: 650; line-height: 1.1; }
+  #head { font-size: 1.35rem; color: var(--muted); }
+  .badges { display: flex; gap: 0.75rem; }
+  .badge { display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; padding: 0.55rem 1.1rem;
+           border-radius: 99rem; background: var(--panel); color: var(--muted); }
+  .badge svg { width: 1.3rem; height: 1.3rem; }
   #offline { color: var(--accent); font-weight: 700; }
-  #private { font-size: 1.5vw; }
-  main { display: grid; place-items: center; min-height: 0; }
-  figure { margin: 0; display: grid; gap: 1vw; justify-items: center; max-height: 100%; }
-  svg { max-width: 100%; max-height: 62vh; border-radius: 1vw; }
-  figcaption { font-size: 3vw; font-weight: 700; color: var(--accent); }
-  #caption { font-size: 3.4vw; font-weight: 600; min-height: 2.6em; }
-  #why { font-size: 1.6vw; color: var(--muted); }
-  #side { display: grid; gap: 1vw; align-content: start; font-size: 1.7vw; color: var(--muted); min-width: 0; }
-  #side h2 { margin: 0; font-size: 1.4vw; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-  #side ol, #side ul { margin: 0; padding-left: 1.2em; display: grid; gap: 0.4vw; color: var(--text); }
-  #timer { font: 700 3.2vw/1 ui-monospace, monospace; color: var(--accent); font-variant-numeric: tabular-nums; }
-  #models { display: flex; flex-wrap: wrap; gap: 0.6vw; font-size: 1.4vw; min-height: 2.2vw; }
-  #models span { border-radius: 99px; padding: 0.15vw 0.9vw; border: 0.15vw solid currentColor; }
+  [hidden] { display: none !important; }
+
+  main { display: grid; grid-template-columns: 31rem 1fr; gap: 1.75rem; min-height: 0; }
+  .side { display: grid; gap: 1.75rem; align-content: start; }
+  .kicker { font-size: 1.45rem; color: var(--muted); }
+  .side h2 { margin: 0.3rem 0 0.2rem; font-size: 2.2rem; font-weight: 750; line-height: 1.15; }
+  .when { font-size: 1.6rem; color: var(--muted); }
+  .when b { color: var(--accent); font-weight: 750; }
+  .side ul { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.7rem; }
+  .side li { font-size: 1.6rem; font-weight: 650; }
+  .side li span { display: block; font-size: 1.3rem; font-weight: 500; color: var(--muted); }
+
+  #card { position: relative; display: grid; grid-template-rows: auto 1fr auto; min-height: 0; overflow: hidden; }
+  #card h1 { margin: 0.35rem 0 1rem; font-size: 3.3rem; font-weight: 750; line-height: 1.12; }
+  #body { min-height: 0; display: grid; align-content: start; }
+  .split { display: grid; grid-template-columns: 1.45fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
+  figure { margin: 0; min-height: 0; }
+  figure svg { width: 100%; height: auto; max-height: 30rem; border-radius: 1.4rem; display: block; }
+  .facts { display: grid; gap: 1.1rem; font-size: 1.6rem; }
+  .facts b { display: block; font-size: 2.6rem; font-weight: 750; color: var(--accent); font-family: "Atkinson Mono", monospace; }
+  ol.steps, ul.steps { margin: 0; padding-left: 2rem; display: grid; gap: 0.6rem; font-size: 1.6rem; align-content: start; }
+  .steps li::marker { color: var(--accent); font-weight: 750; }
+  .answer { font-size: 2.4rem; font-weight: 650; line-height: 1.25; }
+  .sources { margin-top: 1.4rem; display: grid; gap: 0.5rem; font-size: 1.4rem; color: var(--muted); }
+  .try { align-self: center; font-size: 3.4rem; font-weight: 650; line-height: 1.2; }
+  .try small { display: block; margin-top: 1.2rem; font-size: 1.5rem; font-weight: 500; color: var(--muted); }
+  .does { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .does div { border-top: 0.2rem solid var(--accent); padding-top: 1rem; font-size: 1.6rem; }
+  .does b { display: block; font-size: 2rem; font-weight: 750; margin-bottom: 0.3rem; }
+  #models { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; font-size: 1.2rem; margin-top: 1rem; }
+  #models b { color: var(--muted); font-weight: 600; }
+  #models span { border-radius: 99rem; padding: 0.25rem 0.9rem; border: 0.12rem solid currentColor; }
   #models .device { color: var(--accent); } #models .cloud { color: var(--cloud); }
-  #models b { font-weight: 600; color: var(--muted); }
-  .stage { display: grid; grid-template-columns: 1fr minmax(0, 28vw); gap: 2vw; min-height: 0; }
+  #timer { position: absolute; top: 1.75rem; right: 2.25rem; font: 700 2.6rem/1 "Atkinson Mono", monospace; color: var(--accent); }
+  #why { font-size: 1.15rem; color: var(--muted); margin-top: 0.4rem; }
+
+  #captions { min-height: 6.1rem; border-radius: 1.6rem; padding: 1.2rem 2.25rem; background: var(--caption-bg);
+              color: var(--caption); font-size: 2.6rem; line-height: 1.3; opacity: 0; transition: opacity 0.4s ease-out; }
+  #captions.on { opacity: 1; }
+
+  #help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: grid; place-items: center; background: rgba(10, 18, 15, 0.55); }
+  #help[hidden] { display: none; }
+  #help .panel { width: 76vw; padding: 3rem 3.5rem; backdrop-filter: none; background: var(--solid); }  /* text on solid */
+  #help h1 { margin: 0 0 0.5rem; font-size: 3.2rem; }
+  #help .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.8rem; }
+  #help h3 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
+  #help p { margin: 0 0 0.9rem; font-size: 1.75rem; }
+
+  @media (prefers-reduced-motion: reduce) { .scene i { animation: none; } #captions { transition: none; } }
 </style>
 </head>
 <body>
-<header><span>Andy, a robot <small id="private">· pictures and voice stay on this computer</small></span><span id="offline" hidden>Offline: working on this computer</span><span id="badge" class="badge" hidden></span></header>
-<div class="stage"><main id="main"></main><aside id="side" aria-live="polite"></aside></div>
-<footer><div id="caption" aria-live="polite"></div><div id="why"></div><div id="models" aria-label="Models on this turn"></div></footer>
+<div class="scene" aria-hidden="true"><i></i><i></i></div>
+<div class="stage">
+  <header>
+    <div><div id="day"></div><div id="date"></div></div>
+    <div class="right">
+      <div id="pill" class="panel" role="status" aria-live="polite">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <path d="M16 13 12 5M32 13 36 5"/></g><circle cx="12" cy="5" r="2.6" fill="currentColor"/><circle cx="36" cy="5" r="2.6" fill="currentColor"/>
+          <rect x="6" y="13" width="36" height="28" rx="14" fill="currentColor"/><circle cx="18" cy="27" r="4.2" fill="var(--panel)"/><circle cx="30" cy="27" r="4.2" fill="var(--panel)"/></svg>
+        <div><div id="state">Waiting</div><div id="head"></div></div>
+      </div>
+      <div class="badges">
+        <span class="badge" id="offline" hidden>Offline: working on this computer</span>
+        <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>Pictures and voice stay on this computer</span>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="side">
+      <section class="panel"><div class="kicker">Next</div><div id="next"></div></section>
+      <section class="panel"><div class="kicker">Keeping an eye on</div><div id="watching"></div></section>
+    </div>
+    <section id="card" class="panel" aria-live="polite">
+      <div><div class="kicker" id="kicker"></div><h1 id="title"></h1></div>
+      <div id="body"></div>
+      <div><div id="models"></div><div id="why"></div></div>
+      <div id="timer"></div>
+    </section>
+  </main>
+  <div id="captions" aria-live="polite"></div>
+</div>
+<div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?">
+  <h1>What can I ask Andy?</h1>
+  <div class="kicker">Start with “Andy”. These are ideas to say out loud.</div>
+  <div class="cols">
+    <div><h3>Find things</h3><p>“Andy, where are my glasses?”</p><p>“Andy, the blue mug, next to the laptop.”</p><p>“Andy, I lost my keys in the kitchen.”</p></div>
+    <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p></div>
+    <div><h3>Talk and look up</h3><p>“Andy, how are you?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, forget my keys.”</p></div>
+  </div>
+</div></div>
 <script>
   const $ = (id) => document.getElementById(id);
+  const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   const svgNS = "http://www.w3.org/2000/svg";
-  let shown = "";
-  // Zoom to the found thing: about four times its size, at least a third of the frame, in the frame's shape.
-  function zoom(p) {
-    const [l, t, r, b] = p.box, aspect = p.width / p.height;
-    let w = Math.max((r - l) * 4, (b - t) * 4 * aspect, p.width / 3);
-    w = Math.min(w, p.width);
-    const h = w / aspect;
-    const x = Math.min(Math.max((l + r) / 2 - w / 2, 0), p.width - w);
-    const y = Math.min(Math.max((t + b) / 2 - h / 2, 0), p.height - h);
-    return [x, y, w, h].map(Math.round);
+  const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
+               "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
+  let lastCaption = "", captionAt = 0, pictureKey = "";
+
+  function partOfDay(h) { return h < 5 || h >= 21 ? "night" : h < 12 ? "morning" : h < 17 ? "afternoon" : "evening"; }
+  function clock() {
+    const d = new Date(), part = partOfDay(d.getHours());
+    document.documentElement.dataset.part = part;
+    $("day").textContent = d.toLocaleDateString("en-US", { weekday: "long" });
+    const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
+    const date = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    $("date").replaceChildren(part[0].toUpperCase() + part.slice(1) + ", ", el("b", time), ", " + date);
   }
-  function list(tag, items) {
-    const el = document.createElement(tag);
-    for (const it of items) { const li = document.createElement("li"); li.textContent = it; el.append(li); }
-    return el;
+  function until(at) {
+    const m = Math.round((at * 1000 - Date.now()) / 60000);
+    if (m <= 0) return "now";
+    if (m < 60) return `in ${m} minute${m === 1 ? "" : "s"}`;
+    const h = Math.round(m / 60); return `in about ${h} hour${h === 1 ? "" : "s"}`;
   }
   function side(s) {
-    const aside = $("side");
-    aside.replaceChildren();
-    if (s.seconds !== null) {
-      const t = document.createElement("div"); t.id = "timer";
-      t.textContent = s.seconds.toFixed(1) + " s" + (s.running ? "" : " ✓");
-      aside.append(t);
+    if (s.next) {
+      const at = new Date(s.next.at * 1000).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
+      const when = el("div", null, "when"); when.append(at + " · ", el("b", until(s.next.at)));
+      $("next").replaceChildren(el("h2", s.next.text), when);
+    } else $("next").replaceChildren(el("h2", "No reminders"), el("div", "“Andy, remind me at 3 pm to call Sam.”", "when"));
+    const list = el("ul");
+    for (const line of s.watching || []) {
+      const [what, where] = line.split(": ");
+      const li = el("li", what[0].toUpperCase() + what.slice(1)); li.append(el("span", where)); list.append(li);
     }
-    const add = (title, el) => { const h = document.createElement("h2"); h.textContent = title; aside.append(h, el); };
-    if (s.steps && s.steps.length) add("Andy's plan", list("ol", s.steps));
-    if (s.memory) add("What I remember", list("ul", s.memory.length ? s.memory : ["Nothing yet."]));
-    if (s.sources && s.sources.length) add("Sources", list("ul", s.sources.map(x => x.title + " · " + new URL(x.url).hostname.replace(/^www\./, ""))));
+    $("watching").replaceChildren(list.children.length ? list : el("div", "Nothing yet. “Andy, keep an eye on my keys.”", "when"));
   }
-  function models(list) {
-    const el = $("models");
-    el.replaceChildren();
-    for (const where of ["device", "cloud"]) {
-      const these = (list || []).filter(m => m.where === where);
-      if (!these.length) continue;
-      const b = document.createElement("b");
-      b.textContent = where === "device" ? "On this computer:" : "In the cloud (words only):";
-      el.append(b);
-      for (const m of these) {
-        const chip = document.createElement("span");
-        chip.className = where;
-        chip.textContent = m.name + (m.times > 1 ? " ×" + m.times : "");
-        el.append(chip);
-      }
-    }
+  function zoom(p) {  // about four times the thing's size, at least a third of the frame, in the frame's shape
+    const [l, t, r, b] = p.box, aspect = p.width / p.height;
+    const w = Math.min(Math.max((r - l) * 4, (b - t) * 4 * aspect, p.width / 3), p.width), h = w / aspect;
+    const x = Math.min(Math.max((l + r) / 2 - w / 2, 0), p.width - w), y = Math.min(Math.max((t + b) / 2 - h / 2, 0), p.height - h);
+    return [x, y, w, h].map(Math.round).join(" ");
   }
-  function render(s) {
-    side(s);
-    models(s.models);
-    $("caption").textContent = s.caption || "";
-    $("offline").hidden = s.online;
-    const b = $("badge");
-    b.hidden = !s.source;
-    b.className = "badge " + (s.source || "");
-    b.textContent = s.source === "cloud" ? "Muse Spark in the cloud: words only" : "On this computer";
-    $("why").textContent = s.reason ? "Why: " + s.reason : "";
-    const p = s.picture, key = p ? p.src.length + ":" + p.box.join(",") : "";
-    if (key === shown) return;
-    shown = key;
-    const main = $("main");
-    main.replaceChildren();
-    if (!p) return;
-    const fig = document.createElement("figure");
+  function picture(p) {
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", zoom(p).join(" "));
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", `Where Andy saw the ${p.label}`);
+    svg.setAttribute("viewBox", zoom(p)); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", `Where Andy saw the ${p.label}`);
     const img = document.createElementNS(svgNS, "image");
-    img.setAttribute("href", p.src); img.setAttribute("width", p.width); img.setAttribute("height", p.height);
-    svg.append(img);
+    img.setAttribute("href", p.src); img.setAttribute("width", p.width); img.setAttribute("height", p.height); svg.append(img);
     if (p.outline) {
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", p.outline);
       path.setAttribute("transform", `translate(${p.box[0]} ${p.box[1]}) scale(${p.scale[0]} ${p.scale[1]})`);
       path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--outline)");
-      path.setAttribute("stroke-width", "4"); path.setAttribute("vector-effect", "non-scaling-stroke");
-      svg.append(path);
+      path.setAttribute("stroke-width", "5"); path.setAttribute("vector-effect", "non-scaling-stroke"); svg.append(path);
     }
-    const cap = document.createElement("figcaption");
-    cap.textContent = p.words;
-    fig.append(svg, cap);
-    main.append(fig);
+    const fig = el("figure"); fig.append(svg); return fig;
+  }
+  function steps(list, tag = "ol") { const o = el(tag, null, "steps"); for (const s of list) o.append(el("li", s)); return o; }
+  function card(s) {
+    const body = $("body");
+    let kicker, title = "";
+    if (s.picture) {
+      kicker = "Found"; title = s.picture.words;
+      const key = s.picture.src.length + ":" + s.picture.box.join(",");
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const facts = el("div", null, "facts");
+        if (s.seconds !== null) { const f = el("div", "to find it"); f.prepend(el("b", s.seconds.toFixed(1) + " s")); facts.append(f); }
+        if (s.steps.length) facts.append(steps(s.steps));
+        const split = el("div", null, "split"); split.append(picture(s.picture), facts); body.replaceChildren(split);
+      }
+    } else {
+      pictureKey = "";
+      if (s.looking_for && s.running) {
+        kicker = `Finding your ${s.looking_for}`; title = s.head || "Looking around the room";
+        body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", "If I can't find it, I'll say so.", "when"));
+      } else if (s.looking_for && s.seconds !== null) {
+        kicker = `Looked for your ${s.looking_for}`; title = s.caption;
+        body.replaceChildren(steps(s.steps));
+      } else if (s.sources.length) {
+        kicker = "What I found";
+        const src = el("div", null, "sources");
+        for (const x of s.sources) src.append(el("div", x.title + " · " + new URL(x.url).hostname.replace(/^www\./, "")));
+        body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
+      } else if (s.memory) {
+        kicker = "What I remember"; title = s.memory.length ? "Where I last saw things" : "Nothing yet";
+        body.replaceChildren(steps(s.memory, "ul"));
+      } else {
+        kicker = "Try asking";
+        const t = el("div", TRY[Math.floor(Date.now() / 20000) % TRY.length], "try");
+        t.append(el("small", "Andy sees and hears on this computer. Pictures and voice never leave your home."));
+        const does = el("div", null, "does");
+        for (const [b, d] of [["Finds things", "Looks around the room and points, and tells a real thing from a picture of it."],
+                              ["Keeps an eye out", "Remembers where the things you choose were last seen. Never a picture."],
+                              ["Reminds you", "Turns to find you when it's time, and says it in your own words."]]) {
+          const x = el("div", d); x.prepend(el("b", b)); does.append(x);
+        }
+        body.replaceChildren(t, does);
+      }
+    }
+    $("kicker").textContent = kicker; $("title").textContent = title; $("title").hidden = !title;
+    $("timer").textContent = s.running && s.seconds !== null ? s.seconds.toFixed(1) + " s" : "";
+  }
+  function models(list) {
+    const m = $("models"); m.replaceChildren();
+    for (const where of ["device", "cloud"]) {
+      const these = (list || []).filter(x => x.where === where);
+      if (!these.length) continue;
+      m.append(el("b", where === "device" ? "On this computer:" : "In the cloud, words only:"));
+      for (const x of these) m.append(el("span", x.name + (x.times > 1 ? " ×" + x.times : ""), where));
+    }
+  }
+  function render(s) {
+    $("state").textContent = s.state; $("head").textContent = s.head;
+    $("offline").hidden = s.online;
+    side(s); card(s); models(s.models);
+    $("why").textContent = s.reason ? "Why: " + s.reason : "";
+    if (s.caption !== lastCaption || s.state === "Speaking") captionAt = Date.now();
+    lastCaption = s.caption;
+    $("captions").textContent = s.caption;  // Andy's words only, never the person's
+    $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
+    $("help").hidden = !s.help;
   }
   async function tick() {
     try { render(await (await fetch("/state.json", { cache: "no-store" })).json()); } catch (e) {}
-    setTimeout(tick, 500);
+    setTimeout(tick, 400);
   }
-  tick();
+  clock(); setInterval(clock, 1000); tick();
 </script>
 </body>
 </html>

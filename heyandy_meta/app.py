@@ -64,10 +64,12 @@ class Andy:
     clock: object = time.time
 
     def __post_init__(self):
-        self.finder = Finder(self.body, self.segmenter, check=self.judge.real if self.judge else None)
+        self.finder = Finder(self.body, self.segmenter, check=self.judge.real if self.judge else None,
+                             on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"))
         self.router = Router(self.device, self.cloud or NoCloud())
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()
+        self.refresh_panels()
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
@@ -88,9 +90,11 @@ class Andy:
             self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
             self._pointed = False
+            self.screen.doing("Thinking", "Looking at you")
             reply = respond(text, self._answer, self.disclosure)
             self.face_person_to_speak()
             self.say(reply)
+            self.refresh_panels()
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
             self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
             return reply
@@ -123,8 +127,25 @@ class Andy:
             face(yaw, pitch)  # and keep easing towards them while talking
 
     def say(self, text: str) -> None:
-        self.body.say(text)
         self.screen.said(text, self._source, self._reason)
+        before = (self.screen.state, self.screen.head)
+        self.screen.doing("Speaking", before[1] if before[0] == "Pointing" else "Looking at you")
+        try:
+            self.body.say(text)
+        finally:
+            if before[0] in ("Working", "Pointing"):
+                self.screen.doing(*before)
+            else:
+                self.screen.doing("Waiting")
+
+    def refresh_panels(self) -> None:
+        """The screen's side cards: the next reminder, and what Andy is keeping an eye on."""
+        up = self.reminders.upcoming()
+        if up:
+            self.screen.reminder_next(up[0].text, up[0].at)
+        else:
+            self.screen.reminder_next(None)
+        self.screen.keeping(self._memory())
 
     def _answer(self, text: str) -> str:
         i = parse(text, _now(self.clock))
@@ -157,6 +178,10 @@ class Andy:
                 return "What should I remind you about, and when?"
             r = self.reminders.add(i.text, i.at, i.daily, now=self.clock())
             return f"I'll remind you {'every day ' if r.daily else ''}at {spoken_time(r.at)}: {r.text}."
+        if i.kind == "help":
+            self.screen.show_help()
+            return ("I can find things and point at them, keep an eye on things, remind you, and look things up. "
+                    "There are some ideas on the screen. Start with my name.")
         if i.kind == "world":
             return self.look_up(text)
         return self.talk(text)
@@ -208,7 +233,9 @@ class Andy:
         self.screen.timer_start()
         checks = getattr(self.judge, "calls", 0)
         self.finder.looks = 0
+        self.screen.looking(thing)
         self.say("Let me look.")  # answer at once: a search takes a few seconds
+        self.screen.doing("Working", "Looking around the room")
         self.gesture("thinking")
         try:
             return self._find(thing, request, hint, checks)
@@ -219,11 +246,14 @@ class Andy:
         found, words = None, ""
         for client, model, paid, source, reason in (self.planners() if hint else []):
             tools = SearchTools(self.finder, self.places, self.judge, on_tool=self._tool_moves)
+            on_look, self.finder.on_look = self.finder.on_look, None  # the plan's own steps show the progress
             try:
                 plan = plan_search(client, request, tools, model=model, budget=self.budget, paid=paid)
             except CLOUD_TROUBLE as e:
                 self.screen.step(f"{model} is unavailable ({type(e).__name__})")
                 continue
+            finally:
+                self.finder.on_look = on_look
             for tool, args, result in plan.steps:
                 self.screen.step(f"{tool}: {result}")
             found, words = tools.pointed, ""  # found: Andy's words come from the tools, never the model's guesses
@@ -247,6 +277,7 @@ class Andy:
             return self._not_found(thing)
         self.places.saw(found.label, found.yaw, found.pitch, when=self.clock())
         self._pointed = True
+        self.screen.doing("Pointing", f"At your {found.label}")
         self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
@@ -288,10 +319,13 @@ class Andy:
         if self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
             self.gesture("searching")
+            self.screen.doing("Working", "Glancing around the room")
             try:
                 glance(self.body, self.segmenter, self.places)
             finally:
                 self.gesture("idle")
+                self.screen.doing("Waiting")
+        self.refresh_panels()
 
     def _find_person(self):
         self.gesture("searching")

@@ -235,3 +235,23 @@ def test_upward_looks_at_a_face_are_softened():
     assert soften_look_up(10.0) == 10.0  # down: as it is
     assert soften_look_up(-10.0) == pytest.approx(-6.0)
     assert soften_look_up(-40.0) == -12.0  # never more than 12 degrees up
+
+
+def test_the_screen_shows_what_andy_is_doing_and_the_side_cards(tmp_path):
+    a, _, clock = andy(Thing("keys", 20.0, 20.0), tmp_path=tmp_path)
+    a.hear("keep an eye on my keys")
+    a.hear("remind me in ten minutes to check the oven")
+    snap = a.screen.snapshot()
+    assert snap["next"]["text"] == "check the oven" and snap["watching"] == ["keys: not seen yet"]
+    a.hear("where are my keys")
+    snap = a.screen.snapshot()
+    assert snap["looking_for"] == "keys" and snap["state"] == "Pointing" and snap["head"] == "At your keys"
+    assert snap["watching"][0].startswith("keys: seen just now")
+    a.hear("tell me a joke")
+    assert a.screen.snapshot()["state"] == "Waiting"
+
+
+def test_what_can_i_ask_opens_the_guide(tmp_path):
+    a, _, _ = andy(tmp_path=tmp_path)
+    assert "ideas on the screen" in a.hear("what can I ask you?")
+    assert a.screen.snapshot()["help"] is True

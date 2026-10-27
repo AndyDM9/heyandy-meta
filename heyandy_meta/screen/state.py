@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from ..finder.search import Found
 
 PICTURE_SECONDS = 120
+HELP_SECONDS = 60
 
 
 @dataclass
@@ -32,6 +33,31 @@ class ScreenState:
         self.memory: list[str] | None = None  # shown while "what do you remember?" is answered
         self._timer: tuple[float, float | None] | None = None  # (started, stopped)
         self.models: dict[str, list] = {}  # this turn's Meta models: name -> [where, times used]
+        self.state, self.head = "Waiting", ""  # the pill: what Andy is doing, and what its head is turned to
+        self.looking_for = ""  # "your cup", while a search runs and after
+        self.next_reminder: tuple[str, float] | None = None  # (the person's words, when), epoch seconds
+        self.watching: list[str] = []  # what Andy keeps an eye on, and where it last saw each
+        self._help_until = 0.0
+
+    def doing(self, state: str, head: str = "") -> None:
+        with self._lock:
+            self.state, self.head = state, head
+
+    def looking(self, thing: str) -> None:
+        with self._lock:
+            self.looking_for = thing
+
+    def reminder_next(self, text: str | None, at: float = 0.0) -> None:
+        with self._lock:
+            self.next_reminder = (text, at) if text else None
+
+    def keeping(self, lines: list[str]) -> None:
+        with self._lock:
+            self.watching = list(lines)
+
+    def show_help(self) -> None:
+        with self._lock:
+            self._help_until = self._clock() + HELP_SECONDS
 
     def new_turn(self) -> None:
         with self._lock:
@@ -57,6 +83,7 @@ class ScreenState:
     def clear(self) -> None:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
+            self.looking_for, self._help_until = "", 0.0
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
@@ -86,7 +113,10 @@ class ScreenState:
             out = {"caption": self.caption, "source": self.source, "reason": self.reason, "online": self.online,
                    "picture": None, "sources": [{"title": a, "url": b} for a, b in self.sources],
                    "steps": list(self.steps), "memory": self.memory, "seconds": None, "running": False,
-                   "models": [{"name": n, "where": w, "times": t} for n, (w, t) in self.models.items()]}
+                   "models": [{"name": n, "where": w, "times": t} for n, (w, t) in self.models.items()],
+                   "state": self.state, "head": self.head, "looking_for": self.looking_for,
+                   "next": {"text": self.next_reminder[0], "at": self.next_reminder[1]} if self.next_reminder else None,
+                   "watching": list(self.watching), "help": self._clock() < self._help_until}
             if self._timer:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)

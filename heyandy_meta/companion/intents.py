@@ -15,6 +15,7 @@ FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see
                   + r"(?:\s+(?:is|are|went|go|gone))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
+HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
 REMIND = re.compile(r"\bremind me\b", re.I)
@@ -32,7 +33,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # find | watch | forget | remember | reminders | remind | world | chat
+    kind: str  # find | watch | forget | remember | reminders | remind | help | world | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
     at: float = 0.0  # a reminder's time, epoch seconds
@@ -122,6 +123,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())
                     if w not in FILLER]
             return Intent(kind, thing=snap(thing.strip()), text=t, hint=kind == "find" and len(rest) >= 2)
+    if HELP.search(t):
+        return Intent("help", text=t)
     if WORLD.search(t):
         return Intent("world", text=t)
     return Intent("chat", text=t)

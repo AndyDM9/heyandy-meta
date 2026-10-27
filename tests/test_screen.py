@@ -7,7 +7,7 @@ import pytest
 from heyandy_meta.finder.search import Found
 from heyandy_meta.models.common import Mask
 from heyandy_meta.robot.body import Frame
-from heyandy_meta.screen.server import COLORS, page, serve
+from heyandy_meta.screen.server import THEMES, page, serve
 from heyandy_meta.screen.state import PICTURE_SECONDS, ScreenState
 
 
@@ -42,17 +42,41 @@ def test_caption_and_who_answered():
     assert (snap["caption"], snap["source"], snap["reason"]) == ("It's half past ten.", "device", "everyday turn")
 
 
-def _luminance(hex_):
-    def ch(c):
-        c = int(hex_[c:c + 2], 16) / 255
-        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-    return 0.2126 * ch(1) + 0.7152 * ch(3) + 0.0722 * ch(5)
+def _rgb(hex_):
+    h = hex_.lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)), (int(h[6:8], 16) / 255 if len(h) == 8 else 1.0)
 
 
-@pytest.mark.parametrize("name", ["text", "muted", "accent", "cloud"])
-def test_every_text_colour_is_at_least_7_to_1(name):
-    a, b = _luminance(COLORS[name]), _luminance(COLORS["bg"])
-    assert (max(a, b) + 0.05) / (min(a, b) + 0.05) >= 7.0
+def _luminance(rgb):
+    def ch(v):
+        v /= 255
+        return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+    return 0.2126 * ch(rgb[0]) + 0.7152 * ch(rgb[1]) + 0.0722 * ch(rgb[2])
+
+
+def _ratio(a, b):
+    x, y = sorted([_luminance(a), _luminance(b)], reverse=True)
+    return (x + 0.05) / (y + 0.05)
+
+
+def _backgrounds(part):
+    if part == "night":
+        return [THEMES["night"][k] for k in ("bg1", "bg2", "bg3")]
+    return [c for p in ("day", "morning", "evening") for k, c in THEMES[p].items() if k.startswith("bg")]
+
+
+@pytest.mark.parametrize("part", ["day", "night"])
+@pytest.mark.parametrize("name", ["ink", "muted", "accent", "cloud"])
+def test_every_text_colour_is_at_least_7_to_1_on_a_frosted_panel_over_any_background(part, name):
+    panel, alpha = _rgb(THEMES[part]["panel"])
+    for bg in _backgrounds(part):
+        seen = tuple(round(alpha * p + (1 - alpha) * b) for p, b in zip(panel, _rgb(bg)[0]))
+        assert _ratio(_rgb(THEMES[part][name])[0], seen) >= 7.0, (part, name, bg)
+
+
+@pytest.mark.parametrize("part", ["day", "night"])
+def test_captions_are_at_least_7_to_1(part):
+    assert _ratio(_rgb(THEMES[part]["caption"])[0], _rgb(THEMES[part]["caption_bg"])[0]) >= 7.0
 
 
 def test_page_has_no_unfilled_colours():
@@ -67,7 +91,7 @@ def test_served_on_this_computer_only_and_read_only():
         host, port = server.server_address
         assert host == "127.0.0.1"
         base = f"http://127.0.0.1:{port}"
-        assert b"Andy, a robot" in urllib.request.urlopen(base + "/").read()
+        assert b"Pictures and voice stay on this computer" in urllib.request.urlopen(base + "/").read()
         assert json.loads(urllib.request.urlopen(base + "/state.json").read())["caption"] == "Hello"
         with pytest.raises(urllib.error.HTTPError):
             urllib.request.urlopen(urllib.request.Request(base + "/state.json", data=b"{}", method="POST"))
@@ -95,3 +119,16 @@ def test_timer_plan_memory_and_sources():
     assert snap["sources"] == [{"title": "Market hours", "url": "https://www.townmarket.org/hours"}]
     s.clear()
     assert s.snapshot()["steps"] == [] and s.snapshot()["seconds"] is None
+
+
+def test_the_typeface_is_served_by_andy_itself():
+    srv = serve(ScreenState(), port=0)
+    try:
+        url = f"http://127.0.0.1:{srv.server_port}"
+        data = urllib.request.urlopen(url + "/fonts/AtkinsonHyperlegibleNext.ttf").read()
+        assert data[:4] == b"\x00\x01\x00\x00"  # a TrueType font
+        with pytest.raises(urllib.error.HTTPError):
+            urllib.request.urlopen(url + "/fonts/../server.py")
+        assert "fonts.googleapis" not in page() and "http" not in page().split("<script>")[0].replace("http://www.w3.org", "")
+    finally:
+        srv.shutdown()

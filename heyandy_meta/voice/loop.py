@@ -61,6 +61,9 @@ class VoiceLoop:
             if gesture and endpointer.active != hearing and self._clock() <= self.awake_until:
                 hearing = endpointer.active
                 gesture("listening" if hearing else "idle")  # attentive while a follow-up is spoken
+                screen = getattr(self.andy, "screen", None)
+                if screen and hearing:
+                    screen.doing("Listening", "Looking at you")
             if utterance is not None:
                 self.utterance_end = time.monotonic() - endpointer.end_silence_s
                 try:
