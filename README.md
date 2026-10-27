@@ -27,7 +27,14 @@ trademark application.
 - **Model clients:** Muse Spark and SAM 3.1 through the Meta Model API, and Muse Glimmer locally.
 - **A hard spending cap,** because Meta's Billing "spend limit" only sends an email.
 - **SAM 3.1 masks turned into head angles,** and sightings merged across views.
-- **Next:** the search itself, the Reachy Mini body, voice, object memory, and the before/after evaluation.
+- **The search:**
+  - It sweeps four views, looks closer, and points only after a centred second look confirms the thing.
+  - The base turns for things past the head's reach.
+  - If something is out of any reach, the robot says so instead of pointing wrong.
+  - It's tested in a simulated room.
+- **Object memory (opt-in):** an idle glance notes where chosen things are, as label, direction and time, never a
+  picture. "Where are my keys?" then goes straight there.
+- **Next:** the Reachy Mini body, voice, Muse Spark planning the search, and the before/after evaluation.
 
 ## Run the tests
 ```bash
@@ -37,7 +44,9 @@ uv sync --extra dev && uv run pytest -q   # no network calls: the model clients 
 ## Layout
 ```
 heyandy_meta/models/   Muse Spark and SAM 3.1 (Model API) and Muse Glimmer (local) clients
-heyandy_meta/finder/   from a SAM 3.1 mask to where the head looks
+heyandy_meta/finder/   the search, and from a SAM 3.1 mask to where the head looks
+heyandy_meta/memory/   object memory: where watched things were last seen
+heyandy_meta/robot/    the body interface, and a simulated room for tests
 heyandy_meta/router.py who answers a turn: the device or the cloud
 heyandy_meta/budget.py the hard cap on Model API spend
 config/                config.example.yaml (no secrets)
@@ -48,7 +57,7 @@ tests/
 ## What doesn't work yet
 - **No live model call has been made yet.** The first paid calls wait for the hackathon credits.
 - **SAM 3.1 frames are sent as data URLs.** That the API accepts them gets checked on the first call.
-- **There is no robot body, voice or search loop yet,** and no measurements.
+- **There is no real robot body or voice yet,** and no measurements: the search runs only in the simulated room.
 
 ## Licence
 Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
