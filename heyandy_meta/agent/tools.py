@@ -5,9 +5,12 @@ reason the model can read, and nothing moves.
 """
 import re
 from dataclasses import dataclass, field
+from typing import Protocol
 
 from ..finder.search import Finder, Found
 from ..memory.places import Places
+from ..models.common import Mask
+from ..robot.body import Frame
 
 VIEWS = {  # name -> (yaw, pitch); the names are what the model sees
     "far left": (55.0, 15.0),
@@ -19,6 +22,13 @@ VIEWS = {  # name -> (yaw, pitch); the names are what the model sees
     "floor in front": (0.0, 32.0),
 }
 OBJECT = re.compile(r"^[a-zA-Z][a-zA-Z '\-]{0,39}$")  # a short noun phrase for SAM 3.1
+DESCRIPTION = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9 ,'\-]{0,79}$")  # the person's words about which one
+
+
+class Judge(Protocol):
+    """Picture checks that run on this computer (Glimmer); the model planning the search only sees the answer."""
+
+    def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None: ...
 
 
 def _side(yaw: float) -> str:
@@ -45,6 +55,15 @@ SPECS = [
         "parameters": {"type": "object", "properties": {"object": {"type": "string"}, "place": {"type": "string"}},
                        "required": ["object", "place"]}}},
     {"type": "function", "function": {
+        "name": "compare", "description": "When several numbered places might hold the object, look closely at each "
+        "and pick the one that fits the person's description (colour, what it's next to). The pictures are checked on "
+        "the robot's own computer; you get back only which place fits.",
+        "parameters": {"type": "object", "properties": {
+            "object": {"type": "string"},
+            "description": {"type": "string", "description": "The person's words, e.g. 'blue, next to the laptop'."},
+            "places": {"type": "array", "items": {"type": "string"}}},
+            "required": ["object", "description", "places"]}}},
+    {"type": "function", "function": {
         "name": "point", "description": "Point at a place that look_closer confirmed. Only confirmed places can be pointed at.",
         "parameters": {"type": "object", "properties": {"place": {"type": "string"}}, "required": ["place"]}}},
 ]
@@ -54,12 +73,14 @@ SPECS = [
 class SearchTools:
     finder: Finder
     places: Places | None = None
+    judge: Judge | None = None
     candidates: dict[str, tuple[float, float]] = field(default_factory=dict)
     confirmed: dict[str, Found] = field(default_factory=dict)
     pointed: Found | None = None
 
     def call(self, name: str, args: dict) -> str:
-        handler = {"recall": self._recall, "look": self._look, "look_closer": self._closer, "point": self._point}.get(name)
+        handler = {"recall": self._recall, "look": self._look, "look_closer": self._closer, "compare": self._compare,
+                   "point": self._point}.get(name)
         if handler is None:
             return f"refused: there is no tool called {name!r}"
         try:
@@ -104,9 +125,37 @@ class SearchTools:
             return f"refused: no place {place!r}; places so far: {list(self.candidates) or 'none'}"
         found = self.finder.confirm(obj, *self.candidates[place])
         if found is None:
-            return f"Looked closer at place {place}: no {obj} there."
+            return f"Looked closer at place {place}: {self.finder.why or 'not there'}."
         self.confirmed[place] = found
         return f"Confirmed: the {obj} is at place {place}, {_side(found.yaw)}."
+
+    def _compare(self, object, description, places) -> str:
+        obj = self._object(object)
+        if obj is None:
+            return "refused: the object must be a short plain noun phrase"
+        if not isinstance(description, str) or not DESCRIPTION.match(description.strip()):
+            return "refused: the description must be a few plain words"
+        if not isinstance(places, list) or not 2 <= len(places) <= 4 or any(p not in self.candidates for p in places):
+            return f"refused: give 2 to 4 places from {list(self.candidates) or 'none'}"
+        if self.judge is None:
+            return "I can't compare pictures right now; look_closer at the likeliest place instead."
+        seen, notes = [], []
+        for p in dict.fromkeys(places):
+            found = self.finder.confirm(obj, *self.candidates[p])
+            if found is None:
+                notes.append(f"place {p}: {self.finder.why}")
+                continue
+            self.confirmed[p] = found
+            seen.append(p)
+        if not seen:
+            return "Compared: " + "; ".join(notes) + "."
+        i = self.judge.pick([(self.confirmed[p].frame, self.confirmed[p].mask) for p in seen], description.strip())
+        for p in seen:
+            if i is None or p != seen[i]:
+                self.confirmed.pop(p)  # only the one that fits may be pointed at
+        if i is None:
+            return f"Compared places {', '.join(seen)}: none looks like '{description.strip()}'. Ask the person."
+        return f"Place {seen[i]} fits '{description.strip()}' and is confirmed, {_side(self.confirmed[seen[i]].yaw)}."
 
     def _point(self, place) -> str:
         found = self.confirmed.get(place)

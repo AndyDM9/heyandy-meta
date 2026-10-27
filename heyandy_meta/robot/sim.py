@@ -19,6 +19,7 @@ class Thing:
     size_px: int = 60  # how wide it looks at 1080p
     score: float = 0.9
     on_screen: bool = False  # a picture of the thing on a TV or in a photo
+    looks: str = ""  # what tells it apart from others like it, e.g. "blue, next to the laptop"
 
 
 @dataclass
@@ -80,3 +81,33 @@ class SimSegmenter:
             box = (int(at[0]) - h, int(at[1]) - h, int(at[0]) + h, int(at[1]) + h)
             masks.append(Mask(query, box, t.score, center=at, area=t.size_px ** 2))
         return masks
+
+
+class SimJudge:
+    """Answers like Glimmer's picture checks would, from the room's ground truth."""
+
+    def __init__(self, room: Room):
+        self.room = room
+        self.calls = 0
+
+    def _thing(self, frame: Frame, mask: Mask) -> Thing | None:
+        for t in self.room.things:
+            at = self.room.where_in_frame(t, frame.yaw, frame.pitch)
+            if t.label == mask.label and at and abs(at[0] - mask.center[0]) < 2 and abs(at[1] - mask.center[1]) < 2:
+                return t
+        return None
+
+    def real(self, frame: Frame, mask: Mask) -> bool:
+        self.calls += 1
+        t = self._thing(frame, mask)
+        return not (t and t.on_screen)
+
+    def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None:
+        self.calls += 1
+        words = set(description.lower().replace(",", " ").split())
+        overlap = []
+        for frame, mask in found:
+            t = self._thing(frame, mask)
+            overlap.append(len(words & set(t.looks.lower().replace(",", " ").split())) if t else 0)
+        best = max(range(len(found)), key=overlap.__getitem__, default=None)
+        return best if best is not None and overlap[best] > 0 else None

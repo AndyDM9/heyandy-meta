@@ -41,6 +41,7 @@ class Finder:
     closer_looks: int = 2
     confirm_within_px: float = 0.15  # a close-up's mask must be this near the centre (fraction of frame width)
     check: Callable[[Frame, Mask], bool] | None = None  # optional second opinion, e.g. "is this on a screen?"
+    why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
         """The fixed search: the remembered place, then a sweep, then up to two closer looks."""
@@ -71,15 +72,18 @@ class Finder:
 
     def confirm(self, label: str, yaw: float, pitch: float) -> Found | None:
         """Look straight at a place; it counts only if the thing is near the centre of that frame."""
+        self.why = ""
         frame = self._look(yaw, pitch)
         cam = self._cam(frame)
         near = [m for m in self._masks(frame, label)
                 if abs(m.center[0] - cam.cx) <= self.confirm_within_px * frame.width
                 and abs(m.center[1] - cam.cy) <= self.confirm_within_px * frame.width]
         if not near:
+            self.why = "not there"
             return None
         best = min(near, key=lambda m: (m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
         if self.check and not self.check(frame, best):
+            self.why = "only a picture of one, on a screen or in a photo"
             return None
         y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)
