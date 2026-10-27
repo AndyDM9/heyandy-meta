@@ -8,6 +8,7 @@ from meta_sam_parser import (
     SegmentationBoxRecord,
     SegmentationMaskRecord,
     decode_mask_to_raster,
+    decode_mask_to_svg_path,
     image_segmentation_format,
 )
 
@@ -32,8 +33,10 @@ def parse(output_text: str, label: str) -> list[Mask]:
             continue
         b = record.bounds
         score = record.confidence if record.confidence is not None else box_scores.get(record.object_id)
+        scale = ((b.right - b.left) / record.mask.width, (b.bottom - b.top) / record.mask.height)
         masks.append(Mask(label=label, box=(int(b.left), int(b.top), int(b.right), int(b.bottom)),
-                          score=score, center=center, area=area))
+                          score=score, center=center, area=area,
+                          outline=decode_mask_to_svg_path(record.mask), outline_scale=scale))
     return sorted(masks, key=lambda m: -(m.score if m.score is not None else 0.0))
 
 

@@ -20,6 +20,7 @@ def test_centre_of_the_mask_not_the_box():
     assert m.area == 30
     assert m.center == pytest.approx((107.5, 203.0))  # the right half of the box is filled
     assert m.score == pytest.approx(0.9)
+    assert m.outline.startswith("M") and m.outline.endswith("Z") and m.outline_scale == (1.0, 1.0)
 
 
 def test_two_objects_strongest_first():

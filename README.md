@@ -39,6 +39,11 @@ trademark application.
   - Every argument is checked in code. Pointing is refused until a closer look confirms.
   - A run is limited to 12 calls and stays under the spend cap.
   - The model never sends angles or motor values.
+- **The TV page** (this computer only, read-only):
+  - It shows the picture the thing was confirmed in, zoomed to it, with SAM 3.1's outline drawn on.
+  - It shows Andy's words as large captions, and who answered and why: the device or the cloud.
+  - The picture stays in memory for two minutes, is never saved, and no requests are logged.
+  - Every text colour is at least 7:1 contrast, which the tests check.
 - **Next:** the Reachy Mini body, voice, and the before/after evaluation.
 
 ## Run the tests
@@ -53,6 +58,7 @@ heyandy_meta/agent/    Muse Spark's search tools and planning loop
 heyandy_meta/finder/   the search, and from a SAM 3.1 mask to where the head looks
 heyandy_meta/memory/   object memory: where watched things were last seen
 heyandy_meta/robot/    the body interface, and a simulated room for tests
+heyandy_meta/screen/   the TV page
 heyandy_meta/router.py who answers a turn: the device or the cloud
 heyandy_meta/budget.py the hard cap on Model API spend
 config/                config.example.yaml (no secrets)

@@ -25,3 +25,5 @@ class Mask:
     score: float | None  # SAM's 0-1 confidence; None when not returned (not zero)
     center: tuple[float, float] = (0.0, 0.0)  # the mask's centre of mass
     area: int = 0  # mask pixels
+    outline: str = ""  # SVG path in the mask's own pixels; place it with translate(box[0], box[1]) scale(*outline_scale)
+    outline_scale: tuple[float, float] = (1.0, 1.0)
