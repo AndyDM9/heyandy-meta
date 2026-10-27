@@ -25,6 +25,16 @@ FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?
 DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is) (?:this|that)\b(?! (?:song|noise|sound))"
                       r"|\bwhat(?:'s| is) on the (?P<place>table|desk|counter|shelf|floor|sofa|couch|bed|chair)\b"
                       r"|\bwhat (?:can|do) you see\b|\bdescribe what you see\b|\bwhat colou?r is (?:this|it)\b", re.I)
+VOICE = {  # how Andy speaks, set by voice and remembered
+    "repeat": re.compile(r"\b(?:repeat that|say (?:that|it) again|what did you (?:just )?say|pardon\??$|come again|"
+                         r"i didn'?t (?:catch|hear) (?:that|you))\b", re.I),
+    "louder": re.compile(r"\b(?:speak up|(?:speak |talk )?louder|i can'?t hear you|turn (?:it|yourself|your voice) up)\b",
+                         re.I),
+    "quieter": re.compile(r"\b(?:(?:speak |talk )?(?:more )?(?:quieter|quietly|softer|softly)|too loud|turn (?:it|yourself|"
+                          r"your voice) down)\b", re.I),
+    "slower": re.compile(r"\b(?:(?:speak |talk )?(?:more )?slow(?:er|ly)|slow down|too fast)\b", re.I),
+    "faster": re.compile(r"\b(?:(?:speak |talk )?(?:a bit |a little )?faster|speed up|too slow(?:ly)?)\b", re.I),
+}
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
@@ -43,7 +53,8 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # find | follow | watch | forget | remember | reminders | remind | describe | draw | help | world | chat
+    kind: str  # voice | find | follow | watch | forget | remember | reminders | remind | describe | draw | help | world
+    #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
     at: float = 0.0  # a reminder's time, epoch seconds
@@ -116,6 +127,9 @@ def normalise(text: str) -> str:
 def parse(text: str, now: dt.datetime | None = None) -> Intent:
     now = now or dt.datetime.now()
     t = normalise(text)
+    for name, rx in VOICE.items():
+        if rx.search(t):
+            return Intent("voice", thing=name, text=t)
     if REMIND.search(t):
         when = parse_time(t, now)
         words = _reminder_words(when[1]) if when else ""

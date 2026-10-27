@@ -10,10 +10,12 @@ from ..models.sam_local import LocalUnavailable, NotLocal
 
 
 class LocalVoice:
-    def __init__(self, endpoint: str = "http://127.0.0.1:8092", voice: str = "am_michael", timeout: float = 10.0):
+    def __init__(self, endpoint: str = "http://127.0.0.1:8092", voice: str = "am_michael", timeout: float = 10.0,
+                 speed: float = 1.0, loudness: float = -21.0):
         if not is_local(endpoint):
             raise NotLocal(f"speech stays on this computer or the home network, not {endpoint}")
         self.endpoint, self.voice, self.timeout = endpoint.rstrip("/"), voice, timeout
+        self.speed, self.loudness = speed, loudness  # "speak more slowly", "speak up": set by voice
 
     def _post(self, path: str, data: bytes, headers: dict):
         try:
@@ -27,6 +29,7 @@ class LocalVoice:
             return json.load(r)["text"]
 
     def speak(self, text: str, rate: int = 16000) -> np.ndarray:
-        body = json.dumps({"text": text, "voice": self.voice, "rate": rate}).encode()
+        body = json.dumps({"text": text, "voice": self.voice, "rate": rate, "speed": self.speed,
+                           "loudness": self.loudness}).encode()
         with self._post("/speak", body, {"Content-Type": "application/json"}) as r:
             return np.frombuffer(r.read(), dtype="<f4").copy()

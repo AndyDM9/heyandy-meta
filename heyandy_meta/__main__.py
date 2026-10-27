@@ -56,6 +56,7 @@ def build(args) -> Andy:
             from .voice.speaker import Speaker
 
             body._say = Speaker(LocalVoice(args.voice_url, voice=args.voice_name), body.play)
+            body.voice = body._say.voice
     else:
         room = Room(list(LIVING_ROOM))
         body, segmenter, judge = SimBody(room), SimSegmenter(room), SimJudge(room)
@@ -63,6 +64,8 @@ def build(args) -> Andy:
     andy = Andy(body, segmenter, device, places, reminders, ScreenState(), cloud, spark, judge,
                 glimmer=None if args.no_local_agent else device.client, budget=budget, online=not args.offline,
                 home=args.home)
+    andy.voice = getattr(body, "voice", None)
+    andy.load_voice()
     if args.staged_scene:
         if not args.robot:
             raise SystemExit("--staged-scene is for filming on the robot in a staged room")

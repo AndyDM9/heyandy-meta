@@ -7,7 +7,7 @@ Audio is held in memory for one request; nothing is written or logged.
 
 POST /transcribe  body: float32 little-endian mono samples; header X-Sample-Rate (default 16000)
   -> {"text": "where are my glasses", "seconds": 0.04}
-POST /speak       {"text": "I see your glasses.", "voice": "am_michael", "rate": 16000}
+POST /speak       {"text": "I see your glasses.", "voice": "am_michael", "rate": 16000, "speed": 1.0, "loudness": -21}
   -> body: float32 little-endian mono samples at "rate" (default 24000, Kokoro's own); headers X-Sample-Rate, X-Seconds
 """
 import argparse
@@ -70,18 +70,20 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                     req = json.loads(self.rfile.read(min(n, 8192)))
                     text, voice = str(req["text"])[:600], str(req.get("voice") or VOICE)
                     rate = int(req.get("rate") or 24000)
+                    speed = min(1.3, max(0.7, float(req.get("speed") or 1.0)))
+                    loudness = min(-12.0, max(-30.0, float(req.get("loudness") or -21.0)))
                 except (ValueError, KeyError):
                     return self._json(400, {"error": "need 'text'"})
                 start = time.monotonic()
                 try:
                     with lock:
-                        parts = [np.asarray(a, dtype=np.float32) for _, _, a in tts(text, voice=voice, speed=1.0)]
+                        parts = [np.asarray(a, dtype=np.float32) for _, _, a in tts(text, voice=voice, speed=speed)]
                 except Exception as e:  # noqa: BLE001 - e.g. a voice that isn't downloaded; say so, don't drop the line
                     return self._json(500, {"error": f"{type(e).__name__}: {e}"[:300]})
                 audio = np.concatenate(parts) if parts else np.zeros(0, np.float32)
                 if rate != 24000 and audio.size:
                     audio = torchaudio.functional.resample(torch.from_numpy(audio), 24000, rate).numpy()
-                audio = louder(audio)
+                audio = louder(audio, loudness)
                 data = audio.astype("<f4").tobytes()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/octet-stream")

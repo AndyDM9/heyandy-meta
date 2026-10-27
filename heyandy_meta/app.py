@@ -7,6 +7,7 @@ Glimmer unless it needs more thought. When the cloud is refused or unreachable, 
 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
+import json
 import re
 import threading
 import time
@@ -87,6 +88,8 @@ class Andy:
         self._drawing = None  # the last picture Muse Image made, to refine
         self._briefed = None  # the day of the last morning briefing
         self.assistant = Assistant(self)
+        self.voice = None  # the voice server client (speed, loudness), when Andy speaks out loud
+        self._last_said = ""  # for "say that again"
         self._stop_following = threading.Event()
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
@@ -115,6 +118,8 @@ class Andy:
             self.refresh_panels()
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
             self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
+            if parse(text).kind != "voice":
+                self._last_said = reply.removeprefix(DISCLOSURE).strip()
             return reply
 
     def turn_to_person(self, yaw: float, pitch: float | None = None) -> None:
@@ -186,6 +191,8 @@ class Andy:
             if done is not None:
                 self._briefed = today if brief else self._briefed
                 return done
+        if i.kind == "voice":
+            return self.adjust_voice(i.thing)
         if i.kind == "find":
             return self.find(i.thing, text, i.hint)
         if i.kind == "follow":
@@ -338,6 +345,37 @@ class Andy:
         words = words or self._found_words(found)
         self.screen.found(found, words)
         return words
+
+    def adjust_voice(self, what: str) -> str:
+        """"Say that again", "speak up", "speak more slowly": how Andy speaks, changed by voice and remembered."""
+        if what == "repeat":
+            return self._last_said or "I haven't said anything yet."
+        v = self.voice
+        if v is None:
+            return "I can't change my voice here."
+        steps = {"louder": ("loudness", 3.0, -12.0), "quieter": ("loudness", -3.0, -30.0),
+                 "slower": ("speed", -0.1, 0.7), "faster": ("speed", 0.1, 1.3)}
+        name, step, limit = steps[what]
+        now = getattr(v, name)
+        new = max(limit, now + step) if step < 0 else min(limit, now + step)
+        if round(new, 2) == round(now, 2):
+            return {"louder": "That's as loud as I go.", "quieter": "That's as quiet as I go.",
+                    "slower": "That's as slowly as I speak.", "faster": "That's as fast as I speak."}[what]
+        setattr(v, name, round(new, 2))
+        self.save_voice()
+        return "Is this better?"
+
+    def save_voice(self) -> None:
+        if self.voice is not None:
+            path = self.places.path.parent / "voice.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({"speed": self.voice.speed, "loudness": self.voice.loudness}))
+
+    def load_voice(self) -> None:
+        path = self.places.path.parent / "voice.json"
+        if self.voice is not None and path.exists():
+            saved = json.loads(path.read_text())
+            self.voice.speed, self.voice.loudness = saved.get("speed", 1.0), saved.get("loudness", -21.0)
 
     def agent(self, request: str, brief: bool = False) -> str | None:
         """Several things at once, or the morning briefing: an agent plans over all of Andy's abilities. Muse Spark

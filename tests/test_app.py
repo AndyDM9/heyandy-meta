@@ -282,3 +282,32 @@ def test_andy_looks_and_says_what_it_sees(tmp_path):
     assert a.hear("what's on the table?").endswith("I see a mug.")
     assert ("look", 0.0, 28.0) in body.log  # it looked down at the table
     assert {m["name"]: m["where"] for m in a.screen.snapshot()["models"]}["Muse Glimmer (looks)"] == "device"
+
+
+@pytest.mark.parametrize("said, what", [("speak up please", "louder"), ("Andy, I can't hear you", "louder"),
+                                        ("that's too loud", "quieter"), ("speak more slowly", "slower"),
+                                        ("a bit faster please", "faster"), ("what did you say?", "repeat"),
+                                        ("say that again", "repeat")])
+def test_how_andy_speaks_is_asked_for_by_voice(said, what):
+    from heyandy_meta.companion.intents import parse
+
+    i = parse(said)
+    assert (i.kind, i.thing) == ("voice", what)
+
+
+def test_say_that_again_and_speak_up_are_remembered(tmp_path):
+    from types import SimpleNamespace as NS
+
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.voice = NS(speed=1.0, loudness=-21.0)
+    a.hear("tell me a joke")
+    assert a.hear("what did you say?") == "Hello there."
+    assert a.hear("speak up") == "Is this better?" and a.voice.loudness == -18.0
+    assert a.hear("say that again") == "Hello there."  # still the last real answer, not "Is this better?"
+    for _ in range(5):
+        a.hear("speak more slowly")
+    assert a.voice.speed == 0.7 and a.hear("slower") == "That's as slowly as I speak."
+    b, _, _ = andy(tmp_path=tmp_path)
+    b.voice = NS(speed=1.0, loudness=-21.0)
+    b.load_voice()
+    assert (b.voice.speed, b.voice.loudness) == (0.7, -18.0)
