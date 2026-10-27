@@ -162,8 +162,8 @@ class Andy:
         self.screen.timer_start()
         checks = getattr(self.judge, "calls", 0)
         self.finder.looks = 0
-        self.gesture("thinking")
         self.say("Let me look.")  # answer at once: a search takes a few seconds
+        self.gesture("thinking")
         found, words = None, ""
         for client, model, paid, source, reason in (self.planners() if hint else []):
             tools = SearchTools(self.finder, self.places, self.judge)
