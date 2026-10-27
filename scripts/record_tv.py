@@ -1,0 +1,49 @@
+"""Record the TV page to a video, for the demo film: what Andy's screen showed, beside the footage of the robot.
+
+    uv run --with playwright python scripts/record_tv.py --seconds 90 --out film/tv-take1.webm
+
+For filming in the staged room only: the recording keeps whatever the TV shows (the found picture, captions). It
+drives a browser already open for automation (Chrome with --remote-debugging-port, default 9333), or starts a
+headless one if none is there. Nothing is uploaded.
+"""
+import argparse
+import shutil
+import time
+from pathlib import Path
+
+from playwright.sync_api import sync_playwright
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--url", default="http://127.0.0.1:8765/")
+    ap.add_argument("--seconds", type=float, default=60.0)
+    ap.add_argument("--out", default="film/tv.webm")
+    ap.add_argument("--cdp", default="http://127.0.0.1:9333", help="an open Chrome's debugging address ('' for headless)")
+    args = ap.parse_args()
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.parent / ".recording"
+    with sync_playwright() as pw:
+        try:
+            browser = pw.chromium.connect_over_cdp(args.cdp) if args.cdp else pw.chromium.launch()
+        except Exception:  # noqa: BLE001 - no open Chrome: a headless one (needs `playwright install chromium`)
+            browser = pw.chromium.launch()
+        ctx = browser.new_context(viewport={"width": 1920, "height": 1080},
+                                  record_video_dir=str(tmp), record_video_size={"width": 1920, "height": 1080})
+        page = ctx.new_page()
+        page.goto(args.url)
+        print(f"recording {args.url} for {args.seconds:.0f} s ...")
+        start = time.monotonic()
+        while time.monotonic() - start < args.seconds:
+            page.wait_for_timeout(500)
+        video = page.video.path()
+        ctx.close()
+        browser.close()
+    shutil.move(video, out)
+    shutil.rmtree(tmp, ignore_errors=True)
+    print("saved", out)
+
+
+if __name__ == "__main__":
+    main()
