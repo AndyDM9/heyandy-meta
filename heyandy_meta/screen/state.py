@@ -38,6 +38,7 @@ class ScreenState:
         self.next_reminder: tuple[str, float] | None = None  # (the person's words, when), epoch seconds
         self.watching: list[str] = []  # what Andy keeps an eye on, and where it last saw each
         self._help_until = 0.0
+        self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
 
     def doing(self, state: str, head: str = "") -> None:
         with self._lock:
@@ -116,7 +117,8 @@ class ScreenState:
                    "models": [{"name": n, "where": w, "times": t} for n, (w, t) in self.models.items()],
                    "state": self.state, "head": self.head, "looking_for": self.looking_for,
                    "next": {"text": self.next_reminder[0], "at": self.next_reminder[1]} if self.next_reminder else None,
-                   "watching": list(self.watching), "help": self._clock() < self._help_until}
+                   "watching": list(self.watching), "help": self._clock() < self._help_until,
+                   "staged": self.staged}
             if self._timer:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)

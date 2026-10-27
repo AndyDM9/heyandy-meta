@@ -255,3 +255,14 @@ def test_what_can_i_ask_opens_the_guide(tmp_path):
     a, _, _ = andy(tmp_path=tmp_path)
     assert "ideas on the screen" in a.hear("what can I ask you?")
     assert a.screen.snapshot()["help"] is True
+
+
+def test_a_staged_scene_sends_the_finders_frames_to_the_api_and_says_so(tmp_path):
+    a, _, _ = andy(Thing("keys", 20.0, 20.0), tmp_path=tmp_path)
+    local = a.segmenter
+    api = SimSegmenter(Room([Thing("keys", 20.0, 20.0)]))
+    a.use_staged_scene(api)
+    a.hear("where are my keys")
+    assert api.calls > 0 and a.segmenter is local  # only the finder; the glance and the face tracker stay local
+    snap = a.screen.snapshot()
+    assert snap["staged"] is True and {m["name"]: m["where"] for m in snap["models"]}["SAM 3.1"] == "cloud"

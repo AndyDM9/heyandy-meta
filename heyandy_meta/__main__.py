@@ -60,8 +60,15 @@ def build(args) -> Andy:
         room = Room(list(LIVING_ROOM))
         body, segmenter, judge = SimBody(room), SimSegmenter(room), SimJudge(room)
         body.say = lambda text: None  # the console prints instead
-    return Andy(body, segmenter, device, places, reminders, ScreenState(), cloud, spark, judge,
+    andy = Andy(body, segmenter, device, places, reminders, ScreenState(), cloud, spark, judge,
                 glimmer=None if args.no_local_agent else device.client, budget=budget, online=not args.offline)
+    if args.staged_scene:
+        if not args.robot:
+            raise SystemExit("--staged-scene is for filming on the robot in a staged room")
+        from .models.sam import Sam31Segmenter
+
+        andy.use_staged_scene(Sam31Segmenter(budget=budget))
+    return andy
 
 
 def main() -> None:
@@ -76,6 +83,9 @@ def main() -> None:
     ap.add_argument("--voice-url", default="http://127.0.0.1:8092")
     ap.add_argument("--voice-name", default="am_michael", help="a Kokoro voice")
     ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
+    ap.add_argument("--staged-scene", action="store_true",
+                    help="filming in a staged room only: the finder sends frames to SAM 3.1 through the Model API "
+                         "(paid, and the TV says so); never in a lived-in home")
     ap.add_argument("--data", default="~/.local/share/heyandy-meta")
     ap.add_argument("--tv-port", type=int, default=8765)
     ap.add_argument("--tv-host", default="127.0.0.1",

@@ -61,6 +61,7 @@ class Andy:
     spark: object | None = None  # the Model API client, for planning searches and web answers (words only)
     judge: object | None = None  # Glimmer's picture checks, on this computer
     glimmer: object | None = None  # the local llama-server client, for Glimmer planning searches itself
+    vision_where: str = "device"  # "cloud" only for a staged scene, where the finder uses SAM 3.1 through the API
     budget: Budget = field(default_factory=Budget)
     online: bool = True
     clock: object = time.time
@@ -144,6 +145,11 @@ class Andy:
                 self.screen.doing(*before)
             else:
                 self.screen.doing("Waiting")
+
+    def use_staged_scene(self, api_segmenter) -> None:
+        """Filming in a staged room: the finder's frames go to SAM 3.1 through the Model API, and the TV says so. The
+        face tracker and the idle glance stay on this computer (and cost nothing)."""
+        self.finder.segmenter, self.vision_where, self.screen.staged = api_segmenter, "cloud", True
 
     def set_online(self, online: bool) -> None:
         """The network came or went: the TV says so, and the cloud is only tried while it's there."""
@@ -294,7 +300,7 @@ class Andy:
             found = self.finder.find(thing, last)
             self.screen.step(f"looked {self.finder.looks} times" + (f"; {self.finder.why}" if self.finder.why else ""))
         self.screen.timer_stop()
-        self.screen.used("SAM 3.1", "device", self.finder.looks)
+        self.screen.used("SAM 3.1", self.vision_where, self.finder.looks)
         self.screen.used("Muse Glimmer (picture check)", "device", getattr(self.judge, "calls", 0) - checks)
         if found is None:
             return self._not_found(thing)

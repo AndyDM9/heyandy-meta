@@ -7,6 +7,11 @@ Wants=heyandy-glimmer.service heyandy-sam.service heyandy-voice.service
 WorkingDirectory=%h/Documents/GitHub/heyandy-meta
 Environment=PYTHONPATH=%h/Documents/GitHub/heyandy-meta
 Environment=PYTHONWARNINGS=ignore
+# The Model API key, kept out of the repository: a file only its owner can read, with lines
+#   MODEL_API_KEY=...
+#   HEYANDY_PAID_CALLS=1
+# (chmod 600). Without it, Andy runs entirely on this computer.
+EnvironmentFile=-%h/.config/heyandy-meta/env
 ExecStart=%h/Documents/GitHub/heyandy-meta/.venv/bin/python -u -m heyandy_meta --robot --voice --quiet
 StandardInput=null
 Restart=on-failure
