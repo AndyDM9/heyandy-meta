@@ -311,3 +311,14 @@ def test_say_that_again_and_speak_up_are_remembered(tmp_path):
     b.voice = NS(speed=1.0, loudness=-21.0)
     b.load_voice()
     assert (b.voice.speed, b.voice.loudness) == (0.7, -18.0)
+
+
+def test_a_voice_change_shows_briefly_on_the_tv(tmp_path):
+    from types import SimpleNamespace as NS
+
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.voice = NS(speed=1.0, loudness=-21.0)
+    a.hear("speak up")
+    assert a.screen.snapshot()["notice"] == "Volume ●●●●●○○ · Speed ●●●●○○○"
+    a.screen._clock = lambda: 10 ** 12  # much later
+    assert a.screen.snapshot()["notice"] == ""

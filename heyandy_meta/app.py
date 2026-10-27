@@ -363,7 +363,16 @@ class Andy:
                     "slower": "That's as slowly as I speak.", "faster": "That's as fast as I speak."}[what]
         setattr(v, name, round(new, 2))
         self.save_voice()
+        self.screen.notice(self.voice_levels())
         return "Is this better?"
+
+    def voice_levels(self) -> str:
+        """"Volume ●●●●○○○ · Speed ●●●○○○○": seven steps each, the middle one where Andy started."""
+        v = self.voice
+        loud = round((v.loudness + 30.0) / 3.0) + 1  # -30..-12 dBFS -> 1..7
+        speed = round((v.speed - 0.7) / 0.1) + 1  # 0.7..1.3 -> 1..7
+        bar = lambda n: "●" * n + "○" * (7 - n)  # noqa: E731
+        return f"Volume {bar(loud)} · Speed {bar(speed)}"
 
     def save_voice(self) -> None:
         if self.voice is not None:
