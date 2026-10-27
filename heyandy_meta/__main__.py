@@ -75,6 +75,7 @@ def main() -> None:
     ap.add_argument("--voice", action="store_true", help="listen and speak through the robot (needs --robot)")
     ap.add_argument("--voice-url", default="http://127.0.0.1:8092")
     ap.add_argument("--voice-name", default="am_michael", help="a Kokoro voice")
+    ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
     ap.add_argument("--data", default="~/.local/share/heyandy-meta")
     ap.add_argument("--tv-port", type=int, default=8765)
     args = ap.parse_args()
@@ -99,8 +100,11 @@ def main() -> None:
                 print(f"(heard {text}; not for Andy)", flush=True)
                 return
             first = getattr(andy.body._say, "first_after", lambda t: None)(loop.utterance_end)
-            wait = f"  [first word {first - loop.utterance_end:.1f}s after you stopped]" if first else ""
-            print(f"\nheard> {text}\nandy> {reply}{wait}", flush=True)
+            wait = f"[first word {first - loop.utterance_end:.1f}s after the person stopped]" if first else ""
+            if args.quiet:  # a service: its output is kept in the journal, so timings only, never words
+                print(f"turn answered {wait}", flush=True)
+            else:
+                print(f"\nheard> {text}\nandy> {reply}  {wait}", flush=True)
 
         loop = VoiceLoop(andy, on_heard=shown)
         ears = Endpointer()
