@@ -1,0 +1,82 @@
+"""A pretend room for tests and demos without the robot: objects at known directions, and a body that looks at them.
+
+The room's camera is the same pinhole as the real one, so a test can check that the finder points where an object
+really is. Frames carry no picture; the room's own segmenter reads the head's direction from them instead.
+"""
+import math
+from dataclasses import dataclass, field
+
+from ..finder.geometry import LITE, Camera
+from ..models.common import Mask
+from .body import Frame, Reach
+
+
+@dataclass
+class Thing:
+    label: str
+    yaw: float
+    pitch: float
+    size_px: int = 60  # how wide it looks at 1080p
+    score: float = 0.9
+    on_screen: bool = False  # a picture of the thing on a TV or in a photo
+
+
+@dataclass
+class Room:
+    things: list[Thing] = field(default_factory=list)
+    cam: Camera = LITE
+
+    def where_in_frame(self, thing: Thing, yaw: float, pitch: float) -> tuple[float, float] | None:
+        dyaw, dpitch = math.radians(thing.yaw - yaw), math.radians(thing.pitch - pitch)
+        if abs(dyaw) >= math.pi / 2 or abs(dpitch) >= math.pi / 2:
+            return None
+        x = self.cam.cx - self.cam.fx * math.tan(dyaw)
+        y = self.cam.cy + self.cam.fx * math.tan(dpitch)
+        h = thing.size_px / 2
+        if h <= x < self.cam.width - h and h <= y < self.cam.height - h:
+            return x, y
+        return None
+
+
+class SimBody:
+    def __init__(self, room: Room, reach: Reach = Reach()):
+        self.room, self.reach = room, reach
+        self.yaw = self.pitch = 0.0
+        self.log: list[tuple] = []
+
+    def look(self, yaw: float, pitch: float) -> None:
+        self.yaw, self.pitch = self.reach.clamp(yaw, pitch)
+        self.log.append(("look", round(self.yaw, 2), round(self.pitch, 2)))
+
+    def capture(self) -> Frame:
+        self.log.append(("capture",))
+        return Frame(b"", self.room.cam.width, self.room.cam.height, self.yaw, self.pitch)
+
+    def point(self, yaw: float, pitch: float) -> None:
+        self.look(yaw, pitch)
+        self.log.append(("point", round(self.yaw, 2), round(self.pitch, 2)))
+
+    def say(self, text: str) -> None:
+        self.log.append(("say", text))
+
+
+class SimSegmenter:
+    """Answers like SAM 3.1 would, from the room's ground truth."""
+
+    def __init__(self, room: Room):
+        self.room = room
+        self.calls = 0
+
+    def find(self, frame: Frame, query: str) -> list[Mask]:
+        self.calls += 1
+        masks = []
+        for t in self.room.things:
+            if t.label != query:
+                continue
+            at = self.room.where_in_frame(t, frame.yaw, frame.pitch)
+            if at is None:
+                continue
+            h = t.size_px // 2
+            box = (int(at[0]) - h, int(at[1]) - h, int(at[0]) + h, int(at[1]) + h)
+            masks.append(Mask(query, box, t.score, center=at, area=t.size_px ** 2))
+        return masks

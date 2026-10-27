@@ -85,7 +85,9 @@ class Sam31Segmenter:
             self._client = OpenAI(base_url=self._base_url, api_key=key)
         return self._client
 
-    def find(self, image: bytes, query: str) -> list[Mask]:
+    def find(self, frame, query: str) -> list[Mask]:
+        """``frame`` is a robot Frame or raw JPEG bytes."""
+        image = getattr(frame, "image", frame)
         self.budget.check(SAM_PER_IMAGE)
         start = time.monotonic()
         with self.client.responses.stream(**request(image, query)) as stream:
