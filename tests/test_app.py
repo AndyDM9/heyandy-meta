@@ -162,3 +162,13 @@ def test_a_plain_request_gets_the_fast_sweep_even_with_planners(tmp_path):
     a.glimmer = glimmer
     assert a.hear("where are my keys").endswith("I see your keys, a little to my left.")
     assert glimmer.requests == []
+
+
+def test_the_tv_shows_which_models_worked_on_a_turn(tmp_path):
+    a, _, _ = andy(Thing("glasses", 52.0, 5.0, on_screen=True), Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    a.hear("where are my glasses")
+    models = {m["name"]: (m["where"], m["times"]) for m in a.screen.snapshot()["models"]}
+    assert models["SAM 3.1"][0] == "device" and models["SAM 3.1"][1] >= 3
+    assert models["Muse Glimmer (picture check)"][0] == "device"
+    a.hear("tell me a joke")
+    assert [m["name"] for m in a.screen.snapshot()["models"]] == ["Muse Glimmer"]  # a new turn starts afresh

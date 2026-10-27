@@ -17,8 +17,10 @@ def glance(body: Body, segmenter: Segmenter, places: Places, views=VIEWS, min_sc
             continue
         body.look(yaw, pitch, precise=False)
         frame = body.capture()
+        many = getattr(segmenter, "find_many", None)
+        found = many(frame, labels) if many else {label: segmenter.find(frame, label) for label in labels}
         for label in labels:
-            for m in segmenter.find(frame, label):
+            for m in found[label]:
                 if m.score is not None and m.score < min_score:
                     continue
                 y, p = pixel_to_angles(*m.center, frame.yaw, frame.pitch)

@@ -13,6 +13,7 @@
   .badge { border: 0.2vw solid currentColor; border-radius: 99px; padding: 0.3vw 1.2vw; font-size: 1.8vw; }
   .badge.cloud { color: var(--cloud); } .badge.device { color: var(--accent); }
   #offline { color: var(--accent); font-weight: 700; }
+  #private { font-size: 1.5vw; }
   main { display: grid; place-items: center; min-height: 0; }
   figure { margin: 0; display: grid; gap: 1vw; justify-items: center; max-height: 100%; }
   svg { max-width: 100%; max-height: 62vh; border-radius: 1vw; }
@@ -23,13 +24,17 @@
   #side h2 { margin: 0; font-size: 1.4vw; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
   #side ol, #side ul { margin: 0; padding-left: 1.2em; display: grid; gap: 0.4vw; color: var(--text); }
   #timer { font: 700 3.2vw/1 ui-monospace, monospace; color: var(--accent); font-variant-numeric: tabular-nums; }
+  #models { display: flex; flex-wrap: wrap; gap: 0.6vw; font-size: 1.4vw; min-height: 2.2vw; }
+  #models span { border-radius: 99px; padding: 0.15vw 0.9vw; border: 0.15vw solid currentColor; }
+  #models .device { color: var(--accent); } #models .cloud { color: var(--cloud); }
+  #models b { font-weight: 600; color: var(--muted); }
   .stage { display: grid; grid-template-columns: 1fr minmax(0, 28vw); gap: 2vw; min-height: 0; }
 </style>
 </head>
 <body>
-<header><span>Andy, a robot</span><span id="offline" hidden>Offline: working on this computer</span><span id="badge" class="badge" hidden></span></header>
+<header><span>Andy, a robot <small id="private">· pictures and voice stay on this computer</small></span><span id="offline" hidden>Offline: working on this computer</span><span id="badge" class="badge" hidden></span></header>
 <div class="stage"><main id="main"></main><aside id="side" aria-live="polite"></aside></div>
-<footer><div id="caption" aria-live="polite"></div><div id="why"></div></footer>
+<footer><div id="caption" aria-live="polite"></div><div id="why"></div><div id="models" aria-label="Models on this turn"></div></footer>
 <script>
   const $ = (id) => document.getElementById(id);
   const svgNS = "http://www.w3.org/2000/svg";
@@ -62,14 +67,32 @@
     if (s.memory) add("What I remember", list("ul", s.memory.length ? s.memory : ["Nothing yet."]));
     if (s.sources && s.sources.length) add("Sources", list("ul", s.sources.map(x => x.title + " · " + new URL(x.url).hostname.replace(/^www\./, ""))));
   }
+  function models(list) {
+    const el = $("models");
+    el.replaceChildren();
+    for (const where of ["device", "cloud"]) {
+      const these = (list || []).filter(m => m.where === where);
+      if (!these.length) continue;
+      const b = document.createElement("b");
+      b.textContent = where === "device" ? "On this computer:" : "In the cloud (words only):";
+      el.append(b);
+      for (const m of these) {
+        const chip = document.createElement("span");
+        chip.className = where;
+        chip.textContent = m.name + (m.times > 1 ? " ×" + m.times : "");
+        el.append(chip);
+      }
+    }
+  }
   function render(s) {
     side(s);
+    models(s.models);
     $("caption").textContent = s.caption || "";
     $("offline").hidden = s.online;
     const b = $("badge");
     b.hidden = !s.source;
     b.className = "badge " + (s.source || "");
-    b.textContent = s.source === "cloud" ? "Answered in the cloud (Muse Spark)" : "Answered on this computer (Muse Glimmer)";
+    b.textContent = s.source === "cloud" ? "Muse Spark in the cloud: words only" : "On this computer";
     $("why").textContent = s.reason ? "Why: " + s.reason : "";
     const p = s.picture, key = p ? p.src.length + ":" + p.box.join(",") : "";
     if (key === shown) return;

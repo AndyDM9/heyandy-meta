@@ -31,6 +31,18 @@ class ScreenState:
         self.steps: list[str] = []  # the plan as it happens: "look: right, far right"
         self.memory: list[str] | None = None  # shown while "what do you remember?" is answered
         self._timer: tuple[float, float | None] | None = None  # (started, stopped)
+        self.models: dict[str, list] = {}  # this turn's Meta models: name -> [where, times used]
+
+    def new_turn(self) -> None:
+        with self._lock:
+            self.models = {}
+
+    def used(self, name: str, where: str = "device", times: int = 1) -> None:
+        """A model worked on this turn: "device" (this computer) or "cloud" (words only)."""
+        if times <= 0:
+            return
+        with self._lock:
+            self.models.setdefault(name, [where, 0])[1] += times
 
     def said(self, text: str, source: str = "", reason: str = "") -> None:
         with self._lock:
@@ -73,7 +85,8 @@ class ScreenState:
                 self._picture = None
             out = {"caption": self.caption, "source": self.source, "reason": self.reason, "online": self.online,
                    "picture": None, "sources": [{"title": a, "url": b} for a, b in self.sources],
-                   "steps": list(self.steps), "memory": self.memory, "seconds": None, "running": False}
+                   "steps": list(self.steps), "memory": self.memory, "seconds": None, "running": False,
+                   "models": [{"name": n, "where": w, "times": t} for n, (w, t) in self.models.items()]}
             if self._timer:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)

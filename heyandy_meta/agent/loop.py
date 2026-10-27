@@ -20,6 +20,7 @@ class Plan:
     reply: str
     steps: list[tuple[str, dict, str]] = field(default_factory=list)  # tool, arguments, result
     stopped: str = ""  # why it ended early, if it did
+    calls: int = 0  # model calls made
 
 
 def plan_search(client, request: str, tools: SearchTools, model: str = "muse-spark-1.3",
@@ -38,6 +39,7 @@ def plan_search(client, request: str, tools: SearchTools, model: str = "muse-spa
                                                                 max_tokens=max_tokens if paid else 1024),
                          sleep=sleep)
         usage = getattr(out, "usage", None)
+        plan.calls += 1
         if paid:
             budget.record(model, chat_cost(model, getattr(usage, "prompt_tokens", 0) or 0,
                                            getattr(usage, "completion_tokens", 0) or 0))

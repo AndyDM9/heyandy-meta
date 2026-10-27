@@ -52,6 +52,7 @@ class GlimmerJudge:
             raise NotLocal(f"picture checks run only on this computer, not at {endpoint}")
         self.model, self.endpoint, self._client, self.max_tokens = model, endpoint, client, max_tokens
         self.unavailable = 0  # checks skipped because Glimmer couldn't be reached
+        self.calls = 0
         self.why = ""  # the last answer, for the TV's plan list
 
     @property
@@ -63,6 +64,7 @@ class GlimmerJudge:
         return self._client
 
     def _ask(self, content: list) -> str | None:
+        self.calls += 1
         try:
             out = self.client.chat.completions.create(
                 model=self.model, max_tokens=self.max_tokens,

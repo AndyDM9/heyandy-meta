@@ -32,6 +32,10 @@ class VoiceLoop:
                 self.andy.body.gesture("listening")
             if rest.strip(" ,.!?"):
                 reply = self.andy.hear(rest)
+                screen = getattr(self.andy, "screen", None)
+                if screen:
+                    screen.used("Omnilingual ASR (hearing)", "device")
+                    screen.used("Kokoro (voice)", "device")
             else:
                 reply = "Yes?"
                 self.andy.say(reply)

@@ -69,6 +69,7 @@ class Andy:
 
     def hear(self, text: str) -> str:
         with self.lock:
+            self.screen.new_turn()
             self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
             reply = respond(text, self._answer, self.disclosure)
@@ -116,6 +117,7 @@ class Andy:
         except APIError:
             return "I'm having trouble thinking just now. Could you say that again in a minute?"
         self._source, self._reason = reply.source, self.router.last.reason
+        self.screen.used("Muse Spark" if reply.source == "cloud" else "Muse Glimmer", reply.source)
         return reply.text
 
     def look_up(self, question: str) -> str:
@@ -128,6 +130,7 @@ class Andy:
             self._source, self._reason = "device", "the web search didn't answer"
             return "I couldn't look that up just now. Please try again in a little while."
         self._source, self._reason = "cloud", "web search (Muse Spark)"
+        self.screen.used("Muse Spark + web search", "cloud")
         self.screen.answered(ans.text, ans.sources, "cloud", self._reason)
         return ans.spoken
 
@@ -149,6 +152,8 @@ class Andy:
         """A plain "where are my keys" gets the fast fixed sweep; a request with a hint gets an agent that uses it."""
         self.screen.clear()
         self.screen.timer_start()
+        checks = getattr(self.judge, "calls", 0)
+        self.finder.looks = 0
         self.gesture("thinking")
         self.say("Let me look.")  # answer at once: a search takes a few seconds
         found, words = None, ""
@@ -162,6 +167,7 @@ class Andy:
             for tool, args, result in plan.steps:
                 self.screen.step(f"{tool}: {result}")
             found, words = tools.pointed, ""  # found: Andy's words come from the tools, never the model's guesses
+            self.screen.used(("Muse Spark" if paid else "Muse Glimmer") + " (plans)", source, plan.calls)
             self._source, self._reason = source, reason
             if found is None:
                 self.screen.timer_stop()
@@ -174,6 +180,8 @@ class Andy:
             found = self.finder.find(thing, last)
             self.screen.step(f"looked {self.finder.looks} times" + (f"; {self.finder.why}" if self.finder.why else ""))
         self.screen.timer_stop()
+        self.screen.used("SAM 3.1", "device", self.finder.looks)
+        self.screen.used("Muse Glimmer (picture check)", "device", getattr(self.judge, "calls", 0) - checks)
         if found is None:
             return self._not_found(thing)
         self.places.saw(found.label, found.yaw, found.pitch)

@@ -18,7 +18,9 @@ def server():
     class H(BaseHTTPRequestHandler):
         def do_POST(self):
             got.append((self.path, json.loads(self.rfile.read(int(self.headers["Content-Length"])))))
-            data = json.dumps(REPLY).encode()
+            body = got[-1][1]
+            data = json.dumps(REPLY if "query" in body else {"masks": {q: REPLY["masks"] for q in body["queries"]},
+                                                              "seconds": 0.4}).encode()
             self.send_response(200)
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
@@ -50,3 +52,10 @@ def test_refuses_a_cloud_address():
 def test_a_stopped_server_is_reported_not_hidden():
     with pytest.raises(LocalUnavailable):
         LocalSam31("http://127.0.0.1:9", timeout=1).find(b"x", "keys")
+
+
+def test_several_things_in_one_frame(server):
+    url, got = server
+    out = LocalSam31(url).find_many(b"\xff\xd8jpeg", ["keys", "glasses"])
+    assert got[0][0] == "/segment_many" and got[0][1]["queries"] == ["keys", "glasses"]
+    assert [m.label for m in out["keys"]] == ["keys"] and [m.label for m in out["glasses"]] == ["glasses"]
