@@ -45,6 +45,15 @@ trademark application.
   - The picture stays in memory for two minutes, is never saved, and no requests are logged.
   - Every text colour is at least 7:1 contrast, which the tests check.
 - **The Reachy Mini adapter,** the only module that imports Pollen's SDK: it splits a direction between the head (±55°) and a turn of the base, moves gently, and reads JPEG frames. It's tested against a stand-in robot; the real robot comes on Day 2.
+- **The companion in the room:**
+  - Andy turns to face the person: it finds "person" with SAM 3.1 and keeps nothing about who.
+  - Reminders are delivered in person: at the time, Andy turns to find you and says your own words. If nobody's there,
+    it tries again, then mentions it later.
+  - Answers come with sources from Muse Spark's web search.
+- **Says it's an AI, and a crisis protocol:**
+  - Andy says "I'm Andy, an AI robot" at the start and every three hours.
+  - Self-harm words get a fixed reply with the 988 line, before any model sees them, and Andy never counsels.
+  - See [docs/crisis-protocol.md](docs/crisis-protocol.md).
 - **Next:** voice, and the before/after evaluation.
 
 ## Run the tests
@@ -62,6 +71,7 @@ heyandy_meta/robot/    the body interface, the Reachy Mini adapter, and a simula
 heyandy_meta/screen/   the TV page
 heyandy_meta/router.py who answers a turn: the device or the cloud
 heyandy_meta/budget.py the hard cap on Model API spend
+heyandy_meta/companion/ facing the person, reminders, answers with sources, AI disclosure and the crisis protocol
 config/                config.example.yaml (no secrets)
 docs/                  the build plan, the hackathon's rules, research
 tests/

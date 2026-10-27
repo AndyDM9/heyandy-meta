@@ -14,6 +14,7 @@ PRICES = {  # dollars per 1M tokens (input, output), or per image
     "muse-wonder-1.0": (4.00, 20.00),
 }
 SAM_PER_IMAGE = 2.50 / 1000
+WEB_SEARCH = 2.50 / 1000  # Muse Spark's web_search tool, per search, on top of tokens
 
 
 class BudgetExceeded(RuntimeError):
