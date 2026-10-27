@@ -30,9 +30,10 @@ class MuseSparkModel:
             self._client = OpenAI(base_url=self._base_url, api_key=key)
         return self._client
 
-    def chat(self, prompt: str) -> Reply:
-        worst = chat_cost(self.model, len(prompt) // 2 + 200, self.max_tokens)  # generous token guess, before the call
+    def chat(self, prompt: str, history=()) -> Reply:
+        words = len(prompt) + sum(len(a) + len(b) for a, b in history)
+        worst = chat_cost(self.model, words // 2 + 200, self.max_tokens)  # generous token guess, before the call
         self.budget.check(worst)
-        reply = chat(self.client, self.model, prompt, source="cloud", max_tokens=self.max_tokens)
+        reply = chat(self.client, self.model, prompt, source="cloud", max_tokens=self.max_tokens, history=history)
         self.budget.record(self.model, chat_cost(self.model, reply.tokens_in, reply.tokens_out) if reply.tokens_in else worst)
         return reply

@@ -36,13 +36,13 @@ class Router:
         self.device, self.cloud = device, cloud
         self.last: Decision | None = None
 
-    def answer(self, prompt: str, online: bool = True) -> Reply:
+    def answer(self, prompt: str, online: bool = True, history=()) -> Reply:
         self.last = decide(prompt, online)
         if self.last.where == "cloud":
             try:
-                return self.cloud.chat(prompt)
+                return self.cloud.chat(prompt, history)
             except BudgetExceeded as refused:
                 self.last = Decision("device", f"cloud refused: {refused}")
             except CloudUnavailable as down:
                 self.last = Decision("device", f"cloud unavailable: {down}")
-        return self.device.chat(prompt)
+        return self.device.chat(prompt, history)

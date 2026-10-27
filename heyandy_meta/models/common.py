@@ -27,7 +27,7 @@ class Reply:
 
 
 class Chat(Protocol):
-    def chat(self, prompt: str) -> Reply: ...
+    def chat(self, prompt: str, history=()) -> Reply: ...
 
 
 @dataclass

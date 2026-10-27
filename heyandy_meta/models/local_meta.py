@@ -15,5 +15,5 @@ class GlimmerModel:
             self._client = OpenAI(base_url=self.endpoint, api_key="local")  # local servers ignore the key
         return self._client
 
-    def chat(self, prompt: str) -> Reply:
-        return chat(self.client, self.model, prompt, source="device")
+    def chat(self, prompt: str, history=()) -> Reply:
+        return chat(self.client, self.model, prompt, source="device", history=history)

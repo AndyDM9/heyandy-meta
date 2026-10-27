@@ -17,8 +17,9 @@ class Device:
     def __init__(self, text="Hello there."):
         self.text, self.prompts = text, []
 
-    def chat(self, prompt):
+    def chat(self, prompt, history=()):
         self.prompts.append(prompt)
+        self.history = list(history)
         return Reply(self.text, "device")
 
 
@@ -181,3 +182,13 @@ def test_what_i_remember_says_when_and_where(tmp_path):
     clock.t += 2 * 3600 + 60
     a.hear("what do you remember")
     assert a.screen.snapshot()["memory"] == ["keys: seen 2 hours ago, to my left"]
+
+
+def test_a_conversation_is_remembered_for_a_while_then_forgotten(tmp_path):
+    a, _, clock = andy(tmp_path=tmp_path)
+    a.hear("What's a good word for sunny?")
+    a.hear("And for rainy?")
+    assert a.device.history == [("What's a good word for sunny?", "Hello there.")]  # without the AI opening
+    clock.t += 31 * 60
+    a.hear("Hello again")
+    assert a.device.history == []

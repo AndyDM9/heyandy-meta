@@ -20,7 +20,7 @@ from .companion import answers
 from .companion.attention import face_person
 from .companion.intents import parse
 from .companion.reminders import Reminders, spoken_time
-from .companion.safety import Disclosure, respond
+from .companion.safety import DISCLOSURE, Disclosure, respond
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
 from .memory.places import Places
@@ -31,13 +31,14 @@ from .robot.body import Body
 from .screen.state import ScreenState
 
 GLANCE_EVERY_S = 5 * 60
+HISTORY_TURNS, HISTORY_FORGET_S = 4, 30 * 60  # a conversation: its last few exchanges, forgotten after 30 quiet minutes
 CLOUD_TROUBLE = (BudgetExceeded, CloudUnavailable, APIError, RuntimeError)  # RuntimeError: no key set
 
 
 class NoCloud:
     """Stands in for Muse Spark when there's no key or the robot is offline: the router falls back to the device."""
 
-    def chat(self, prompt: str) -> Reply:
+    def chat(self, prompt: str, history=()) -> Reply:
         raise CloudUnavailable("no Model API key on this computer", [])
 
 
@@ -64,16 +65,23 @@ class Andy:
         self._last_glance = self.clock()
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
+        self.history: list[tuple[str, str]] = []  # this conversation, in memory only
+        self._last_turn = float("-inf")
 
     # --- a turn ---
 
     def hear(self, text: str) -> str:
         with self.lock:
             self.screen.new_turn()
+            if self.clock() - self._last_turn > HISTORY_FORGET_S:
+                self.history = []  # a new conversation
+            self._last_turn = self.clock()
             self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
             reply = respond(text, self._answer, self.disclosure)
             self.say(reply)
+            # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
+            self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
             return reply
 
     def say(self, text: str) -> None:
@@ -113,7 +121,7 @@ class Andy:
 
     def talk(self, text: str) -> str:
         try:
-            reply = self.router.answer(text, self.online)
+            reply = self.router.answer(text, self.online, self.history)
         except APIError:
             return "I'm having trouble thinking just now. Could you say that again in a minute?"
         self._source, self._reason = reply.source, self.router.last.reason
