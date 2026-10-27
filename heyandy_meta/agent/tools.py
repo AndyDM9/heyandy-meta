@@ -76,6 +76,7 @@ class SearchTools:
     places: Places | None = None
     judge: Judge | None = None
     candidates: dict[str, tuple[float, float]] = field(default_factory=dict)
+    looked: set = field(default_factory=set)  # (object, view) already searched
     confirmed: dict[str, Found] = field(default_factory=dict)
     pointed: Found | None = None
     auto_point: bool = True  # a confirmed closer look points at once: one model call fewer
@@ -127,18 +128,26 @@ class SearchTools:
             return "refused: the object must be a short plain noun phrase"
         if not isinstance(views, list) or not views or any(v not in VIEWS for v in views):
             return f"refused: views must be chosen from {list(VIEWS)}"
+        new = [v for v in dict.fromkeys(views) if (obj, v) not in self.looked]
+        if not new:  # looking again costs moves and finds the same: say what's known instead
+            return (f"You've already looked for the {obj} in {', '.join(views)}. Places so far: "
+                    f"{self._places_so_far()}. Use look_closer or compare on them, or try other views.")
         if self._looks_left() < 1:
             return "refused: you've looked enough for one search. Stop, and tell the person you couldn't find it."
-        views = list(dict.fromkeys(views))[: self._looks_left()]
-        found = self.finder.scan(obj, [VIEWS[v] for v in views])
+        new = new[: self._looks_left()]
+        self.looked.update((obj, v) for v in new)
+        found = self.finder.scan(obj, [VIEWS[v] for v in new])
         if not found:
-            return f"No {obj} seen in: {', '.join(views)}."
+            return f"No {obj} seen in: {', '.join(new)}."
         lines = []
         for s in found[:5]:
             pid = str(len(self.candidates) + 1)
             self.candidates[pid] = (s.yaw, s.pitch)
             lines.append(f"place {pid}: {side(s.yaw)}, confidence {s.score:.2f}, seen in {s.views} view(s)")
         return "Possible " + obj + ": " + "; ".join(lines)
+
+    def _places_so_far(self) -> str:
+        return "; ".join(f"place {p}: {side(yaw)}" for p, (yaw, _) in self.candidates.items()) or "none"
 
     def _closer(self, object, place) -> str:
         obj = self._object(object)
@@ -184,6 +193,8 @@ class SearchTools:
                 self.confirmed.pop(p)  # only the one that fits may be pointed at
         if i is None:
             return f"Compared places {', '.join(seen)}: none looks like '{description.strip()}'. Ask the person."
+        if self.auto_point:  # the one that fits is confirmed: point at once, one model call fewer
+            return f"Place {seen[i]} fits '{description.strip()}'. " + self._point(seen[i])
         return f"Place {seen[i]} fits '{description.strip()}' and is confirmed, {side(self.confirmed[seen[i]].yaw)}."
 
     def _point(self, place) -> str:

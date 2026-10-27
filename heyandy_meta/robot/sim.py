@@ -103,11 +103,16 @@ class SimJudge:
         return not (t and t.on_screen)
 
     def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None:
+        """Like Glimmer looking at the crops: the words of the description, and "not the one on the TV"."""
         self.calls += 1
         words = set(description.lower().replace(",", " ").split())
+        real_only = bool(words & {"tv", "screen", "picture", "photo", "television"}) and bool(words & {"not", "real"})
         overlap = []
         for frame, mask in found:
             t = self._thing(frame, mask)
-            overlap.append(len(words & set(t.looks.lower().replace(",", " ").split())) if t else 0)
+            score = len(words & set(t.looks.lower().replace(",", " ").split())) if t else 0
+            if real_only and t:
+                score += 0 if t.on_screen else 1
+            overlap.append(score)
         best = max(range(len(found)), key=overlap.__getitem__, default=None)
         return best if best is not None and overlap[best] > 0 else None

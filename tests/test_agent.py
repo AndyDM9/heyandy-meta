@@ -123,7 +123,17 @@ def test_recall_is_offered_only_when_something_is_watched(tmp_path):
 def test_a_search_stops_after_ten_looks():
     tools, body = setup()  # nothing in the room
     every = ["far left", "left", "right", "far right", "behind left", "behind right", "floor in front"]
-    spark = ScriptedSpark(*[[("look", {"object": "keys", "views": every})]] * 3, "I couldn't find them.")
+    spark = ScriptedSpark(*[[("look", {"object": name, "views": every})] for name in ("keys", "key", "keychain")],
+                          "I couldn't find them.")
     plan = plan_search(spark, "find my keys", tools)
     assert sum(1 for e in body.log if e[0] == "capture") == 10
     assert plan.steps[-1][2].startswith("refused: you've looked enough")
+
+
+def test_looking_again_answers_from_memory_and_costs_no_moves():
+    tools, body = setup(Thing("keys", 20.0, 20.0))
+    tools.call("look", {"object": "keys", "views": ["left"]})
+    before = sum(1 for e in body.log if e[0] == "capture")
+    again = tools.call("look", {"object": "keys", "views": ["left"]})
+    assert again.startswith("You've already looked") and "place 1" in again
+    assert sum(1 for e in body.log if e[0] == "capture") == before
