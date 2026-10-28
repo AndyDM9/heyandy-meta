@@ -198,3 +198,13 @@ def test_a_direction_in_the_object_isnt_taken_for_which_one():
     tools.call("look", {"object": "glasses behind you", "views": ["behind left"]})
     assert tools.described == ""
     assert tools.call("look_closer", {"object": "glasses", "place": "1"}).startswith("Confirmed")
+
+
+def test_place_numbers_are_never_said_out_loud():
+    from heyandy_meta.app import PLACE_NUMBERS
+
+    assert PLACE_NUMBERS.sub("", "I found a mug at place 1, but it doesn't look blue.") == (
+        "I found a mug, but it doesn't look blue.")
+    assert PLACE_NUMBERS.sub("", "I found a mug (place 2) that isn't blue.") == "I found a mug that isn't blue."
+    assert PLACE_NUMBERS.sub("", "Places 1 and 2 are mugs.").strip()[:1].islower()  # the caller says its own sentence
+    assert PLACE_NUMBERS.sub("", "There is no workplace 4 here.") == "There is no workplace 4 here."

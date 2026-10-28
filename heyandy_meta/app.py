@@ -460,7 +460,8 @@ class Andy:
             self._source, self._reason = source, reason
             if found is None:
                 self.screen.timer_stop()
-                return plan.reply or self._not_found(thing)
+                said = PLACE_NUMBERS.sub("", plan.reply).strip()
+                return said if said[:1].isupper() else self._not_found(thing)  # a sentence the numbers began: ours
             break
         if found is None:
             self._source, self._reason = "device", "fixed search on this computer"
@@ -1225,6 +1226,8 @@ def _now(clock):
     return dt.datetime.fromtimestamp(clock())
 
 
+# "place 1" is the tools' own numbering, never something to say out loud ("I found a mug at place 1")
+PLACE_NUMBERS = re.compile(r"\s*\(?\b(?:at |in |from )?places? \d+(?:\s*(?:,|and|or)\s*\d+)*\)?(?=[\s,.!?]|$)", re.I)
 CLAUSES = re.compile(r"[,;.?!]+\s*(?:and\s+(?:then\s+)?|then\s+|also\s+)?|\s+and\s+(?:then\s+)?|\s+then\s+", re.I)
 
 

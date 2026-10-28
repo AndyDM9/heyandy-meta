@@ -7,6 +7,7 @@ import datetime as dt
 import re
 from dataclasses import dataclass
 
+from ..agent.tools import COLOURS
 from ..finder.names import KNOWN, snap
 
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
@@ -209,7 +210,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
             thing, place = (PLACE.split(_thing(m), maxsplit=1) + [""])[:2]  # "keys in the kitchen": thing, hint
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())
                     if w not in FILLER]
-            return Intent(kind, thing=snap(thing.strip()), text=t, hint=kind == "find" and len(rest) >= 2)
+            hint = len(rest) >= 2 or bool(set(thing.lower().split()) & COLOURS)  # "the blue mug": which one, for compare
+            return Intent(kind, thing=snap(thing.strip()), text=t, hint=kind == "find" and hint)
     if GOING_OUT.search(t):  # after finding and watching: "where are my keys? I'm going out" is a find
         return Intent("going_out", text=t)
     if m := DESCRIBE.search(t):

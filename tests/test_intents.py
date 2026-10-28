@@ -74,7 +74,13 @@ def test_spoken_times(heard, when):
 @pytest.mark.parametrize("text, hint", [
     ("where are my glasses", False), ("Andy, where are my reading glasses please?", False),
     ("where are my glasses, I think I left them by the TV", True), ("I lost my keys in the kitchen", True),
-    ("have you seen my phone? it was on the sofa", True), ("where is the blue mug", False)])
+    ("have you seen my phone? it was on the sofa", True),
+    ("where is the blue mug", True)])  # a colour says which one: the planner compares the look-alikes (2026-10-28)
 def test_a_hint_is_more_than_what_to_find(text, hint):
     i = parse(text, NOW)
     assert i.kind == "find" and i.hint is hint
+
+
+def test_a_colour_says_which_one_so_the_planner_compares():
+    assert parse("Andy, where's the blue mug?").hint and parse("where is my red phone").hint
+    assert not parse("where's my mug").hint and not parse("where are my glasses").hint
