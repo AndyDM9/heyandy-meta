@@ -49,4 +49,4 @@ where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", 
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never
 shown beyond a silhouette.
 
-**For X (Most Viral):** the uncut find (or the cup game, if it's in) cut to 30 seconds, captions burned in, the same badge, posted after we submit.
+**For X (Most Viral):** the uncut find (or the cup game, if it's in) cut to 30 seconds, captions burned in, the same badge. Posted as soon as there's a good take: the prize counts engagement through November 8, and the post's link goes into the submission (`docs/rules.md`).

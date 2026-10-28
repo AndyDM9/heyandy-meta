@@ -11,6 +11,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [ ] Film: the uncut find, follow the mug (or the cup game), several things at once, the network unplugged, a reminder
       (`docs/demo-script.md`). Recording the TV needs `uv run --with playwright playwright install ffmpeg` once.
 - [ ] The physical scorecard (`evals/physical.py`), and its numbers in the README.
+- [ ] The 30-second clip on X as soon as a take is good (Most Viral counts engagement through November 8): the uncut
+      find or the cup game, captions burned in. Keep its link for the form (step 6).
 - [x] Muse Spark live (since October 27, on our billing until the credits come; `docs/going-live.md`).
 - [ ] Any last questions in Discord #questions (November 3 is the last full day for them).
 
@@ -26,10 +28,9 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 5. [ ] Rebuild and upload the Space (`uv run python scripts/build_static_space.py`, then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out.
-6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the Space,
-       about 1,200 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
+6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
+       about 1,300 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
 7. [ ] Publish Andy Finder to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
        `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space`. The `reachy_mini_python_app` tag lists it.
-8. [ ] After submitting: the 30-second clip on X (Most Viral, judged to November 8), its link added to the submission;
-       share the gallery page for the community vote.
+8. [ ] After submitting: share the gallery page for the community vote.
