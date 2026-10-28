@@ -58,7 +58,19 @@ from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
 ASRInferencePipeline(model_card='omniASR_LLM_1B_v2', device='cpu')  # what the voice server runs; downloads it once
 ")
 
+# Llama Guard 3 8B, the second crisis check (gated: request access first): Meta's weights converted here, 4-bit
+LG="$MODELS/llama-guard-3-8b"
+if [ ! -f "$LG/Llama-Guard-3-8B-Q4_K_M.gguf" ]; then
+  uv run -q --no-project --with huggingface_hub hf download meta-llama/Llama-Guard-3-8B --local-dir "$LG" --exclude "original/*"
+  if [ ! -d "$OPT/llama.cpp-src-$LLAMA" ]; then git clone -q --depth 1 --branch "$LLAMA" https://github.com/ggml-org/llama.cpp.git "$OPT/llama.cpp-src-$LLAMA"; fi
+  (cd "$OPT/llama.cpp-src-$LLAMA" && uv run -q --no-project --with "numpy<2.3" --with sentencepiece --with "transformers>=4.45,<5" \
+     --with safetensors --with protobuf --with "torch==2.8.0" --index-url https://download.pytorch.org/whl/cpu \
+     --extra-index-url https://pypi.org/simple python convert_hf_to_gguf.py "$LG" --outtype bf16 --outfile "$LG/bf16.gguf")
+  LD_LIBRARY_PATH="$D/cudart-llama-$LLAMA-bin-ubuntu-cuda-13.4-x64:$D/llama-$LLAMA" "$D/llama-$LLAMA/llama-quantize" \
+    "$LG/bf16.gguf" "$LG/Llama-Guard-3-8B-Q4_K_M.gguf" Q4_K_M && rm "$LG/bf16.gguf"
+fi
+
 # Andy itself, with the robot and the web on the TV (a clean headless browser): run from the repository
 uv sync -q --extra dev --extra robot --extra browse && uv run playwright install --only-shell chromium
 
-echo "Done. Start them: systemctl --user link $(pwd)/deploy/heyandy-*.service && systemctl --user start heyandy-glimmer heyandy-sam heyandy-voice"
+echo "Done. Start them: systemctl --user link $(pwd)/deploy/heyandy-*.service && systemctl --user start heyandy-glimmer heyandy-sam heyandy-voice heyandy-guard"

@@ -101,6 +101,7 @@ class Andy:
         self._offered: tuple | None = None  # (thing, when, yaw, pitch): Andy offered to keep an eye on it
         self.language = "en"  # "es": Andy hears and speaks Spanish (companion/language.py)
         self.translator = None  # Muse Glimmer on this computer, translating; set where Glimmer runs
+        self.guard = None  # Llama Guard 3 on this computer: the second crisis check (companion/safety_model.py)
         self._browser = None  # a clean browser on this computer, made when first asked to use the web
         self._web: tuple[str, str, float] | None = None  # (the request, the last run's response id, when)
         self._drawing = None  # the last picture Muse Image made, to refine
@@ -125,18 +126,22 @@ class Andy:
 
     def hear(self, text: str) -> str:
         with self.lock:
-            if self.language != "en" and self.translator is not None and not crisis(text):
-                text = self.translator.to_english(text, self.language)  # the rules and tools work in English
             self.screen.new_turn()
+            # Before any other model sees the words (the translator too): the word list, then Llama Guard, both here
+            flagged = not crisis(text) and self.guard is not None and self.guard.self_harm(text)
+            if self.guard is not None:
+                self.screen.used("Llama Guard 3 (safety check)", "device")
+            if not flagged and self.language != "en" and self.translator is not None and not crisis(text):
+                text = self.translator.to_english(text, self.language)  # the rules and tools work in English
             if self.clock() - self._last_turn > HISTORY_FORGET_S:
                 self.history = []  # a new conversation
             self._last_turn = self.clock()
-            if not crisis(text):  # a crisis turn is the crisis reply, and nothing before it
+            if not (flagged or crisis(text)):  # a crisis turn is the crisis reply, and nothing before it
                 self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
             self._pointed, self._said = False, []
             self.screen.doing("Thinking", "Looking at you")
-            reply = respond(text, self._answer, self.disclosure, opening=self._say_now)
+            reply = respond(text, self._answer, self.disclosure, opening=self._say_now, flagged=flagged)
             rest = reply
             for part in self._said:  # what was already said as it came (the opening, streamed sentences)
                 rest = rest.removeprefix(part).lstrip()

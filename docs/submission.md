@@ -48,6 +48,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **Omnilingual ASR** (open weights) | GPU 1 | Hears the person, in English or Spanish |
 | **DINOv2** (open weights) | GPU 1 | Knows the person's own things by sight |
 | **Llama Prompt Guard 2** (open weights) | GPU 1 | Reads each web page first: one that tries to instruct Andy ends the run |
+| **Llama Guard 3 8B** (open weights, 4-bit, converted here) | GPU 1 | A second crisis check on what the person says, before any other model |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers with sources; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
 | *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice |
@@ -62,8 +63,9 @@ exactly which words went to which cloud model, or "Nothing left this house". Unp
   reads the pose back, corrects once, and every frame carries the measured direction: pointing within about 3 degrees.
 - **Agents that can't move the robot by themselves:** named views and numbered places, never motor values; every
   argument checked in code; Andy's words built from the tools' results, never the model's.
-- **Identical cups, crossing.** Object Multiplex runs at about 5 frames a second on a 3090; at that rate the cups were
-  lost every time, so Andy records at 10 and replays. A detection batch of 4 keeps it at 10.5 GB beside the voice models.
+- **Identical cups, crossing.** Object Multiplex tracks about 4 frames a second on a 3090; at 5 frames a second of
+  video the cups were lost every time, so Andy records at 10 and replays. Small detection batches fit it on one 24 GB
+  card beside the voice, Prompt Guard and Llama Guard.
 - **Telling my mug from yours.** DINOv2 ignores colour (a blue and a red mug of one shape: 0.94 alike), so half the
   likeness is a colour fingerprint of the mug's own pixels: red 0.55, the same thing from other angles 0.79 to 0.98.
 - **Straight to the answer.** Glimmer reasons privately before every answer, whatever its setting. Starting its reply
@@ -89,7 +91,8 @@ that?" (public photos: 4 of 6), going out (robot simulated). Every result, failu
 ## Safety and honesty
 
 Andy says it's an AI at the start of a conversation and every three hours; crisis words, in English or Spanish, get
-the 988 line in code and reach no model; no medical advice; it never asks for money or passwords. Speech that isn't for
+the 988 line in code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3, which
+caught 3 of 8 phrasings the list missed, with no false alarms on 12 ordinary ones, in 0.04 s); no medical advice; it never asks for money or passwords. Speech that isn't for
 Andy is dropped and never shown or kept. Model API spend has a hard cap.
 
 ## What's next

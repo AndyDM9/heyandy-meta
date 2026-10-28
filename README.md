@@ -77,7 +77,7 @@ trademark application.
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
   Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), Llama Prompt Guard 2 (reading each web page before the
-  cloud model sees it); with
+  cloud model sees it), Llama Guard 3 (a second crisis check); with
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
   sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;
@@ -100,8 +100,8 @@ trademark application.
   agent that plans requests with several parts over all of these.
 - **Muse Spark** for web answers with their sources (US units, only the final answer spoken) and harder conversation;
   **Muse Image** for pictures from the person's words, shown on the TV and saved.
-- **Safety in code:** "I'm an AI" at the start and every three hours; a crisis reply with the 988 line before any model
-  sees the words ([docs/crisis-protocol.md](docs/crisis-protocol.md)); no false promises (a chat reply that claims an
+- **Safety in code:** "I'm an AI" at the start and every three hours; a crisis reply with the 988 line before any other
+  model sees the words (a word list, then Llama Guard 3 on this computer) ([docs/crisis-protocol.md](docs/crisis-protocol.md)); no false promises (a chat reply that claims an
   action is replaced); speech not for Andy is dropped; a hard cap on Model API spend.
 - **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
 - **Scorecards:** the search, simulated (fixed sweep, Glimmer and Spark planners, seeded rooms); the agent (12
@@ -210,7 +210,8 @@ right ability; said by Kokoro's Spanish voice and heard by Omnilingual ASR, 37 o
 word, one misread). Glimmer translates each in a median 0.44 s, on the computer beside the robot.
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
-swaps of 0.8 s each; `docs/research.md` section 18): about 5 frames a second, so a 4-second shuffle replays in about 9 s.
+swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second
+shuffle replays in about 10 to 13 s.
 At the camera's 10 frames a second it picked the right cup in 4 of 5 runs; at 5 frames a second it lost the cups in all 4. Not
 yet scored with real cups. The physical scorecard (`evals/physical.py`) comes next.
 

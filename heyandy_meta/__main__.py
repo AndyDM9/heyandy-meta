@@ -69,6 +69,10 @@ def build(args) -> Andy:
         from .companion.language import Translator
 
         andy.translator = Translator(args.glimmer)
+    if args.robot:  # the second crisis check, on this computer (deploy/heyandy-guard.service); the word list if it's down
+        from .companion.safety_model import LlamaGuard
+
+        andy.guard = LlamaGuard(args.guard)
     andy.load_voice()
     if args.staged_scene:
         if not args.robot:
@@ -86,6 +90,7 @@ def main() -> None:
     ap.add_argument("--no-cloud", action="store_true", help="never call the Model API")
     ap.add_argument("--no-local-agent", action="store_true", help="don't let Glimmer plan searches (fixed sweep only)")
     ap.add_argument("--glimmer", default="http://127.0.0.1:8080/v1")
+    ap.add_argument("--guard", default="http://127.0.0.1:8094", help="Llama Guard 3, the second crisis check")
     ap.add_argument("--sam", default="http://127.0.0.1:8090")
     ap.add_argument("--voice", action="store_true", help="listen and speak through the robot (needs --robot)")
     ap.add_argument("--voice-url", default="http://127.0.0.1:8092")

@@ -2,7 +2,7 @@
 
 Identical cups crossing over each other are what per-frame finding can't follow: after the swap, which red cup is
 which? SAM 3.1's Object Multiplex tracks every cup through the clip at once, each keeping its own identity. It runs
-at about 5 frames a second here, slower than the camera, so Andy records the shuffle and replays it:
+at about 4 frames a second here, slower than the camera, so Andy records the shuffle and replays it:
 
 1. watch for the ball, a few times a second, until it disappears (under a cup);
 2. record every camera frame (10 a second; half that loses the cups mid-swap) until the cups have moved and then

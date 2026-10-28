@@ -1,0 +1,13 @@
+[Unit]
+Description=HeyAndy: Llama Guard 3 8B on GPU 1, the second crisis check (llama.cpp server, this computer only)
+
+[Service]
+Environment=CUDA_VISIBLE_DEVICES=1
+Environment=LD_LIBRARY_PATH=%h/opt/llama.cpp-b11936/cudart-llama-b11936-bin-ubuntu-cuda-13.4-x64:%h/opt/llama.cpp-b11936/llama-b11936
+ExecStart=%h/opt/llama.cpp-b11936/llama-b11936/llama-server \
+  -m %h/models/llama-guard-3-8b/Llama-Guard-3-8B-Q4_K_M.gguf \
+  -a llama-guard-3-8b -ngl 99 -c 4096 -np 1 --host 127.0.0.1 --port 8094 --jinja --no-webui
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

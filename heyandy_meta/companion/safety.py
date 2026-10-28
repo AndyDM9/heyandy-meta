@@ -19,13 +19,15 @@ CRISIS = re.compile(
     r"|harm(ing)? myself|self[- ]harm|(hang|shoot|drown|cut)(ing)? myself|overdos(e|ing) on purpose"
     r"|(don'?t|do not|no longer) want to (live|be alive|be here|wake up)|(want|going) to die|wanna die|better off dead"
     r"|wish (i was|i were|i'?d) (dead|never born)|life (isn'?t|is not|'s not|ain'?t) worth (it|living)|no reason to (live|go on)"
-    r"|can'?t go on (anymore|any more|living)|end(ing)? it (all )?(tonight|today|now)"
+    r"|can'?t go on (anymore|any more|living)|end(ing)? it (all )?(tonight|today|now)|better off without me"
+    r"|(sleep|go to sleep) and (never|not) wake up|never wake up again|disappear (forever|for good)"
     # Spanish (Andy can speak it): checked on the person's own words, before any translation
     r"|suicid[ao]r(me|se)?|matarme|quitarme la vida|lastimarme|hacerme da[nñ]o"
     r"|me (quiero|voy a|pienso|deseo) (matar|suicidar|morir|quitar la vida|hacer da[nñ]o|lastimar)"
     r"|(acabar|terminar) con (todo|mi vida)|no quiero (vivir|seguir viviendo|estar aqu[ií]|seguir aqu[ií])"
     r"|quiero morir(me)?|quisiera morir(me)?|ganas de morir(me)?|(estar[ií]a|quisiera estar|mejor) muert[oa]"
-    r"|quisiera estar muert[oa]|ser[ií]a mejor estar muert[oa]|no vale la pena vivir|no tengo raz[oó]n para vivir)\b",
+    r"|quisiera estar muert[oa]|ser[ií]a mejor estar muert[oa]|no vale la pena vivir|no tengo raz[oó]n para vivir"
+    r"|(estar[ií]an|vivir[ií]an) mejor sin m[ií]|desaparecer para siempre|no (volver a )?despertar(me)?)\b",
     re.IGNORECASE)
 
 
@@ -51,10 +53,11 @@ class Disclosure:
         return ""
 
 
-def respond(text: str, answer, disclosure: Disclosure, opening=None) -> str:
+def respond(text: str, answer, disclosure: Disclosure, opening=None, flagged: bool = False) -> str:
     """The one entry point for a spoken turn: the crisis reply bypasses the model; otherwise the model answers.
-    opening, if given, is handed the AI disclosure before the answer is made, so it can be said at once."""
-    if crisis(text):
+    opening, if given, is handed the AI disclosure before the answer is made, so it can be said at once. flagged: the
+    second check (Llama Guard on this computer, safety_model.py) heard it where the word list didn't."""
+    if flagged or crisis(text):
         disclosure.last_said = disclosure.last_turn = disclosure._clock()
         return CRISIS_REPLY
     prefix = disclosure.prefix()

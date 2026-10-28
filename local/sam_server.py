@@ -13,7 +13,7 @@ POST /segment {"image": <base64 JPEG>, "query": "glasses", "min_score": 0.3}
 POST /track {"frames": [<base64 JPEG>, ...], "query": "cup"}: SAM 3.1 Object Multiplex follows every cup through a clip
   -> {"objects": [{"id": 0, "path": [[frame, x, y], ...], "end": <a mask as above, or null>}], "frames": 47,
       "seconds": 9.4}
-  About 5 frames a second on an RTX 3090; the clip is held in memory for the request only.
+  About 4 frames a second on an RTX 3090 beside the other models; the clip is held in memory for the request only.
 POST /embed {"image": ..., "masks": [{"box": [...], "outline": "M ...", "outline_scale": [sx, sy]}, ...]}: what each
   masked thing looks like, as numbers: {"vectors": [[808 floats], ...]}. Half DINOv2 (Meta's open image model: shape
   and texture), half a colour fingerprint, since DINOv2 learned to ignore colour (a blue and a red mug of one shape
@@ -25,6 +25,7 @@ import argparse
 import base64
 import io
 import json
+import os
 import re
 import threading
 import time
@@ -40,7 +41,8 @@ MAX_BODY = 12 * 1024 * 1024  # a 1080p JPEG is well under this
 MAX_CLIP_BODY = 96 * 1024 * 1024  # a clip for /track: up to MAX_CLIP_FRAMES camera JPEGs
 MAX_CLIP_FRAMES = 160
 TRACK_SIDE = 960  # clip frames are shrunk to this width first: the model works at 1008 anyway, and memory stays low
-DETECT_BATCH = 4  # frames the detector takes at once while tracking: 16 (sam3's default) needs ~12 GB more
+DETECT_BATCH = int(os.environ.get("HEYANDY_DETECT_BATCH", "2"))  # frames the detector takes at once while tracking:
+# 16 (sam3's default) needs ~12 GB more; 4 needed 6.6 GB; 2 leaves room for Llama Guard on the same GPU (research.md, 29)
 OUTLINE_SIDE = 64  # the outline is traced on the mask shrunk to at most this many pixels a side
 
 

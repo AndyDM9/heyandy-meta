@@ -274,6 +274,7 @@ class Browser:
     def close(self) -> None:
         if self._thread and self._thread.is_alive():
             self._jobs.put((None, (), None))
+            self._thread.join(timeout=10)  # let Chromium shut down before Python does
 
 
 @dataclass
