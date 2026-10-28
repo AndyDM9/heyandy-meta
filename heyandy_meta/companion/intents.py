@@ -35,7 +35,7 @@ VOICE = {  # how Andy speaks, set by voice and remembered
     "slower": re.compile(r"\b(?:(?:speak |talk )?(?:more )?slow(?:er|ly)|slow down|too fast)\b", re.I),
     "faster": re.compile(r"\b(?:(?:speak |talk )?(?:a bit |a little )?faster|speed up|too slow(?:ly)?)\b", re.I),
 }
-QUIET = re.compile(r"\b(?:be quiet|quiet mode|leave me alone|(?:do not|don'?t) disturb(?: me)?|give me some peace|"
+QUIET = re.compile(r"\b(?:be quiet|(?:stay|keep) (?:quiet|silent)|quiet mode|leave me alone|(?:do not|don'?t) disturb(?: me)?|give me some peace|"
                    r"stop looking around)\b", re.I)
 UNQUIET = re.compile(r"\b(?:you can (?:talk|look around|move) again|quiet mode off|stop being quiet|you can go back to "
                      r"normal)\b", re.I)

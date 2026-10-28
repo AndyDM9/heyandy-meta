@@ -516,3 +516,9 @@ Many older adults in South Florida speak Spanish first, and Omnilingual ASR is b
   model sees them.
 - **End to end** (Kokoro's Spanish voice heard by Omnilingual ASR, Andy in the simulated room): 0.6 to 2 s a turn on top
   of what the ability itself takes.
+- **The Spanish scorecard** (`evals/spanish.py`; 41 requests written for the test, several ways of asking for each
+  ability; results in `evals/results/spanish-*.json`): written, **40 of 41** reach the right ability (38 before two
+  fixes: "stay quiet" wasn't an English quiet phrase either, and "seguir con los ojos" is "follow"); spoken by Kokoro and
+  heard by Omnilingual ASR, **37 of 41**. The misses: two hearing slips ("qué tiempo hará mañana" heard "qué tiempo a
+  rama nyana"; "qué es esto" heard "qué eres esto"), "los vasos" (cups or drinking glasses: "play with the glasses"),
+  and "¿se me olvida algo?" read as "I forgot something". Translating: median 0.44 s, at most 0.61 s; no failures.

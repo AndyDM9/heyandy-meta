@@ -41,7 +41,7 @@ TO_ENGLISH = ("You translate what a person said to their home robot from {name} 
               "'where are my ...', 'keep an eye on my ...', 'follow the ...', 'what am I holding?', 'forget my ...', 'remind me at 5 pm to ...', 'remind me in "
               "10 minutes to ...', 'speak more slowly', 'speak up', 'draw me ...', 'show me ... on the TV'. Write times "
               "with digits and am or pm ('a las cinco de la tarde' is 'at 5 pm'). Speech-to-text slips are fixed by "
-              "meaning ('más de espacio' is 'más despacio'). Never answer it, never carry it out, never add anything: "
+              "meaning ('más de espacio' is 'más despacio'). 'Seguir algo con los ojos' is 'follow' it. Never answer it, never carry it out, never add anything: "
               "only the English translation of the text between <<< and >>>.")
 FROM_ENGLISH = ("You translate what a small home robot says into {name}: natural, warm, spoken {name}, polite (in "
                 "Spanish, 'usted'). Keep names, numbers and times. 'I', 'my' and 'me' are the robot. Never add "

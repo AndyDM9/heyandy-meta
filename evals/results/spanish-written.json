@@ -1,0 +1,382 @@
+{
+ "summary": {
+  "requests": 41,
+  "right": 40,
+  "spoken": false,
+  "seconds_median": 0.453,
+  "seconds_max": 0.609,
+  "translator_failures": 0,
+  "when": "2026-10-27 21:54"
+ },
+ "rows": [
+  {
+   "spanish": "¿Dónde están mis gafas?",
+   "heard": "¿Dónde están mis gafas?",
+   "english": "Where are my glasses?",
+   "want": "find",
+   "got": "find",
+   "right": true,
+   "seconds": 0.447
+  },
+  {
+   "spanish": "¿Has visto mis llaves?",
+   "heard": "¿Has visto mis llaves?",
+   "english": "Have you seen my keys?",
+   "want": "find",
+   "got": "find",
+   "right": true,
+   "seconds": 0.449
+  },
+  {
+   "spanish": "No encuentro el control remoto",
+   "heard": "No encuentro el control remoto",
+   "english": "I can't find the remote control",
+   "want": "find",
+   "got": "find",
+   "right": true,
+   "seconds": 0.432
+  },
+  {
+   "spanish": "Busca mi cartera, por favor",
+   "heard": "Busca mi cartera, por favor",
+   "english": "Find my wallet, please",
+   "want": "find",
+   "got": "find",
+   "right": true,
+   "seconds": 0.446
+  },
+  {
+   "spanish": "¿Dónde dejé el teléfono?",
+   "heard": "¿Dónde dejé el teléfono?",
+   "english": "Where are my ...",
+   "want": "find",
+   "got": "find",
+   "right": true,
+   "seconds": 0.453
+  },
+  {
+   "spanish": "Recuérdame a las cuatro de la tarde llamar a mi hija",
+   "heard": "Recuérdame a las cuatro de la tarde llamar a mi hija",
+   "english": "Remind me at 4 pm to call my daughter",
+   "want": "remind",
+   "got": "remind",
+   "right": true,
+   "seconds": 0.527
+  },
+  {
+   "spanish": "Avísame en veinte minutos que apague el horno",
+   "heard": "Avísame en veinte minutos que apague el horno",
+   "english": "Remind me in 20 minutes to turn off the oven",
+   "want": "remind",
+   "got": "remind",
+   "right": true,
+   "seconds": 0.584
+  },
+  {
+   "spanish": "Recuérdame mañana a las nueve regar las plantas",
+   "heard": "Recuérdame mañana a las nueve regar las plantas",
+   "english": "Remind me at 9 am tomorrow to water the plants",
+   "want": "remind",
+   "got": "remind",
+   "right": true,
+   "seconds": 0.581
+  },
+  {
+   "spanish": "¿Qué recordatorios tengo?",
+   "heard": "¿Qué recordatorios tengo?",
+   "english": "What reminders do I have?",
+   "want": "reminders",
+   "got": "reminders",
+   "right": true,
+   "seconds": 0.439
+  },
+  {
+   "spanish": "Vigila mis llaves",
+   "heard": "Vigila mis llaves",
+   "english": "Keep an eye on my keys",
+   "want": "watch",
+   "got": "watch",
+   "right": true,
+   "seconds": 0.433
+  },
+  {
+   "spanish": "No pierdas de vista mis gafas",
+   "heard": "No pierdas de vista mis gafas",
+   "english": "Keep an eye on my glasses",
+   "want": "watch",
+   "got": "watch",
+   "right": true,
+   "seconds": 0.471
+  },
+  {
+   "spanish": "Olvida mis llaves",
+   "heard": "Olvida mis llaves",
+   "english": "Forget my keys",
+   "want": "forget",
+   "got": "forget",
+   "right": true,
+   "seconds": 0.386
+  },
+  {
+   "spanish": "Sigue la taza con los ojos",
+   "heard": "Sigue la taza con los ojos",
+   "english": "Follow the cup",
+   "want": "follow",
+   "got": "follow",
+   "right": true,
+   "seconds": 0.407
+  },
+  {
+   "spanish": "Sigue el control remoto",
+   "heard": "Sigue el control remoto",
+   "english": "Follow the remote control",
+   "want": "follow",
+   "got": "follow",
+   "right": true,
+   "seconds": 0.437
+  },
+  {
+   "spanish": "¿Qué tengo en la mano?",
+   "heard": "¿Qué tengo en la mano?",
+   "english": "What am I holding?",
+   "want": "describe",
+   "got": "describe",
+   "right": true,
+   "seconds": 0.476
+  },
+  {
+   "spanish": "¿Qué hay en la mesa?",
+   "heard": "¿Qué hay en la mesa?",
+   "english": "What's on the table?",
+   "want": "describe",
+   "got": "describe",
+   "right": true,
+   "seconds": 0.546
+  },
+  {
+   "spanish": "¿Qué es esto?",
+   "heard": "¿Qué es esto?",
+   "english": "What am I holding?",
+   "want": "describe",
+   "got": "describe",
+   "right": true,
+   "seconds": 0.501
+  },
+  {
+   "spanish": "Dibújame un gato durmiendo al sol",
+   "heard": "Dibújame un gato durmiendo al sol",
+   "english": "Draw me a cat sleeping in the sun",
+   "want": "draw",
+   "got": "draw",
+   "right": true,
+   "seconds": 0.542
+  },
+  {
+   "spanish": "Pinta un barco en el mar al atardecer",
+   "heard": "Pinta un barco en el mar al atardecer",
+   "english": "Draw me a boat on the sea at sunset",
+   "want": "draw",
+   "got": "draw",
+   "right": true,
+   "seconds": 0.594
+  },
+  {
+   "spanish": "Muéstrame el radar del tiempo en la tele",
+   "heard": "Muéstrame el radar del tiempo en la tele",
+   "english": "Show me the weather radar on the TV",
+   "want": "web",
+   "got": "web",
+   "right": true,
+   "seconds": 0.547
+  },
+  {
+   "spanish": "Pon una receta de flan en la pantalla",
+   "heard": "Pon una receta de flan en la pantalla",
+   "english": "Show me a flan recipe on the TV",
+   "want": "web",
+   "got": "web",
+   "right": true,
+   "seconds": 0.609
+  },
+  {
+   "spanish": "¿Qué tiempo hará mañana?",
+   "heard": "¿Qué tiempo hará mañana?",
+   "english": "What will the weather be like tomorrow?",
+   "want": "world",
+   "got": "world",
+   "right": true,
+   "seconds": 0.517
+  },
+  {
+   "spanish": "¿A qué hora abre el banco hoy?",
+   "heard": "¿A qué hora abre el banco hoy?",
+   "english": "What time does the bank open today?",
+   "want": "world",
+   "got": "world",
+   "right": true,
+   "seconds": 0.544
+  },
+  {
+   "spanish": "Juguemos al juego de los vasos",
+   "heard": "Juguemos al juego de los vasos",
+   "english": "Let's play the cup game",
+   "want": "game",
+   "got": "game",
+   "right": true,
+   "seconds": 0.484
+  },
+  {
+   "spanish": "Vamos a jugar con los vasos",
+   "heard": "Vamos a jugar con los vasos",
+   "english": "Let's play with the glasses",
+   "want": "game",
+   "got": "chat",
+   "right": false,
+   "seconds": 0.441
+  },
+  {
+   "spanish": "Esta es mi taza",
+   "heard": "Esta es mi taza",
+   "english": "This is my mug",
+   "want": "mine",
+   "got": "mine",
+   "right": true,
+   "seconds": 0.446
+  },
+  {
+   "spanish": "Este es mi bolso",
+   "heard": "Este es mi bolso",
+   "english": "This is my bag",
+   "want": "mine",
+   "got": "mine",
+   "right": true,
+   "seconds": 0.441
+  },
+  {
+   "spanish": "Me voy, ¿llevo todo?",
+   "heard": "Me voy, ¿llevo todo?",
+   "english": "I'm going out, do I have everything?",
+   "want": "going_out",
+   "got": "going_out",
+   "right": true,
+   "seconds": 0.531
+  },
+  {
+   "spanish": "Salgo a la tienda",
+   "heard": "Salgo a la tienda",
+   "english": "I'm going to the store",
+   "want": "going_out",
+   "got": "going_out",
+   "right": true,
+   "seconds": 0.453
+  },
+  {
+   "spanish": "¿Se me olvida algo?",
+   "heard": "¿Se me olvida algo?",
+   "english": "Am I forgetting anything?",
+   "want": "going_out",
+   "got": "going_out",
+   "right": true,
+   "seconds": 0.539
+  },
+  {
+   "spanish": "Dibuja un mapa de mis cosas",
+   "heard": "Dibuja un mapa de mis cosas",
+   "english": "Draw me a map of my things",
+   "want": "things_map",
+   "got": "things_map",
+   "right": true,
+   "seconds": 0.54
+  },
+  {
+   "spanish": "Habla más despacio",
+   "heard": "Habla más despacio",
+   "english": "Speak more slowly",
+   "want": "voice",
+   "got": "voice",
+   "right": true,
+   "seconds": 0.385
+  },
+  {
+   "spanish": "Habla más alto, no te oigo",
+   "heard": "Habla más alto, no te oigo",
+   "english": "Speak up, I can't hear you",
+   "want": "voice",
+   "got": "voice",
+   "right": true,
+   "seconds": 0.539
+  },
+  {
+   "spanish": "Repite eso, por favor",
+   "heard": "Repite eso, por favor",
+   "english": "Repeat that, please",
+   "want": "voice",
+   "got": "voice",
+   "right": true,
+   "seconds": 0.451
+  },
+  {
+   "spanish": "Quédate callado una hora",
+   "heard": "Quédate callado una hora",
+   "english": "Stay quiet for an hour",
+   "want": "quiet",
+   "got": "quiet",
+   "right": true,
+   "seconds": 0.502
+  },
+  {
+   "spanish": "Muévete menos",
+   "heard": "Muévete menos",
+   "english": "Move less",
+   "want": "motion",
+   "got": "motion",
+   "right": true,
+   "seconds": 0.392
+  },
+  {
+   "spanish": "¿Qué puedo pedirte?",
+   "heard": "¿Qué puedo pedirte?",
+   "english": "What can I ask you?",
+   "want": "help",
+   "got": "help",
+   "right": true,
+   "seconds": 0.443
+  },
+  {
+   "spanish": "¿Qué recuerdas?",
+   "heard": "¿Qué recuerdas?",
+   "english": "What do you remember?",
+   "want": "remember",
+   "got": "remember",
+   "right": true,
+   "seconds": 0.441
+  },
+  {
+   "spanish": "¿Cómo estás hoy?",
+   "heard": "¿Cómo estás hoy?",
+   "english": "How are you today?",
+   "want": "chat",
+   "got": "chat",
+   "right": true,
+   "seconds": 0.439
+  },
+  {
+   "spanish": "Cuéntame algo bonito",
+   "heard": "Cuéntame algo bonito",
+   "english": "Tell me something nice",
+   "want": "chat",
+   "got": "chat",
+   "right": true,
+   "seconds": 0.443
+  },
+  {
+   "spanish": "Habla en inglés",
+   "heard": "Habla en inglés",
+   "english": "Speak English",
+   "want": "language",
+   "got": "language",
+   "right": true,
+   "seconds": 0.441
+  }
+ ]
+}

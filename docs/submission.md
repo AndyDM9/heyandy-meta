@@ -121,7 +121,8 @@ Every turn, the TV lists which models worked on it and where.
 *Simulated scorecard (seeded rooms with the robot's camera model and measured timings; noise stated):* with look-alikes
 described, the fixed sweep pointed at the wrong one 20 times in 100; **Glimmer's plan: 20 of 20, none wrong**. Things
 behind the robot: **20 of 20 in 3.5 looks** (fixed sweep: 92 of 100 in 6.2). Nothing there: no false finds.
-*On the robot:* a cup in 7.5 s and a keyboard in 8.2 s, the screen check included; [the physical scorecard: N of M].
+*In Spanish:* 40 of 41 written requests and 37 of 41 spoken ones reach the right ability (median 0.44 s to
+translate, on the computer beside the robot). *On the robot:* a cup in 7.5 s and a keyboard in 8.2 s, the screen check included; [the physical scorecard: N of M].
 Every result, failures included: `evals/results/`.
 
 ## Safety and honesty

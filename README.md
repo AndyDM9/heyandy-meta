@@ -179,6 +179,10 @@ the robot sharing its GPU; with 20 rooms a scenario, a few points either way is 
 **On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included;
 pointing within about 3 degrees after the head's correction.
 
+**Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 40 of 41 reach the
+right ability; said by Kokoro's Spanish voice and heard by Omnilingual ASR, 37 of 41 (two hearing slips, one ambiguous
+word, one misread). Glimmer translates each in a median 0.44 s, on the computer beside the robot.
+
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` section 18): about 5 frames a second, so a 4-second shuffle replays in about 9 s.
 At the camera's 10 frames a second it picked the right cup in 4 of 5 runs; at 5 frames a second it lost the cups in all 4. Not
