@@ -271,6 +271,8 @@ class Andy:
                 return "Okay, I've closed it."
             if WEB_MORE.search(text):
                 return self.use_the_web(text, more=True)
+        if i.kind == "pointing":
+            return self.pointed_at()
         if i.kind == "going_out":
             return self.going_out()
         if i.kind == "things_map":
@@ -761,6 +763,58 @@ class Andy:
         if run.stopped:  # out of steps or time: say so plainly rather than the model's half-finished narration
             return "That's as far as I could get. What I found is on the TV."
         return (run.answer or "It's on the TV.") + ("" if more else " You can say scroll down, or go back.")
+
+    def pointed_at(self) -> str:
+        """"What's that?" while pointing: Glimmer, on this computer, says what the person points at and on which side;
+        SAM 3.1 finds it, in the same picture if it's in view, else Andy turns that way and looks; then it points at it
+        too, and asks if that's the one (joint attention: both looking at the same thing)."""
+        ask = getattr(self.judge, "pointing", None)
+        if ask is None:
+            return "I can't tell where you're pointing right now. Could you tell me what it is?"
+        self.screen.clear()
+        self.say("Let me see where you're pointing.")
+        self.screen.doing("Working", "Looking where you point")
+        self.gesture("searching")
+        try:
+            yaw, pitch = self.person or (getattr(self.body, "yaw", 0.0), 0.0)
+            self.body.look(yaw, min(pitch + 8.0, 25.0))  # the person and what's around them
+            frame = self.body.capture()
+            seen = ask(frame)
+            self.screen.used("Muse Glimmer (looks)", "device")
+            if seen is None:
+                self._source, self._reason = "device", "Glimmer looked, on this computer"
+                return "I can't tell what you're pointing at. Could you tell me what it is?"
+            thing, where = seen
+            self.screen.step(f"pointing at: {thing}, {where}")
+            masks = self.finder._masks(frame, thing, self.segmenter)
+            want = {"left": 0.25, "right": 0.75}.get(where.split()[-1] if where else "", 0.5) * frame.width
+            found = None
+            if masks and "edge" not in where:  # in view: the one on the side the person points to
+                m = min(masks, key=lambda m: abs(m.center[0] - want))
+                cam = LITE.scaled(frame.width, frame.height)
+                found = self.finder.confirm(thing, *pixel_to_angles(*m.center, frame.yaw, frame.pitch, cam))
+            if found is None:  # out of view: turn that way first, then the rest of the room
+                views = self.finder.views
+                first = [v for v in views if (v[0] > yaw) == ("left" in where)] if where != "middle" else []
+                self.finder.views = tuple(first + [v for v in views if v not in first])
+                try:
+                    found = self.finder.find(thing)
+                finally:
+                    self.finder.views = views
+            else:
+                self.finder.point(found)
+        finally:
+            self.gesture("idle")
+            self.screen.doing("Waiting")
+        self.screen.used("SAM 3.1", "device", max(1, self.finder.looks))
+        self._source, self._reason = "device", "Glimmer saw where you pointed; SAM 3.1 found it, on this computer"
+        if found is None:
+            return f"I think you're pointing at the {thing}, but I can't find it from here. Could you show me?"
+        self._pointed = True
+        self.gesture("found")
+        words = f"You mean the {thing}? It's {side(found.yaw)}."
+        self.screen.found(found, words)
+        return words
 
     def going_out(self) -> str:
         """"I'm going out": look again where each watched thing was last seen, and point at any still here (it isn't

@@ -535,3 +535,19 @@ as the fallback.
   glasses): fast 10 of 10, usual 10 of 10. Median 1.07 s against 1.89 s (most of what's left is encoding the picture).
 - **On the robot:** finding the keyboard took **7.1 and 7.2 s**, against 8.5 and 8.4 s the usual way (2 looks and 1
   picture check each time).
+
+## 25. "What's that?": looking where the person points (2026-10-27, night)
+
+Joint attention, a robot and a person looking at the same thing, is a classic of human-robot interaction. Andy faces
+the person, Glimmer (on this computer) says what they're pointing at and on which side of the picture, SAM 3.1 finds it
+(in the same picture if it's in view, else Andy looks to that side first), and Andy points at it too and asks: "You
+mean the lamp?" "What's this?" stays the question about what's in the person's hands.
+
+Measured on 8 public photos from Wikimedia Commons (no home pictures; 6 with someone pointing, 2 without):
+
+- **With Glimmer's reasoning** (about 5 s): it named the thing in **4 of 6** (book, laptop, screen, book; it missed a
+  hand pointing at a computer, "wall", and a tiny figure in an old photo) and imagined no pointing in the 2 without.
+  Its sense of side was weak ("middle" for most).
+- **Straight to the answer** (section 24's trick, about 1.3 s): only 2 of 6. So this question keeps the reasoning.
+- **Not yet tried on the robot**, with a person pointing in the room. Andy asks rather than asserts, and says when it
+  can't tell ("Could you tell me what it is?").

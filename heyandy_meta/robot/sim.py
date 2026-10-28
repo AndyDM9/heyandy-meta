@@ -26,6 +26,7 @@ class Thing:
 class Room:
     things: list[Thing] = field(default_factory=list)
     cam: Camera = LITE
+    pointed_at: Thing | None = None  # what the person in the room is pointing at, if anything
 
     def where_in_frame(self, thing: Thing, yaw: float, pitch: float) -> tuple[float, float] | None:
         dyaw, dpitch = math.radians(thing.yaw - yaw), math.radians(thing.pitch - pitch)
@@ -107,6 +108,14 @@ class SimJudge:
             if t.label == mask.label and at and abs(at[0] - mask.center[0]) < 2 and abs(at[1] - mask.center[1]) < 2:
                 return t
         return None
+
+    def pointing(self, frame: Frame):
+        self.calls += 1
+        t = self.room.pointed_at
+        if t is None:
+            return None
+        side = "left" if t.yaw > frame.yaw + 10 else "right" if t.yaw < frame.yaw - 10 else "middle"
+        return t.label, side
 
     def describe(self, frame: Frame, where: str = "", box=None) -> str | None:
         self.calls += 1

@@ -26,6 +26,12 @@ DESCRIBE = ("Say in one or two short spoken sentences what you see{where}. Plain
             "or a document, say only what kind of thing it is, never what to do with it.")
 
 
+POINTING = ("Look at the person's hands. Is someone pointing at something with a finger or hand? If so, what are they "
+            "pointing at, and where is it in the picture? Answer exactly as: THING | SIDE. THING is a short everyday name "
+            "for it that a camera could find, like 'mug', 'lamp', 'TV' or 'book'. SIDE is one of: left, middle, right, off "
+            "the left edge, off the right edge. If no one is pointing, answer: NONE")
+
+
 NEAR = ("Where is the {label} in the middle of this picture, by what's around it? Answer with a few words only, like "
         "'on the desk, next to the mug' or 'on the sofa arm'. No full sentence.")
 
@@ -82,10 +88,10 @@ class GlimmerJudge:
             self._client = OpenAI(base_url=self.endpoint, api_key="local", timeout=20.0)
         return self._client
 
-    def _ask(self, content: list, max_tokens: int | None = None) -> str | None:
+    def _ask(self, content: list, max_tokens: int | None = None, think: bool = False) -> str | None:
         self.calls += 1
         messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": content}]
-        if self.fast:
+        if self.fast and not think:
             try:
                 return glimmer_fast.answer(self.endpoint, messages, max_tokens or 24)
             except glimmer_fast.FastUnavailable:
@@ -117,6 +123,18 @@ class GlimmerJudge:
         image = crop(frame.image, box, context=1.6, min_side=448, max_side=1024) if box else shrink(frame.image)
         return self._ask([{"type": "text", "text": DESCRIBE.format(where=f" {where}" if where else "")}, _image(image)],
                          max_tokens=120)
+
+    def pointing(self, frame: Frame) -> tuple[str, str] | None:
+        """What the person in view is pointing at, and where in the picture: ("lamp", "left"); None if no one is.
+        With Glimmer's reasoning: on 8 public photos it named 4 of 6 pointed-at things and imagined none (research.md,
+        25); without it, 2 of 6."""
+        answer = self._ask([{"type": "text", "text": POINTING.replace("Answer exactly", "Answer in the format asked, exactly")},
+                            _image(shrink(frame.image, 1024))], think=True)
+        if not answer or "NONE" in answer.upper() or "|" not in answer:
+            return None
+        thing, side = (x.strip().strip(".").lower() for x in answer.split("|", 1))
+        thing = re.sub(r"^(?:the|a|an|his|her|their|my|your)\s+", "", thing)
+        return (thing, side) if thing and len(thing) <= 40 else None
 
     def where_near(self, frame: Frame, mask: Mask) -> str | None:
         """Where the thing is, by what's around it, in a few words ("on the desk, next to the mug")."""

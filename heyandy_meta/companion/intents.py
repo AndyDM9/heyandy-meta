@@ -22,7 +22,7 @@ REFINE = re.compile(r"^\W*(?:(?:now|and|ok|okay)\s+)?(?:make (?:it|him|her|them|
 FOLLOW = re.compile(r"\b(?:follow|track)\s+" + THING + r"(?:\s+with your eyes)?(?:\?|$|[,.!]| please)", re.I)
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
-DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have) in my hands?\b|\bwhat(?:'s| is) (?:this|that)\b(?! (?:song|noise|sound))"
+DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have) in my hands?\b|\bwhat(?:'s| is) this\b(?! (?:song|noise|sound))"
                       r"|\bwhat(?:'s| is) on the (?P<place>table|desk|counter|shelf|floor|sofa|couch|bed|chair)\b"
                       r"|\bwhat (?:can|do) you see\b|\bdescribe what you see\b|\bwhat colou?r is (?:this|it)\b", re.I)
 VOICE = {  # how Andy speaks, set by voice and remembered
@@ -53,6 +53,9 @@ MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:
         re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
         re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),
         re.compile(r"\blearn (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now|by sight))", re.I)]
+POINTING = re.compile(r"\bwhat(?:'s| is) that\b(?! (?:song|noise|sound|smell|about|for))(?!\s+\w+ing\b)|"
+                      r"\b(?:look|see) (?:at )?(?:what|where) i(?:'?m| am) pointing\b|\bwhat am i pointing at\b|"
+                      r"\b(?:look|see) over there\b|\bwhat(?:'s| is) (?:that|the thing) over there\b", re.I)
 GOING_OUT = re.compile(r"\b(?:i'?m|i am|we'?re|we are) (?:just )?(?:going out|heading out|off out|popping out|leaving(?: now| "
                        r"the house)?|going to the (?:store|shops|supermarket|beach|bank|park|post office|mall)|off to the "
                        r"(?:store|shops|beach|park))\b|\bdo i have everything\b|\bam i forgetting anything\b|"
@@ -85,7 +88,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -185,6 +188,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("remember")
     if GAME.search(t):
         return Intent("game", text=t)
+    if POINTING.search(t):
+        return Intent("pointing", text=t)
     if GOING_OUT.search(t):
         return Intent("going_out", text=t)
     if MAP_OF_THINGS.search(t):
