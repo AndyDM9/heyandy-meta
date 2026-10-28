@@ -45,6 +45,8 @@ class ScreenState:
         self._help_until = 0.0
         self.quiet_text = ""  # "Quiet until 9:40", while Andy keeps quiet
         self.language = ""  # "Español", while Andy hears and speaks Spanish
+        self.lang = "en"  # the TV's own labels follow it (page.html)
+        self.words = None  # Andy's own words on the TV, in that language: a TVWords, or None for English
         self._notice: tuple[str, float] | None = None  # a short notice ("Volume ●●●●○○○"), and until when
         self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
         self._drawing: tuple[bytes, str, str, float] | None = None  # (WebP, what was asked, where it's saved, until)
@@ -205,6 +207,7 @@ class ScreenState:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
                 out["running"] = stop is None
+            out["lang"] = self.lang
             p = self._picture
             if p:
                 f, m = p.found, p.found.mask
@@ -218,4 +221,32 @@ class ScreenState:
                 if p.trails:
                     out["picture"]["trails"] = [{"d": "M " + " L ".join(f"{x:.0f} {y:.0f}" for x, y in pts),
                                                  "chosen": chosen} for pts, chosen in p.trails if len(pts) >= 2]
-            return out
+            words = self.words if self.lang != "en" else None
+        return _in(out, words) if words else out
+
+
+def _in(out: dict, tr) -> dict:
+    """The snapshot with Andy's own words in the person's language (the caption already is; names of models aren't)."""
+    for key in ("head", "looking_for"):
+        out[key] = tr(out[key])
+    out["steps"] = [tr(x) for x in out["steps"]]
+    out["watching"] = [tr(x) for x in out["watching"]]
+    if out["memory"] is not None:
+        out["memory"] = [tr(x) for x in out["memory"]]
+    out["map"] = [{**m, "label": tr(m["label"])} for m in out["map"]]
+    if out["next"]:
+        out["next"] = {**out["next"], "text": tr(out["next"]["text"])}
+    if out["picture"]:
+        out["picture"] = {**out["picture"], "words": tr(out["picture"]["words"]), "label": tr(out["picture"]["label"])}
+    if out["game"]:
+        out["game"] = {**out["game"], "title": tr(out["game"]["title"]), "detail": tr(out["game"]["detail"])}
+    if out["checklist"]:
+        c = out["checklist"]
+        out["checklist"] = {**c, "weather": tr(c["weather"]), "next": tr(c["next"]),
+                            "items": [{**i, "thing": tr(i["thing"]), "words": tr(i["words"])} for i in c["items"]]}
+    if out["web"]:
+        out["web"] = {**out["web"], "request": tr(out["web"]["request"]), "words": tr(out["web"]["words"])}
+    if out["drawing"]:
+        out["drawing"] = {**out["drawing"], "prompt": tr(out["drawing"]["prompt"])}
+    out["reason"] = tr(out["reason"])
+    return out

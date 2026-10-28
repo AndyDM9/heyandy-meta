@@ -8,7 +8,9 @@ takes about 2 s even for a short sentence (research.md, 23).
 
 What must never be machine-translated is written here by hand: saying it's an AI, and the crisis reply.
 """
+import queue
 import re
+import threading
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -57,6 +59,24 @@ PHRASES = {"es": {
     "Let me draw where your things are. It takes a little while.": "Déjeme dibujar dónde están sus cosas. Tarda un poco.",
     "Let me draw that. It takes a little while.": "Déjeme dibujarlo. Tarda un poco.",
     "Okay, I'll speak Spanish now.": "De acuerdo, desde ahora le hablo en español.",
+    # the going-out checklist, on the TV
+    "Not where I last saw it: with you?": "No está donde lo vi: ¿lo lleva usted?",
+    "Not where I last saw them: with you?": "No están donde los vi: ¿los lleva usted?",
+    "Not seen lately": "No lo he visto últimamente",
+    "looked again where your things were last seen, on this computer":
+        "volví a mirar donde vi sus cosas por última vez, en esta computadora",
+    "looked again where your things were last seen; the weather from the web":
+        "volví a mirar donde vi sus cosas por última vez; el tiempo, de la web",
+}}
+# Everyday things, by hand: one word is too little for a translator to go on ("keys" came back "keys").
+THINGS = {"es": {
+    "keys": "llaves", "key": "llave", "wallet": "billetera", "purse": "monedero", "glasses": "gafas",
+    "reading glasses": "gafas de leer", "sunglasses": "gafas de sol", "phone": "teléfono", "remote": "control remoto",
+    "mug": "taza", "cup": "taza", "bottle": "botella", "water bottle": "botella de agua", "book": "libro",
+    "watch": "reloj", "hat": "sombrero", "bag": "bolso", "charger": "cargador", "pen": "bolígrafo", "laptop": "computadora",
+    "keyboard": "teclado", "tablet": "tableta", "umbrella": "paraguas", "scarf": "bufanda", "gloves": "guantes",
+    "lamp": "lámpara", "plant": "planta", "slippers": "pantuflas", "shoes": "zapatos", "jacket": "chaqueta",
+    "coat": "abrigo", "headphones": "audífonos", "hearing aid": "audífono", "ring": "anillo", "ball": "pelota",
 }}
 
 
@@ -136,3 +156,44 @@ def asked_for(text: str) -> str | None:
         return None
     word = (m.group("a") or m.group("b") or m.group("c")).lower()
     return "es" if word.startswith(("span", "esp")) else "en"
+
+
+class TVWords:
+    """Andy's own words on the TV ("looking a little to my right", "keys: seen 2 hours ago"), in the person's language.
+    The TV asks often and must never wait: a word not translated yet is shown as it is, and Glimmer translates it in the
+    background, once (then it's cached)."""
+
+    def __init__(self, translator: Translator, language: str = "es"):
+        self.translator, self.language = translator, language
+        self._done: dict[str, str] = {}
+        self._asked: set[str] = set()
+        self._lock = threading.Lock()
+        self._todo: queue.Queue = queue.Queue()
+        threading.Thread(target=self._work, daemon=True).start()
+
+    def __call__(self, text: str) -> str:
+        if not text or not text.strip():
+            return text
+        known = PHRASES.get(self.language, {}).get(text) or THINGS.get(self.language, {}).get(text.lower())
+        if known:
+            return known
+        with self._lock:
+            if text in self._done:
+                return self._done[text]
+            if text not in self._asked and len(self._asked) < 5000:
+                self._asked.add(text)
+                self._todo.put(text)
+        return text
+
+    def _work(self) -> None:
+        while True:
+            text = self._todo.get()
+            out = PHRASES.get(self.language, {}).get(text) or THINGS.get(self.language, {}).get(text.lower()) or \
+                self.translator._translate(
+                FROM_ENGLISH.format(name=LANGUAGES[self.language].name) + " It is a short label on a TV screen: keep it "
+                "short; keep the robot's 'my'/'me' as 'mi'/'me'.", text)
+            with self._lock:
+                if out:
+                    self._done[text] = out
+                else:  # Glimmer was away: ask again next time it's shown
+                    self._asked.discard(text)

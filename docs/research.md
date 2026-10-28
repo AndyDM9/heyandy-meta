@@ -569,3 +569,8 @@ with the right words, the right things kept an eye on); the model's words don't 
   the agent's prompt says "do all of it and nothing more".
 - **After: Muse Spark 12 of 12** (median 4.3 s with the robot simulated), **Muse Glimmer on this computer 12 of 12**
   (median 6.0 s): the offline brain does every multi-part request too.
+- **The TV in Spanish too:** while Andy speaks Spanish, every fixed label on the TV (the date, the status, the cards, the
+  receipt, the help) is hand-written Spanish in the page, and Andy's own words on it (steps, what it remembers, the
+  checklist) are translated by Glimmer in the background and cached, so the TV never waits: a new phrase shows in
+  English for a moment, then in Spanish. Everyday things ("keys", "wallet") are hand-written: one word is too little
+  for the translator ("keys" came back "keys").

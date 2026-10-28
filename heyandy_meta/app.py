@@ -22,7 +22,7 @@ from .budget import Budget, BudgetExceeded
 from .companion import answers
 from .companion.attention import face_person
 from .companion import cupgame, pictures, web
-from .companion.language import LANGUAGES, asked_for
+from .companion.language import LANGUAGES, TVWords, asked_for
 from .companion.follow import follow
 from .companion.intents import REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
@@ -508,6 +508,13 @@ class Andy:
         if motion is not None:
             motion.liveliness = value
 
+    def _tv_language(self) -> None:
+        """The TV follows: its labels (page.html) and Andy's own words on it (translated in the background)."""
+        self.screen.language = "Español · en esta computadora" if self.language == "es" else ""
+        self.screen.lang = self.language
+        if self.language != "en" and self.translator is not None and getattr(self.screen.words, "language", "") != self.language:
+            self.screen.words = TVWords(self.translator, self.language)
+
     def set_language(self, to: str) -> str:
         """"Andy, habla español" / "speak English": hearing, voice and captions switch, and it's remembered."""
         if to != "en" and self.translator is None:
@@ -520,7 +527,7 @@ class Andy:
         if self.voice is not None:
             self.voice.voice = LANGUAGES[to].voice if to != "en" else self._own_voice
         self.screen.notice("Español" if to == "es" else "English")
-        self.screen.language = "Español · on this computer" if to == "es" else ""
+        self._tv_language()
         self.save_voice()
         self._source, self._reason = "device", "hearing and speaking switched, on this computer"
         return "Okay, I'll speak Spanish now." if to == "es" else "Okay, I'll speak English now."
@@ -552,7 +559,7 @@ class Andy:
             self._set_liveliness(self.liveliness)
             if saved.get("language", "en") in LANGUAGES and (saved.get("language") == "en" or self.translator):
                 self.language = saved.get("language", "en")
-                self.screen.language = "Español · on this computer" if self.language == "es" else ""
+                self._tv_language()
                 if self.voice is not None and self.language != "en":
                     self.voice.voice = LANGUAGES[self.language].voice
 

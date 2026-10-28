@@ -132,3 +132,32 @@ def test_spanish_crisis_words_are_caught_before_any_model(tmp_path, text):
     glimmer.asked.clear()
     assert a.hear(text) == CRISIS_REPLY and glimmer.asked == [] and a.device.prompts == []
     assert all(CRISIS_REPLY not in r and text not in q for q, r in a.history)  # not kept for the next chat either
+
+
+def test_the_tv_shows_andys_words_in_spanish_without_waiting(tmp_path):
+    import time as _time
+
+    from heyandy_meta.companion.language import TVWords
+
+    words = TVWords(Glimmer(), "es")
+    assert words("keys") == "llaves"  # everyday things by hand, at once
+    assert words("Not where I last saw it: with you?").startswith("No está")
+    assert words("Let me look.") == "Déjeme buscar."
+    assert words("something new") == "something new"  # not yet: shown as it is, translated in the background
+    for _ in range(50):
+        if words("something new") != "something new":
+            break
+        _time.sleep(0.01)
+
+
+def test_the_tv_follows_the_language(tmp_path):
+    a, _, _ = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.hear("habla español")
+    snap = a.screen.snapshot()
+    assert snap["lang"] == "es" and snap["language"].startswith("Español")
+    a.places.watch("keys")
+    a.refresh_panels()
+    assert a.screen.snapshot()["map"][0]["label"] == "llaves"
+    a.hear("habla inglés")
+    assert a.screen.snapshot()["lang"] == "en" and a.screen.snapshot()["map"][0]["label"] == "keys"

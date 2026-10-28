@@ -170,15 +170,15 @@
         <span class="badge" id="quiet" hidden></span>
         <span class="badge" id="lang" hidden></span>
         <span class="badge" id="offline" hidden>Offline: working on this computer</span>
-        <span class="badge" id="private"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>Pictures and voice stay on this computer</span>
+        <span class="badge" id="private"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg><span id="t-private">Pictures and voice stay on this computer</span></span>
         <span class="badge" id="staged" hidden>Staged scene: camera pictures go to Meta's Model API</span>
       </div>
     </div>
   </header>
   <main>
     <div class="side">
-      <section class="panel"><div class="kicker">Next</div><div id="next"></div></section>
-      <section class="panel"><div class="kicker">Keeping an eye on</div><div id="watching"></div></section>
+      <section class="panel"><div class="kicker" id="k-next">Next</div><div id="next"></div></section>
+      <section class="panel"><div class="kicker" id="k-watching">Keeping an eye on</div><div id="watching"></div></section>
     </div>
     <section id="card" class="panel" aria-live="polite">
       <div><div class="kicker" id="kicker"></div><h1 id="title"></h1></div>
@@ -190,7 +190,7 @@
   <div id="captions" aria-live="polite"></div>
 </div>
 <nav id="demo" hidden aria-label="Sample scenes"></nav>
-<div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?">
+<div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?"><div id="help-en">
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
@@ -198,7 +198,16 @@
     <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p></div>
     <div><h3>Talk, look, make</h3><p>“Andy, what am I holding?” · “What's on the table?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
-</div></div>
+</div>
+  <div id="help-es" hidden>
+  <h1>¿Qué puedo pedirle a Andy?</h1>
+  <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
+  <div class="cols">
+    <div><h3>Encontrar cosas</h3><p>“Andy, ¿dónde están mis gafas?”</p><p>“Andy, la taza azul, junto a la computadora.”</p><p>“Andy, sigue la taza.” (muévala; diga “basta”)</p></div>
+    <div><h3>Recordar cosas</h3><p>“Andy, vigila mis llaves.”</p><p>“Andy, ¿qué recuerdas?”</p><p>“Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p></div>
+    <div><h3>Hablar, mirar, crear</h3><p>“Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Andy, ¿qué tiempo hará mañana?”</p><p>“Andy, dibújame un faro al amanecer.”</p></div>
+  </div>
+  </div></div></div>
 <script>
   const $ = (id) => document.getElementById(id);
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
@@ -207,6 +216,48 @@
                "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”", "“Andy, let's play the cup game.”", "“Andy, this is my mug.”", "“Andy, show me the weather radar on the TV.”",
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
+  // The TV in Spanish, while Andy speaks it: every fixed label by hand (Andy's own words come translated, from Glimmer).
+  let LANG = "en";
+  const ES = {
+    "Next": "Lo próximo", "Keeping an eye on": "Vigilando", "No reminders": "Sin recordatorios",
+    "“Andy, remind me at 3 pm to call Sam.”": "“Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
+    "Nothing yet. “Andy, keep an eye on my keys.”": "Nada todavía. “Andy, vigila mis llaves.”",
+    "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
+    "What I found": "Lo que encontré", "Going out": "Antes de salir", "Have you got everything?": "¿Lleva todo?",
+    "What I remember": "Lo que recuerdo", "Where I last saw things": "Dónde vi las cosas por última vez",
+    "Nothing yet": "Nada todavía", "Try asking": "Pruebe a decir", "to find it": "para encontrarlo",
+    "If I can't find it, I'll say so.": "Si no lo encuentro, se lo diré.", "Looking around the room": "Mirando por la habitación",
+    "Andy sees and hears on this computer. Pictures and voice never leave your home.":
+      "Andy ve y oye en esta computadora. Las imágenes y la voz nunca salen de su casa.",
+    "Finds things": "Encuentra cosas", "Looks around the room and points, and tells a real thing from a picture of it.":
+      "Mira por la habitación, señala y distingue una cosa real de una foto de ella.",
+    "Keeps an eye out": "Vigila", "Remembers where the things you choose were last seen. Never a picture.":
+      "Recuerda dónde vio por última vez las cosas que usted elige. Nunca una foto.",
+    "Reminds you": "Le recuerda", "Turns to find you when it's time, and says it in your own words.":
+      "A la hora se gira para buscarle y se lo dice con sus propias palabras.",
+    "On this computer:": "En esta computadora:", "In the cloud, words only:": "En la nube, solo palabras:",
+    "In the cloud, words and web pages:": "En la nube, palabras y páginas web:",
+    "Sent to the cloud this turn, words only: ": "Enviado a la nube en este turno, solo palabras: ",
+    "Sent to the cloud this turn (words, and screenshots of web pages): ":
+      "Enviado a la nube en este turno (palabras y capturas de páginas web): ",
+    "✓ Nothing left this house this turn.": "✓ Nada salió de esta casa en este turno.", "Why: ": "Por qué: ",
+    "Andy sends Muse Spark screenshots of this web page, never the camera":
+      "Andy envía a Muse Spark capturas de esta página web, nunca de la cámara",
+    "SAM 3.1 Object Multiplex followed every cup at once, on this computer":
+      "SAM 3.1 Object Multiplex siguió todos los vasos a la vez, en esta computadora",
+    "Made by Muse Image from your words only": "Hecho por Muse Image solo con sus palabras",
+    "Pictures and voice stay on this computer": "Las imágenes y la voz se quedan en esta computadora",
+    "Offline: working on this computer": "Sin conexión: trabajando en esta computadora",
+    "Waiting": "Esperando", "Working": "Trabajando", "Pointing": "Señalando", "Speaking": "Hablando",
+    "Listening": "Escuchando", "Playing": "Jugando", "Thinking": "Pensando", "now": "ahora",
+    "Night": "Noche", "Morning": "Mañana", "Afternoon": "Tarde", "Evening": "Tarde",
+  };
+  const T = (s) => (LANG === "es" && ES[s]) || s;
+  const LOCALE = () => (LANG === "es" ? "es-US" : "en-US");
+  const TRY_ES = ["“Andy, ¿dónde están mis gafas?”", "“Andy, vigila mis llaves.”", "“Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
+                  "“Andy, dibújame un gato en un jardín soleado.”", "“Andy, ¿qué tengo en la mano?”", "“Andy, juguemos al juego de los vasos.”",
+                  "“Andy, esta es mi taza.”", "“Andy, muéstrame el radar del tiempo en la tele.”", "“Andy, me voy, ¿llevo todo?”",
+                  "“Andy, ¿qué recuerdas?”", "“Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
   const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", help: "What can I ask?" };
@@ -226,25 +277,27 @@
   function clock() {
     const d = new Date(), part = partOfDay(d.getHours());
     document.documentElement.dataset.part = part;
-    $("day").textContent = d.toLocaleDateString("en-US", { weekday: "long" });
-    const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
-    const date = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
-    $("date").replaceChildren(part[0].toUpperCase() + part.slice(1) + ", ", el("b", time), ", " + date);
+    const day = d.toLocaleDateString(LOCALE(), { weekday: "long" });
+    $("day").textContent = day[0].toUpperCase() + day.slice(1);
+    const time = d.toLocaleTimeString(LOCALE(), { hour: "numeric", minute: "2-digit" }).toLowerCase();
+    const date = d.toLocaleDateString(LOCALE(), { month: "long", day: "numeric" });
+    $("date").replaceChildren(T(part[0].toUpperCase() + part.slice(1)) + ", ", el("b", time), ", " + date);
   }
   function nextAt(n) { return n.at || Date.now() / 1000 + n.in_s; }  // a saved sample counts from now
   function until(at) {
     const m = Math.round((at * 1000 - Date.now()) / 60000);
-    if (m <= 0) return "now";
+    if (m <= 0) return T("now");
+    if (LANG === "es") return m < 60 ? `en ${m} minuto${m === 1 ? "" : "s"}` : `en unas ${Math.round(m / 60)} hora${Math.round(m / 60) === 1 ? "" : "s"}`;
     if (m < 60) return `in ${m} minute${m === 1 ? "" : "s"}`;
     const h = Math.round(m / 60); return `in about ${h} hour${h === 1 ? "" : "s"}`;
   }
   function side(s) {
     if (s.next) {
       const t = nextAt(s.next);
-      const at = new Date(t * 1000).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
+      const at = new Date(t * 1000).toLocaleTimeString(LOCALE(), { hour: "numeric", minute: "2-digit" }).toLowerCase();
       const when = el("div", null, "when"); when.append(at + " · ", el("b", until(t)));
       $("next").replaceChildren(el("h2", s.next.text), when);
-    } else $("next").replaceChildren(el("h2", "No reminders"), el("div", "“Andy, remind me at 3 pm to call Sam.”", "when"));
+    } else $("next").replaceChildren(el("h2", T("No reminders")), el("div", T("“Andy, remind me at 3 pm to call Sam.”"), "when"));
     const seen = (s.map || []).some(p => p.yaw !== undefined);
     const list = el("ul", null, seen ? "compact" : "");
     for (const line of s.watching || []) {  // beside the map, only when; the map shows where
@@ -253,7 +306,7 @@
       li.append(el("span", seen ? " · " + where.split(",")[0] : where)); list.append(li);
     }
     $("watching").replaceChildren(...(list.children.length ? (seen ? [dial(s.map), list] : [list])
-                                     : [el("div", "Nothing yet. “Andy, keep an eye on my keys.”", "when")]));
+                                     : [el("div", T("Nothing yet. “Andy, keep an eye on my keys.”"), "when")]));
   }
   // What Andy remembers, as a map around it: front is up, left is left; lower (nearer) things sit closer in;
   // older sightings fade. Directions are where the head looked, so this is a dial, not a floor plan.
@@ -264,7 +317,7 @@
     const add = (tag, attrs, text) => { const e = document.createElementNS(svgNS, tag);
       for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text) e.textContent = text; svg.append(e); return e; };
     add("circle", { cx: 0, cy: 0, r: R, class: "ring" }); add("circle", { cx: 0, cy: 0, r: R / 2, class: "ring" });
-    add("text", { x: 0, y: -R - 6, class: "front" }, "front");
+    add("text", { x: 0, y: -R - 6, class: "front" }, LANG === "es" ? "al frente" : "front");
     add("rect", { x: -9, y: -7, width: 18, height: 14, rx: 7, fill: "var(--accent)" });  // Andy
     add("circle", { cx: -3.5, cy: 0, r: 2.2, fill: "var(--panel)" }); add("circle", { cx: 3.5, cy: 0, r: 2.2, fill: "var(--panel)" });
     for (const p of places || []) {
@@ -313,7 +366,8 @@
     const body = $("body");
     let kicker, title = "";
     if (s.web) {
-      kicker = s.web.request[0].toUpperCase() + s.web.request.slice(1) + " · on the web" + (s.web.host ? " at " + s.web.host : "");
+      kicker = s.web.request[0].toUpperCase() + s.web.request.slice(1) + (LANG === "es" ? " · en la web" + (s.web.host ? " en " + s.web.host : "")
+                                                                                     : " · on the web" + (s.web.host ? " at " + s.web.host : ""));
       const key = "web:" + s.web.v;
       if (key !== pictureKey) {
         pictureKey = key;
@@ -327,30 +381,30 @@
           shot.append(dot);
         }
         box.append(shot, el("small", (s.web.words ? s.web.words + " · " : "") +
-                                     "Andy sends Muse Spark screenshots of this web page, never the camera"));
+                                     T("Andy sends Muse Spark screenshots of this web page, never the camera")));
         body.replaceChildren(box);
       }
     } else if (s.drawing) {
-      kicker = "A picture for you"; title = s.drawing.prompt[0].toUpperCase() + s.drawing.prompt.slice(1);
+      kicker = T("A picture for you"); title = s.drawing.prompt[0].toUpperCase() + s.drawing.prompt.slice(1);
       const key = "drawing:" + s.drawing.v;
       if (key !== pictureKey) {
         pictureKey = key;
         const box = el("div", null, "drawing"), img = el("img");
         img.src = (window.HEYANDY_STATIC ? "drawing.webp" : "/drawing.webp") + "?v=" + s.drawing.v;
         img.alt = "A picture of " + s.drawing.prompt;
-        box.append(img, el("small", s.drawing.saved + " · Made by Muse Image from your words only"));
+        box.append(img, el("small", s.drawing.saved + " · " + T("Made by Muse Image from your words only")));
         body.replaceChildren(box);
       }
     } else if (s.picture) {
-      kicker = s.game ? "The cup game" : "Found"; title = s.picture.words;
+      kicker = T(s.game ? "The cup game" : "Found"); title = s.picture.words;
       const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
       if (key !== pictureKey) {
         pictureKey = key;
         const facts = el("div", null, "facts");
-        if (s.seconds !== null) { const f = el("div", "to find it"); f.prepend(el("b", s.seconds.toFixed(1) + " s")); facts.append(f); }
+        if (s.seconds !== null) { const f = el("div", T("to find it")); f.prepend(el("b", s.seconds.toFixed(1) + " s")); facts.append(f); }
         if (s.steps.length) facts.append(steps(s.steps));
         if (s.game) {
-          const f = el("div", "SAM 3.1 Object Multiplex followed every cup at once, on this computer");
+          const f = el("div", T("SAM 3.1 Object Multiplex followed every cup at once, on this computer"));
           f.prepend(el("b", s.picture.trails ? s.picture.trails.length + " cups" : "")); facts.append(f);
         }
         const split = el("div", null, "split"); split.append(picture(s.picture), facts); body.replaceChildren(split);
@@ -358,23 +412,23 @@
     } else {
       pictureKey = "";
       if (s.game) {
-        kicker = "The cup game"; title = s.game.title;
+        kicker = T("The cup game"); title = s.game.title;
         const w = el("div", s.game.detail, "when");
         if (s.game.score) w.append(el("div", s.game.score, "answer"));
         body.replaceChildren(w);
       } else if (s.looking_for && s.running) {
-        kicker = `Finding your ${s.looking_for}`; title = s.head || "Looking around the room";
-        body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", "If I can't find it, I'll say so.", "when"));
+        kicker = LANG === "es" ? `Buscando: ${s.looking_for}` : `Finding your ${s.looking_for}`; title = s.head || T("Looking around the room");
+        body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", T("If I can't find it, I'll say so."), "when"));
       } else if (s.looking_for && s.seconds !== null) {
-        kicker = `Looked for your ${s.looking_for}`; title = s.caption;
+        kicker = LANG === "es" ? `Busqué: ${s.looking_for}` : `Looked for your ${s.looking_for}`; title = s.caption;
         body.replaceChildren(steps(s.steps));
       } else if (s.sources.length) {
-        kicker = "What I found";
+        kicker = T("What I found");
         const src = el("div", null, "sources");
         for (const x of s.sources) src.append(el("div", x.title + " · " + new URL(x.url).hostname.replace(/^www\./, "")));
         body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
       } else if (s.checklist) {
-        kicker = "Going out"; title = "Have you got everything?";
+        kicker = T("Going out"); title = T("Have you got everything?");
         const box = el("div", null, "check");
         for (const i of s.checklist.items) {  // still here: it isn't with you (Andy points at it)
           const row = el("div", null, "row " + (i.here === true ? "here" : i.here === false ? "gone" : "unknown"));
@@ -386,18 +440,19 @@
         }
         body.replaceChildren(box);
       } else if (s.memory) {
-        kicker = "What I remember"; title = s.memory.length ? "Where I last saw things" : "Nothing yet";
+        kicker = T("What I remember"); title = T(s.memory.length ? "Where I last saw things" : "Nothing yet");
         const box = el("div", null, "memory"); box.append(dial(s.map, true), steps(s.memory, "ul"));
         body.replaceChildren(s.memory.length ? box : steps(s.memory, "ul"));
       } else {
-        kicker = "Try asking";
-        const t = el("div", TRY[Math.floor(Date.now() / 20000) % TRY.length], "try");
-        t.append(el("small", "Andy sees and hears on this computer. Pictures and voice never leave your home."));
+        kicker = T("Try asking");
+        const tries = LANG === "es" ? TRY_ES : TRY;
+        const t = el("div", tries[Math.floor(Date.now() / 20000) % tries.length], "try");
+        t.append(el("small", T("Andy sees and hears on this computer. Pictures and voice never leave your home.")));
         const does = el("div", null, "does");
         for (const [b, d] of [["Finds things", "Looks around the room and points, and tells a real thing from a picture of it."],
                               ["Keeps an eye out", "Remembers where the things you choose were last seen. Never a picture."],
                               ["Reminds you", "Turns to find you when it's time, and says it in your own words."]]) {
-          const x = el("div", d); x.prepend(el("b", b)); does.append(x);
+          const x = el("div", T(d)); x.prepend(el("b", T(b))); does.append(x);
         }
         body.replaceChildren(t, does);
       }
@@ -409,10 +464,10 @@
   function receipt(s) {
     const r = $("receipt");
     if (!s.models || !s.models.length) { r.replaceChildren(); return; }
-    if (!s.outbox || !s.outbox.length) { r.replaceChildren(el("b", "✓ Nothing left this house this turn.")); return; }
+    if (!s.outbox || !s.outbox.length) { r.replaceChildren(el("b", T("✓ Nothing left this house this turn."))); return; }
     const web = s.outbox.some(o => o.to.includes("computer use"));  // web pages' screenshots went too: say so
-    r.replaceChildren(el("span", web ? "Sent to the cloud this turn (words, and screenshots of web pages): "
-                                     : "Sent to the cloud this turn, words only: "));
+    r.replaceChildren(el("span", T(web ? "Sent to the cloud this turn (words, and screenshots of web pages): "
+                                       : "Sent to the cloud this turn, words only: ")));
     s.outbox.forEach((o, i) => {
       if (i) r.append(" · ");
       r.append(o.to + " ← ", el("q", o.words));
@@ -425,19 +480,24 @@
     for (const where of ["device", "cloud"]) {
       const these = (list || []).filter(x => x.where === where);
       if (!these.length) continue;
-      m.append(el("b", where === "device" ? "On this computer:" : web ? "In the cloud, words and web pages:" : "In the cloud, words only:"));
+      m.append(el("b", T(where === "device" ? "On this computer:" : web ? "In the cloud, words and web pages:" : "In the cloud, words only:")));
       for (const x of these) m.append(el("span", x.name + (x.times > 1 ? " ×" + x.times : ""), where));
     }
   }
   function render(s) {
-    $("state").textContent = s.state; $("head").textContent = s.head;
+    if ((s.lang || "en") !== LANG) { LANG = s.lang || "en"; document.documentElement.lang = LANG; pictureKey = ""; clock(); }
+    $("k-next").textContent = T("Next"); $("k-watching").textContent = T("Keeping an eye on");
+    $("t-private").textContent = T("Pictures and voice stay on this computer");
+    $("offline").textContent = T("Offline: working on this computer");
+    $("help-en").hidden = LANG === "es"; $("help-es").hidden = LANG !== "es";
+    $("state").textContent = T(s.state); $("head").textContent = s.head;
     $("offline").hidden = s.online;
     $("notice").hidden = !s.notice; $("notice").textContent = s.notice || "";
     $("quiet").hidden = !s.quiet; $("quiet").textContent = s.quiet || "";
     $("lang").hidden = !s.language; $("lang").textContent = s.language || "";
     $("private").hidden = s.staged; $("staged").hidden = !s.staged;
     side(s); card(s); models(s.models);
-    $("why").textContent = s.reason ? "Why: " + s.reason : "";
+    $("why").textContent = s.reason ? T("Why: ") + s.reason : "";
     receipt(s);
     if (s.caption !== lastCaption || s.state === "Speaking") captionAt = Date.now();
     lastCaption = s.caption;

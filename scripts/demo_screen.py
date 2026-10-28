@@ -154,15 +154,21 @@ def show(state: ScreenState, scene: str) -> None:
     elif scene == "spanish":
         jpeg, mask = sample_frame()
         found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3)
-        state.language = "Español · on this computer"
-        state.looking("mug")
+        state.language, state.lang = "Español · en esta computadora", "es"
+        state.reminder_next("Llamar a Sam", time.time() + 25 * 60)
+        state.keeping(["llaves: vistas hace 2 horas, a mi izquierda", "gafas: vistas hace 10 minutos, un poco a mi derecha",
+                       "control remoto: visto hace 25 minutos, detrás de mí a la izquierda"],
+                      [{"label": "llaves", "yaw": 48.0, "pitch": 20.0, "ago_s": 7300},
+                       {"label": "gafas", "yaw": -22.0, "pitch": 14.0, "ago_s": 600},
+                       {"label": "control remoto", "yaw": 125.0, "pitch": 26.0, "ago_s": 1500}])
+        state.looking("taza")
         state.timer_start()
-        state.step("look: a little to my left, a little to my right")
+        state.step("miré: un poco a mi izquierda, un poco a mi derecha")
         state.timer_stop()
         state._timer = (time.monotonic() - 8.1, time.monotonic())
         state.found(found, "Veo su taza azul, un poco a mi derecha.")
-        state.said("Veo su taza azul, un poco a mi derecha.", "device", "fixed search on this computer")
-        state.doing("Pointing", "At your mug")
+        state.said("Veo su taza azul, un poco a mi derecha.", "device", "búsqueda en esta computadora")
+        state.doing("Pointing", "Señalando su taza")
         for name, times in (("Omnilingual ASR (hearing, Spanish)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
                             ("Kokoro (voice, Spanish)", 1)):
             state.used(name, "device", times)
