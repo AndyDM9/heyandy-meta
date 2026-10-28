@@ -424,3 +424,26 @@ times a second for the ball to vanish and the cups to settle, then replays the c
 A 4-second shuffle replays in about 9 s; Andy says "Let me replay that" and the TV shows the stage. It asks for a
 shuffle "not too fast". Then it points, says "Lift it up", checks which cup the ball appears under, and keeps score for
 the session.
+
+## 19. "This one is mine": knowing the person's own things by sight (2026-10-27, night)
+
+Section 16's second idea. "Andy, this is my mug": Andy looks at the person's hands, SAM 3.1 masks the mug in four
+frames as it's turned, and each view becomes a vector; later finds compare each mug they confirm with those views and
+skip one that isn't alike enough. Kept as numbers in `mine.json` (mode 600), never a picture.
+
+- **The model:** DINOv3 would be the first choice (Meta's newest, strongest at telling instances apart), but its
+  weights need a licence request on Hugging Face, so DINOv2-base (Apache-2.0, pinned revision) runs now, on GPU 1 inside
+  the SAM server: 350 MB, 0.4 s for a request with its first load 1.2 s. Swapping is one line.
+- **Which features** (the robot's camera, things on the founder's desk seen from four head angles, numbers only, frames
+  not kept): the mask-weighted mean of DINOv2's patch tokens held up best across views (the same thing: median 0.86,
+  minimum 0.47; the class token: median 0.81, minimum 0.36), so only the thing's own pixels count.
+- **Colour:** DINOv2 learned to ignore colour (it was trained with colour jitter): a blue and a red mug of one shape
+  scored **0.94** alike. Half of the likeness is now a colour fingerprint (12 hues by 3 strengths, and 4 greys, over the
+  masked pixels, compared by overlap). Drawn mugs: the same blue one in dimmer light or moved 1.00; red 0.55; white
+  0.62; a blue cup of another shape 0.81.
+- **On the robot, combined** (five head angles, every thing SAM 3.1 found): the same thing from another angle scored
+  **0.79 to 0.98** (median 0.89); different things median 0.39 (the highest 0.94 were near-identical pieces of one
+  monitor and keyboard). The threshold is 0.75.
+- **Limits:** two mugs of the same colour and a similar shape will look alike; held in the hand under one light and
+  found on a table under another hasn't been measured yet. The TV shows each mug's likeness ("a mug, 82% like yours")
+  so the founder's tests can set the threshold.

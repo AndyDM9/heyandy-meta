@@ -40,6 +40,9 @@ the house.
 - **"Andy, let's play the cup game."** Hide a ball under a cup and shuffle. Andy records the shuffle, replays it
   through SAM 3.1's Object Multiplex (every cup tracked at once, on the computer beside the robot), points at the cup
   with the ball, and keeps score. The TV draws each cup's path through the shuffle.
+- **"Andy, this is my mug."** Andy learns your mug by sight as you turn it in your hands, and from then on "where's
+  my mug?" skips anyone else's. What it looks like is kept as a few hundred numbers on the computer beside the robot,
+  never a picture.
 - **"Andy, draw me a lighthouse at dawn."** Muse Image paints it from the person's words; it fills the TV and is
   saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
@@ -58,6 +61,7 @@ the house.
 | **SAM 3.1** (open weights, `sam3.1_multiplex.pt`) | GPU 1, on the computer beside the robot | Finds things in camera frames (several per frame for the idle glance), finds the person for reminders, follows a moving thing; **Object Multiplex tracks every cup at once** in the cup game |
 | **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
 | **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language |
+| **DINOv2** (open weights, base) | GPU 1 | Knows the person's own things by sight, from SAM 3.1's mask of the thing alone, kept as numbers |
 | **Muse Spark 1.3** (Model API) | The cloud, **words only** | Plans hinted searches when online; web answers with sources; harder conversation |
 | **Muse Image 1.0** (Model API) | The cloud, **words only** | Pictures from the person's words, refined over turns |
 | *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice; Meta has no open text-to-speech model |
@@ -84,6 +88,9 @@ Every turn, the TV lists which models worked on it and where.
   rate, and at 5 frames a second the cups were lost every time. So Andy records at 10 and replays. The model's default
   detection batch needed about 12 GB more than the GPU had beside the voice models; 4 frames a batch keeps tracking at
   10.5 GB. Cups dropped while crossing and found again under a new id are joined back up by where they were heading.
+- **Telling my mug from yours.** DINOv2 learned to ignore colour, so a blue and a red mug of one shape scored 0.94
+  alike. Half of the likeness is now a colour fingerprint of the mug's own pixels: the red one scores 0.55, while the same
+  thing seen from other angles on the robot scored 0.79 to 0.98.
 - **Never a false promise:** a chat model can't claim to set a reminder or watch something; code checks every sentence
   before it's said.
 

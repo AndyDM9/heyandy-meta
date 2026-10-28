@@ -58,6 +58,12 @@ class LocalSam31:
         return {q: [_mask(q, m) for m in out.get(q, [])] for q in queries}
 
 
+    def embed(self, frame_or_bytes, masks: list[Mask]) -> list[list[float]]:
+        """What each masked thing looks like, as numbers (DINOv2 on this computer), from its own pixels only."""
+        image = getattr(frame_or_bytes, "image", frame_or_bytes)
+        return self._send("/embed", {"image": base64.b64encode(image).decode(), "masks": [
+            {"box": list(m.box), "outline": m.outline, "outline_scale": list(m.outline_scale)} for m in masks]})["vectors"]
+
     def track(self, frames: list, query: str) -> list[Track]:
         """Every ``query`` in the first frame, followed through the clip by SAM 3.1 Object Multiplex (about 5 frames a
         second on this computer's GPU, so a few seconds of shuffling takes a few more to replay)."""

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # The models that run on this computer, in user space (nothing system-wide):
 #   GPU 0: Muse Glimmer 30B (Q4_K_M + perception encoder + DFlash drafter) on llama.cpp's server
-#   GPU 1: SAM 3.1 from the open weights (facebook/sam3.1, gated: request access first) via local/sam_server.py,
+#   GPU 1: SAM 3.1 from the open weights (facebook/sam3.1, gated: request access first) and DINOv2 (knowing the
+#          person's own things by sight) via local/sam_server.py,
 #          and hearing and speaking (Meta's Omnilingual ASR, Kokoro-82M) via local/voice_server.py
 # Needs: an NVIDIA driver for CUDA 13, uv, gh (or curl), and `hf auth login` for SAM 3.1.
 set -euo pipefail
@@ -33,8 +34,10 @@ if [ ! -d "$OPT/sam3" ]; then git clone -q https://github.com/facebookresearch/s
 git -C "$OPT/sam3" checkout -q "$SAM3"
 (cd "$OPT/sam3" && uv venv -q -p 3.12 .venv \
   && VIRTUAL_ENV=.venv uv pip install -q torch==2.10.0 torchvision --index-url https://download.pytorch.org/whl/cu128 \
-  && VIRTUAL_ENV=.venv uv pip install -q -e . pillow einops pycocotools psutil opencv-python-headless)
+  && VIRTUAL_ENV=.venv uv pip install -q -e . pillow einops pycocotools psutil opencv-python-headless "transformers>=5,<6")
 uv run -q --no-project --with huggingface_hub hf download facebook/sam3.1 --local-dir "$MODELS/sam3.1"
+uv run -q --no-project --with huggingface_hub hf download facebook/dinov2-base \
+  --revision f9e44c814b77203eaa57a6bdbbd535f21ede1415  # into the Hugging Face cache, where sam_server.py loads it
 
 # Voice: Omnilingual ASR (Apache-2.0; fairseq2 pins torch 2.8 and NumPy 1) and Kokoro-82M (Apache-2.0)
 V="$OPT/voice"

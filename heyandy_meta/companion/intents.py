@@ -49,6 +49,10 @@ HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
 REMIND = re.compile(r"\bremind me\b", re.I)
+MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now))", re.I),
+        re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
+        re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),
+        re.compile(r"\blearn (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now|by sight))", re.I)]
 GAME = re.compile(r"\b(?:cups? game|shell game|(?:play|let'?s play)\b.{0,25}\bcups?\b|keep (?:your|an) eyes? on the ball|"
                   r"watch (?:the|my) ball|which cup|ball under (?:a|the|which|one of the) cups?)\b", re.I)
 WORLD = re.compile(r"\b(?:weather|forecast|news|headlines|score|who won|open (?:today|now|on)|opening hours|"
@@ -65,7 +69,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | describe | draw | help | world
+    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -165,6 +169,9 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("remember")
     if GAME.search(t):
         return Intent("game", text=t)
+    for rx in MINE:
+        if m := rx.search(t):
+            return Intent("mine", thing=snap(_thing(m)), text=t)
     for kind, rx in (("forget", FORGET), ("watch", WATCH), ("follow", FOLLOW), ("last_seen", LAST_SEEN), ("find", FIND)):
         m = rx.search(t)
         if m:

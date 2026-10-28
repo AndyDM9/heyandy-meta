@@ -48,6 +48,7 @@ class Finder:
     check: Callable[[Frame, Mask], bool] | None = None  # optional second opinion, e.g. "is this on a screen?"
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
     on_look: Callable[[float, float], None] | None = None  # told each direction as the head turns (the TV's progress)
+    rejected: str = ""  # set by ``check`` to say why it said no ("a mug, but not yours")
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
         """The fixed search: the remembered place, then a sweep, then behind. A confident sighting is checked as soon
@@ -109,7 +110,7 @@ class Finder:
             return None
         best = min(near, key=lambda m: (m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
         if self.check and not self.check(frame, best):
-            self.why = "only a picture of one, on a screen or in a photo"
+            self.why, self.rejected = self.rejected or "only a picture of one, on a screen or in a photo", ""
             return None
         y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)

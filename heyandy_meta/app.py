@@ -29,6 +29,7 @@ from .companion.safety import DISCLOSURE, Disclosure, respond
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
+from .memory.mine import Mine
 from .memory.places import Places
 from .models.common import Chat, Mask, Reply
 from .models.retry import CloudUnavailable
@@ -75,7 +76,9 @@ class Andy:
     clock: object = time.time
 
     def __post_init__(self):
-        self.finder = Finder(self.body, self.segmenter, check=self.judge.real if self.judge else None,
+        self.mine = Mine(self.places.path.parent / "mine.json")  # things Andy knows by sight, as numbers
+        self._alike: float | None = None  # how like the person's own the last checked thing was
+        self.finder = Finder(self.body, self.segmenter, check=self._check,
                              on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"))
         self.router = Router(self.device, self.cloud or NoCloud())
         self.disclosure = Disclosure(self.clock)
@@ -222,8 +225,11 @@ class Andy:
                     f"never a picture. Say 'forget my {i.thing}' to stop.")
         if i.kind == "forget":
             self.places.forget(i.thing)
+            by_sight = self.mine.forget(i.thing)
             self.screen.remember_list(self._memory())
-            return f"I've forgotten your {i.thing}."
+            return f"I've forgotten your {i.thing}" + (", and what it looks like." if by_sight else ".")
+        if i.kind == "mine":
+            return self.learn_mine(i.thing)
         if i.kind == "remember":
             lines = self._memory()
             self.screen.remember_list(lines)
@@ -321,7 +327,7 @@ class Andy:
         self.screen.clear()
         self.screen.timer_start()
         checks = getattr(self.judge, "calls", 0)
-        self.finder.looks = 0
+        self.finder.looks, self._alike = 0, None
         self.screen.looking(thing)
         self.say("Let me look.")  # answer at once: a search takes a few seconds
         self.screen.doing("Working", "Looking around the room")
@@ -581,6 +587,64 @@ class Andy:
                 return min(cups, key=lambda c: (cups[c][0] - at[0]) ** 2 + (cups[c][1] - at[1]) ** 2) == r.chosen.id
         return None
 
+    def learn_mine(self, thing: str, views: int = 4) -> str:
+        """"This is my mug": look at it in the person's hands, a few times as they turn it, and keep what it looks like
+        as numbers (DINOv2, on this computer; memory/mine.py). Later finds skip a mug that isn't theirs."""
+        embed = getattr(self.segmenter, "embed", None)
+        if embed is None:
+            return "I can't learn things by sight right now."
+        self.say(f"Hold your {thing} up so I can see it, and turn it slowly.")
+        self.screen.clear()
+        self.screen.doing("Working", f"Learning your {thing}")
+        yaw, pitch = self.person or (getattr(self.body, "yaw", 0.0), 0.0)
+        vectors, shown = [], None
+        self.gesture("searching")
+        try:
+            self.body.look(yaw, min(pitch + 12.0, 30.0))  # a little lower than the face: the hands
+            for _ in range(views):
+                frame = self.body.capture()
+                masks = self.finder._masks(frame, thing)
+                if masks:
+                    held = max(masks, key=lambda m: (m.box[2] - m.box[0]) * (m.box[3] - m.box[1]))  # nearest: largest
+                    vectors += embed(frame, [held])
+                    shown = shown or (frame, held)
+        except RuntimeError:  # the local models didn't answer
+            vectors = []
+        finally:
+            self.gesture("idle")
+            self.screen.doing("Waiting")
+        self.screen.used("SAM 3.1", "device", views)
+        if len(vectors) < 2:
+            return f"I couldn't see your {thing} clearly. Could you hold it a little closer to me, and ask again?"
+        self.mine.learn(thing, vectors, now=self.clock())
+        self.screen.used("DINOv2 (knows it by sight)", "device", len(vectors))
+        self._source, self._reason = "device", "learned by sight on this computer, kept as numbers, not a picture"
+        frame, held = shown
+        self.screen.found(Found(thing, frame.yaw, frame.pitch, held.score or 0.5, frame, held, views),
+                          f"Your {thing}: I'll know it by sight")
+        return (f"Got it. I'll know your {thing} from now on. I keep what it looks like as numbers on this computer, "
+                f"never a picture. Say forget my {thing} to remove it.")
+
+    def _check(self, frame, mask) -> bool:
+        """The finder's second opinion on what it found: a real thing (not a picture of one, Glimmer), and when the
+        person has shown Andy theirs, theirs (as alike as the views Andy kept)."""
+        if self.judge and not self.judge.real(frame, mask):
+            return False
+        embed = getattr(self.segmenter, "embed", None)
+        if not self.mine.knows(mask.label) or embed is None:
+            return True
+        try:
+            alike = self.mine.how_alike(mask.label, embed(frame, [mask])[0])
+        except RuntimeError:
+            return True  # can't tell: SAM 3.1 and Glimmer already agreed it's a real one
+        self.screen.used("DINOv2 (knows it by sight)", "device")
+        self.screen.step(f"a {mask.label}, {alike:.0%} like yours")
+        self._alike = alike
+        if alike < self.mine.alike:
+            self.finder.rejected = f"a {mask.label}, but not yours"
+            return False
+        return True
+
     def draw(self, what: str, refine: bool = False) -> str:
         """A picture from the person's words, with Muse Image (words only leave the house); shown and saved."""
         if not self.online or self.spark is None:
@@ -651,9 +715,12 @@ class Andy:
         where = side(f.yaw)
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
-        return f"I see your {f.label}, {where}." + (" Right where I last saw it." if f.remembered else "")
+        yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""
+        return f"I see your {f.label}{yours}, {where}." + (" Right where I last saw it." if f.remembered else "")
 
     def _not_found(self, thing: str) -> str:
+        if "not yours" in self.finder.why:
+            return f"I saw a {thing}, but not yours. Could you tell me where you last had {_it(thing)}?"
         if "picture" in self.finder.why:
             return f"I only saw a picture of {thing} on a screen. Could you tell me where you last had {_it(thing)}?"
         return f"I couldn't find your {thing}. Could you tell me where you last had {_it(thing)}?"
@@ -669,6 +736,8 @@ class Andy:
             where = (history[-1]["near"] if history and history[-1]["near"] else side(last[0]))
             moved = f" (moved at {spoken_time(history[-1]['since'])})" if len(history) > 1 else ""
             lines.append(f"{label}: seen {_ago(self.clock() - at)}, {where}{moved}")
+        watched = self.places.watching()
+        lines += [f"{k}: I know it by sight" for k in self.mine.known() if k not in watched]
         return lines
 
     def _note_place(self, label: str, frame, mask) -> None:

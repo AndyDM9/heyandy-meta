@@ -83,6 +83,17 @@ class SimSegmenter:
         return masks
 
 
+    def embed(self, frame: Frame, masks: list[Mask]) -> list[list[float]]:
+        """Like DINOv2 would: things that look the same (same ``looks``) get the same vector, others a different one."""
+        out = []
+        for m in masks:
+            t = next((t for t in self.room.things if t.label == m.label and (at := self.room.where_in_frame(
+                t, frame.yaw, frame.pitch)) and abs(at[0] - m.center[0]) < 2 and abs(at[1] - m.center[1]) < 2), None)
+            k = sum(map(ord, t.looks if t else "")) % 8
+            out.append([1.0 if i == k else 0.1 for i in range(8)])
+        return out
+
+
 class SimJudge:
     """Answers like Glimmer's picture checks would, from the room's ground truth."""
 
