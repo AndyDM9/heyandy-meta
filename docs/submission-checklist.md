@@ -28,5 +28,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out.
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the Space,
        about 1,200 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
-7. [ ] After submitting: the 30-second clip on X (Most Viral, judged to November 8), its link added to the submission;
+7. [ ] Publish Andy Finder to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
+       `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
+       `hf upload <account>/andy-finder apps/andy_finder . --repo-type space`. The `reachy_mini_python_app` tag lists it.
+8. [ ] After submitting: the 30-second clip on X (Most Viral, judged to November 8), its link added to the submission;
        share the gallery page for the community vote.

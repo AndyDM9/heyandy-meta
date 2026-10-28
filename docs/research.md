@@ -614,3 +614,17 @@ on the person's own words, before any other model (the translator included); its
   tracking was about 4 frames a second at batch 4 and 3.7 at batch 2 (batch 3: 3.4, no faster), so a 4-second shuffle
   replays in about 13 s. Synthetic shuffles at batch 2: 3 of 5 right (4 of 5 at batch 4; with 5 runs each, within
   noise).
+
+## 30. Andy Finder: a Reachy Mini app for everyone (2026-10-27, night)
+
+Pollen's app store lists every Hugging Face Space tagged `reachy_mini_python_app` (506 on October 27); none finds a lost
+thing and points at it. `apps/andy_finder/` is a slim, self-contained app from HeyAndy's search: a page in the Reachy
+Mini dashboard asks what to find; five views, middle first; SAM 3.1 on each frame; the likeliest sighting turned into a
+head direction with the camera's calibration; a nod and an antenna wiggle, or a shake of the head. Most owners run the
+robot from a laptop without an NVIDIA GPU, so it uses SAM 3.1 on this computer when it's there, else SAM 3.1 through
+Meta's Model API with the owner's key, and the page and the README say plainly that pictures then go to Meta.
+
+- Passes `reachy-mini-app-assistant check` (install, entry point, uninstall).
+- On the robot, with SAM 3.1 on this computer: "keyboard" found straight ahead in 5.6 s, "coffee mug" a little to the
+  right in 4.1 s.
+- Not published yet: it links to this repository, which goes public on November 4 (submission checklist, step 7).
