@@ -53,6 +53,16 @@ MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:
         re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
         re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),
         re.compile(r"\blearn (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now|by sight))", re.I)]
+WEB = [re.compile(r"\b(?:show|put|pull up|bring up|open|find|look up|display|get)\b.{2,120}?\bon (?:the|my|your) "
+                  r"(?:tv|telly|screen|television)\b", re.I),
+       re.compile(r"\bshow me (?:some |a few )?(?:pictures?|photos?|images?|a map|the map|a video|videos|the radar|"
+                  r"the weather radar|a recipe|the recipe)\b", re.I),
+       re.compile(r"\b(?:open|go to|pull up)\s+(?:the\s+)?(?:[\w-]+\.(?:com|org|net|gov|edu)|wikipedia|the news)\b", re.I)]
+WEB_MORE = re.compile(r"^\W*(?:(?:now|ok(?:ay)?|and)\s+)?(?:scroll|go back|back|next page|click|tap|press|open the|zoom|"
+                      r"show me more|show more|read (?:it|that|this|me)|what does (?:it|that|this) say|go to the|"
+                      r"search (?:for|this page)|play (?:it|that|the))\b", re.I)
+WEB_CLOSE = re.compile(r"\b(?:close (?:the |that )?(?:browser|web ?page|page|website)|take (?:it|that) off the "
+                       r"(?:tv|screen))\b", re.I)
 GAME = re.compile(r"\b(?:cups? game|shell game|(?:play|let'?s play)\b.{0,25}\bcups?\b|keep (?:your|an) eyes? on the ball|"
                   r"watch (?:the|my) ball|which cup|ball under (?:a|the|which|one of the) cups?)\b", re.I)
 WORLD = re.compile(r"\b(?:weather|forecast|news|headlines|score|who won|open (?:today|now|on)|opening hours|"
@@ -69,7 +79,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | mine | describe | draw | help | world
+    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -169,6 +179,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("remember")
     if GAME.search(t):
         return Intent("game", text=t)
+    if any(rx.search(t) for rx in WEB):
+        return Intent("web", text=t)
     for rx in MINE:
         if m := rx.search(t):
             return Intent("mine", thing=snap(_thing(m)), text=t)

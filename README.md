@@ -22,18 +22,23 @@ trademark application.
 8. **"Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
    anyone else's. What it looks like is kept as numbers on the computer beside the robot (DINOv2, Meta's open image
    model, plus a colour fingerprint, over SAM 3.1's mask of the mug alone), never a picture. "Forget my mug" deletes it.
-9. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
+9. **"Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
+   computer beside the robot opens it (no sign-ins, no downloads), and Muse Spark's computer use brings what was asked
+   into view; the TV shows each step, with a dot where Andy clicks. "Scroll down", "go back". Code reviews every action
+   before it runs: nothing personal is typed, and a sign-in or payment page ends it. Screenshots of web pages go to the
+   cloud; the camera never does, and the TV's privacy receipt says which went.
+10. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
    saved to your Pictures folder to print or share. "Make it sunset" changes it.
-10. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
+11. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
    at the table) and Glimmer says what it sees, on the computer beside the robot.
-11. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
+12. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
    (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, reminders,
    pictures, look up) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
-12. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
-13. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+13. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
+14. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-14. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+15. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
    the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
    steps.
 

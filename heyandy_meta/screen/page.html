@@ -70,7 +70,7 @@
   #card { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; overflow: hidden; }
   #card h1 { margin: 0.35rem 0 1rem; font-size: 3.3rem; font-weight: 750; line-height: 1.12; }
   #body { min-height: 0; display: grid; align-content: start; overflow: hidden; }
-  #body:has(.drawing) { align-content: stretch; }
+  #body:has(.drawing), #body:has(.web) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.45fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   figure { margin: 0; min-height: 0; }
   figure svg { width: 100%; height: auto; max-height: 30rem; border-radius: 1.4rem; display: block; }
@@ -88,6 +88,19 @@
   .dial .ring { fill: none; stroke: var(--muted); stroke-width: 0.6; opacity: 0.5; }
   .dial .front { fill: var(--muted); font-size: 9px; text-anchor: middle; }
   .dial .dot { fill: var(--accent); }
+  /* A web page needs the room: no side cards, and a one-line date */
+  main:has(.web) { grid-template-columns: 1fr; } main:has(.web) .side { display: none; }
+  .stage:has(.web) { padding-top: 2.25rem; gap: 1.25rem; }
+  .stage:has(.web) header { align-items: center; }
+  .stage:has(.web) #day { font-size: 3rem; display: inline; } .stage:has(.web) #date { font-size: 2rem; display: inline; margin-left: 1rem; }
+  .stage:has(.web) .badges { display: none; } .stage:has(.web) #pill { padding: 0.6rem 1.6rem 0.6rem 1rem; }
+  #card:has(.web) #title { display: none; }
+  .web { display: grid; gap: 0.8rem; min-height: 0; height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
+  .web .shot { position: relative; min-height: 0; justify-self: start; max-width: 100%; height: 100%; }
+  .web img { height: 100%; max-width: 100%; object-fit: contain; object-position: left top; border-radius: 1.2rem; display: block; }
+  .web .click { position: absolute; width: 2.4rem; height: 2.4rem; margin: -1.2rem 0 0 -1.2rem; border-radius: 50%;
+                border: 0.35rem solid var(--outline); box-shadow: 0 0 0 0.3rem #0006; }
+  .web small { font-size: 1.3rem; color: var(--muted); }
   .trail { fill: none; stroke: var(--muted); stroke-width: 4; stroke-dasharray: 2 10; stroke-linecap: round; opacity: 0.8; }
   .trail.chosen { stroke: var(--outline); stroke-dasharray: none; stroke-width: 6; opacity: 1; }
   .dial .name { fill: var(--ink); font-size: 11px; font-weight: 700; }
@@ -184,7 +197,7 @@
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   const svgNS = "http://www.w3.org/2000/svg";
   const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
-               "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”", "“Andy, let's play the cup game.”", "“Andy, this is my mug.”",
+               "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”", "“Andy, let's play the cup game.”", "“Andy, this is my mug.”", "“Andy, show me the weather radar on the TV.”",
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
@@ -292,7 +305,25 @@
   function card(s) {
     const body = $("body");
     let kicker, title = "";
-    if (s.drawing) {
+    if (s.web) {
+      kicker = s.web.request[0].toUpperCase() + s.web.request.slice(1) + " · on the web" + (s.web.host ? " at " + s.web.host : "");
+      const key = "web:" + s.web.v;
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const box = el("div", null, "web"), shot = el("div", null, "shot"), img = el("img");
+        img.src = (window.HEYANDY_STATIC ? "web.jpg" : "/web.jpg") + "?v=" + s.web.v;
+        img.alt = "The web page Andy is showing";
+        shot.append(img);
+        if (s.web.point) {  // where Andy is clicking, placed once the screenshot's size on the TV is known
+          const dot = el("div", null, "click");
+          img.onload = () => { dot.style.left = (s.web.point[0] * img.clientWidth) + "px"; dot.style.top = (s.web.point[1] * img.clientHeight) + "px"; };
+          shot.append(dot);
+        }
+        box.append(shot, el("small", (s.web.words ? s.web.words + " · " : "") +
+                                     "Andy sends Muse Spark screenshots of this web page, never the camera"));
+        body.replaceChildren(box);
+      }
+    } else if (s.drawing) {
       kicker = "A picture for you"; title = s.drawing.prompt[0].toUpperCase() + s.drawing.prompt.slice(1);
       const key = "drawing:" + s.drawing.v;
       if (key !== pictureKey) {
@@ -360,7 +391,9 @@
     const r = $("receipt");
     if (!s.models || !s.models.length) { r.replaceChildren(); return; }
     if (!s.outbox || !s.outbox.length) { r.replaceChildren(el("b", "✓ Nothing left this house this turn.")); return; }
-    r.replaceChildren(el("span", "Sent to the cloud this turn, words only: "));
+    const web = s.outbox.some(o => o.to.includes("computer use"));  // web pages' screenshots went too: say so
+    r.replaceChildren(el("span", web ? "Sent to the cloud this turn (words, and screenshots of web pages): "
+                                     : "Sent to the cloud this turn, words only: "));
     s.outbox.forEach((o, i) => {
       if (i) r.append(" · ");
       r.append(o.to + " ← ", el("q", o.words));
@@ -369,10 +402,11 @@
   }
   function models(list) {
     const m = $("models"); m.replaceChildren();
+    const web = (list || []).some(x => x.name.includes("computer use"));
     for (const where of ["device", "cloud"]) {
       const these = (list || []).filter(x => x.where === where);
       if (!these.length) continue;
-      m.append(el("b", where === "device" ? "On this computer:" : "In the cloud, words only:"));
+      m.append(el("b", where === "device" ? "On this computer:" : web ? "In the cloud, words and web pages:" : "In the cloud, words only:"));
       for (const x of these) m.append(el("span", x.name + (x.times > 1 ? " ×" + x.times : ""), where));
     }
   }

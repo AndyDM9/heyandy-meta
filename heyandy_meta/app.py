@@ -21,9 +21,9 @@ from .agent.tools import SearchTools, side
 from .budget import Budget, BudgetExceeded
 from .companion import answers
 from .companion.attention import face_person
-from .companion import cupgame, pictures
+from .companion import cupgame, pictures, web
 from .companion.follow import follow
-from .companion.intents import REFINE, parse
+from .companion.intents import REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import DISCLOSURE, Disclosure, respond
 from .finder.geometry import LITE, pixel_to_angles
@@ -41,6 +41,7 @@ GLANCE_EVERY_S = 5 * 60
 HONEST = ("I can't do that from a chat. Say it to me directly, like: Andy, remind me in ten minutes to stretch, or: "
           "Andy, where are my keys?")
 ANSWER_WITHIN_S = 60
+WEB_MORE_WITHIN_S = 3 * 60  # "scroll down", "go back": the web page on the TV, for three minutes
 REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten minutes  # how long Andy's question ("remind you about what, and when?") waits for the answer
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
@@ -93,6 +94,8 @@ class Andy:
         self.playing = False  # the cup game: "done" ends the shuffle
         self.cup_score = [0, 0]  # Andy, the person: this session's cup games, in memory only
         self._again_until = 0.0  # Andy just asked "again?" after a cup game
+        self._browser = None  # a clean browser on this computer, made when first asked to use the web
+        self._web: tuple[str, str, float] | None = None  # (the request, the last run's response id, when)
         self._drawing = None  # the last picture Muse Image made, to refine
         self._briefed = None  # the day of the last morning briefing
         self.assistant = Assistant(self)
@@ -246,6 +249,15 @@ class Andy:
                 return "What should I remind you about, and when?"
             r = self.reminders.add(i.text, i.at, i.daily, now=self.clock())
             return f"I'll remind you {'every day ' if r.daily else ''}at {spoken_time(r.at)}: {r.text}."
+        if self._web and self.clock() - self._web[2] <= WEB_MORE_WITHIN_S and i.kind == "chat":
+            if WEB_CLOSE.search(text):
+                self._web = None
+                self.screen.clear()
+                return "Okay, I've closed it."
+            if WEB_MORE.search(text):
+                return self.use_the_web(text, more=True)
+        if i.kind == "web":
+            return self.use_the_web(text)
         again, self._again_until = self.clock() <= self._again_until and AGAIN.match(text), 0.0
         if i.kind == "game" or (again and i.kind == "chat"):
             return self.cup_game()
@@ -644,6 +656,54 @@ class Andy:
             self.finder.rejected = f"a {mask.label}, but not yours"
             return False
         return True
+
+    def use_the_web(self, request: str, more: bool = False) -> str:
+        """"Show me a banana bread recipe on the TV" (companion/web.py): Muse Spark's web search picks the page, a
+        clean browser on this computer opens it, and Muse Spark's computer use brings what was asked into view. The TV
+        shows every step. Screenshots of web pages go to the cloud; the camera never does."""
+        if not self.online or self.spark is None:
+            self._source, self._reason = "device", "the web needs the Model API"
+            return "I can only use the web when I'm connected."
+        if self._browser is None:
+            try:
+                import playwright  # noqa: F401 - the optional 'browse' extra
+            except ImportError:
+                return "I can't use the web on this computer yet."
+            self._browser = web.Browser()
+        first = self._web[0] if more and self._web else \
+            re.sub(r"\s*\bon (?:the|my|your) (?:tv|telly|screen|television)\b", "", request, flags=re.I).strip(" ,.!?")
+        self.say("Okay." if more else "Let me find that for you.")
+        self.screen.doing("Working", "On the web")
+        self.screen.sent("Muse Spark (uses the web)", request)
+
+        def step(jpeg, words, point):
+            self.screen.web(jpeg, first, words, point, url=self._browser.url())
+
+        try:
+            if more:
+                run = web.use_the_web(self.spark, self._browser, request, step, previous=self._web[1],
+                                      budget=self.budget, max_steps=2, within_s=40.0)
+            else:
+                url = web.best_page(self.spark, request, self.home, budget=self.budget)
+                self._browser.open(url) if url else self._browser.search(request)
+                self.screen.used("Muse Spark (web search)", "cloud")
+                run = web.use_the_web(self.spark, self._browser, web.SHOW.format(task=request, url=url or "search results"),
+                                      step, budget=self.budget, max_steps=3, within_s=45.0)
+            step(self._browser.screenshot(), "", None)
+        except (*CLOUD_TROUBLE, TimeoutError) as e:
+            self._source, self._reason = "device", f"the web didn't answer ({type(e).__name__})"
+            return "I couldn't get that page just now. Please try again in a little while."
+        finally:
+            self.screen.doing("Waiting")
+        self.screen.sent("Muse Spark (computer use)", f"{run.steps + 1} screenshots of the web page")
+        self.screen.used("Muse Spark (computer use)", "cloud", run.steps + 1)
+        self._web = (first, run.response_id, self.clock())
+        self._source, self._reason = "cloud", "Muse Spark used the web: screenshots of web pages, never the camera"
+        if "sign-in" in run.stopped:
+            return "That page wants a sign-in or a payment, so I've stopped there. I'll leave that part to you."
+        if run.stopped:  # out of steps or time: say so plainly rather than the model's half-finished narration
+            return "That's as far as I could get. What I found is on the TV."
+        return (run.answer or "It's on the TV.") + ("" if more else " You can say scroll down, or go back.")
 
     def draw(self, what: str, refine: bool = False) -> str:
         """A picture from the person's words, with Muse Image (words only leave the house); shown and saved."""

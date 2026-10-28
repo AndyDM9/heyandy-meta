@@ -12,6 +12,7 @@ from ..finder.search import Found
 PICTURE_SECONDS = 120
 HELP_SECONDS = 60
 DRAWING_SECONDS = 10 * 60
+WEB_SECONDS = 10 * 60
 
 
 @dataclass
@@ -49,6 +50,8 @@ class ScreenState:
         self.drawings = 0  # a version for the page, so it fetches each new picture once
         self._game: tuple[str, str, float] | None = None  # the cup game: (what's happening, the detail, until)
         self.score = ""  # "Andy 2 · You 1", for this session's cup games
+        self._web: dict | None = None  # the web page Andy is using: the screenshot, what's happening, where it clicks
+        self.webs = 0  # a version, so the page fetches each screenshot once
 
     def doing(self, state: str, head: str = "") -> None:
         with self._lock:
@@ -71,6 +74,21 @@ class ScreenState:
             self._picture, self.sources, self.steps, self.memory, self._timer, self.looking_for = None, [], [], None, None, ""
             self._drawing = (image, prompt, saved, self._clock() + DRAWING_SECONDS)
             self.drawings += 1
+
+    def web(self, jpeg: bytes, request: str, words: str = "", point=None, size=(1280, 800), url: str = "") -> None:
+        """A screenshot of the web page Andy is using (never the camera), as each step happens."""
+        with self._lock:
+            self._picture, self._drawing, self.sources, self.memory, self._game = None, None, [], None, None
+            before = self._web or {}
+            self._web = {"jpeg": jpeg, "request": request, "words": words or before.get("words", ""),
+                         "point": [point[0] / size[0], point[1] / size[1]] if point else None,
+                         "host": url.split("/")[2].removeprefix("www.") if url.count("/") >= 2 else before.get("host", ""),
+                         "until": self._clock() + WEB_SECONDS}
+            self.webs += 1
+
+    def web_bytes(self) -> bytes | None:
+        with self._lock:
+            return self._web["jpeg"] if self._web else None
 
     def drawing_bytes(self) -> bytes | None:
         with self._lock:
@@ -124,7 +142,7 @@ class ScreenState:
     def clear(self) -> None:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
-            self.looking_for, self._help_until, self._drawing, self._game = "", 0.0, None, None
+            self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
@@ -163,6 +181,10 @@ class ScreenState:
                    "quiet": self.quiet_text, "outbox": list(self.outbox),
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else "",
                    "game": None}
+            if self._web and self._clock() >= self._web["until"]:
+                self._web = None
+            out["web"] = {"v": self.webs, **{k: v for k, v in self._web.items() if k not in ("jpeg", "until")}} \
+                if self._web else None
             if self._game and self._clock() < self._game[2]:
                 out["game"] = {"title": self._game[0], "detail": self._game[1], "score": self.score}
             if self._drawing and self._clock() >= self._drawing[3]:

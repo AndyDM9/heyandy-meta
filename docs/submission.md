@@ -43,6 +43,10 @@ the house.
 - **"Andy, this is my mug."** Andy learns your mug by sight as you turn it in your hands, and from then on "where's
   my mug?" skips anyone else's. What it looks like is kept as a few hundred numbers on the computer beside the robot,
   never a picture.
+- **"Andy, show me the weather radar on the TV."** Andy picks the page with Muse Spark's web search and opens it in a
+  clean browser; Muse Spark's computer use clicks and scrolls until the radar (or the recipe, or the pictures) is in
+  view, while the TV shows each step. Every action is reviewed in code first: nothing personal is typed, and a sign-in
+  or payment page ends the run.
 - **"Andy, draw me a lighthouse at dawn."** Muse Image paints it from the person's words; it fills the TV and is
   saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
@@ -62,7 +66,7 @@ the house.
 | **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
 | **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language |
 | **DINOv2** (open weights, base) | GPU 1 | Knows the person's own things by sight, from SAM 3.1's mask of the thing alone, kept as numbers |
-| **Muse Spark 1.3** (Model API) | The cloud, **words only** | Plans hinted searches when online; web answers with sources; harder conversation |
+| **Muse Spark 1.3** (Model API) | The cloud, **words only** (and, for "show me … on the TV", screenshots of web pages) | Plans hinted searches when online; web answers with sources; harder conversation; **computer use** in a clean browser on the TV |
 | **Muse Image 1.0** (Model API) | The cloud, **words only** | Pictures from the person's words, refined over turns |
 | *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice; Meta has no open text-to-speech model |
 

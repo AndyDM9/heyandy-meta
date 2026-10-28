@@ -2,9 +2,9 @@
 
 "Find my glasses, and remind me at 5 to clean them." "Good morning, Andy." A single rule can't do these, so Muse Spark
 (online) or Muse Glimmer (on this computer) gets the robot's abilities as tools and does them in order: finding,
-following, looking and telling, keeping an eye on things, reminders, pictures and looking things up. Each tool is the
-same code the simple paths use, so it moves the body, checks its arguments and speaks its own short acknowledgements;
-the model sees only the tools' words, and ends with a short spoken sentence built from them.
+following, looking and telling, keeping an eye on things, reminders, pictures, looking things up and showing a web page
+on the TV. Each tool is the same code the simple paths use, so it moves the body, checks its arguments and speaks its
+own short acknowledgements; the model sees only the tools' words, and ends with a short spoken sentence built from them.
 """
 import datetime as dt
 import json
@@ -13,7 +13,7 @@ import time
 from dataclasses import dataclass, field
 
 from ..budget import Budget, chat_cost
-from ..companion.intents import DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, WORLD, normalise, parse_time
+from ..companion.intents import DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, WEB, WORLD, normalise, parse_time
 from ..companion.reminders import spoken_time
 from ..models.retry import with_retry
 
@@ -24,7 +24,7 @@ ABILITIES = {
     "watch": re.compile(r"\bkeep (?:an )?eye on\b", re.I),
     "forget": re.compile(r"\b(?:forget|stop watching)\b", re.I),
     "describe": DESCRIBE, "draw": DRAW_START, "remind": REMIND, "reminders": REMINDERS, "remember": REMEMBER,
-    "world": WORLD}
+    "world": WORLD, "web": re.compile("|".join(f"(?:{rx.pattern})" for rx in WEB), re.I)}
 MORNING = re.compile(r"^\W*(?:(?:hey|hi|hello)\s+)?(?:andy[\s,]*)?good morning\b", re.I)
 JOINED = re.compile(r"\b(?:and then|then|after that|and also|also|and)\b", re.I)
 
@@ -58,6 +58,8 @@ TOOLS = [
     _fn("list_reminders", "The person's upcoming reminders."),
     _fn("draw", "Make a picture from words and show it on the TV.", picture=dict(S)),
     _fn("look_up", "Look something up on the web (weather, opening hours, news).", question=dict(S)),
+    _fn("show_on_tv", "Open a web page on the TV and bring what was asked into view (a recipe, the weather radar, "
+                      "pictures of something).", request=dict(S)),
 ]
 
 
@@ -123,6 +125,7 @@ class Assistant:
             "set_reminder": remind, "list_reminders": reminders,
             "draw": lambda picture: a.draw(picture),
             "look_up": lambda question: a.look_up(question),
+            "show_on_tv": lambda request: a.use_the_web(request),
         }
 
     def run(self, client, request: str, model: str, paid: bool, budget: Budget | None = None,

@@ -447,3 +447,27 @@ skip one that isn't alike enough. Kept as numbers in `mine.json` (mode 600), nev
 - **Limits:** two mugs of the same colour and a similar shape will look alike; held in the hand under one light and
   found on a table under another hasn't been measured yet. The TV shows each mug's likeness ("a mug, 82% like yours")
   so the founder's tests can set the threshold.
+
+## 20. Using the web on the TV: Meta's computer use (2026-10-27, night)
+
+Section 16's sixth idea, from [dev.meta.ai/docs/computer-use](https://dev.meta.ai/docs/computer-use): the Responses
+API's `computer` tool; each `computer_call` carries a batch of `actions`, and the client answers with a screenshot.
+
+- **Muse Wonder** refuses the tool on our account (`400 Unsupported tool type: 'computer'`; plain Wonder chat works), so
+  **Muse Spark 1.3** runs the loop, as the docs allow.
+- **Every batch comes with a safety check** (`computer_action_requires_confirmation`, "Review and confirm before
+  executing this computer action"), even typing a search. So the review is ours, in code, before anything runs:
+  nothing that looks like an email address, a phone or card number or a password is typed; unexpected key
+  combinations are refused; a page whose address is a sign-in, account, checkout or payment page ends the run (and a
+  click that lands on one goes back). Only then is the check acknowledged.
+- **The headless browser has no address bar**, so "ctrl+l, type, Enter" is caught and done by our code. DuckDuckGo
+  turns a headless browser away; Bing answers one that says it's Chrome.
+- **Speed:** each model turn took 10 to 15 s. Clicking through search results took 1.5 to 4 minutes for a recipe
+  (9 to 15 steps). Letting Muse Spark's web search pick the page first (4 to 8 s) and opening it directly put it on the
+  TV in **6 to 11 s**, with Andy's sentence about it at **10 to 16 s** (recipe 10.4 s, radar 11.1 s, Northern Lights
+  pictures 13.8 s; through Andy's turn, the radar in 15.6 s). Computer use then has at most 3 steps or 45 s to bring
+  the answer into view; follow-ups ("scroll down") at most 2 steps or 40 s. "Zoom in on the map" failed (98 s before the
+  limits), and a question like opening hours is better answered in words (Andy's web answers), not on a page.
+- **The follow-up quirk:** a screenshot can be sent as an input image only in a run's first request ("native computer
+  input images are supported only in the initial request"), so follow-ups send words and the model asks for a
+  screenshot.
