@@ -76,7 +76,8 @@ trademark application.
   found-wiggle; it keeps its eyes on the person.
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
-  Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight); with
+  Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), Llama Prompt Guard 2 (reading each web page before the
+  cloud model sees it); with
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
   sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;

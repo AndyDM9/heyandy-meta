@@ -36,6 +36,8 @@ git -C "$OPT/sam3" checkout -q "$SAM3"
   && VIRTUAL_ENV=.venv uv pip install -q torch==2.10.0 torchvision --index-url https://download.pytorch.org/whl/cu128 \
   && VIRTUAL_ENV=.venv uv pip install -q -e . pillow einops pycocotools psutil opencv-python-headless "transformers>=5,<6")
 uv run -q --no-project --with huggingface_hub hf download facebook/sam3.1 --local-dir "$MODELS/sam3.1"
+uv run -q --no-project --with huggingface_hub hf download meta-llama/Llama-Prompt-Guard-2-86M \
+  --revision a8ded8e697ce7c355e395a0df51f94adb4a2fd27  # gated: request access on Hugging Face first
 uv run -q --no-project --with huggingface_hub hf download facebook/dinov2-base \
   --revision f9e44c814b77203eaa57a6bdbbd535f21ede1415  # into the Hugging Face cache, where sam_server.py loads it
 

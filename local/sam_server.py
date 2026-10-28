@@ -18,6 +18,8 @@ POST /embed {"image": ..., "masks": [{"box": [...], "outline": "M ...", "outline
   masked thing looks like, as numbers: {"vectors": [[808 floats], ...]}. Half DINOv2 (Meta's open image model: shape
   and texture), half a colour fingerprint, since DINOv2 learned to ignore colour (a blue and a red mug of one shape
   scored 0.94 alike). Only the thing's own pixels count (the mask). Used to tell "my mug" from another mug.
+POST /guard {"texts": ["...", ...]}: Llama Prompt Guard 2 (Meta's open weights): how likely each text is an attempt to
+  instruct Andy (a web page saying "ignore your instructions..."): {"scores": [0.0-1.0, ...]}. Text only, no pictures.
 """
 import argparse
 import base64
@@ -92,6 +94,27 @@ def colour(crop: Image.Image, keep: np.ndarray) -> np.ndarray:
     hist = np.concatenate([np.bincount(h[coloured] * 12 // 180 * 3 + np.minimum((s[coloured] - 50) * 3 // 206, 2),
                                        minlength=36), np.bincount(v[~coloured] // 64, minlength=4)]).astype(float)
     return np.sqrt(hist / hist.sum()) if hist.sum() else np.zeros(40)
+
+
+GUARD_MODEL = "meta-llama/Llama-Prompt-Guard-2-86M"  # Llama 4 Community License; gated: access granted to the founder's account
+GUARD_REVISION = "a8ded8e697ce7c355e395a0df51f94adb4a2fd27"
+
+
+class Guard:
+    """Llama Prompt Guard 2: is this text trying to instruct the robot? Loaded on first use (86M, GPU 1)."""
+
+    def __init__(self, name: str = GUARD_MODEL):
+        self.name, self.model, self.tokenizer = name, None, None
+
+    def scores(self, texts: list[str]) -> list[float]:
+        if self.model is None:
+            from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+            self.tokenizer = AutoTokenizer.from_pretrained(self.name, revision=GUARD_REVISION)
+            self.model = AutoModelForSequenceClassification.from_pretrained(self.name, revision=GUARD_REVISION)
+            self.model = self.model.to("cuda").eval()
+        enc = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=512).to("cuda")
+        return torch.softmax(self.model(**enc).logits.float(), -1)[:, 1].cpu().tolist()
 
 
 def mask_pixels(m: dict, size: tuple[int, int]) -> np.ndarray:
@@ -221,13 +244,14 @@ def track(predictor, frames: list[Image.Image], query: str, min_score: float) ->
 def serve(predictor, host: str, port: int) -> None:
     lock = threading.Lock()  # one GPU, one frame at a time
     looks = Looks()
+    guard = Guard()
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             self._send(200, {"status": "ok"} if self.path == "/health" else {"error": "not found"})
 
         def do_POST(self):
-            if self.path not in ("/segment", "/segment_many", "/track", "/embed"):
+            if self.path not in ("/segment", "/segment_many", "/track", "/embed", "/guard"):
                 return self._send(404, {"error": "not found"})
             n = int(self.headers.get("Content-Length") or 0)
             if not 0 < n <= (MAX_CLIP_BODY if self.path == "/track" else MAX_BODY):
@@ -236,6 +260,8 @@ def serve(predictor, host: str, port: int) -> None:
                 return self._track(n)
             if self.path == "/embed":
                 return self._embed(n)
+            if self.path == "/guard":
+                return self._guard(n)
             try:
                 req = json.loads(self.rfile.read(n))
                 image = Image.open(io.BytesIO(base64.b64decode(req["image"]))).convert("RGB")
@@ -251,6 +277,17 @@ def serve(predictor, host: str, port: int) -> None:
             if self.path == "/segment":
                 return self._send(200, {"masks": found[queries[0]], "seconds": seconds})
             self._send(200, {"masks": found, "seconds": seconds})
+
+        def _guard(self, n):
+            try:
+                texts = [str(t)[:4000] for t in json.loads(self.rfile.read(n))["texts"]][:64]
+            except (ValueError, KeyError, TypeError):
+                return self._send(400, {"error": "need 'texts', a list of strings"})
+            if not texts:
+                return self._send(200, {"scores": []})
+            with lock, torch.inference_mode():
+                scores = guard.scores(texts)
+            self._send(200, {"scores": [round(s, 4) for s in scores]})
 
         def _embed(self, n):
             try:

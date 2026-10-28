@@ -796,6 +796,7 @@ class Andy:
         self.say("Okay." if more else "Let me find that for you.")
         self.screen.doing("Working", "On the web")
         shots = [0]  # screenshots of web pages sent, counted as they go: the receipt says so even if the run fails
+        guard = getattr(self.segmenter, "guard", None)  # Llama Prompt Guard 2, on this computer
 
         def step(jpeg, words, point):
             self.screen.web(jpeg, first, words, point, url=self._browser.url())
@@ -806,14 +807,14 @@ class Andy:
                 task = request if previous else f"{request} (The browser shows the page for: {first}.)"
                 self.screen.sent("Muse Spark (uses the web)", request)
                 run = web.use_the_web(self.spark, self._browser, task, step, previous=previous, budget=self.budget,
-                                      max_steps=2, within_s=40.0, shots=shots)
+                                      max_steps=2, within_s=40.0, shots=shots, guard=guard)
             else:
                 self.screen.sent("Muse Spark (web search)", (f"(home: {self.home}) " if self.home else "") + request)
                 url = web.best_page(self.spark, request, self.home, budget=self.budget)
                 self._browser.open(url) if url else self._browser.search(request)
                 self.screen.used("Muse Spark (web search)", "cloud")
                 run = web.use_the_web(self.spark, self._browser, web.SHOW.format(task=request, url=url or "search results"),
-                                      step, budget=self.budget, max_steps=3, within_s=45.0, shots=shots)
+                                      step, budget=self.budget, max_steps=3, within_s=45.0, shots=shots, guard=guard)
             self.screen.web(self._browser.screenshot(), first, "", None, url=self._browser.url())
         except (*CLOUD_TROUBLE, TimeoutError) as e:
             if isinstance(e, web.BrowserTrouble):  # a fresh browser next time
@@ -827,6 +828,10 @@ class Andy:
                 self.screen.sent("Muse Spark (computer use)", f"{shots[0]} screenshots of the web page")
                 self.screen.used("Muse Spark (computer use)", "cloud", shots[0])
         self._web = (first, None if run.stopped else run.response_id, self.clock())
+        if run.guarded:
+            self.screen.used("Llama Prompt Guard 2 (reads the page)", "device", run.guarded)
+        if "instructions aimed at me" in run.stopped:
+            return "That page had instructions aimed at me, so I stopped there and didn't follow them."
         self._source, self._reason = "cloud", "Muse Spark used the web: screenshots of web pages, never the camera"
         if "sign-in" in run.stopped:
             return "That page wants a sign-in or a payment, so I've stopped there. I'll leave that part to you."

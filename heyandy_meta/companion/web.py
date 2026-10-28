@@ -29,6 +29,7 @@ from .answers import _citations, _final_text
 
 log = logging.getLogger(__name__)
 MODEL = "muse-spark-1.3"
+INJECTION = 0.5  # Prompt Guard's score for "this text tries to instruct the robot"; real pages scored at most 0.007
 SIZE = (1280, 800)
 START = "https://www.bing.com"
 SEARCH = START + "/search?q="  # DuckDuckGo turns a headless browser away; Bing answers one that says it's Chrome
@@ -206,6 +207,10 @@ class Browser:
     def url(self) -> str:
         return self._call(lambda: self.page.url)
 
+    def text(self, limit: int = 30000) -> str:
+        """The page's visible words, for Prompt Guard to read before the model sees the page."""
+        return self._call(lambda: self.page.inner_text("body")[:limit])
+
     def execute(self, actions: list[dict]) -> None:
         self._call(self._execute, actions)
 
@@ -278,6 +283,7 @@ class Run:
     stopped: str = ""  # why the run ended early, in words
     response_id: str | None = None
     actions: list = field(default_factory=list)
+    guarded: int = 0  # page passages Prompt Guard read
 
 
 def _shot(jpeg: bytes) -> str:
@@ -287,11 +293,21 @@ def _shot(jpeg: bytes) -> str:
 def use_the_web(client, browser: Browser, task: str, on_step=lambda jpeg, words, point: None,
                 previous: str | None = None, budget: Budget | None = None, max_steps: int = 15,
                 model: str = MODEL, effort: str = "low", within_s: float = 120.0, clock=time.monotonic,
-                shots: list | None = None) -> Run:
+                shots: list | None = None, guard=None) -> Run:
     """One request on the web, step by step. ``previous`` continues the last run ("scroll down", "go back").
-    ``shots[0]`` counts the screenshots sent, as they're sent, for the privacy receipt even if the run fails."""
+    ``shots[0]`` counts the screenshots sent, as they're sent, for the privacy receipt even if the run fails.
+    ``guard(texts) -> scores`` is Llama Prompt Guard 2 on this computer: a page whose words try to instruct Andy ends
+    the run before the model sees it (one layer; the code's own review of every action stays the main one)."""
     shots = shots if shots is not None else [0]
     budget, run, end = budget or Budget(), Run(), clock() + within_s
+
+    def hostile() -> bool:
+        if guard is None:
+            return False
+        text = browser.text()
+        chunks = [text[i:i + 1500] for i in range(0, len(text), 1500)] or [""]
+        run.guarded += len(chunks)
+        return max(guard(chunks)) >= INJECTION
     jpeg = browser.screenshot()
     on_step(jpeg, "Searching the web" if previous is None else "Looking at the page", None)
     if previous is None:
@@ -302,6 +318,9 @@ def use_the_web(client, browser: Browser, task: str, on_step=lambda jpeg, words,
     else:  # the API takes a screenshot this way only in a run's first request; the model asks for a fresh one
         request, extra = [{"role": "user", "content": [{"type": "input_text", "text": task}]}], {"previous_response_id": previous}
     while True:
+        if hostile():  # before the model sees this page
+            run.stopped = "the page has instructions aimed at me"
+            return run
         budget.check(chat_cost(model, 3000, 1500))
         r = with_retry(lambda request=request, extra=extra: client.responses.create(
             model=model, instructions=INSTRUCTIONS, tools=[{"type": "computer"}], reasoning={"effort": effort},

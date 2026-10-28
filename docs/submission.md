@@ -47,6 +47,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; says what it sees; translates Spanish |
 | **Omnilingual ASR** (open weights) | GPU 1 | Hears the person, in English or Spanish |
 | **DINOv2** (open weights) | GPU 1 | Knows the person's own things by sight |
+| **Llama Prompt Guard 2** (open weights) | GPU 1 | Reads each web page first: one that tries to instruct Andy ends the run |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers with sources; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
 | *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice |
@@ -69,8 +70,8 @@ exactly which words went to which cloud model, or "Nothing left this house". Unp
   past the reasoning made its picture checks 1.1 s instead of 1.9 (same 10 of 10 on public photos), a find on the robot
   7.1 s instead of 8.5, and Spanish translation 0.4 s a sentence, on this computer.
 - **Computer use with a reviewer.** Every batch of actions is reviewed in code before Meta's safety check is
-  acknowledged: nothing personal is typed, sign-in and payment pages end the run, and the browser can't reach the home
-  network.
+  acknowledged: nothing personal is typed, sign-in and payment pages end the run, the browser can't reach the home
+  network, and Llama Prompt Guard 2 reads each page first (hidden "ignore your instructions" text: stopped in 0.06 s).
 
 ## Measured
 

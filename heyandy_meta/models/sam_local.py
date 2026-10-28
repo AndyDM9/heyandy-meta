@@ -64,6 +64,10 @@ class LocalSam31:
         return self._send("/embed", {"image": base64.b64encode(image).decode(), "masks": [
             {"box": list(m.box), "outline": m.outline, "outline_scale": list(m.outline_scale)} for m in masks]})["vectors"]
 
+    def guard(self, texts: list[str]) -> list[float]:
+        """Llama Prompt Guard 2 on this computer: how likely each text is trying to instruct Andy (0 to 1)."""
+        return self._send("/guard", {"texts": list(texts)})["scores"]
+
     def track(self, frames: list, query: str) -> list[Track]:
         """Every ``query`` in the first frame, followed through the clip by SAM 3.1 Object Multiplex (about 5 frames a
         second on this computer's GPU, so a few seconds of shuffling takes a few more to replay)."""
