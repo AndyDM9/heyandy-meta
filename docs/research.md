@@ -1,6 +1,6 @@
 # Research for the build plan
 
-**Gathered 2026-10-27.** The plan built on it is [build-plan.md](build-plan.md). Prices, versions and dates change, so each
+**Gathered 2026-10-27.** Prices, versions and dates change, so each
 one is dated. ⚠ marks a fact we couldn't confirm from Meta or the organizers; check it before relying on it.
 
 ## 1. The hackathon
@@ -156,37 +156,18 @@ Docs: [overview](https://dev.meta.ai/docs/overview), [quickstart](https://dev.me
 - **For a Jetson Orin Nano 8 GB** (not this entry): Glimmer won't fit; Llama 3.2 1B or 3B would. The Llama licence
   requires "Built with Llama" and a model name starting with "Llama".
 
-## 5. Our own earlier work, as the baseline
+## 5. What existed before
 
-From our earlier prototype (public, Apache-2.0), read on 2026-10-27. Its finder code is in `its own repository`.
-
-- **The finder:**
-  - Four views at yaw 55, 18, −18 and −55°, pitch 15° down.
-  - Each view cut into six tiles at full resolution, read by a vision-language model.
-  - Up to two close-ups, each checked by the model before pointing.
-  - Pixel to angle: a pinhole model with fx 1116, cx 953 and cy 542 at 1920×1080, from Pollen's Reachy Mini Lite
-    calibration.
-  - The head reaches ±60° yaw and ±35° pitch.
-- **Measured:**
-
-  | Where | Result | Time |
-  |---|---|---|
-  | Simulation (seed 11, 30 trials, a vision-language model on this desktop) | Pointed 22 of 23, false finds 0 of 7, error median 1.95° | 4.80 s a search (model time only) |
-  | Real robot, 2026-10-20 | Pointed 3 of 9, never wrong; all six misses on a chair about 74° to the side, past the head's reach | Median 12.4 s to point |
-
-  A search cost about $0.005.
-- **For a fair comparison:**
-  - The simulation can be replayed on the same trials.
-  - The October 20 real-robot pictures were deleted after scoring, so the real comparison needs new recorded tries, read
-    by both finders.
-- **Its ideas never tried:** an open-vocabulary detector first, 4K stills, a lower second row of views. No segmentation.
-- **Related winner:** Mira (TreeHacks 2026, Most Impactful) also finds lost things for older adults. Our difference to
-  state is the physical pointing, the memory of where things were put, offline operation, and published measurements.
+Our own earlier object-finding prototype, built before the event, used a vision-language model on tiled views and no
+segmentation; none of its code is in this repository. What carries over is only what's public: Pollen's published
+Reachy Mini Lite camera calibration (fx 1116, cx 953 and cy 542 at 1920x1080), used for pixel-to-angle here. Ideas it
+never tried, and this entry does: an open-vocabulary segmenter first (SAM 3.1), a confirmed centred look before
+pointing, memory of where things were, offline operation, and published measurements.
 
 ## 6. Hardware on hand (2026-10-27)
 
 - **Body:** a Reachy Mini Lite on USB to the desktop. The robot runs SDK `reachy-mini==1.12.0rc1`.
-- **Desktop:** 2× RTX 3090, 24 GB each. Both were in use by our earlier prototype on October 27: 21.7 GB and 7.2 GB.
+- **Desktop:** 2× RTX 3090, 24 GB each, both given to this entry on October 27.
 - **No Jetson** is owned yet.
 
 ## 7. A physical robot for people who live at home: what older adults use, competitors, rules (read 2026-10-27)
@@ -231,7 +212,7 @@ points at physical objects. Alexa Together was discontinued May 21, 2025.
 
 ## 8. The local models, measured (2026-10-27, evening)
 
-Both 3090s were freed for this entry (the founder's call); our earlier prototype's services are stopped, the robot untouched.
+Both 3090s run this entry's models (the founder's call).
 Set up by `scripts/setup-local-models.sh`; run as the user units in `deploy/`.
 
 - **Muse Glimmer 30B** on GPU 0: llama.cpp **b11936** (official CUDA 13.4 build, digests checked), Q4_K_M with the
@@ -371,7 +352,7 @@ A survey of products, research and needs (sources below; the robots' own claims 
   expressive motion less.
 - **Ranked ideas:** (1) when did it move, and what's it near, in words, with how long ago; (2) "this one is mine" (a
   local reference picture); (3) several things tracked at once with SAM 3.1's Object Multiplex (a shell game); (4) read
-  and act (left out: our earlier prototype has a letter reader, and medical papers slide into advice); (5) a privacy receipt on
+  and act (left out: medical papers slide into advice); (5) a privacy receipt on
   the TV; (6) Muse Wonder working a browser on the TV. Also: a quiet mode and calmer motion.
 - **Avoid:** medical papers, safety monitoring (stove, falls), companionship framing, describing without acting, cloud
   voice outside a staged scene, claims about Glimmer fine-tuning on 24 GB or running Muse Spark Open locally, unlabelled

@@ -1,2 +1,0 @@
-[reachy_mini_apps]
-andy_finder = andy_finder.main:AndyFinder

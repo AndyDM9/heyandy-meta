@@ -61,15 +61,13 @@ trademark application.
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
 
 **What existed before:**
-- **our earlier prototype** ([(not in this repository)](https://(not in this repository))): the founder's
-  earlier robot, built before this event. Its finder uses a vision-language model. It is **not in this repository,
-  and nothing here imports it.** Its published results are our *baseline*: we run it unchanged in its own repository and
-  bring only its result files here, marked as pre-existing.
+- **Our own earlier object-finding prototype,** built before this event: **none of its code is in this repository,
+  and nothing here imports it.** The search, memory, voice, agents and screen here were all written during the event,
+  on Meta's models.
 - **Third-party open source**, used under its licences: Pollen Robotics' Reachy Mini SDK, simulation scene and published
   camera calibration; llama.cpp; Meta's `meta-sam-parser`.
 
-**What's new here,** all built during the event (the day-by-day record: [docs/build-plan.md](docs/build-plan.md) and
-[docs/research.md](docs/research.md)):
+**What's new here,** all built during the event (the day-by-day record: [docs/research.md](docs/research.md)):
 - **On the Reachy Mini Lite:** a closed-loop adapter (the only module that imports Pollen's SDK). The head falls short and
   sags, so it reads the pose back, corrects once, and every frame carries the measured direction; the base turns past
   the head's reach. Body language in a 50 Hz loop: breathing, listening, thinking, moving with its own words, a

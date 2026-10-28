@@ -40,8 +40,8 @@ before submitting.
 > involving war
 
 **What this means for us:**
-- As a startup we may build on our earlier prototype. We must say exactly what is new, which the README's "Prior work and
-  what's new" section does.
+- As a startup we may build on earlier work. We must say exactly what is new, which the README's "Built during the
+  event, and what came before" section does.
 - The video may show only what was built during the event.
 - The building period is October 27 to November 4.
 
@@ -124,8 +124,8 @@ the last full day for submission questions.
   to be public at submission — it must be publicly accessible for judges, and private repos with judge access are not
   accepted. Keep everything the app needs to run in one public repo when you submit."
 - **For us:** the repo stays private until November 4, then goes public before we submit. Everything the robot needs to
-  run is in this one repository. The models are downloaded from their public pages; our earlier prototype is needed only to
-  reproduce the baseline, not to run the robot.
+  run is in this one repository. The models are downloaded from their public pages; nothing else is needed to run the
+  robot.
 
 **Spend limits** (the FAQ): "Don't assume a 'Spend Limit' notification automatically stops billing." That's why our
 code has its own hard cap (`heyandy_meta/budget.py`).

@@ -9,3 +9,5 @@ docs/private/
 .claude/
 dist/
 film/
+*.egg-info/
+apps/*/build/

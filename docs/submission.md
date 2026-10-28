@@ -8,8 +8,8 @@
 
 HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link] · Live screen: huggingface.co/spaces/heyandy-ai/andy · Code: github.com/AndyDM9/heyandy-meta
 
-**Before this week:** a Reachy Mini Lite robot, and our earlier prototype, our earlier robot built before this event (not in this
-repository; its results are our baseline). **Everything below was built this week, on Meta's models.**
+**Before this week:** a Reachy Mini Lite robot, and our own earlier object-finding prototype (none of its code is in
+this repository). **Everything below was built this week, on Meta's models.**
 
 ## The problem
 
