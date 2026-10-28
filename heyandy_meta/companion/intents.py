@@ -7,7 +7,7 @@ import datetime as dt
 import re
 from dataclasses import dataclass
 
-from ..finder.names import snap
+from ..finder.names import KNOWN, snap
 
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
 FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced)\s+"
@@ -55,8 +55,8 @@ MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:
         re.compile(r"\blearn (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now|by sight))", re.I)]
 MAP_OF_THINGS = re.compile(r"\b(?:draw|make|paint|show)(?: me| us)? (?:a |the )?(?:map|picture|postcard|drawing) of "
                            r"(?:where )?(?:all )?(?:my|our|the) things\b|\bmap of (?:where )?(?:all )?(?:my|our) things\b", re.I)
-WEB = [re.compile(r"\b(?:show|put|pull up|bring up|open|find|look up|display|get)\b.{2,120}?\bon (?:the|my|your) "
-                  r"(?:tv|telly|screen|television)\b", re.I),
+WEB = [re.compile(r"\b(?:show|put|pull up|bring up|open|look up|display|(?:find|get)(?! my\b))\b.{2,120}?\bon (?:the|my|"
+                  r"your) (?:tv|telly|screen|television)\b(?!\s*(?:stand|cabinet|unit|table|shelf|console))", re.I),
        re.compile(r"\bshow me (?:some |a few )?(?:pictures?|photos?|images?|a map|the map|a video|videos|the radar|"
                   r"the weather radar|a recipe|the recipe)\b", re.I),
        re.compile(r"\b(?:open|go to|pull up)\s+(?:the\s+)?(?:[\w-]+\.(?:com|org|net|gov|edu)|wikipedia|the news)\b", re.I)]
@@ -185,9 +185,9 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("things_map", text=t)
     if any(rx.search(t) for rx in WEB):
         return Intent("web", text=t)
-    for rx in MINE:
-        if m := rx.search(t):
-            return Intent("mine", thing=snap(_thing(m)), text=t)
+    for rx in MINE if not WATCH.search(t) else ():  # "this is my wallet, keep an eye on it" is watching
+        if (m := rx.search(t)) and (thing := snap(_thing(m))).split()[-1] in KNOWN:  # a thing, not "my point"
+            return Intent("mine", thing=thing, text=t)
     for kind, rx in (("forget", FORGET), ("watch", WATCH), ("follow", FOLLOW), ("last_seen", LAST_SEEN), ("find", FIND)):
         m = rx.search(t)
         if m:

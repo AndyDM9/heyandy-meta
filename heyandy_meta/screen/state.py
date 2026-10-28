@@ -72,7 +72,7 @@ class ScreenState:
     def drawn(self, image: bytes, prompt: str, saved: str) -> None:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer, self.looking_for = None, [], [], None, None, ""
-            self._drawing = (image, prompt, saved, self._clock() + DRAWING_SECONDS)
+            self._drawing, self._web = (image, prompt, saved, self._clock() + DRAWING_SECONDS), None
             self.drawings += 1
 
     def web(self, jpeg: bytes, request: str, words: str = "", point=None, size=(1280, 800), url: str = "") -> None:
@@ -131,13 +131,13 @@ class ScreenState:
         if not found.frame.image:  # the pretend room has no camera: words only
             return
         with self._lock:
-            self._picture = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS, trails)
+            self._picture, self._web = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS, trails), None
 
     def game(self, title: str, detail: str = "") -> None:
         """The cup game, stage by stage: "Watching the cups", "Replaying the shuffle"."""
         with self._lock:
             self._picture, self._drawing, self.sources, self.steps, self.memory = None, None, [], [], None
-            self._game = (title, detail, self._clock() + PICTURE_SECONDS)
+            self._game, self._web = (title, detail, self._clock() + PICTURE_SECONDS), None
 
     def clear(self) -> None:
         with self._lock:
@@ -147,6 +147,7 @@ class ScreenState:
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
             self.caption, self.source, self.reason, self.sources = text, source, reason, list(sources)[:3]
+            self._web = None
 
     def step(self, line: str) -> None:
         with self._lock:

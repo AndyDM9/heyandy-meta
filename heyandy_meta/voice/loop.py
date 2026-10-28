@@ -5,7 +5,9 @@ Only speech that starts with "Andy" (or "hey Andy") is answered; after an answer
 speaks, the microphone is ignored so it doesn't answer itself.
 """
 import logging
+import queue
 import re
+import threading
 import time
 
 log = logging.getLogger(__name__)
@@ -22,12 +24,17 @@ class VoiceLoop:
         self.andy, self.follow_up_s, self._clock, self.on_heard = andy, follow_up_s, clock, on_heard
         self.awake_until = float("-inf")
         self.utterance_end = 0.0  # time.monotonic() when the last utterance ended
+        self.busy = False  # a turn is running (on its own thread, so "stop" and "done" can still be heard)
+
+    def stops(self, text: str) -> bool:
+        """Words that end what Andy is doing right now: "stop" a follow, "done" shuffling the cups."""
+        return getattr(self.andy, "following", False) and bool(
+            STOP.search(text) or (getattr(self.andy, "playing", False) and DONE.search(text)))
 
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
         text = " ".join(text.split())
-        if getattr(self.andy, "following", False) and (
-                STOP.search(text) or (getattr(self.andy, "playing", False) and DONE.search(text))):
+        if self.stops(text):
             self.andy.stop_following()  # no lock: the follow holds it, and this must reach it at once
             return "Stopped."
         if _looping(text):
@@ -57,29 +64,58 @@ class VoiceLoop:
         return reply
 
     def run(self, mic, voice, endpointer, stop) -> None:
-        """Listen until ``stop`` is set: mic yields (samples, speech_flag, voice_yaw); quiet while Andy speaks."""
+        """Listen until ``stop`` is set: mic yields (samples, speech_flag, voice_yaw); quiet while Andy speaks.
+
+        Turns run on a thread of their own, so listening never pauses: "stop" reaches a follow and "done" reaches the
+        cup game while they run. Anything else said during a turn is dropped, as it was before (unheard)."""
         gesture = getattr(self.andy.body, "gesture", None)
         hearing = False
+        turns: queue.Queue = queue.Queue(maxsize=1)
+        threading.Thread(target=self._turns, args=(turns, endpointer, stop), daemon=True).start()
         for samples, flag, yaw in mic(stop):
             utterance = endpointer.feed(samples, flag)
-            if gesture and endpointer.active != hearing and self._clock() <= self.awake_until:
+            if gesture and not self.busy and endpointer.active != hearing and self._clock() <= self.awake_until:
                 hearing = endpointer.active
                 gesture("listening" if hearing else "idle")  # attentive while a follow-up is spoken
                 screen = getattr(self.andy, "screen", None)
                 if screen and hearing:
                     screen.doing("Listening", "Looking at you")
-            if utterance is not None:
-                self.utterance_end = time.monotonic() - endpointer.end_silence_s
-                try:
-                    text = voice.transcribe(utterance)
-                    reply = self.heard(text, yaw)
-                except Exception as e:  # noqa: BLE001 - one bad turn must not leave Andy deaf
-                    log.warning("a turn failed: %s: %s", type(e).__name__, e)
-                    continue
-                if self.on_heard:  # what wasn't for Andy is reported by its length only, never its words
-                    self.on_heard(text if reply is not None else
-                                  f"{len(text.split())} words in {len(utterance) / endpointer.rate:.1f}s, room level "
-                                  f"{endpointer.floor:.3f}", reply)
+            if utterance is None:
+                continue
+            self.utterance_end = time.monotonic() - endpointer.end_silence_s
+            try:
+                text = voice.transcribe(utterance)
+            except Exception as e:  # noqa: BLE001 - one bad utterance must not leave Andy deaf
+                log.warning("hearing failed: %s: %s", type(e).__name__, e)
+                continue
+            if self.busy:
+                stopped = self.stops(text)
+                if stopped:
+                    self.andy.stop_following()  # no lock: the turn holds it, and this must reach it at once
+                self._report(text if stopped else None, "Stopped." if stopped else None, utterance, endpointer)
+                continue
+            self.busy = True
+            turns.put((text, yaw, utterance))
+
+    def _turns(self, turns: queue.Queue, endpointer, stop) -> None:
+        while not stop.is_set():
+            try:
+                text, yaw, utterance = turns.get(timeout=0.5)
+            except queue.Empty:
+                continue
+            reply = None
+            try:
+                reply = self.heard(text, yaw)
+            except Exception as e:  # noqa: BLE001 - one bad turn must not leave Andy deaf
+                log.warning("a turn failed: %s: %s", type(e).__name__, e)
+            finally:
+                self.busy = False
+            self._report(text if reply is not None else None, reply, utterance, endpointer)
+
+    def _report(self, text, reply, utterance, endpointer) -> None:
+        if self.on_heard:  # what wasn't for Andy is reported by its length only, never its words
+            self.on_heard(text if text is not None else
+                          f"{len(utterance) / endpointer.rate:.1f}s of speech, room level {endpointer.floor:.3f}", reply)
 
 
 def _looping(text: str) -> bool:

@@ -135,3 +135,48 @@ def test_stop_reaches_a_follow_at_once():
     a.following, stopped = True, []
     a.stop_following = lambda: stopped.append(True)
     assert VoiceLoop(a).heard("stop") == "Stopped." and stopped == [True] and a.heard == []
+
+
+def test_stop_is_heard_while_a_turn_is_running():
+    """Turns run on their own thread: the microphone keeps listening, so "done" reaches the cup game mid-shuffle."""
+    import threading
+
+    stop, stopped, said = threading.Event(), threading.Event(), iter(["andy let's play the cup game", "okay done"])
+
+    class Playing(Andy):
+        following = playing = False
+
+        def hear(self, text):
+            self.following = self.playing = True
+            ok = stopped.wait(3.0)
+            self.following = self.playing = False
+            return "stopped" if ok else "never heard"
+
+        def stop_following(self):
+            stopped.set()
+
+    class Ears:
+        active, rate, end_silence_s, floor = False, RATE, 0.5, 0.0
+
+        def feed(self, samples, flag):
+            return samples
+
+    def mic(stop):
+        yield np.zeros(RATE, np.float32), True, None
+        while not a.following:
+            stop.wait(0.01)
+        yield np.zeros(RATE, np.float32), True, None
+        stop.wait(3.0)
+
+    a, replies = Playing(), []
+    loop = VoiceLoop(a, on_heard=lambda text, reply: replies.append(reply))
+    voice = SimpleNamespace(transcribe=lambda audio: next(said))
+    t = threading.Thread(target=loop.run, args=(mic, voice, Ears(), stop), daemon=True)
+    t.start()
+    assert stopped.wait(3.0)
+    for _ in range(100):
+        if "stopped" in replies:
+            break
+        stop.wait(0.02)
+    stop.set()
+    assert replies == ["Stopped.", "stopped"] and not loop.busy

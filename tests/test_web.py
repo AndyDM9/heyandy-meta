@@ -138,3 +138,68 @@ def test_andy_shows_a_page_and_takes_follow_ups(tmp_path, monkeypatch):
 def test_offline_andy_says_the_web_needs_a_connection(tmp_path):
     a, _, _ = andy(online=False, tmp_path=tmp_path)
     assert "when I'm connected" in a.hear("show me the weather radar on the TV")
+
+
+@pytest.mark.parametrize("url", ["http://127.0.0.1:8765/", "http://localhost:8765/state.json", "http://192.168.1.1/admin",
+                                 "http://10.0.0.5/", "http://router.local/", "http://printer/"])
+def test_nothing_at_home_is_ever_opened(url):
+    assert web.at_home(url)  # the TV page holds the last camera picture: never screenshotted for the cloud
+
+
+def test_the_web_is_still_the_web():
+    assert not web.at_home("https://en.wikipedia.org/wiki/Banana_bread")
+
+
+def test_a_picked_page_at_home_is_refused():
+    spark = Spark([message("http://127.0.0.1:8765/")])
+    assert web.best_page(spark, "show me the TV page") is None
+
+
+def test_capital_keys_are_still_ctrl_l():
+    assert web.review([{"type": "keypress", "keys": ["CTRL", "L"]}], "https://www.bing.com") is None
+
+
+def test_after_a_run_that_stopped_early_a_follow_up_starts_afresh_with_a_screenshot(tmp_path, monkeypatch):
+    clicks = [call({"type": "scroll", "x": 1, "y": 1, "scroll_y": 100}) for _ in range(4)]
+    spark = Spark(*[[c] for c in clicks], [message("Scrolled.")])
+    a, _, _ = andy(spark=spark, tmp_path=tmp_path)
+    a._browser = Browser()
+    monkeypatch.setattr(web, "best_page", lambda *a, **k: "https://example.org/radar")
+    assert "as far as I could get" in a.hear("show me the radar on the TV")
+    a.hear("scroll down")
+    sent = spark.sent[-1]
+    assert "previous_response_id" not in sent and sent["input"][0]["content"][1]["type"] == "input_image"
+
+
+def test_the_receipt_counts_screenshots_even_when_the_run_fails(tmp_path, monkeypatch):
+    class Failing(Spark):
+        def create(self, **kw):
+            if len(self.sent) >= 1:
+                raise RuntimeError("the network went")
+            return super().create(**kw)
+
+    spark = Failing([call({"type": "scroll", "x": 1, "y": 1, "scroll_y": 100})])
+    a, _, _ = andy(spark=spark, tmp_path=tmp_path)
+    a.home = "Sunny Isles Beach, Florida"
+    a._browser = Browser()
+    monkeypatch.setattr(web, "best_page", lambda *a, **k: "https://example.org/radar")
+    assert "couldn't get that page" in a.hear("show me the radar on the TV")
+    outbox = a.screen.snapshot()["outbox"]
+    assert any(o["words"] == "2 screenshots of the web page" for o in outbox)
+    assert any("Sunny Isles Beach" in o["words"] for o in outbox)  # the home went with the web search: say so
+
+
+def test_a_drawing_replaces_the_web_page_on_the_tv():
+    from heyandy_meta.screen.state import ScreenState
+
+    s = ScreenState()
+    s.web(b"jpeg", "the radar", url="https://example.org/radar")
+    s.drawn(b"webp", "a cat", "saved")
+    assert s.snapshot()["web"] is None and s.snapshot()["drawing"]
+
+
+@pytest.mark.parametrize("text,kind", [("find my phone, I left it on the TV stand", "find"),
+                                       ("I put my keys on the tv stand, keep an eye on them", "watch"),
+                                       ("find me a banana bread recipe on the TV", "web")])
+def test_the_tv_stand_is_furniture(text, kind):
+    assert parse(text).kind == kind

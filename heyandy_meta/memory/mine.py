@@ -40,10 +40,12 @@ class Mine:
     def key(self, label: str) -> str | None:
         """The known thing a label means: "mug" finds "coffee mug", and the other way round."""
         label = label.lower().strip()
-        if label in self._things:
-            return label
-        last = label.split()[-1] if label else ""
-        return next((k for k in self._things if k.split()[-1] == last), None)
+        if label in self._things or not label:
+            return label or None
+        if " " not in label:  # "mug" means the one mug Andy knows, "coffee mug"
+            return next((k for k in self._things if k.split()[-1] == label), None)
+        last = label.split()[-1]  # "coffee mug" means "mug" if that's what was learned; "house keys" isn't "car keys"
+        return last if last in self._things else None
 
     def knows(self, label: str) -> bool:
         return self.key(label) is not None

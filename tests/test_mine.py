@@ -67,3 +67,22 @@ def test_forgetting_my_mug_forgets_what_it_looks_like(tmp_path):
 def test_nothing_held_up_nothing_learned(tmp_path):
     a, _, _ = andy(tmp_path=tmp_path)
     assert "couldn't see your mug" in a.hear("this is my mug") and not a.mine.knows("mug")
+
+
+def test_house_keys_are_not_car_keys(tmp_path):
+    mine = Mine(tmp_path / "mine.json")
+    mine.learn("car keys", [[1.0, 0.0]])
+    assert mine.key("keys") == "car keys" and mine.key("house keys") is None
+    assert not mine.forget("house keys") and mine.knows("car keys")
+    mine.learn("mug", [[1.0, 0.0]])
+    assert mine.key("coffee mug") == "mug"
+
+
+@pytest.mark.parametrize("text", ["that's my point", "this is my friend sarah", "here's my question",
+                                  "this is my first time", "learn my face"])
+def test_conversation_is_not_learning_a_thing(text):
+    assert parse(text).kind != "mine"
+
+
+def test_keeping_an_eye_wins_over_learning():
+    assert parse("this is my wallet, keep an eye on it").kind == "watch"

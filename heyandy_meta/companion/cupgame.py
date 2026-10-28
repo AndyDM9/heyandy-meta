@@ -106,6 +106,7 @@ def stitch(tracks: list, near: float, max_gap: int = 6) -> list:
     for t in order:
         if t.id in taken:
             continue
+        taken.add(t.id)  # each track belongs to one cup only
         path, cur = list(t.path), t
         while cur.end is None:
             f, x, y = path[-1]

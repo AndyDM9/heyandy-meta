@@ -131,11 +131,12 @@ class Finder:
         self.looks += 1
         return self.body.capture()
 
-    def _masks(self, frame: Frame, label: str) -> list[Mask]:
+    def _masks(self, frame: Frame, label: str, segmenter=None) -> list[Mask]:
         """SAM 3.1 asked for the thing and a couple of close names ("cup": also "mug"), in one request if it can."""
-        many, names = getattr(self.segmenter, "find_many", None), also(label)
+        segmenter = segmenter or self.segmenter
+        many, names = getattr(segmenter, "find_many", None), also(label)
         found = [m for ms in many(frame, names).values() for m in ms] if many and len(names) > 1 \
-            else self.segmenter.find(frame, label)
+            else segmenter.find(frame, label)
         for m in found:
             m.label = label
         return [m for m in _dedupe(found) if m.score is None or m.score >= self.min_score]

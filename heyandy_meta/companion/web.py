@@ -12,6 +12,7 @@ Muse Wonder doesn't take the computer tool on our account yet (400 "Unsupported 
 loop, as Meta's docs allow.
 """
 import base64
+import logging
 import queue
 import time
 import re
@@ -23,6 +24,7 @@ from ..budget import WEB_SEARCH, Budget, chat_cost
 from ..models.retry import with_retry
 from .answers import _citations, _final_text
 
+log = logging.getLogger(__name__)
 MODEL = "muse-spark-1.3"
 SIZE = (1280, 800)
 START = "https://www.bing.com"
@@ -51,8 +53,16 @@ KEYS = {"enter": "Enter", "return": "Enter", "tab": "Tab", "esc": "Escape", "esc
 ALLOWED_COMBOS = {"Control+l", "Control+f", "Control+a", "Alt+ArrowLeft", "Shift+Tab"}
 
 
-class Walled(Exception):
-    """The page wants a sign-in, an account or a payment: the run stops there."""
+class BrowserTrouble(RuntimeError):
+    """The browser didn't start, crashed, or stopped answering: make a new one next time."""
+
+
+def at_home(url: str) -> bool:
+    """An address on this computer or the home network: never opened (the TV page itself is one, with its pictures)."""
+    from ..models.common import is_local
+
+    host = (urlsplit(url).hostname or "").lower()
+    return not host or is_local(url) or "." not in host or host.endswith((".local", ".lan", ".home", ".internal", ".arpa"))
 
 
 def review(actions: list[dict], url: str) -> str | None:
@@ -73,7 +83,7 @@ def review(actions: list[dict], url: str) -> str | None:
 
 def _key(k: str) -> str:
     k = str(k)
-    return KEYS.get(k.lower(), k if len(k) == 1 else k[:1].upper() + k[1:].lower())
+    return KEYS.get(k.lower(), k.lower() if len(k) == 1 else k[:1].upper() + k[1:].lower())  # "CTRL", "L": Control+l
 
 
 def address(text: str) -> str:
@@ -101,16 +111,23 @@ class Browser:
         self._jobs: queue.Queue = queue.Queue()
         self._thread: threading.Thread | None = None
         self._typing: list[str] | None = None  # after ctrl+l: the address being typed
+        self.page = None
 
     def _run(self) -> None:
         from playwright.sync_api import sync_playwright
 
         with sync_playwright() as pw:
-            browser = pw.chromium.launch()
-            ctx = browser.new_context(viewport={"width": self.size[0], "height": self.size[1]}, accept_downloads=False,
-                                      locale="en-US", user_agent=AGENT)
-            self.page = ctx.new_page()
-            self.page.goto(self.start)
+            try:
+                browser = pw.chromium.launch()
+                ctx = browser.new_context(viewport={"width": self.size[0], "height": self.size[1]},
+                                          accept_downloads=False, locale="en-US", user_agent=AGENT)
+                # Nothing on this computer or the home network, whatever a page links to: the web only.
+                ctx.route("**/*", lambda route: route.abort() if at_home(route.request.url) else route.continue_())
+                self.page = ctx.new_page()
+                self.page.goto(self.start)
+            except Exception as e:  # noqa: BLE001 - say so to whoever is waiting, at once
+                log.warning("the browser didn't start: %s", e)
+                return
             while True:
                 fn, args, done = self._jobs.get()
                 if fn is None:
@@ -123,15 +140,22 @@ class Browser:
 
     def _call(self, fn, *args):
         if self._thread is None or not self._thread.is_alive():
+            self._jobs = queue.Queue()  # a new browser doesn't run what the old one left
             self._thread = threading.Thread(target=self._run, daemon=True)
             self._thread.start()
         done: queue.Queue = queue.Queue()
         self._jobs.put((fn, args, done))
-        try:
-            ok, out = done.get(timeout=60)
-        except queue.Empty as e:
-            raise TimeoutError("the browser didn't answer") from e
+        end = time.monotonic() + 60
+        while True:
+            try:
+                ok, out = done.get(timeout=0.5)
+                break
+            except queue.Empty:
+                if not self._thread.is_alive() or time.monotonic() > end:
+                    raise BrowserTrouble("the browser didn't start or stopped answering") from None
         if not ok:
+            if "closed" in str(out).lower():  # Playwright: "Target page, context or browser has been closed"
+                raise BrowserTrouble(f"the browser closed: {out}") from out
             raise RuntimeError(f"the browser: {type(out).__name__}: {out}") from out
         return out
 
@@ -229,8 +253,11 @@ def _shot(jpeg: bytes) -> str:
 
 def use_the_web(client, browser: Browser, task: str, on_step=lambda jpeg, words, point: None,
                 previous: str | None = None, budget: Budget | None = None, max_steps: int = 15,
-                model: str = MODEL, effort: str = "low", within_s: float = 120.0, clock=time.monotonic) -> Run:
-    """One request on the web, step by step. ``previous`` continues the last run ("scroll down", "go back")."""
+                model: str = MODEL, effort: str = "low", within_s: float = 120.0, clock=time.monotonic,
+                shots: list | None = None) -> Run:
+    """One request on the web, step by step. ``previous`` continues the last run ("scroll down", "go back").
+    ``shots[0]`` counts the screenshots sent, as they're sent, for the privacy receipt even if the run fails."""
+    shots = shots if shots is not None else [0]
     budget, run, end = budget or Budget(), Run(), clock() + within_s
     jpeg = browser.screenshot()
     on_step(jpeg, "Searching the web" if previous is None else "Looking at the page", None)
@@ -238,6 +265,7 @@ def use_the_web(client, browser: Browser, task: str, on_step=lambda jpeg, words,
         request = [{"role": "user", "content": [{"type": "input_text", "text": task},
                                                 {"type": "input_image", "image_url": _shot(jpeg)}]}]
         extra = {}
+        shots[0] += 1
     else:  # the API takes a screenshot this way only in a run's first request; the model asks for a fresh one
         request, extra = [{"role": "user", "content": [{"type": "input_text", "text": task}]}], {"previous_response_id": previous}
     while True:
@@ -285,6 +313,7 @@ def use_the_web(client, browser: Browser, task: str, on_step=lambda jpeg, words,
             output["acknowledged_safety_checks"] = [{"id": c["id"], "code": c.get("code"), "message": c.get("message")}
                                                     for c in checks]
         request, extra = [output], {"previous_response_id": r.id}
+        shots[0] += 1
 
 
 PICK = ("Find the single best web page to show on a TV for this request, from a well-known, trustworthy site, one that "
@@ -303,10 +332,8 @@ def best_page(client, task: str, home: str = "", budget: Budget | None = None, m
     budget.record(model, chat_cost(model, getattr(usage, "input_tokens", 0) or 0, getattr(usage, "output_tokens", 0) or 0)
                   + WEB_SEARCH)
     said = re.search(r"https?://[^\s)\]>\"']+", _final_text(r))
-    if said:
-        return said.group().rstrip(".,")
-    cited = _citations(r)
-    return cited[0][1] if cited else None
+    url = said.group().rstrip(".,") if said else next((u for _, u in _citations(r)), None)
+    return url if url and not at_home(url) else None
 
 
 SHOW = ("{task} The browser shows {url}. If the page already shows it, do nothing more: just say what's on the "

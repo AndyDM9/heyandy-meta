@@ -46,7 +46,8 @@ REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten 
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
                     r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
-AGAIN = re.compile(r"^\W*(?:yes|yeah|yep|sure|ok(?:ay)?|again|one more|let'?s go|go on|why not)\b(?!\W*(?:but|no)\b)", re.I)
+AGAIN = re.compile(r"^\W*(?:yes|yeah|yep|sure|ok(?:ay)?|again|one more|let'?s go|go on|why not)"
+                   r"(?:\W+(?:please|again|one more|let'?s go|let'?s play|why not|sure|yes|go))*\W*$", re.I)  # not "okay thanks"
 HISTORY_TURNS, HISTORY_FORGET_S = 4, 30 * 60  # a conversation: its last few exchanges, forgotten after 30 quiet minutes
 CLOUD_TROUBLE = (BudgetExceeded, CloudUnavailable, APIError, RuntimeError)  # RuntimeError: no key set
 
@@ -79,6 +80,7 @@ class Andy:
     def __post_init__(self):
         self.mine = Mine(self.places.path.parent / "mine.json")  # things Andy knows by sight, as numbers
         self._alike: float | None = None  # how like the person's own the last checked thing was
+        self._not_yours = False  # this find saw one, but someone else's
         self.finder = Finder(self.body, self.segmenter, check=self._check,
                              on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"))
         self.router = Router(self.device, self.cloud or NoCloud())
@@ -341,7 +343,7 @@ class Andy:
         self.screen.clear()
         self.screen.timer_start()
         checks = getattr(self.judge, "calls", 0)
-        self.finder.looks, self._alike = 0, None
+        self.finder.looks, self._alike, self._not_yours = 0, None, False
         self.screen.looking(thing)
         self.say("Let me look.")  # answer at once: a search takes a few seconds
         self.screen.doing("Working", "Looking around the room")
@@ -524,12 +526,20 @@ class Andy:
         track = getattr(self.segmenter, "track", None)
         if track is None:
             return "I can't play the cup game right now: it needs my eyes on this computer."
+        self._stop_following.clear()
+        self.following = self.playing = True  # the face tracker leaves the head alone until the reveal is over
+        try:
+            return self._cup_game(track)
+        finally:
+            self.following = self.playing = False
+            self.screen.doing("Waiting")
+            self.gesture("idle")
+
+    def _cup_game(self, track) -> str:
         self.screen.clear()
         yaw = self.person[0] if self.person else getattr(self.body, "yaw", 0.0)
         self.body.look(yaw, 25.0)  # the table between us
         self.gesture("searching")  # a still head: the clip needs it
-        self._stop_following.clear()
-        self.following = self.playing = True
         self.screen.doing("Playing", "Watching the table")
         self.say("Let's play! Show me the ball, then hide it under a cup and shuffle, not too fast. Say done when "
                  "you're finished.")
@@ -537,16 +547,15 @@ class Andy:
             r = cupgame.play(self.body, self.segmenter, track, self._stop_following.is_set, self._game_stage)
         except RuntimeError:  # the local SAM 3.1 or the camera didn't answer
             r = cupgame.Result("broken")
-        finally:
-            self.following = self.playing = False
-            self.screen.doing("Waiting")
-        self.gesture("idle")
+        self.playing = False  # the shuffle is over: "done" means nothing now
         if r.frames:
             self.screen.used("SAM 3.1 Object Multiplex", "device", r.frames)
             self._source = "device"
             self._reason = f"SAM 3.1 followed every cup through {r.frames} frames, on this computer ({r.seconds:.0f} s)"
         if r.how != "found":
             self.screen.game({"lost": "I lost track", "stopped": "Another time"}.get(r.how, "Let's try again"))
+            if r.how in ("lost", "no_cups", "no_ball", "not_hidden"):
+                self._again_until = self.clock() + ANSWER_WITHIN_S  # "yes" starts another round
             return {"lost": "I lost track of the cups, sorry. Shall we go again, a little slower?",
                     "no_cups": "I need to see two or three cups on the table in front of me. Shall we try again?",
                     "no_ball": "I didn't see the ball. Show it to me first, then hide it under a cup.",
@@ -593,8 +602,11 @@ class Andy:
         cups = {t.id: pixel_to_angles(*t.end.center, r.frame.yaw, r.frame.pitch, cam) for t in r.tracks if t.end}
         end = time.monotonic() + seconds
         while time.monotonic() < end:
-            frame = self.body.capture()
-            balls = [m for m in self.segmenter.find(frame, "ball") if m.score is None or m.score >= 0.4]
+            try:
+                frame = self.body.capture()
+                balls = [m for m in self.segmenter.find(frame, "ball") if m.score is None or m.score >= 0.4]
+            except RuntimeError:  # the camera or SAM 3.1 didn't answer: no verdict, but the game ends properly
+                return None
             if balls:
                 at = pixel_to_angles(*max(balls, key=lambda m: m.score or 0.5).center, frame.yaw, frame.pitch,
                                      LITE.scaled(frame.width, frame.height))
@@ -617,7 +629,7 @@ class Andy:
             self.body.look(yaw, min(pitch + 12.0, 30.0))  # a little lower than the face: the hands
             for _ in range(views):
                 frame = self.body.capture()
-                masks = self.finder._masks(frame, thing)
+                masks = self.finder._masks(frame, thing, self.segmenter)  # local, even when filming a staged scene
                 if masks:
                     held = max(masks, key=lambda m: (m.box[2] - m.box[0]) * (m.box[3] - m.box[1]))  # nearest: largest
                     vectors += embed(frame, [held])
@@ -655,7 +667,7 @@ class Andy:
         self.screen.step(f"a {mask.label}, {alike:.0%} like yours: " + ("yours" if alike >= self.mine.alike else "not yours"))
         self._alike = alike
         if alike < self.mine.alike:
-            self.finder.rejected = f"a {mask.label}, but not yours"
+            self.finder.rejected, self._not_yours = f"a {mask.label}, but not yours", True
             return False
         return True
 
@@ -676,30 +688,38 @@ class Andy:
             re.sub(r"\s*\bon (?:the|my|your) (?:tv|telly|screen|television)\b", "", request, flags=re.I).strip(" ,.!?")
         self.say("Okay." if more else "Let me find that for you.")
         self.screen.doing("Working", "On the web")
-        self.screen.sent("Muse Spark (uses the web)", request)
+        shots = [0]  # screenshots of web pages sent, counted as they go: the receipt says so even if the run fails
 
         def step(jpeg, words, point):
             self.screen.web(jpeg, first, words, point, url=self._browser.url())
 
         try:
             if more:
-                run = web.use_the_web(self.spark, self._browser, request, step, previous=self._web[1],
-                                      budget=self.budget, max_steps=2, within_s=40.0)
+                previous = self._web[1]  # None after a run that stopped early: its last step was never answered
+                task = request if previous else f"{request} (The browser shows the page for: {first}.)"
+                self.screen.sent("Muse Spark (uses the web)", request)
+                run = web.use_the_web(self.spark, self._browser, task, step, previous=previous, budget=self.budget,
+                                      max_steps=2, within_s=40.0, shots=shots)
             else:
+                self.screen.sent("Muse Spark (web search)", request + (f" (home: {self.home})" if self.home else ""))
                 url = web.best_page(self.spark, request, self.home, budget=self.budget)
                 self._browser.open(url) if url else self._browser.search(request)
                 self.screen.used("Muse Spark (web search)", "cloud")
                 run = web.use_the_web(self.spark, self._browser, web.SHOW.format(task=request, url=url or "search results"),
-                                      step, budget=self.budget, max_steps=3, within_s=45.0)
-            step(self._browser.screenshot(), "", None)
+                                      step, budget=self.budget, max_steps=3, within_s=45.0, shots=shots)
+            self.screen.web(self._browser.screenshot(), first, "", None, url=self._browser.url())
         except (*CLOUD_TROUBLE, TimeoutError) as e:
+            if isinstance(e, web.BrowserTrouble):  # a fresh browser next time
+                self._browser.close()
+                self._browser = None
             self._source, self._reason = "device", f"the web didn't answer ({type(e).__name__})"
             return "I couldn't get that page just now. Please try again in a little while."
         finally:
             self.screen.doing("Waiting")
-        self.screen.sent("Muse Spark (computer use)", f"{run.steps + 1} screenshots of the web page")
-        self.screen.used("Muse Spark (computer use)", "cloud", run.steps + 1)
-        self._web = (first, run.response_id, self.clock())
+            if shots[0]:
+                self.screen.sent("Muse Spark (computer use)", f"{shots[0]} screenshots of the web page")
+                self.screen.used("Muse Spark (computer use)", "cloud", shots[0])
+        self._web = (first, None if run.stopped else run.response_id, self.clock())
         self._source, self._reason = "cloud", "Muse Spark used the web: screenshots of web pages, never the camera"
         if "sign-in" in run.stopped:
             return "That page wants a sign-in or a payment, so I've stopped there. I'll leave that part to you."
@@ -813,7 +833,7 @@ class Andy:
         return f"I see your {f.label}{yours}, {where}." + (" Right where I last saw it." if f.remembered else "")
 
     def _not_found(self, thing: str) -> str:
-        if "not yours" in self.finder.why:
+        if self._not_yours or "not yours" in self.finder.why:
             return f"I saw a {thing}, but not yours. Could you tell me where you last had {_it(thing)}?"
         if "picture" in self.finder.why:
             return f"I only saw a picture of {thing} on a screen. Could you tell me where you last had {_it(thing)}?"

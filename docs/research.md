@@ -471,6 +471,11 @@ API's `computer` tool; each `computer_call` carries a batch of `actions`, and th
 - **The follow-up quirk:** a screenshot can be sent as an input image only in a run's first request ("native computer
   input images are supported only in the initial request"), so follow-ups send words and the model asks for a
   screenshot.
+- **Never the home network:** the browser refuses every request to this computer or the home network (loopback, private
+  addresses, `.local`), whatever a page links to. Without it, a page or a picked link could load the TV page
+  (127.0.0.1:8765), whose state holds the last camera picture, and the next screenshot would send it to the cloud. Page
+  loads stay under 2 s with the check. Found by a second reviewer, with 14 other defects from that night, all fixed with
+  tests (among them: "done" and "stop" couldn't reach a running turn, because turns ran on the listening thread).
 
 ## 21. A map of where things are, drawn from words (2026-10-27, night)
 

@@ -159,3 +159,45 @@ def test_done_reaches_the_game_without_waiting_for_it(tmp_path):
     a.following = a.playing = True
     assert VoiceLoop(a).heard("okay, done") == "Stopped."
     assert a._stop_following.is_set()
+
+
+@pytest.mark.parametrize("text", ["okay thanks", "ok, that's enough", "sure, maybe later", "okay bye",
+                                  "ok I'm going to bed"])
+def test_no_thanks_is_not_another_round(tmp_path, text):
+    a, _, _ = andy(tmp_path=tmp_path)
+    a._again_until = a.clock() + 30
+    a.cup_game = lambda: "another round"
+    assert "another round" not in a.hear(text)
+
+
+@pytest.mark.parametrize("text", ["yes", "yes please", "okay, let's go", "sure, one more", "again!"])
+def test_yes_is_another_round(tmp_path, text):
+    a, _, _ = andy(tmp_path=tmp_path)
+    a._again_until = a.clock() + 30
+    a.cup_game = lambda: "another round"
+    assert "another round" in a.hear(text)
+
+
+def test_a_ghost_track_doesnt_copy_a_cup():
+    end = Mask("cup", (0, 0, 1, 1), 0.9, (600.0, 640.0))
+    cup = Track(1, [(f, 600.0, 640.0) for f in range(0, 26)], end)
+    ghost = Track(2, [(f, 602.0, 641.0) for f in range(0, 3)], None)
+    joined = cupgame.stitch([ghost, cup], near=150)
+    assert sum(t.end is end for t in joined) == 1
+
+
+def test_the_camera_failing_during_the_reveal_still_ends_the_game(tmp_path, monkeypatch):
+    from heyandy_meta.models.sam_local import LocalUnavailable
+
+    monkeypatch.setattr(cupgame, "play", partial(cupgame.play, fps=50))
+    a, _, _ = andy(tmp_path=tmp_path)
+    sam = Sam(revealed=True)
+
+    def broken(frame, thing):
+        if thing == "ball" and any(e[0] == "point" for e in a.body.log):
+            raise LocalUnavailable("gone")
+        return Sam.find(sam, frame, thing)
+
+    sam.find = broken
+    a.body, a.segmenter = GameBody(), sam
+    assert "play again" in a.hear("let's play the cup game") and not a.following
