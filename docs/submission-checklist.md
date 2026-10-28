@@ -5,7 +5,7 @@ online, so its screen is: the Hugging Face Space). The form is at
 https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-read the live rules page before submitting.
 
 **Before, on November 3**
-- [ ] The founder's tests of what hasn't been tried on the robot yet (`docs/private/founder-notes.md`: the cup game, my
+- [ ] The founder's tests of what hasn't been tried on the robot yet (the founder's own test list: the cup game, my
       mug, going out, Spanish, "what's that?"), so the video and the text show only what works.
 - [ ] `uv run python scripts/preflight.py --cloud` says READY (and again on the morning of November 4).
 - [ ] Film: the uncut find, follow the mug (or the cup game), several things at once, the network unplugged, a reminder

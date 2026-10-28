@@ -1,6 +1,6 @@
 # Submission text (draft, for the form on November 4)
 
-*About 1,200 words with the table. Fill in the [brackets] on the day; check every number against `evals/results/` first.*
+*About 1,350 words with the table. Fill in the [brackets] on the day; check every number against `evals/results/` first.*
 
 ---
 
@@ -37,7 +37,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 - **"Draw me a lighthouse at dawn"**, **"draw me a map of my things"** (Muse Image, from words only), questions about
   the world with their sources, conversation, and **"habla español"**: Andy hears, speaks and shows the TV in Spanish.
 - **Several things at once:** "find my glasses, then my keys, then remind me in an hour to leave" goes to an agent with
-  all of Andy's abilities as tools (Muse Spark, or Glimmer offline).
+  Andy's everyday abilities as tools (Muse Spark, or Glimmer offline).
 
 ## Meta's models, and where each one runs
 
@@ -56,6 +56,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
 this house"; "Andy, what did you send to the cloud today?" adds up the day's. Unplug the network and Andy carries on.
+(The one exception is a switch for filming in a staged room: SAM 3.1 through the API, and the TV says so.)
 
 ## Technical depth (what was hard)
 
@@ -82,13 +83,13 @@ wrong one 20 times in 100; **Glimmer's plan 17 of 20, 1 wrong** (Muse Spark 16 o
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12** (6 of 12 before the fixes
 this scorecard showed were needed), **Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every request the program made recorded on its way
-out): **no camera picture reached the cloud** (21 taken), **every word sent was on its turn's receipt**, crisis words
-reached no model; offline, nothing at all went.
+out): **no camera picture reached the cloud** (21 taken); **every word from the home that was sent was on its turn's
+receipt** (the rest were Andy's own instructions); crisis words reached no model; offline, nothing at all went.
 *Spanish:* **40 of 41** written requests and **37 of 41** spoken ones reach the right ability.
 *On the robot:* a cup found in 7.5 s and a keyboard in 7.1 s; first word 0.7 to 1 s after Andy understands you;
 [the physical scorecard: N of M].
-*Not yet tried on the robot with real things or a person:* the cup game (synthetic shuffles: 4 of 5), my mug, "what's
-that?" (public photos: 4 of 6), going out (robot simulated). Every result, failures included: `evals/results/`.
+*Not yet tried on the robot with real things or a person:* the cup game (synthetic shuffles: 3 of 5), my mug, "what's
+that?" (public photos: 4 of 6), going out (robot simulated). Every result, failures included: `evals/results/` and `docs/research.md`.
 
 ## Safety and honesty
 

@@ -9,8 +9,9 @@ trademark application.
 1. **Ask "where are my glasses?"** The robot looks around the room.
 2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points.
 3. **The TV shows the picture it saw them in,** with the mask drawn. The picture is kept in memory only, never saved.
-4. **Muse Spark plans the search; Muse Glimmer works offline.** Muse Spark plans through the Meta Model API. Muse Glimmer
-   runs on the computer beside the robot, so the robot keeps working with no internet.
+4. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
+   agent: Muse Spark through the Meta Model API, or Muse Glimmer on the computer beside the robot, so the robot keeps
+   working with no internet. A plain "where are my glasses?" uses a fixed sweep, which needs no model to plan.
 5. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
 6. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
@@ -18,7 +19,7 @@ trademark application.
 7. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
    points at any still here ("Your keys are still here, on the desk"), says which it didn't see (so they're probably
    with you), reminds you of the next reminder, and, looked up by Muse Spark while the robot was checking, whether to
-   take an umbrella. 7 to 8 s with the robot simulated; the TV shows the checklist.
+   take an umbrella. 7 to 8.5 s with the robot simulated; the TV shows the checklist.
 8. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
    shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
    cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
@@ -44,7 +45,9 @@ trademark application.
    (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, forget,
    what it remembers, reminders, pictures, look up, show on the TV) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
-15. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
+15. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
+   moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
+   ("every morning at 8").
 16. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Kokoro
    speaks with a Spanish voice, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
    a sentence), so the abilities work in Spanish too (40 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
@@ -58,6 +61,8 @@ trademark application.
    privacy receipt shows exactly what went, every turn. **"Andy, what did you send to the cloud today?"** adds up the
    day's receipts on the computer beside the robot (so asking sends nothing): "Today, 21 of your 24 requests stayed in
    this house. For the other 3, I sent 68 words to Muse Spark..." Only the counts are kept, in memory, never the words.
+   One switch is the exception, for filming only: `--staged-scene`, in a staged room with nobody in it, sends the camera's
+   pictures to SAM 3.1 through the Model API, and the TV and the receipt say so every time.
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
@@ -97,7 +102,8 @@ trademark application.
   numbers), "I'm going out" (pointing at what's still here, the weather looked up at the same time), "what's that?"
   (looking where the person points), the web on the TV (Muse Spark's computer use, every action reviewed in code), a
   map of where things are (Muse Image, from words), Andy in Spanish (hearing, voice, TV and every ability), and an
-  agent that plans requests with several parts over all of these.
+  agent that plans requests with several parts over the everyday abilities (finding, following, looking, keeping an
+  eye on, reminders, pictures, looking things up, the web).
 - **Muse Spark** for web answers with their sources (US units, only the final answer spoken) and harder conversation;
   **Muse Image** for pictures from the person's words, shown on the TV and saved.
 - **Safety in code:** "I'm an AI" at the start and every three hours; a crisis reply with the 988 line before any other
@@ -223,7 +229,8 @@ the network off, the same day sent nothing to the cloud, and Andy answered every
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second
 shuffle replays in about 10 to 13 s.
-At the camera's 10 frames a second it picked the right cup in 4 of 5 runs; at 5 frames a second it lost the cups in all 4. Not
+At the camera's 10 frames a second it picked the right cup in 3 of 5 runs with the detection batches that fit beside the
+safety models (4 of 5 with larger ones); at 5 frames a second it lost the cups in all 4. Not
 yet scored with real cups. The physical scorecard (`evals/physical.py`) comes next.
 
 ## What doesn't work yet

@@ -22,7 +22,7 @@ can't turn off data retention for hackathon credits; see `research.md`), and the
 ## Verify it
 
 ```bash
-systemctl --user status heyandy-glimmer heyandy-sam heyandy-voice
+systemctl --user status heyandy-glimmer heyandy-sam heyandy-voice heyandy-guard
 uv run python scripts/verify_open_weights.py
 ```
 
