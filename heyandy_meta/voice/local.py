@@ -23,9 +23,11 @@ class LocalVoice:
         except (urllib.error.URLError, TimeoutError) as e:
             raise LocalUnavailable(f"voice server at {self.endpoint}: {e}") from e
 
+    language = "eng_Latn"  # what Omnilingual ASR is told it will hear ("spa_Latn" when Andy speaks Spanish)
+
     def transcribe(self, samples: np.ndarray, rate: int = 16000) -> str:
         data = np.asarray(samples, dtype="<f4").tobytes()
-        with self._post("/transcribe", data, {"X-Sample-Rate": str(rate)}) as r:
+        with self._post("/transcribe", data, {"X-Sample-Rate": str(rate), "X-Language": self.language}) as r:
             return json.load(r)["text"]
 
     def speak(self, text: str, rate: int = 16000) -> np.ndarray:

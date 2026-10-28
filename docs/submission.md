@@ -40,6 +40,10 @@ the house.
 - **"Andy, I'm going out."** Andy looks again where it last saw your keys, wallet and glasses, and points at any still
   here: "Don't forget your keys." Meanwhile Muse Spark looks up whether you'll need an umbrella. About 7 seconds, both
   at once; the TV shows the checklist.
+- **"Andy, habla español."** Andy hears and speaks Spanish, the first language of many people in South Florida.
+  Omnilingual ASR is told to hear Spanish, and Muse Glimmer translates between the person and Andy's English rules on
+  the computer beside the robot, in half a second, so every ability works in Spanish and nothing leaves the house for
+  it. The AI disclosure and the crisis reply are written by hand.
 - **"Andy, let's play the cup game."** Hide a ball under a cup and shuffle. Andy records the shuffle, replays it
   through SAM 3.1's Object Multiplex (every cup tracked at once, on the computer beside the robot), points at the cup
   with the ball, and keeps score. The TV draws each cup's path through the shuffle.
@@ -69,8 +73,8 @@ the house.
 | Model | Where | What it does |
 |---|---|---|
 | **SAM 3.1** (open weights, `sam3.1_multiplex.pt`) | GPU 1, on the computer beside the robot | Finds things in camera frames (several per frame for the idle glance), finds the person for reminders, follows a moving thing; **Object Multiplex tracks every cup at once** in the cup game |
-| **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
-| **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language |
+| **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; translating to and from Spanish; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
+| **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language (English or Spanish) |
 | **DINOv2** (open weights, base) | GPU 1 | Knows the person's own things by sight, from SAM 3.1's mask of the thing alone, kept as numbers |
 | **Muse Spark 1.3** (Model API) | The cloud, **words only** (and, for "show me … on the TV", screenshots of web pages) | Plans hinted searches when online; web answers with sources; harder conversation; **computer use** in a clean browser on the TV |
 | **Muse Image 1.0** (Model API) | The cloud, **words only** | Pictures from the person's words, refined over turns |
@@ -105,6 +109,10 @@ Every turn, the TV lists which models worked on it and where.
   reviews each batch before acknowledging it: no personal details typed, and a sign-in or payment page ends the run.
   Clicking through search results took minutes (each model turn 10 to 15 s); letting Muse Spark's web search pick the
   page first puts it on the TV in 6 to 11 s.
+- **Translation in half a second on a reasoning model.** Glimmer reasons privately before every answer (about 2 s,
+  and sometimes all of its tokens, even for "Let me look"), whatever its reasoning setting. Starting its reply at the
+  answer itself (" to=user"), past the reasoning, brings a sentence to 0.25 to 0.6 s. Two worked examples stop it copying
+  Spanish back unchanged, and Andy's short phrases are written by hand ("Let me look" had come back as "look at me").
 - **Never a false promise:** a chat model can't claim to set a reminder or watch something; code checks every sentence
   before it's said.
 

@@ -44,6 +44,7 @@ class ScreenState:
         self.watching_map: list[dict] = []  # the same as directions, for the TV's map
         self._help_until = 0.0
         self.quiet_text = ""  # "Quiet until 9:40", while Andy keeps quiet
+        self.language = ""  # "Español", while Andy hears and speaks Spanish
         self._notice: tuple[str, float] | None = None  # a short notice ("Volume ●●●●○○○"), and until when
         self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
         self._drawing: tuple[bytes, str, str, float] | None = None  # (WebP, what was asked, where it's saved, until)
@@ -187,7 +188,7 @@ class ScreenState:
                    "watching": list(self.watching), "map": list(self.watching_map),
                    "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None,
-                   "quiet": self.quiet_text, "outbox": list(self.outbox),
+                   "quiet": self.quiet_text, "outbox": list(self.outbox), "language": self.language,
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else "",
                    "game": None, "checklist": self.checklist}
             if self._web and self._clock() >= self._web["until"]:

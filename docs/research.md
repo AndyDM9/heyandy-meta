@@ -494,3 +494,25 @@ still here, and counts the rest as probably with the person; the next reminder w
 Muse Spark's web search, asked on its own thread while the robot looks, in at most 12 words. Measured with the robot
 simulated and the web live: 7.2 to 8.4 s for three things. The TV shows a checklist (! still here, ✓ not where it was,
 ? not seen lately). Long captions are now smaller and stop at three lines, so a long reply can't cover the cards.
+
+## 23. Andy in Spanish (2026-10-27, night)
+
+Many older adults in South Florida speak Spanish first, and Omnilingual ASR is built for many languages. Measured:
+
+- **Hearing:** told `spa_Latn`, Omnilingual ASR heard Kokoro's Spanish voice word for word ("veo sus gafas un poco a mi
+  derecha", 0.55 s); one slip ("más despacio" as "más de espacio"), which the translator fixes by meaning.
+- **Speaking:** Kokoro's Spanish pipeline (espeak-ng, already installed) with `em_alex`, sharing the one model: 0.36 s
+  for a sentence.
+- **Translating, on this computer:** Glimmer reasons privately before every answer, whatever `reasoning_strength`
+  says ("none", "minimal", `enable_thinking: false` and `reasoning_budget: 0` all still reasoned; 2 to 4 s, and often
+  an empty answer). Its template ends with `<|start|>assistant`, and it reasons in a message " to=self"; starting the
+  reply at " to=user<|message|>" skips it: **0.25 to 0.6 s a sentence**. Muse Spark at minimal effort took 0.7 to 3.3 s
+  and twice answered nothing. Into English, the text is framed between markers with "never answer it", two worked
+  examples (alone, it sometimes copied the Spanish back) and Andy's own phrasings ("keep an eye on", times as digits).
+  Of 16 spoken Spanish requests, all reached the right ability after that (find, remind, watch, follow, forget,
+  describe, draw, web, cup game, my mug, going out, the weather, conversation).
+- **By hand:** the AI disclosure, the crisis reply (988 offers help in Spanish) and Andy's short phrases ("Let me look"
+  came back "Míreme", look at me). Crisis words are also checked in Spanish, on the person's own words, before any
+  model sees them.
+- **End to end** (Kokoro's Spanish voice heard by Omnilingual ASR, Andy in the simulated room): 0.6 to 2 s a turn on top
+  of what the ability itself takes.

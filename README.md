@@ -42,9 +42,14 @@ trademark application.
    pictures, look up) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
 14. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
-15. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+15. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Kokoro
+   speaks with a Spanish voice, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
+   a sentence), so every ability works and the person's words stay home. Saying it's an AI, the crisis reply (988 has
+   help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
+   back; it's remembered.
+16. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-16. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+17. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
    the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
    steps.
 
@@ -187,7 +192,8 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
   and held conversations (first word 0.7 to 1 s after it understands); the scored runs come next
   (`docs/research.md` sections 8 to 11).
-- **English only** for now: Omnilingual ASR can hear far more languages, but Kokoro speaks English here.
+- **English and Spanish** for now: Omnilingual ASR can hear far more languages; Kokoro speaks eight, and adding one
+  is a voice and a few hand-written phrases. The TV's own labels stay in English; captions follow Andy's language.
 
 ## Licence
 Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.

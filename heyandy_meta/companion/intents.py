@@ -22,7 +22,7 @@ REFINE = re.compile(r"^\W*(?:(?:now|and|ok|okay)\s+)?(?:make (?:it|him|her|them|
 FOLLOW = re.compile(r"\b(?:follow|track)\s+" + THING + r"(?:\s+with your eyes)?(?:\?|$|[,.!]| please)", re.I)
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
-DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is) (?:this|that)\b(?! (?:song|noise|sound))"
+DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have) in my hands?\b|\bwhat(?:'s| is) (?:this|that)\b(?! (?:song|noise|sound))"
                       r"|\bwhat(?:'s| is) on the (?P<place>table|desk|counter|shelf|floor|sofa|couch|bed|chair)\b"
                       r"|\bwhat (?:can|do) you see\b|\bdescribe what you see\b|\bwhat colou?r is (?:this|it)\b", re.I)
 VOICE = {  # how Andy speaks, set by voice and remembered

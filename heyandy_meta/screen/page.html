@@ -168,6 +168,7 @@
       <div class="badges">
         <span class="badge" id="notice" role="status" hidden></span>
         <span class="badge" id="quiet" hidden></span>
+        <span class="badge" id="lang" hidden></span>
         <span class="badge" id="offline" hidden>Offline: working on this computer</span>
         <span class="badge" id="private"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>Pictures and voice stay on this computer</span>
         <span class="badge" id="staged" hidden>Staged scene: camera pictures go to Meta's Model API</span>
@@ -207,7 +208,7 @@
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out",
+  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -433,6 +434,7 @@
     $("offline").hidden = s.online;
     $("notice").hidden = !s.notice; $("notice").textContent = s.notice || "";
     $("quiet").hidden = !s.quiet; $("quiet").textContent = s.quiet || "";
+    $("lang").hidden = !s.language; $("lang").textContent = s.language || "";
     $("private").hidden = s.staged; $("staged").hidden = !s.staged;
     side(s); card(s); models(s.models);
     $("why").textContent = s.reason ? "Why: " + s.reason : "";

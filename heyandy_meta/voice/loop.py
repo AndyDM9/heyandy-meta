@@ -13,10 +13,10 @@ import time
 log = logging.getLogger(__name__)
 
 # "Andy" as speech-to-text writes it: the name, and what it was heard as on 2026-10-27 ("and they", "earndy").
-NAME = r"(?:andy|andi|andie|andee|endy|earndy|handy|annie)"
-WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay)\s+)?(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
+NAME = r"(?:andy|andi|andí|andie|andee|endy|earndy|handy|annie)"
+WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
 # The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.
-LATER = re.compile(r"\b(?:(?:hey|hi|hello|ok|okay)\s+)?" + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
+LATER = re.compile(r"\b(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
 
 
 class VoiceLoop:
@@ -84,6 +84,7 @@ class VoiceLoop:
                 continue
             self.utterance_end = time.monotonic() - endpointer.end_silence_s
             try:
+                voice.language = getattr(self.andy, "asr_language", "eng_Latn")  # what Omnilingual ASR will hear
                 text = voice.transcribe(utterance)
             except Exception as e:  # noqa: BLE001 - one bad utterance must not leave Andy deaf
                 log.warning("hearing failed: %s: %s", type(e).__name__, e)
@@ -126,8 +127,10 @@ def _looping(text: str) -> bool:
     return max(grams.count(g) for g in set(grams)) >= 4 or len(set(words)) / len(words) < 0.35
 
 
-STOP = re.compile(r"\b(?:stop|enough|that's enough|okay thanks|thank you)\b", re.I)
-DONE = re.compile(r"\b(?:done|ready|finished|where(?:'s| is) (?:it|the ball)|which (?:one|cup)|your turn|go ahead)\b",
+STOP = re.compile(r"\b(?:stop|enough|that's enough|okay thanks|thank you|basta|para|detente|alto|ya basta|gracias)\b",
+                  re.I)
+DONE = re.compile(r"\b(?:done|ready|finished|where(?:'s| is) (?:it|the ball)|which (?:one|cup)|your turn|go ahead|"
+                  r"listo|lista|ya está|terminé|cuál|dónde está)\b",
                   re.I)  # the cup game: the shuffle is over
 SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)
 

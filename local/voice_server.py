@@ -5,13 +5,16 @@ Audio is held in memory for one request; nothing is written or logged.
 
     CUDA_VISIBLE_DEVICES=1 ~/opt/voice/.venv/bin/python local/voice_server.py
 
-POST /transcribe  body: float32 little-endian mono samples; header X-Sample-Rate (default 16000)
+POST /transcribe  body: float32 little-endian mono samples; headers X-Sample-Rate (default 16000), X-Language
+                  (Omnilingual ASR's code, default eng_Latn; spa_Latn for Spanish)
   -> {"text": "where are my glasses", "seconds": 0.04}
 POST /speak       {"text": "I see your glasses.", "voice": "am_michael", "rate": 16000, "speed": 1.0, "loudness": -21}
+                  The voice's first letter is Kokoro's language: a(merican English), e(spañol: em_alex, ef_dora), ...
   -> body: float32 little-endian mono samples at "rate" (default 24000, Kokoro's own); headers X-Sample-Rate, X-Seconds
 """
 import argparse
 import json
+import re
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -38,7 +41,17 @@ def load(asr_card: str):
     from kokoro import KPipeline
     from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
 
-    return ASRInferencePipeline(model_card=asr_card, device="cuda"), KPipeline(lang_code="a", repo_id="hexgrad/Kokoro-82M")
+    english = KPipeline(lang_code="a", repo_id="hexgrad/Kokoro-82M")
+    pipelines = {"a": english}
+
+    def tts(text, voice, speed):
+        """Kokoro, in the voice's own language: one pipeline per language, all sharing the one model."""
+        code = voice[:1] if voice[:1] in "abefhijpz" else "a"
+        if code not in pipelines:
+            pipelines[code] = KPipeline(lang_code=code, repo_id="hexgrad/Kokoro-82M", model=english.model)
+        return pipelines[code](text, voice=voice, speed=speed)
+
+    return ASRInferencePipeline(model_card=asr_card, device="cuda"), tts
 
 
 def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
@@ -52,6 +65,9 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
             n = int(self.headers.get("Content-Length") or 0)
             if self.path == "/transcribe":
                 rate = int(self.headers.get("X-Sample-Rate") or 16000)
+                lang = self.headers.get("X-Language") or LANG
+                if not re.fullmatch(r"[a-z]{3}_[A-Z][a-z]{3}", lang):
+                    return self._json(400, {"error": "X-Language: a code like eng_Latn or spa_Latn"})
                 if not 0 < n <= MAX_SECONDS * rate * 4 or n % 4:
                     return self._json(413, {"error": f"send 0 to {MAX_SECONDS} s of float32 samples"})
                 audio = torch.from_numpy(np.frombuffer(self.rfile.read(n), dtype="<f4").copy())
@@ -62,7 +78,7 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                     audio = audio * (0.9 / peak)  # a voice across the room arrives quiet; even it out
                 start = time.monotonic()
                 with lock:
-                    kw = {"lang": [LANG]} if "LLM" in asr_card else {}  # CTC models can't be told the language
+                    kw = {"lang": [lang]} if "LLM" in asr_card else {}  # CTC models can't be told the language
                     text = asr.transcribe([{"waveform": audio.numpy(), "sample_rate": 16000}], batch_size=1, **kw)[0]
                 return self._json(200, {"text": text.strip(), "seconds": round(time.monotonic() - start, 3)})
             if self.path == "/speak":

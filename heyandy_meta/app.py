@@ -22,10 +22,11 @@ from .budget import Budget, BudgetExceeded
 from .companion import answers
 from .companion.attention import face_person
 from .companion import cupgame, pictures, web
+from .companion.language import LANGUAGES, asked_for
 from .companion.follow import follow
 from .companion.intents import REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
-from .companion.safety import DISCLOSURE, Disclosure, respond
+from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
@@ -96,6 +97,8 @@ class Andy:
         self.playing = False  # the cup game: "done" ends the shuffle
         self.cup_score = [0, 0]  # Andy, the person: this session's cup games, in memory only
         self._again_until = 0.0  # Andy just asked "again?" after a cup game
+        self.language = "en"  # "es": Andy hears and speaks Spanish (companion/language.py)
+        self.translator = None  # Muse Glimmer on this computer, translating; set where Glimmer runs
         self._browser = None  # a clean browser on this computer, made when first asked to use the web
         self._web: tuple[str, str, float] | None = None  # (the request, the last run's response id, when)
         self._drawing = None  # the last picture Muse Image made, to refine
@@ -114,8 +117,14 @@ class Andy:
 
     # --- a turn ---
 
+    @property
+    def asr_language(self) -> str:
+        return LANGUAGES[self.language].asr
+
     def hear(self, text: str) -> str:
         with self.lock:
+            if self.language != "en" and self.translator is not None and not crisis(text):
+                text = self.translator.to_english(text, self.language)  # the rules and tools work in English
             self.screen.new_turn()
             if self.clock() - self._last_turn > HISTORY_FORGET_S:
                 self.history = []  # a new conversation
@@ -166,6 +175,8 @@ class Andy:
             face(yaw, pitch)  # and keep easing towards them while talking
 
     def say(self, text: str) -> None:
+        if self.language != "en" and self.translator is not None:
+            text = self.translator.spoken(text, self.language, DISCLOSURE, CRISIS_REPLY)
         self.screen.said(text, self._source, self._reason)
         before = (self.screen.state, self.screen.head)
         self.screen.doing("Speaking", before[1] if before[0] == "Pointing" else "Looking at you")
@@ -202,6 +213,8 @@ class Andy:
         self._asked = None
         today = _now(self.clock).date()
         brief = bool(MORNING.search(text)) and self._briefed != today
+        if (to := asked_for(text)) is not None:
+            return self.set_language(to)
         if brief or needs_agent(text):
             done = self.agent(text, brief)
             if done is not None:
@@ -453,10 +466,25 @@ class Andy:
         if motion is not None:
             motion.liveliness = value
 
+    def set_language(self, to: str) -> str:
+        """"Andy, habla español" / "speak English": hearing, voice and captions switch, and it's remembered."""
+        if to != "en" and self.translator is None:
+            return "I can only speak English on this computer for now."
+        if to == self.language:
+            return "Okay." if to == "en" else "I'm already speaking Spanish."
+        self.language = to
+        if self.voice is not None:
+            self.voice.voice = LANGUAGES[to].voice
+        self.screen.notice("Español" if to == "es" else "English")
+        self.screen.language = "Español · on this computer" if to == "es" else ""
+        self.save_voice()
+        self._source, self._reason = "device", "hearing and speaking switched, on this computer"
+        return "Okay, I'll speak Spanish now." if to == "es" else "Okay, I'll speak English now."
+
     def save_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
         path.parent.mkdir(parents=True, exist_ok=True)
-        saved = {"liveliness": self.liveliness}
+        saved = {"liveliness": self.liveliness, "language": self.language}
         if self.voice is not None:
             saved.update(speed=self.voice.speed, loudness=self.voice.loudness)
         path.write_text(json.dumps(saved))
@@ -469,6 +497,11 @@ class Andy:
                 self.voice.speed, self.voice.loudness = saved.get("speed", 1.0), saved.get("loudness", -21.0)
             self.liveliness = saved.get("liveliness", 1.0)
             self._set_liveliness(self.liveliness)
+            if saved.get("language", "en") in LANGUAGES and (saved.get("language") == "en" or self.translator):
+                self.language = saved.get("language", "en")
+                self.screen.language = "Español · on this computer" if self.language == "es" else ""
+                if self.voice is not None:
+                    self.voice.voice = LANGUAGES[self.language].voice
 
     def agent(self, request: str, brief: bool = False) -> str | None:
         """Several things at once, or the morning briefing: an agent plans over all of Andy's abilities. Muse Spark

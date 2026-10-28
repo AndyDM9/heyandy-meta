@@ -5,7 +5,7 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: idle, finding, found, mine, cups, out, web, answer, drawing, memory, help.
+Scenes: idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, help.
 """
 import argparse
 import functools
@@ -24,7 +24,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("idle", "finding", "found", "mine", "cups", "out", "web", "answer", "drawing", "memory", "help")
+SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
 
@@ -151,6 +151,21 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("Muse Spark + web search", "cloud")
         state.sent("Muse Spark + web search", "Going out now: will I need an umbrella, a jacket or sun protection? "
                                               "(home: Sunny Isles Beach, Florida)")
+    elif scene == "spanish":
+        jpeg, mask = sample_frame()
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3)
+        state.language = "Español · on this computer"
+        state.looking("mug")
+        state.timer_start()
+        state.step("look: a little to my left, a little to my right")
+        state.timer_stop()
+        state._timer = (time.monotonic() - 8.1, time.monotonic())
+        state.found(found, "Veo su taza azul, un poco a mi derecha.")
+        state.said("Veo su taza azul, un poco a mi derecha.", "device", "fixed search on this computer")
+        state.doing("Pointing", "At your mug")
+        for name, times in (("Omnilingual ASR (hearing, Spanish)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
+                            ("Kokoro (voice, Spanish)", 1)):
+            state.used(name, "device", times)
     elif scene == "web":
         state.web(SAMPLE_WEB.read_bytes(), "Show me what banana bread is", "Opening the page", (378, 273),
                   url="https://en.wikipedia.org/wiki/Banana_bread")

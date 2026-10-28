@@ -16,7 +16,10 @@ CRISIS_REPLY = ("I'm a robot, so I can't help with this the way a person can. Yo
                 "and Crisis Lifeline, any time, day or night. If you're in danger right now, please call 911.")
 CRISIS = re.compile(
     r"\b(kill(ing)? myself|end(ing)? (it all|my life)|suicid\w*|hurt(ing)? myself|harm(ing)? myself|self[- ]harm"
-    r"|(don'?t|do not) want to (live|be alive|be here)|want to die|better off dead)\b", re.IGNORECASE)
+    r"|(don'?t|do not) want to (live|be alive|be here)|want to die|better off dead"
+    # Spanish (Andy can speak it): checked on the person's own words, before any translation
+    r"|suicidarme|matarme|quitarme la vida|acabar con (todo|mi vida)|no quiero (vivir|seguir viviendo)|quiero morir(me)?"
+    r"|hacerme daño|estar[ií]a mejor muert[oa])\b", re.IGNORECASE)
 
 
 def crisis(text: str) -> bool:
