@@ -56,7 +56,9 @@ trademark application.
   same checked tools (named views and numbered places, never motor values), ten looks at most, no repeat looks, and
   Andy's words written from the tools' results, never the model's.
 - **Following:** "Andy, follow the mug": the eyes follow it as it's moved, about 2.4 frames a second.
-- **Memory:** an opt-in idle glance notes where chosen things are (label, direction, time; never a picture).
+- **Memory with a history, in words:** an opt-in idle glance notes where chosen things are; Glimmer describes each new
+  place by what's near it ("on the desk in front of the monitor, behind the keyboard"), and Andy notes when a thing
+  moved. "When did you last see my keys?" is answered from memory without moving. Never a picture.
 - **Voice on this computer:** Omnilingual ASR and Kokoro, the robot's microphone array (and the voice's direction),
   "Andy" as the wake word with its common mishearings, answers spoken sentence by sentence: the first word about a
   second after Andy understands.

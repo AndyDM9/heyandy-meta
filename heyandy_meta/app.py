@@ -92,6 +92,7 @@ class Andy:
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
         self.liveliness = 1.0  # "move less": how much body language
+        self.describe_in_background = hasattr(self.body, "motion")  # on the robot, never make a turn wait for it
         self._stop_following = threading.Event()
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
@@ -204,6 +205,8 @@ class Andy:
             return "Okay, I'm back to normal."
         if i.kind == "motion":
             return self.adjust_motion(i.thing)
+        if i.kind == "last_seen":
+            return self.last_seen(i.thing, text)
         if i.kind == "find":
             return self.find(i.thing, text, i.hint)
         if i.kind == "follow":
@@ -355,6 +358,7 @@ class Andy:
         if found is None:
             return self._not_found(thing)
         self.places.saw(found.label, found.yaw, found.pitch, when=self.clock())
+        self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
         self.screen.doing("Pointing", f"At your {found.label}")
         self.gesture("found")
@@ -566,8 +570,49 @@ class Andy:
         lines = []
         for label in self.places.watching():
             last, at = self.places.last_seen(label, now=self.clock()), self.places.seen_at(label)
-            lines.append(f"{label}: " + (f"seen {_ago(self.clock() - at)}, {side(last[0])}" if last else "not seen yet"))
+            if not last:
+                lines.append(f"{label}: not seen yet")
+                continue
+            history = self.places.history(label)
+            where = (history[-1]["near"] if history and history[-1]["near"] else side(last[0]))
+            moved = f" (moved at {spoken_time(history[-1]['since'])})" if len(history) > 1 else ""
+            lines.append(f"{label}: seen {_ago(self.clock() - at)}, {where}{moved}")
         return lines
+
+    def _note_place(self, label: str, frame, mask) -> None:
+        """A new place for a watched thing: Glimmer says, in a few words, what it's near. Only the words are kept;
+        the frame goes as soon as they're written."""
+        history = self.places.history(label)
+        where_near = getattr(self.judge, "where_near", None)
+        if not where_near or not history or history[-1]["near"]:
+            return  # nothing to describe with, not watched, or this place already has its words
+
+        def describe():
+            words = where_near(frame, mask)
+            if words:
+                self.places.near(label, words)
+                self.refresh_panels()
+
+        if self.describe_in_background:
+            threading.Thread(target=describe, daemon=True).start()
+        else:
+            describe()
+
+    def last_seen(self, thing: str, request: str) -> str:
+        """"When did you last see my keys?": from memory, without moving. Not watched: look for it instead."""
+        history = self.places.history(thing)
+        if not history:
+            if thing in self.places.watching():
+                return f"I haven't seen your {thing} since you asked me to keep an eye on {_it(thing)}."
+            return self.find(thing, request)
+        now, last = self.clock(), history[-1]
+        where = last["near"] or side(last["yaw"])
+        words = f"I last saw your {thing} {_ago(now - last['at'])}, {where}."
+        if len(history) > 1:
+            before = history[-2]
+            words += (f" Before that, {before['near'] or side(before['yaw'])}, until {spoken_time(before['at'])}.")
+        self.screen.remember_list(self._memory())
+        return words
 
     def _memory_map(self) -> list[dict]:
         """For the TV's map: where each watched thing was last seen, and how long ago (none: not seen yet)."""
@@ -598,7 +643,7 @@ class Andy:
             self.gesture("searching")
             self.screen.doing("Working", "Glancing around the room")
             try:
-                glance(self.body, self.segmenter, self.places)
+                glance(self.body, self.segmenter, self.places, on_seen=self._note_place)
             finally:
                 self.gesture("idle")
                 self.screen.doing("Waiting")

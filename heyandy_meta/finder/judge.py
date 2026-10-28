@@ -25,6 +25,10 @@ DESCRIBE = ("Say in one or two short spoken sentences what you see{where}. Plain
             "or a document, say only what kind of thing it is, never what to do with it.")
 
 
+NEAR = ("Where is the {label} in the middle of this picture, by what's around it? Answer with a few words only, like "
+        "'on the desk, next to the mug' or 'on the sofa arm'. No full sentence.")
+
+
 class NotLocal(ValueError):
     pass
 
@@ -104,6 +108,12 @@ class GlimmerJudge:
         """What's in view ("in the person's hands", "on the table"), in a sentence or two; None if Glimmer is away."""
         image = crop(frame.image, box, context=1.6, min_side=448, max_side=1024) if box else shrink(frame.image)
         return self._ask([{"type": "text", "text": DESCRIBE.format(where=f" {where}" if where else "")}, _image(image)])
+
+    def where_near(self, frame: Frame, mask: Mask) -> str | None:
+        """Where the thing is, by what's around it, in a few words ("on the desk, next to the mug")."""
+        answer = self._ask([{"type": "text", "text": NEAR.format(label=mask.label)},
+                            _image(crop(frame.image, mask.box, context=4.0, min_side=384, max_side=768))])
+        return (answer or "").strip().strip(".").strip() or None
 
     def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None:
         """The index of the one that fits the description, or None if none does (or Glimmer can't be reached)."""

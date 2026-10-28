@@ -388,3 +388,12 @@ thomasnet.com/insights/companion-robots-for-elderly-get-mixed-reviews ·
 venturebeat.com/ai/apples-elegnt-framework-could-make-home-robots-feel-less-like-machines-and-more-like-companions ·
 arxiv.org/abs/2511.16719 (SAM 3) · dev.meta.ai/docs/sam/segmenting · dev.meta.ai/docs/computer-use ·
 dev.meta.ai/docs/muse-glimmer/prompting · techcrunch.com/2024/02/09/how-to-fake-a-robotics-demo-for-fun-and-profit
+
+## 17. Memory with a history, in words (2026-10-27, night)
+
+From section 16's top idea. Each watched thing keeps its last 8 places: where (direction), when first and last seen
+there, and Glimmer's few words about it, written in the background from the best view and kept as words only. A
+sighting more than 10 degrees from the last place starts a new entry (it moved). On the robot: the cup found in 8.0 s;
+4.0 s later its place read "on desk in front of monitor, behind keyboard"; "when did you last see the cup?" answered
+from memory without the robot moving. Also built from section 16: a privacy receipt on the TV, quiet mode and calmer
+motion.

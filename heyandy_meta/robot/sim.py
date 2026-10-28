@@ -102,6 +102,12 @@ class SimJudge:
         seen = [t.label for t in self.room.things if self.room.where_in_frame(t, frame.yaw, frame.pitch)]
         return ("I see " + " and ".join(f"a {x}" for x in seen) + ".") if seen else "I don't see anything in particular."
 
+    def where_near(self, frame: Frame, mask: Mask) -> str | None:
+        self.calls += 1
+        t = self._thing(frame, mask)
+        others = [o for o in self.room.things if t and o is not t and abs(o.yaw - t.yaw) < 20 and not o.on_screen]
+        return f"next to the {others[0].label}" if others else "on its own"
+
     def real(self, frame: Frame, mask: Mask) -> bool:
         self.calls += 1
         t = self._thing(frame, mask)

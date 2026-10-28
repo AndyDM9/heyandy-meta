@@ -29,7 +29,10 @@ the house.
   straight there.
 - **"Andy, follow the mug."** Its eyes follow a thing as you move it around the table, until you say "stop".
 - **"Keep an eye on my keys."** While idle, Andy glances around now and then and remembers where the things you chose
-  were last seen: a label, a direction and a time, never a picture. "What do you remember?" puts it on the TV.
+  were last seen, and when they moved, described in words by what's near them ("on the desk, behind the keyboard"):
+  never a picture. "When did you last see my keys?" is answered from memory: "40 minutes ago, on the desk behind the
+  keyboard; before that by the door, until 3:12." Remembering *when things moved* is an open problem in robot memory
+  research (MIT's DAAAM).
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it in your
   own words. If you're out, it tries again and tells you later.
 - **"Andy, what am I holding?" / "What's on the table?"** Andy looks at your hands (found with SAM 3.1) or down at

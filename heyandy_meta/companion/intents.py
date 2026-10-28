@@ -43,6 +43,8 @@ MOTION = {"less": re.compile(r"\b(?:move less|calm down|less movement|keep (?:st
                              r"|stay (?:still|stiller))\b", re.I),
           "more": re.compile(r"\b(?:move more|more movement|be (?:more )?lively|livelier)\b", re.I)}
 QUIET_FOR = re.compile(r"\bfor (?P<n>\d+|an?|one|two|three|half an) (?P<unit>minutes?|hours?)\b", re.I)
+LAST_SEEN = re.compile(r"\b(?:(?:when|where) did you (?:last )?see|where did i (?:last )?(?:leave|put|have))\s+" + THING
+                       + r"(?:\s+last)?(?:\?|$|[,.!]| please)", re.I)
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
@@ -61,7 +63,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # quiet | unquiet | motion | voice | find | follow | watch | forget | remember | reminders | remind | describe | draw | help | world
+    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -159,7 +161,7 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("reminders")
     if REMEMBER.search(t):
         return Intent("remember")
-    for kind, rx in (("forget", FORGET), ("watch", WATCH), ("follow", FOLLOW), ("find", FIND)):
+    for kind, rx in (("forget", FORGET), ("watch", WATCH), ("follow", FOLLOW), ("last_seen", LAST_SEEN), ("find", FIND)):
         m = rx.search(t)
         if m:
             thing, place = (PLACE.split(_thing(m), maxsplit=1) + [""])[:2]  # "keys in the kitchen": thing, hint

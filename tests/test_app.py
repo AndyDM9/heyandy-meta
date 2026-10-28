@@ -181,7 +181,7 @@ def test_what_i_remember_says_when_and_where(tmp_path):
     a.hear("where are my keys")
     clock.t += 2 * 3600 + 60
     a.hear("what do you remember")
-    assert a.screen.snapshot()["memory"] == ["keys: seen 2 hours ago, to my left"]
+    assert a.screen.snapshot()["memory"] == ["keys: seen 2 hours ago, on its own"]  # the place's words
 
 
 def test_a_conversation_is_remembered_for_a_while_then_forgotten(tmp_path):
@@ -367,3 +367,25 @@ def test_the_privacy_receipt_says_what_left_the_house(tmp_path):
     sent = b.screen.snapshot()["outbox"]
     assert sent == [{"to": "Muse Spark + web search", "earlier": 0,
                      "words": "what's the weather tomorrow? (home: Sunny Isles Beach, Florida)"}]
+
+
+def test_when_did_you_last_see_my_keys_answers_from_memory_with_what_it_was_near(tmp_path):
+    keys = Thing("keys", 30.0, 20.0)
+    a, body, clock = andy(keys, Thing("mug", 38.0, 18.0), tmp_path=tmp_path)
+    a.hear("keep an eye on my keys")
+    a.hear("where are my keys")
+    clock.t += 40 * 60
+    keys.yaw = -35.0  # someone moved them
+    a.hear("where are my keys")
+    clock.t += 10 * 60
+    body.log.clear()
+    reply = a.hear("Andy, when did you last see my keys?")
+    assert reply.startswith("I last saw your keys 10 minutes ago, on its own.")
+    assert "Before that, next to the mug, until" in reply
+    assert not [e for e in body.log if e[0] in ("look", "capture")]  # from memory: the robot didn't move
+    assert "(moved at" in a.screen.snapshot()["memory"][0]
+
+
+def test_where_did_i_leave_something_not_watched_looks_for_it(tmp_path):
+    a, _, _ = andy(Thing("wallet", -20.0, 20.0), tmp_path=tmp_path)
+    assert a.hear("where did I leave my wallet?").endswith("I see your wallet, a little to my right.")
