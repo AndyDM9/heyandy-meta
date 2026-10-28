@@ -389,3 +389,23 @@ def test_when_did_you_last_see_my_keys_answers_from_memory_with_what_it_was_near
 def test_where_did_i_leave_something_not_watched_looks_for_it(tmp_path):
     a, _, _ = andy(Thing("wallet", -20.0, 20.0), tmp_path=tmp_path)
     assert a.hear("where did I leave my wallet?").endswith("I see your wallet, a little to my right.")
+
+
+def test_asked_three_times_this_week_andy_offers_to_keep_an_eye(tmp_path):
+    a, body, clock = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    for _ in range(2):
+        assert "keep an eye" not in a.hear("where are my glasses?")
+        clock.t += 3600
+    assert "asked me about your glasses 3 times this week. Shall I keep an eye on them?" in a.hear("where are my glasses?")
+    assert "I'll keep an eye on your glasses" in a.hear("yes please") and "glasses" in a.places.watching()
+
+
+def test_no_thanks_and_once_a_week(tmp_path):
+    a, body, clock = andy(Thing("keys", 30.0, 25.0), tmp_path=tmp_path)
+    for _ in range(3):
+        clock.t += 600
+        reply = a.hear("where are my keys?")
+    assert "Shall I keep an eye" in reply
+    assert "Just ask me" in a.hear("no thanks") and a.places.watching() == []
+    clock.t += 600
+    assert "Shall I keep an eye" not in a.hear("where are my keys?")  # offered once this week

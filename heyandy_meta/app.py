@@ -97,6 +97,7 @@ class Andy:
         self.playing = False  # the cup game: "done" ends the shuffle
         self.cup_score = [0, 0]  # Andy, the person: this session's cup games, in memory only
         self._again_until = 0.0  # Andy just asked "again?" after a cup game
+        self._offered: tuple[str, float] | None = None  # Andy offered to keep an eye on this thing
         self.language = "en"  # "es": Andy hears and speaks Spanish (companion/language.py)
         self.translator = None  # Muse Glimmer on this computer, translating; set where Glimmer runs
         self._browser = None  # a clean browser on this computer, made when first asked to use the web
@@ -207,6 +208,14 @@ class Andy:
         self.screen.keeping(self._memory(), self._memory_map())
 
     def _answer(self, text: str) -> str:
+        offered, self._offered = self._offered, None
+        if offered and self.clock() - offered[1] <= ANSWER_WITHIN_S:
+            if AGAIN.match(text) or re.match(r"^\W*(?:please do|go ahead|do that|that would be (?:great|nice))\W*$", text, re.I):
+                self.places.watch(offered[0])
+                self.refresh_panels()
+                return f"I'll keep an eye on your {offered[0]}. I only remember where I last saw {_it(offered[0])}, never a picture."
+            if re.match(r"^\W*(?:no|nope|not now|no thanks?(?: you)?|that'?s ok(?:ay)?)\b", text, re.I):
+                return "Okay. Just ask me whenever you need it."
         i = parse(text, _now(self.clock))
         if self._asked and i.kind == "chat" and self.clock() - self._asked[1] <= ANSWER_WITHIN_S:
             i = parse(self._asked[0] + " " + text, _now(self.clock))  # the answer to Andy's question
@@ -412,7 +421,30 @@ class Andy:
         self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
-        return words
+        return words + self._offer_to_watch(found.label)
+
+    def _offer_to_watch(self, thing: str, times: int = 3, within_s: float = 7 * 24 * 3600) -> str:
+        """Asked for the same thing a few times this week, and not kept an eye on: offer, once a week. Only the word and
+        when it was asked are kept, on this computer."""
+        path = self.places.path.parent / "asked.json"
+        try:
+            asked = json.loads(path.read_text()) if path.exists() else {}
+        except ValueError:
+            asked = {}
+        now = self.clock()
+        entry = asked.setdefault(thing, {"at": [], "offered": 0.0})
+        entry["at"] = [t for t in entry["at"] if now - t <= within_s] + [now]
+        offer = (len(entry["at"]) >= times and thing not in self.places.watching()
+                 and now - entry["offered"] > within_s)
+        if offer:
+            entry["offered"] = now
+            self._offered = (thing, now)  # a plain yes or no answers it
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(asked))
+        if not offer:
+            return ""
+        return (f" You've asked me about your {thing} {len(entry['at'])} times this week. Shall I keep an eye on "
+                f"{_it(thing)}?")
 
     def adjust_voice(self, what: str) -> str:
         """"Say that again", "speak up", "speak more slowly": how Andy speaks, changed by voice and remembered."""
