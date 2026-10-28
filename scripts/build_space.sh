@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# NOT USED: the Space is static, built by scripts/build_static_space.py (a Docker Space for an organisation needs
+# Hugging Face's Team plan). Kept in case that changes.
 # Put together the Hugging Face Space: only what the screen demo needs. No keys, tests, evaluations, robot setup or
 # private notes. Output: dist/space/ (upload it with `hf upload <space> dist/space . --repo-type space`).
 set -euo pipefail

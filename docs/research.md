@@ -326,11 +326,12 @@ about $0.02 a run; results in `evals/results/smoke-model-api-*.json`):
   returned nothing. `reasoning_effort`: minimal 116 tokens, 2.7 s; low 315; medium 510. Andy uses **minimal** for
   conversation (1.1 to 1.3 s) and **low** for planning searches and web answers, with room to answer.
 - **Planning a search with the tools works:** "reading glasses by the TV on the right" -> look right, look closer
-  (confirmed and pointed) in 2 calls, 2.4 to 5.8 s.
+  (confirmed and pointed) in 2 calls, 2.4 s (one later run, 5.6 s, returned no steps and didn't point).
 - **Web search answers arrive in phases:** "commentary" messages while it works ("I'll get Miami's forecast for
   tomorrow.") and a final message with `url_citation` annotations. Andy speaks only the final one. Asked to cite and to
-  use US units: "mostly sunny with a high near 84 degrees Fahrenheit ... according to forecast.weather.gov", 5 to 9 s,
-  so Andy says "Let me look that up" first. Not every answer comes with a citation.
+  use US units: an answer like "mostly sunny with a high near 84 degrees Fahrenheit ... according to
+  forecast.weather.gov" (seen live; the saved smoke runs show "warm around 28 degrees" before US units were asked for,
+  and one empty answer), 5 to 9 s, so Andy says "Let me look that up" first. Not every answer comes with a citation.
 - **SAM 3.1 through the API** takes a base64 data URL (open since day one): the drawn mug at 0.89, 1.4 to 3.8 s.
 
 ## 14. Looking and telling, and the memory map (2026-10-27, night)
@@ -509,7 +510,7 @@ Many older adults in South Florida speak Spanish first, and Omnilingual ASR is b
   reply at " to=user<|message|>" skips it: **0.25 to 0.6 s a sentence**. Muse Spark at minimal effort took 0.7 to 3.3 s
   and twice answered nothing. Into English, the text is framed between markers with "never answer it", two worked
   examples (alone, it sometimes copied the Spanish back) and Andy's own phrasings ("keep an eye on", times as digits).
-  Of 16 spoken Spanish requests, all reached the right ability after that (find, remind, watch, follow, forget,
+  Of 16 Spanish requests in that first check (Kokoro's voice, heard by Omnilingual ASR), all reached the right ability after that (find, remind, watch, follow, forget,
   describe, draw, web, cup game, my mug, going out, the weather, conversation).
 - **By hand:** the AI disclosure, the crisis reply (988 offers help in Spanish) and Andy's short phrases ("Let me look"
   came back "Míreme", look at me). Crisis words are also checked in Spanish, on the person's own words, before any
@@ -521,7 +522,7 @@ Many older adults in South Florida speak Spanish first, and Omnilingual ASR is b
   fixes: "stay quiet" wasn't an English quiet phrase either, and "seguir con los ojos" is "follow"); spoken by Kokoro and
   heard by Omnilingual ASR, **37 of 41**. The misses: two hearing slips ("qué tiempo hará mañana" heard "qué tiempo a
   rama nyana"; "qué es esto" heard "qué eres esto"), "los vasos" (cups or drinking glasses: "play with the glasses"),
-  and "¿se me olvida algo?" read as "I forgot something". Translating: median 0.44 s, at most 0.61 s; no failures.
+  and "¿se me olvida algo?" read as "I forgot something". Translating: median 0.44 s, at most 0.59 s; no failures.
 
 ## 24. Glimmer's picture checks, straight to the answer (2026-10-27, night)
 
@@ -569,6 +570,9 @@ with the right words, the right things kept an eye on); the model's words don't 
   the agent's prompt says "do all of it and nothing more".
 - **After: Muse Spark 12 of 12** (median 4.3 s with the robot simulated), **Muse Glimmer on this computer 12 of 12**
   (median 6.0 s): the offline brain does every multi-part request too.
+
+## 27. The TV in Spanish (2026-10-27, night)
+
 - **The TV in Spanish too:** while Andy speaks Spanish, every fixed label on the TV (the date, the status, the cards, the
   receipt, the help) is hand-written Spanish in the page, and Andy's own words on it (steps, what it remembers, the
   checklist) are translated by Glimmer in the background and cached, so the TV never waits: a new phrase shows in

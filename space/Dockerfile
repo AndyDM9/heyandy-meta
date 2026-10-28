@@ -1,3 +1,5 @@
+# NOT USED: the Space is static (scripts/build_static_space.py); a Docker Space for an organisation needs Hugging
+# Face's Team plan. Kept in case that changes.
 # Andy's TV page on sample data, for judges and visitors: no robot, no camera, no models, no keys.
 FROM python:3.12-slim
 RUN useradd -m -u 1000 user

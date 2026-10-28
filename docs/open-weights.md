@@ -5,16 +5,17 @@ NVIDIA RTX 3090s, 24 GB each), with no inference provider.
 
 | Model | Where | What it does in Andy |
 |---|---|---|
-| **Muse Glimmer 30B** (`meta-models/Muse-Glimmer-30B-GGUF`, Q4_K_M, with its perception encoder and DFlash drafter; Apache-2.0) | GPU 0, llama.cpp b11936 (`deploy/heyandy-glimmer.service`) | Everyday conversation; **plans searches with the robot's tools** when the person gives a hint; checks pictures (a real thing, or a picture of it on a TV? which of two look-alikes did the person mean?) |
+| **Muse Glimmer 30B** (`meta-models/Muse-Glimmer-30B-GGUF`, Q4_K_M, with its perception encoder and DFlash drafter; Apache-2.0) | GPU 0, llama.cpp b11936 (`deploy/heyandy-glimmer.service`) | Everyday conversation; **plans searches and multi-part requests with the robot's tools** (12 of 12 on the agent scorecard, offline); checks pictures (a real thing, or a picture of it on a TV? which of two look-alikes did the person mean?); says what it sees ("what am I holding?") and where the person points; translates to and from Spanish |
 | **SAM 3.1** (`facebook/sam3.1`, `sam3.1_multiplex.pt`) | GPU 1 (`local/sam_server.py`) | Finds things in camera frames; several watched things per glance; finds the person for reminders; **Object Multiplex** tracks every cup at once through a recorded shuffle (the cup game) |
 | **Omnilingual ASR** (`omniASR_LLM_1B_v2`; Apache-2.0) | GPU 1 (`local/voice_server.py`) | Hears the person, told the language: English, or Spanish after "Andy, habla español" |
 | **DINOv2** (`facebook/dinov2-base`, pinned revision; Apache-2.0) | GPU 1 (`local/sam_server.py` `/embed`) | Knows the person's own things by sight ("this is my mug"): the thing's own pixels, inside SAM 3.1's mask, as numbers; never a picture |
 
 Not Meta: Kokoro-82M (Apache-2.0) speaks, because Meta has no open text-to-speech model.
 
-**Muse Spark 1.3** (Model API) is used only when online, only for words: planning a search from what the person said, and
-web answers with sources. Pictures and voice from the home never go to the cloud (Meta can't turn off data retention
-for hackathon credits; see `research.md`).
+**Muse Spark 1.3** and **Muse Image 1.0** (Model API) are used only when online: Muse Spark gets words (planning a search
+or a multi-part request, web answers with sources, harder conversation) and, only for "show me ... on the TV", screenshots
+of web pages for its computer use; Muse Image gets words. Pictures and voice from the home never go to the cloud (Meta
+can't turn off data retention for hackathon credits; see `research.md`), and the TV's privacy receipt shows what did.
 
 ## Verify it
 

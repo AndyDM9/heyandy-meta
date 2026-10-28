@@ -5,22 +5,27 @@ online, so its screen is: the Hugging Face Space). The form is at
 https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-read the live rules page before submitting.
 
 **Before, on November 3**
-- [ ] Film: the uncut find, the look-alikes, the network unplugged, a reminder (`docs/demo-script.md`).
+- [ ] The founder's tests of what hasn't been tried on the robot yet (`docs/private/founder-notes.md`: the cup game, my
+      mug, going out, Spanish, "what's that?"), so the video and the text show only what works.
+- [ ] Film: the uncut find, follow the mug (or the cup game), several things at once, the network unplugged, a reminder
+      (`docs/demo-script.md`). Recording the TV needs `uv run --with playwright playwright install ffmpeg` once.
 - [ ] The physical scorecard (`evals/physical.py`), and its numbers in the README.
-- [ ] Muse Spark live (`docs/going-live.md`), if the credits have come.
+- [x] Muse Spark live (since October 27, on our billing until the credits come; `docs/going-live.md`).
 - [ ] Any last questions in Discord #questions (November 3 is the last full day for them).
 
 **On November 4, in this order**
 1. [ ] The video: 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
        where anyone can watch it signed out.
 2. [ ] The README: the video at the top, the measured results, what was pre-existing, the limits; refresh the
-       "What's new here" list (it dates from October 27 morning). The form text: `docs/submission.md`.
+       "What's new here" list up to date. The form text: `docs/submission.md`.
 3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
        (`git log -p | grep -E "MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}"` finds nothing). Never rewrite the history: its
        dates show the work was done during the event.
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta) and check a fresh clone passes its tests.
-5. [ ] Make the Space public: `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out.
+5. [ ] Rebuild and upload the Space (`uv run python scripts/build_static_space.py`, then
+       `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
+       `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out.
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the Space,
-       about 1,000 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
+       about 1,200 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
 7. [ ] After submitting: the 30-second clip on X (Most Viral, judged to November 8), its link added to the submission;
        share the gallery page for the community vote.

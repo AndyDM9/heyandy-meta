@@ -14,7 +14,7 @@ dev = ["pytest", "numpy", "ruff"]  # numpy: the voice code (on the robot it come
 robot = [
     "reachy-mini==1.12.0rc1",
 ]
-browse = ["playwright>=1.50"]  # Andy uses the web on the TV with Muse Wonder (a clean browser, no sign-ins)
+browse = ["playwright>=1.50"]  # Andy uses the web on the TV with Muse Spark's computer use (a clean browser, no sign-ins)
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

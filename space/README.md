@@ -17,7 +17,7 @@ person, plays the cup game, shows the web on the TV, and speaks Spanish. It was 
 Frontier*), on Meta's models: Muse Glimmer, SAM 3.1 (with Object Multiplex), DINOv2 and Omnilingual ASR from their open
 weights on the computer beside the robot, and Muse Spark and Muse Image through the Meta Model API.
 
-This page is the robot's TV, running the same page and server as on the robot, **on sample data**: no robot, camera,
+This page is the robot's TV, the same page and rendering code as on the robot with each scene saved in advance, **on sample data**: no robot, camera,
 models or keys are here, and the picture is drawn, not taken in a home. Pick a scene at the top: what Andy shows while
 it searches, what it found (with SAM 3.1's outline), your own mug told from another, the cup game (every cup's path
 through the shuffle), going out, Andy in Spanish, a web page Andy opened, an answer with sources, a picture, what it remembers, and "What can I

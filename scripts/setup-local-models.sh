@@ -49,10 +49,14 @@ V="$OPT/voice"
        "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" \
   && .venv/bin/python -c "
 from huggingface_hub import hf_hub_download
-for f in ['config.json', 'kokoro-v1_0.pth'] + [f'voices/{v}.pt' for v in ['am_michael', 'af_heart', 'bf_emma', 'bm_george']]:
+for f in ['config.json', 'kokoro-v1_0.pth'] + [f'voices/{v}.pt' for v in ['am_michael', 'af_heart', 'bf_emma', 'bm_george',
+                                                                           'em_alex', 'ef_dora']]:  # Spanish: em_alex, ef_dora
     hf_hub_download('hexgrad/Kokoro-82M', f)
 from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
-ASRInferencePipeline(model_card='omniASR_CTC_3B_v2', device='cpu')  # downloads the checkpoint (12 GB) once
+ASRInferencePipeline(model_card='omniASR_LLM_1B_v2', device='cpu')  # what the voice server runs; downloads it once
 ")
+
+# Andy itself, with the robot and the web on the TV (a clean headless browser): run from the repository
+uv sync -q --extra dev --extra robot --extra browse && uv run playwright install --only-shell chromium
 
 echo "Done. Start them: systemctl --user link $(pwd)/deploy/heyandy-*.service && systemctl --user start heyandy-glimmer heyandy-sam heyandy-voice"

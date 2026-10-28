@@ -18,7 +18,7 @@ trademark application.
 7. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
    points at any still here ("Your keys are still here, on the desk"), says which it didn't see (so they're probably
    with you), reminds you of the next reminder, and, looked up by Muse Spark while the robot was checking, whether to
-   take an umbrella. About 7 s; the TV shows the checklist.
+   take an umbrella. 7 to 8 s with the robot simulated; the TV shows the checklist.
 8. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
    shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
    cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
@@ -41,20 +41,21 @@ trademark application.
    at it too: "You mean the lamp?" On public photos Glimmer named the thing in 4 of 6 and imagined none; not yet tried
    with a person in the room.
 14. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
-   (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, reminders,
-   pictures, look up) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
+   (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, forget,
+   what it remembers, reminders, pictures, look up, show on the TV) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
 15. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
 16. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Kokoro
    speaks with a Spanish voice, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
-   a sentence), so every ability works and the person's words stay home. Saying it's an AI, the crisis reply (988 has
+   a sentence), so the abilities work in Spanish too (40 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
 17. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-18. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
-   the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
-   steps.
+18. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
+   computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
+   plan steps, questions), plus screenshots of a web page you ask to see on the TV; Muse Image gets words. The TV's
+   privacy receipt shows exactly what went, every turn.
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
@@ -73,8 +74,10 @@ trademark application.
   sags, so it reads the pose back, corrects once, and every frame carries the measured direction; the base turns past
   the head's reach. Body language in a 50 Hz loop: breathing, listening, thinking, moving with its own words, a
   found-wiggle; it keeps its eyes on the person.
-- **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame), Muse Glimmer on
-  llama.cpp, Omnilingual ASR; with `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
+- **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
+  tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
+  Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight); with
+  `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
   sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;
   close names in one request ("cup" also finds the mug).
@@ -89,18 +92,28 @@ trademark application.
   "Andy" as the wake word with its common mishearings, answers spoken sentence by sentence: the first word about a
   second after Andy understands.
 - **Reminders delivered in person,** with Andy's questions taking the next answer.
+- **New abilities:** the cup game (SAM 3.1 Object Multiplex), "this is my mug" (DINOv2 and a colour fingerprint, kept as
+  numbers), "I'm going out" (pointing at what's still here, the weather looked up at the same time), "what's that?"
+  (looking where the person points), the web on the TV (Muse Spark's computer use, every action reviewed in code), a
+  map of where things are (Muse Image, from words), Andy in Spanish (hearing, voice, TV and every ability), and an
+  agent that plans requests with several parts over all of these.
 - **Muse Spark** for web answers with their sources (US units, only the final answer spoken) and harder conversation;
   **Muse Image** for pictures from the person's words, shown on the TV and saved.
 - **Safety in code:** "I'm an AI" at the start and every three hours; a crisis reply with the 988 line before any model
   sees the words ([docs/crisis-protocol.md](docs/crisis-protocol.md)); no false promises (a chat reply that claims an
   action is replaced); speech not for Andy is dropped; a hard cap on Model API spend.
 - **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
-- **Scorecards:** a simulated one (fixed sweep, Glimmer and Spark planners, seeded rooms) and a physical one.
+- **Scorecards:** the search, simulated (fixed sweep, Glimmer and Spark planners, seeded rooms); the agent (12
+  multi-part requests); Spanish (41 requests, written and spoken); and a physical one, built and waiting to be run.
 
 ## Run it
 ```bash
 uv sync --extra dev && uv run pytest -q   # no network calls: the model clients are tested against stand-ins
 uv run python -m heyandy_meta             # talk to Andy by keyboard, in a pretend living room; TV at 127.0.0.1:8765
+```
+On the robot computer, keep the robot and the web extras (an exact sync removes what isn't named):
+```bash
+uv sync --extra dev --extra robot --extra browse && uv run playwright install --only-shell chromium
 ```
 The models on this computer (Glimmer on GPU 0, SAM 3.1 on GPU 1, two 24 GB cards) are set up by
 `scripts/setup-local-models.sh` and run as the user services in `deploy/`. Muse Spark is used when `MODEL_API_KEY` is set
@@ -109,20 +122,23 @@ and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
 ## Layout
 ```
 heyandy_meta/app.py        one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
-heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol
+heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol;
+                           the cup game, the web on the TV, Spanish, pictures, following
 heyandy_meta/finder/       the search, from a SAM 3.1 mask to where the head looks; Glimmer's picture checks; names
 heyandy_meta/agent/        the search tools and the planning loop (Muse Spark online, Muse Glimmer on this computer)
-heyandy_meta/memory/       where watched things were last seen, and the idle glance
+heyandy_meta/memory/       where watched things were last seen, the idle glance, and the person's own things by sight
 heyandy_meta/voice/        listening for "Andy", cutting speech into turns, Andy's voice
 heyandy_meta/robot/        the body interface, the Reachy Mini adapter (the only Pollen SDK import), body language,
                            and a simulated room for tests
 heyandy_meta/screen/       the TV page
-heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimmer, SAM 3.1 (both on this computer)
+heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimmer (and its straight-to-the-answer call),
+                           SAM 3.1 (both on this computer)
 heyandy_meta/router.py     who answers a turn: the device or the cloud
 heyandy_meta/network.py    whether the cloud is reachable right now
 heyandy_meta/budget.py     the hard cap on Model API spend
-local/                     SAM 3.1, and hearing and speaking, served on 127.0.0.1 only
-evals/                     the simulated and physical scorecards, and their results
+local/                     SAM 3.1 (finding, /track for the cup game) and DINOv2 (/embed), and hearing and speaking,
+                           served on 127.0.0.1 only
+evals/                     the scorecards (search simulated, agent, Spanish; physical, to run) and their results
 scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
 config/                    config.example.yaml (no secrets)
 docs/                      the build plan, the hackathon's rules, research, the video plan, open weights
@@ -197,15 +213,18 @@ At the camera's 10 frames a second it picked the right cup in 4 of 5 runs; at 5 
 yet scored with real cups. The physical scorecard (`evals/physical.py`) comes next.
 
 ## What doesn't work yet
-- **The cup game hasn't been scored with real cups yet.** Its tracking was measured on synthetic shuffles (above);
-  identical cups crossing fast can still swap.
+- **Not yet tried on the robot with real things or a person:** the cup game (tracking measured on synthetic shuffles;
+  identical cups crossing fast can still swap), "this is my mug" (measured on the robot's camera with things seen from
+  other angles, not with two mugs), "what's that?" (Glimmer measured on public photos: 4 of 6), and "I'm going out"
+  (the robot simulated). Each has a founder's test written down.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
   and held conversations (first word 0.7 to 1 s after it understands); the scored runs come next
   (`docs/research.md` sections 8 to 11).
 - **English and Spanish** for now: Omnilingual ASR can hear far more languages; Kokoro speaks eight, and adding one
-  is a voice and a few hand-written phrases. The TV's own labels stay in English; captions follow Andy's language.
+  is a voice and a few hand-written phrases. While Andy speaks Spanish the TV is in Spanish too (labels by hand, Andy's
+  own words translated by Glimmer). Spanish is scored on written and synthesised speech; not yet with a person.
 
 ## Licence
 Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
