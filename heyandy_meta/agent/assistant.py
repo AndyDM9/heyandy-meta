@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from ..budget import Budget, chat_cost
 from ..companion.intents import DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, WEB, WORLD, normalise, parse_time
 from ..companion.reminders import spoken_time
+from ..finder.names import KNOWN
 from ..models.retry import with_retry
 
 # Loose on purpose: these only notice that more than one thing was asked; the tools do the exact parsing.
@@ -24,13 +25,15 @@ ABILITIES = {
     "watch": re.compile(r"\bkeep (?:an )?eye on\b", re.I),
     "forget": re.compile(r"\b(?:forget|stop watching)\b", re.I),
     "describe": DESCRIBE, "draw": DRAW_START, "remind": REMIND, "reminders": REMINDERS, "remember": REMEMBER,
+    "last_seen": re.compile(r"\b(?:when|where) did you (?:last )?see\b|\bwhere did i (?:last )?(?:leave|put)\b", re.I),
     "world": WORLD, "web": re.compile("|".join(f"(?:{rx.pattern})" for rx in WEB), re.I)}
 MORNING = re.compile(r"^\W*(?:(?:hey|hi|hello)\s+)?(?:andy[\s,]*)?good morning\b", re.I)
 JOINED = re.compile(r"\b(?:and then|then|after that|and also|also|and)\b", re.I)
 
 SYSTEM = ("You are Andy, a small tabletop robot in someone's home in the United States. Do what the person asked, in "
-          "order, using the tools: they move the robot and report back. Only the tools act; never say you did "
-          "something a tool didn't report. When you're done, reply with one or two short, warm spoken sentences "
+          "order, using the tools: they move the robot and report back. Do all of it and nothing more: never keep an eye "
+          "on something, set a reminder or draw unless asked. Only the tools act; never say you did something a tool "
+          "didn't report. When you're done, reply with one or two short, warm spoken sentences "
           "built only from what the tools returned. No lists or markdown. Never give medical advice.")
 MORNING_BRIEF = ("It's the person's first good morning today. Greet them, then give a short morning briefing: look up "
                  "today's weather, list today's reminders, and say where the things you keep an eye on were last "
@@ -45,8 +48,10 @@ def _fn(name, description, **props):
 
 S = {"type": "string"}
 TOOLS = [
-    _fn("find", "Look around the room for a thing and point at it.", object=dict(S),
-        hint={**S, "description": "anything the person said about where it might be", "optional": True}),
+    _fn("find", "Look around the room for a thing and point at it.",
+        object={**S, "description": "a short noun for the thing, like 'mug' or 'glasses': no colour, owner or place"},
+        hint={**S, "description": "anything the person said that tells it apart ('the blue one, not the red one') or "
+                                  "where it might be ('behind you')", "optional": True}),
     _fn("follow", "Follow a thing with the robot's eyes while the person moves it.", object=dict(S)),
     _fn("look_and_tell", "Look and say what is there.",
         where={"type": "string", "enum": ["in my hands", "on the table", "in front of you"]}),
@@ -69,13 +74,37 @@ def where_they_live(home: str) -> str:
     return "You don't know where the person lives: for weather or anything local, ask them instead of guessing."
 
 
+TWO_THINGS = re.compile(r"\b(?:my|the|our)\s+[a-z][a-z ]{1,30}?\s*(?:,|and|&)\s*(?:my|the|our)\s+[a-z]", re.I)
+TIMES = re.compile(r"\b(?:in (?:\d+|a|an|one|two|three|five|ten|fifteen|twenty|thirty|half an) (?:minutes?|hours?)|at \d|"
+                   r"at (?:noon|midday|midnight))\b", re.I)
+
+
 def needs_agent(text: str) -> bool:
-    """More than one thing asked at once ("find my keys and remind me at 5"), or the day's first good morning."""
+    """More than one thing asked at once ("find my keys and remind me at 5", "keep an eye on my keys and my wallet",
+    two reminders in one breath), or the day's first good morning."""
     t = normalise(text)
     asked = {name for name, rx in ABILITIES.items() if rx.search(t)}
     if "remind" in asked:
         asked.discard("reminders")
-    return len(asked) >= 2 and bool(JOINED.search(t))
+    if not JOINED.search(t):
+        return False
+    if len(asked) >= 2:
+        return True
+    if asked & {"find", "watch", "forget"} and TWO_THINGS.search(t):
+        return True
+    return "remind" in asked and len(TIMES.findall(t)) >= 2
+
+
+def _noun(thing: str) -> tuple[str, str]:
+    """"blue mug, not the red one" -> ("mug", "blue mug, not the red one"): the name the camera knows, and the rest."""
+    t = re.sub(r"^(?:my|the|a|an|your|our)\s+", "", thing.lower().strip())
+    head = re.split(r"[,(]| not | that | which | with | on | in | by | near ", t)[0].strip()
+    words = head.split()
+    for n in (2, 1):
+        if len(words) >= n and " ".join(words[-n:]) in KNOWN:
+            noun = " ".join(words[-n:])
+            return noun, ("" if t == noun else thing)
+    return t, ""
 
 
 @dataclass
@@ -117,8 +146,13 @@ class Assistant:
             up = a.reminders.upcoming()[:5]
             return "; ".join(f"at {spoken_time(r.at)}: {r.text}" for r in up) or "No reminders."
 
+        def find(object, hint=""):
+            noun, rest = _noun(object)
+            hint = " ".join(x for x in (rest, hint) if x)
+            return a.find(noun, f"where is the {noun}? {hint}".strip(), hint=bool(hint))
+
         return {
-            "find": lambda object, hint="": a.find(object.lower(), hint or f"where is the {object}", hint=bool(hint)),
+            "find": find,
             "follow": lambda object: a.follow(object.lower(), seconds=20.0),
             "look_and_tell": lambda where: a.describe("table" if "table" in where else "", holding="hand" in where),
             "keep_an_eye_on": watch, "forget": forget, "what_i_remember": remember,

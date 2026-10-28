@@ -551,3 +551,21 @@ Measured on 8 public photos from Wikimedia Commons (no home pictures; 6 with som
 - **Straight to the answer** (section 24's trick, about 1.3 s): only 2 of 6. So this question keeps the reasoning.
 - **Not yet tried on the robot**, with a person pointing in the room. Andy asks rather than asserts, and says when it
   can't tell ("Could you tell me what it is?").
+
+## 26. The agent scorecard (2026-10-27, night)
+
+`evals/agent.py`: 12 requests with more than one part, each on a fresh Andy in the simulated room, planned by the real
+model. A request scores only if everything asked happened (pointed at the right thing, the reminder at the right time
+with the right words, the right things kept an eye on); the model's words don't count. Results in
+`evals/results/agent-*.json`.
+
+- **First run, Muse Spark: 6 of 12** (`agent-spark-before-fixes.json`). Four never reached the agent: Andy only sent
+  requests mixing two different abilities, so "keep an eye on my wallet and my glasses" watched one thing called "wallet
+  and my glasses", and two reminders in one breath set one. The find tool took "blue mug, not the red one" as the
+  thing's name (the camera knows "mug"), and passed only the hint ("I think it's behind you") to the search planner,
+  which asked "What did you lose?". And Spark kept an eye on glasses nobody asked it to.
+- **Fixes:** two of the same ability ("my keys and my glasses", two times for reminders) and "where did you last see"
+  now go to the agent; the find tool takes a short noun and a hint, and code splits a description off the noun;
+  the agent's prompt says "do all of it and nothing more".
+- **After: Muse Spark 12 of 12** (median 4.3 s with the robot simulated), **Muse Glimmer on this computer 12 of 12**
+  (median 6.0 s): the offline brain does every multi-part request too.

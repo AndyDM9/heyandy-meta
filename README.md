@@ -183,6 +183,10 @@ the robot sharing its GPU; with 20 rooms a scenario, a few points either way is 
 (7.1 s for the keyboard once Glimmer's picture check went straight to its answer; research.md, 24);
 pointing within about 3 degrees after the head's correction.
 
+**The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
+12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of
+12; what failed and what changed is in `docs/research.md`, section 26.
+
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 40 of 41 reach the
 right ability; said by Kokoro's Spanish voice and heard by Omnilingual ASR, 37 of 41 (two hearing slips, one ambiguous
 word, one misread). Glimmer translates each in a median 0.44 s, on the computer beside the robot.

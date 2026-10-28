@@ -71,3 +71,20 @@ def test_a_reminder_says_the_thing_not_to_the_thing(tmp_path):
     a, _, _ = andy(spark=spark, tmp_path=tmp_path)
     a.hear("keep an eye on my cup and remind me in two minutes to drink some water")
     assert a.reminders.upcoming()[0].text == "drink some water"
+
+
+@pytest.mark.parametrize("text,agent", [
+    ("Keep an eye on my wallet and my glasses", True), ("Look for my keys and my glasses", True),
+    ("Remind me in 10 minutes to stretch, and at 6 pm to call Sam", True),
+    ("What reminders do I have, and where did you last see my keys?", True),
+    ("where are my keys", False), ("remind me at 5 to call Sam and Joe", False), ("keep an eye on my keys", False)])
+def test_more_than_one_of_the_same_goes_to_the_agent(text, agent):
+    assert needs_agent(text) is agent
+
+
+def test_the_camera_gets_the_noun_and_the_rest_is_the_hint():
+    from heyandy_meta.agent.assistant import _noun
+
+    assert _noun("blue mug, not the red one") == ("mug", "blue mug, not the red one")
+    assert _noun("my reading glasses") == ("reading glasses", "")
+    assert _noun("charger") == ("charger", "")
