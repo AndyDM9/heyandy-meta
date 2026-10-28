@@ -176,7 +176,8 @@ agents' scores are after the tool fixes of October 27 (no repeat looks; compare 
 only 12 look-alikes and 14 TV cases (`evals/results/*-before-tool-fixes.json`). Glimmer's times in this run were slowed by
 the robot sharing its GPU; with 20 rooms a scenario, a few points either way is noise. Results: `evals/results/`.
 
-**On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included;
+**On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included
+(7.1 s for the keyboard once Glimmer's picture check went straight to its answer; research.md, 24);
 pointing within about 3 degrees after the head's correction.
 
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 40 of 41 reach the

@@ -109,6 +109,8 @@ Every turn, the TV lists which models worked on it and where.
   reviews each batch before acknowledging it: no personal details typed, and a sign-in or payment page ends the run.
   Clicking through search results took minutes (each model turn 10 to 15 s); letting Muse Spark's web search pick the
   page first puts it on the TV in 6 to 11 s.
+- **Straight to the answer.** Starting Glimmer's reply past its private reasoning also speeds up its picture checks
+  (same 10 of 10 on public photos, 1.1 s instead of 1.9), so a find on the robot went from 8.5 s to 7.1 s.
 - **Translation in half a second on a reasoning model.** Glimmer reasons privately before every answer (about 2 s,
   and sometimes all of its tokens, even for "Let me look"), whatever its reasoning setting. Starting its reply at the
   answer itself (" to=user"), past the reasoning, brings a sentence to 0.25 to 0.6 s. Two worked examples stop it copying

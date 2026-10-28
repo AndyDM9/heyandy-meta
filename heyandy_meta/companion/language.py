@@ -3,18 +3,16 @@
 Omnilingual ASR (Meta's, on this computer) is told it will hear Spanish; Kokoro speaks with a Spanish voice. In
 between, Andy's request rules and tools work in English, so Muse Glimmer, also on this computer, translates what the
 person said into English and Andy's words into Spanish: 0.25 to 1 s a sentence, so the person's words never leave
-the house for it. Glimmer is started at its answer (" to=user"), past its private reasoning, which otherwise takes
-about 2 s even for a short sentence (research.md, 23).
+the house for it. Glimmer is started at its answer, past its private reasoning (models/glimmer_fast.py), which otherwise
+takes about 2 s even for a short sentence (research.md, 23).
 
 What must never be machine-translated is written here by hand: saying it's an AI, and the crisis reply.
 """
-import json
 import re
-import urllib.error
-import urllib.request
 from dataclasses import dataclass
 from functools import lru_cache
 
+from ..models import glimmer_fast
 from ..models.common import is_local
 
 
@@ -46,7 +44,7 @@ TO_ENGLISH = ("You translate what a person said to their home robot from {name} 
 FROM_ENGLISH = ("You translate what a small home robot says into {name}: natural, warm, spoken {name}, polite (in "
                 "Spanish, 'usted'). Keep names, numbers and times. 'I', 'my' and 'me' are the robot. Never add "
                 "anything: only the translation of the text between <<< and >>>.")
-STOP = ["<|eot|>", "<|end|>", "<|start|>", ">>>", "\n\n"]
+STOP = [">>>", "\n\n"]
 # Worked examples, so it always answers in English (alone, it sometimes copied the Spanish back unchanged).
 EXAMPLES = {"es": (("¿dónde dejé mis llaves?", "Where are my keys?"),
                    ("me voy, ¿llevo todo?", "I'm going out, do I have everything?"))}
@@ -72,20 +70,12 @@ class Translator:
         self.failures = 0
         self.from_english = lru_cache(maxsize=512)(self._from_english)  # Andy's fixed words come up again and again
 
-    def _post(self, path: str, body: dict) -> dict:
-        req = urllib.request.Request(self.endpoint + path, json.dumps(body).encode(), {"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=self.timeout) as r:
-            return json.load(r)
-
     def _translate(self, system: str, text: str, examples=()) -> str:
         shots = [m for q, a in examples for m in ({"role": "user", "content": f"<<<{q}>>>"}, {"role": "assistant", "content": a})]
+        messages = [{"role": "system", "content": system}, *shots, {"role": "user", "content": f"<<<{text}>>>"}]
         try:
-            prompt = self._post("/apply-template", {"messages": [{"role": "system", "content": system}, *shots,
-                                                                 {"role": "user", "content": f"<<<{text}>>>"}]})["prompt"]
-            prompt = prompt.replace("Reasoning strength: high.", "Reasoning strength: low.") + " to=user<|message|>"
-            out = self._post("/completion", {"prompt": prompt, "n_predict": max(40, len(text)), "temperature": 0,
-                                             "stop": STOP})["content"]
-        except (urllib.error.URLError, OSError, ValueError, KeyError):
+            out = glimmer_fast.answer(self.endpoint, messages, max(40, len(text)), stop=STOP, timeout=self.timeout)
+        except glimmer_fast.FastUnavailable:
             self.failures += 1
             return text
         out = out.replace("<<<", "").strip().strip('"').strip()

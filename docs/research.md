@@ -522,3 +522,16 @@ Many older adults in South Florida speak Spanish first, and Omnilingual ASR is b
   heard by Omnilingual ASR, **37 of 41**. The misses: two hearing slips ("qué tiempo hará mañana" heard "qué tiempo a
   rama nyana"; "qué es esto" heard "qué eres esto"), "los vasos" (cups or drinking glasses: "play with the glasses"),
   and "¿se me olvida algo?" read as "I forgot something". Translating: median 0.44 s, at most 0.61 s; no failures.
+
+## 24. Glimmer's picture checks, straight to the answer (2026-10-27, night)
+
+The trick from section 23 (start Glimmer's reply at " to=user", past its private reasoning), for its picture checks:
+llama-server's `/completion` takes the picture as multimodal data, at the marker the chat template renders (a marker
+with a random suffix; the plain `<__media__>` is refused). Checked that the picture is really seen ("what colour is the
+mug?": "blue"). `models/glimmer_fast.py` is shared by the picture checks and the translator; the usual chat path stays
+as the fallback.
+
+- **Accuracy unchanged** on 10 public photos from Wikimedia Commons (5 real mugs, 5 scanned book drawings of
+  glasses): fast 10 of 10, usual 10 of 10. Median 1.07 s against 1.89 s (most of what's left is encoding the picture).
+- **On the robot:** finding the keyboard took **7.1 and 7.2 s**, against 8.5 and 8.4 s the usual way (2 looks and 1
+  picture check each time).

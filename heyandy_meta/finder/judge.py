@@ -14,6 +14,7 @@ import re
 from openai import APIError
 from PIL import Image
 
+from ..models import glimmer_fast
 from ..models.common import Mask, is_local
 from ..robot.body import Frame
 
@@ -68,6 +69,7 @@ class GlimmerJudge:
         if not is_local(endpoint):
             raise NotLocal(f"picture checks run only on this computer, not at {endpoint}")
         self.model, self.endpoint, self._client, self.max_tokens = model, endpoint, client, max_tokens
+        self.fast = client is None  # straight to the answer, past Glimmer's reasoning (models/glimmer_fast.py)
         self.unavailable = 0  # checks skipped because Glimmer couldn't be reached
         self.calls = 0
         self.why = ""  # the last answer, for the TV's plan list
@@ -80,8 +82,14 @@ class GlimmerJudge:
             self._client = OpenAI(base_url=self.endpoint, api_key="local", timeout=20.0)
         return self._client
 
-    def _ask(self, content: list) -> str | None:
+    def _ask(self, content: list, max_tokens: int | None = None) -> str | None:
         self.calls += 1
+        messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": content}]
+        if self.fast:
+            try:
+                return glimmer_fast.answer(self.endpoint, messages, max_tokens or 24)
+            except glimmer_fast.FastUnavailable:
+                pass  # the usual way, below
         try:
             out = self.client.chat.completions.create(
                 model=self.model, max_tokens=self.max_tokens,
@@ -107,12 +115,13 @@ class GlimmerJudge:
     def describe(self, frame: Frame, where: str = "", box=None) -> str | None:
         """What's in view ("in the person's hands", "on the table"), in a sentence or two; None if Glimmer is away."""
         image = crop(frame.image, box, context=1.6, min_side=448, max_side=1024) if box else shrink(frame.image)
-        return self._ask([{"type": "text", "text": DESCRIBE.format(where=f" {where}" if where else "")}, _image(image)])
+        return self._ask([{"type": "text", "text": DESCRIBE.format(where=f" {where}" if where else "")}, _image(image)],
+                         max_tokens=120)
 
     def where_near(self, frame: Frame, mask: Mask) -> str | None:
         """Where the thing is, by what's around it, in a few words ("on the desk, next to the mug")."""
         answer = self._ask([{"type": "text", "text": NEAR.format(label=mask.label)},
-                            _image(crop(frame.image, mask.box, context=4.0, min_side=384, max_side=768))])
+                            _image(crop(frame.image, mask.box, context=4.0, min_side=384, max_side=768))], max_tokens=40)
         return (answer or "").strip().strip(".").strip() or None
 
     def pick(self, found: list[tuple[Frame, Mask]], description: str) -> int | None:
