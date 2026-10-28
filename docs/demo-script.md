@@ -12,7 +12,7 @@ personal in view). The TV page is screen-recorded at the same time.
 | 0:55–1:12 | **Follow the mug** (the X clip) | "Andy, follow the mug." The person slides it around the table; Andy's eyes stay on it, the base turning past the head's reach. "Stop." |
 | 1:12–1:32 | **Several things at once** | "Andy, find the cup and remind me in two minutes to drink some water." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
 | 1:32–1:46 | **Unplug the network** | The TV says Offline; "Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
-| 1:46–2:04 | Quick cuts | "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "What do you remember?" (the map) |
+| 1:46–2:04 | Quick cuts | "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 11 s, so a labelled time cut) · "What do you remember?" (the map) |
 | 2:04–2:16 | The reminder, two minutes later (a labelled time cut) | Andy finds the person, turns to them: "You asked me to remind you: drink some water." |
 | 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), first word about a second after Andy understands, and every Meta model with where it runs: SAM 3.1, Muse Glimmer, Omnilingual ASR on our hardware; Muse Spark and Muse Image in the cloud, words only. |
 | 2:44–3:00 | Robot close-up | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. |
@@ -21,6 +21,11 @@ personal in view). The TV page is screen-recorded at the same time.
 "Andy, let's play the cup game": the ball goes under a cup, a slow shuffle, "Let me replay that" (a labelled time cut over
 the replay), Andy points, the cup is lifted, and the TV shows every cup's path. It shows SAM 3.1's Object Multiplex
 doing what finding frame by frame can't: telling identical cups apart as they cross.
+
+**"This is my mug," if the founder's two-mug test goes well:** it fits the uncut find (0:16 to 0:55) instead of "the
+blue one": "Andy, this is my mug" (held up and turned), then with a second mug of another colour on the table, "Andy,
+where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", "91%: yours"). It shows a Meta open model
+(DINOv2) and the privacy story in one line: "I keep what it looks like as numbers, never a picture."
 
 **Recording the TV:** start `uv run --with playwright python scripts/record_tv.py --seconds 120 --out
 film/tv-take1.webm` just before each take, and line it up with the camera footage in the edit (Andy's first word is an

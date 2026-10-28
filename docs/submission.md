@@ -95,6 +95,10 @@ Every turn, the TV lists which models worked on it and where.
 - **Telling my mug from yours.** DINOv2 learned to ignore colour, so a blue and a red mug of one shape scored 0.94
   alike. Half of the likeness is now a colour fingerprint of the mug's own pixels: the red one scores 0.55, while the same
   thing seen from other angles on the robot scored 0.79 to 0.98.
+- **Computer use with a reviewer.** Meta's computer use asks for confirmation on every batch of actions, so our code
+  reviews each batch before acknowledging it: no personal details typed, and a sign-in or payment page ends the run.
+  Clicking through search results took minutes (each model turn 10 to 15 s); letting Muse Spark's web search pick the
+  page first puts it on the TV in 6 to 11 s.
 - **Never a false promise:** a chat model can't claim to set a reminder or watch something; code checks every sentence
   before it's said.
 
