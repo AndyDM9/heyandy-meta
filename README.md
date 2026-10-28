@@ -15,18 +15,22 @@ trademark application.
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
 6. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
    second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
-7. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
+7. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
+   shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
+   cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
+   draws each cup's path, and Andy watches the reveal and keeps score.
+8. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
    saved to your Pictures folder to print or share. "Make it sunset" changes it.
-8. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
+9. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
    at the table) and Glimmer says what it sees, on the computer beside the robot.
-9. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
+10. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
    (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, reminders,
    pictures, look up) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
-10. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
-11. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+11. **"Speak up", "speak more slowly", "say that again."** How Andy speaks is set by voice and remembered.
+12. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Kokoro) run on the computer beside the robot.
-12. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
+13. **Pictures from your home never leave it.** SAM 3.1 (open weights) and Glimmer see the camera on the computer beside
    the robot, and so do your voice and Andy's. Muse Spark in the cloud only ever gets words: labels, directions and plan
    steps.
 
@@ -154,11 +158,16 @@ only 12 look-alikes and 14 TV cases (`evals/results/*-before-tool-fixes.json`). 
 the robot sharing its GPU; with 20 rooms a scenario, a few points either way is noise. Results: `evals/results/`.
 
 **On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included;
-pointing within about 3 degrees after the head's correction. The physical scorecard (`evals/physical.py`) comes next.
+pointing within about 3 degrees after the head's correction.
+
+**The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
+swaps of 0.8 s each; `docs/research.md` section 18): about 5 frames a second, so a 4-second shuffle replays in about 9 s.
+At the camera's 10 frames a second it picked the right cup in 4 of 5 runs; at 5 frames a second it lost the cups in all 4. Not
+yet scored with real cups. The physical scorecard (`evals/physical.py`) comes next.
 
 ## What doesn't work yet
-- **Muse Spark hasn't made a live call yet.** It waits for the hackathon credits; until then Andy runs entirely on this
-  computer (Glimmer plans hinted searches and talks; SAM 3.1 sees; Omnilingual ASR hears).
+- **The cup game hasn't been scored with real cups yet.** Its tracking was measured on synthetic shuffles (above);
+  identical cups crossing fast can still swap.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,

@@ -5,7 +5,18 @@ import time
 import urllib.error
 import urllib.request
 
+from dataclasses import dataclass
+
 from .common import Mask, is_local
+
+
+@dataclass
+class Track:
+    """One thing followed through a clip: where it was in each frame it was seen, and its mask in the last frame."""
+
+    id: int
+    path: list[tuple[int, float, float]]  # (frame, x, y) in the clip's pixels
+    end: Mask | None  # None: not seen in the last frame (lost)
 
 
 class NotLocal(ValueError):
@@ -25,13 +36,15 @@ class LocalSam31:
 
     def _post(self, path: str, frame_or_bytes, **fields) -> dict:
         image = getattr(frame_or_bytes, "image", frame_or_bytes)
-        body = json.dumps({"image": base64.b64encode(image).decode(), "min_score": self.min_score, **fields})
-        req = urllib.request.Request(self.endpoint + path, body.encode(), {"Content-Type": "application/json"})
+        return self._send(path, {"image": base64.b64encode(image).decode(), "min_score": self.min_score, **fields})
+
+    def _send(self, path: str, fields: dict, timeout: float | None = None) -> dict:
+        req = urllib.request.Request(self.endpoint + path, json.dumps(fields).encode(), {"Content-Type": "application/json"})
         start = time.monotonic()
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+            with urllib.request.urlopen(req, timeout=timeout or self.timeout) as r:
                 out = json.load(r)
-        except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        except (urllib.error.URLError, OSError, ValueError) as e:  # OSError: timeouts, a dropped connection
             raise LocalUnavailable(f"local SAM 3.1 at {self.endpoint}: {e}") from e
         self.last_latency_s = time.monotonic() - start
         return out
@@ -43,6 +56,15 @@ class LocalSam31:
         """Several things in one frame, encoded once (SAM 3.1 keeps the frame's features for every prompt)."""
         out = self._post("/segment_many", frame_or_bytes, queries=list(queries))["masks"]
         return {q: [_mask(q, m) for m in out.get(q, [])] for q in queries}
+
+
+    def track(self, frames: list, query: str) -> list[Track]:
+        """Every ``query`` in the first frame, followed through the clip by SAM 3.1 Object Multiplex (about 5 frames a
+        second on this computer's GPU, so a few seconds of shuffling takes a few more to replay)."""
+        images = [base64.b64encode(getattr(f, "image", f)).decode() for f in frames]
+        out = self._send("/track", {"frames": images, "query": query}, timeout=30.0 + len(images) / 2)
+        return [Track(o["id"], [tuple(p) for p in o["path"]], _mask(query, o["end"]) if o["end"] else None)
+                for o in out["objects"]]
 
 
 def _mask(label: str, m: dict) -> Mask:

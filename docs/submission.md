@@ -37,6 +37,9 @@ the house.
   own words. If you're out, it tries again and tells you later.
 - **"Andy, what am I holding?" / "What's on the table?"** Andy looks at your hands (found with SAM 3.1) or down at
   the table, and Glimmer says what it sees, all on the computer beside the robot.
+- **"Andy, let's play the cup game."** Hide a ball under a cup and shuffle. Andy records the shuffle, replays it
+  through SAM 3.1's Object Multiplex (every cup tracked at once, on the computer beside the robot), points at the cup
+  with the ball, and keeps score. The TV draws each cup's path through the shuffle.
 - **"Andy, draw me a lighthouse at dawn."** Muse Image paints it from the person's words; it fills the TV and is
   saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
@@ -52,7 +55,7 @@ the house.
 
 | Model | Where | What it does |
 |---|---|---|
-| **SAM 3.1** (open weights, `sam3.1_multiplex.pt`) | GPU 1, on the computer beside the robot | Finds things in camera frames (several per frame for the idle glance), finds the person for reminders, follows a moving thing |
+| **SAM 3.1** (open weights, `sam3.1_multiplex.pt`) | GPU 1, on the computer beside the robot | Finds things in camera frames (several per frame for the idle glance), finds the person for reminders, follows a moving thing; **Object Multiplex tracks every cup at once** in the cup game |
 | **Muse Glimmer 30B** (open weights, Q4_K_M + perception encoder + DFlash drafter) | GPU 0, llama.cpp | Conversation; **plans searches with the robot's tools** when there's a hint; checks pictures (real thing or a picture on a screen? which look-alike?) |
 | **Omnilingual ASR** (open weights, LLM 1B v2) | GPU 1 | Hears the person, told the language |
 | **Muse Spark 1.3** (Model API) | The cloud, **words only** | Plans hinted searches when online; web answers with sources; harder conversation |
@@ -77,6 +80,10 @@ Every turn, the TV lists which models worked on it and where.
 - **Speech that's fast enough to talk to:** Omnilingual ASR and Kokoro on GPU 1, the robot's microphone array for the
   voice's direction, answers spoken sentence by sentence as Glimmer writes them: the first word [0.7 to 1 s] after Andy
   understands you.
+- **Identical cups, crossing.** SAM 3.1 Object Multiplex runs at about 5 frames a second on a 3090, half the camera's
+  rate, and at 5 frames a second the cups were lost every time. So Andy records at 10 and replays. The model's default
+  detection batch needed about 12 GB more than the GPU had beside the voice models; 4 frames a batch keeps tracking at
+  10.5 GB. Cups dropped while crossing and found again under a new id are joined back up by where they were heading.
 - **Never a false promise:** a chat model can't claim to set a reminder or watch something; code checks every sentence
   before it's said.
 

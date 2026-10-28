@@ -26,7 +26,8 @@ class VoiceLoop:
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
         text = " ".join(text.split())
-        if getattr(self.andy, "following", False) and STOP.search(text):
+        if getattr(self.andy, "following", False) and (
+                STOP.search(text) or (getattr(self.andy, "playing", False) and DONE.search(text))):
             self.andy.stop_following()  # no lock: the follow holds it, and this must reach it at once
             return "Stopped."
         if _looping(text):
@@ -90,6 +91,8 @@ def _looping(text: str) -> bool:
 
 
 STOP = re.compile(r"\b(?:stop|enough|that's enough|okay thanks|thank you)\b", re.I)
+DONE = re.compile(r"\b(?:done|ready|finished|where(?:'s| is) (?:it|the ball)|which (?:one|cup)|your turn|go ahead)\b",
+                  re.I)  # the cup game: the shuffle is over
 SOFT = re.compile(r"^\W*and\b[\s,]*", re.I)
 
 

@@ -20,6 +20,7 @@ class _Picture:
     found: Found
     words: str
     until: float
+    trails: list | None = None  # the cup game: each cup's path through the shuffle, [(points, is_the_one)]
 
 
 class ScreenState:
@@ -46,6 +47,8 @@ class ScreenState:
         self.staged = False  # a staged scene: camera pictures go to the Model API, and the TV says so
         self._drawing: tuple[bytes, str, str, float] | None = None  # (WebP, what was asked, where it's saved, until)
         self.drawings = 0  # a version for the page, so it fetches each new picture once
+        self._game: tuple[str, str, float] | None = None  # the cup game: (what's happening, the detail, until)
+        self.score = ""  # "Andy 2 · You 1", for this session's cup games
 
     def doing(self, state: str, head: str = "") -> None:
         with self._lock:
@@ -106,16 +109,22 @@ class ScreenState:
         with self._lock:
             self.caption, self.source, self.reason = text, source, reason
 
-    def found(self, found: Found, words: str) -> None:
+    def found(self, found: Found, words: str, trails: list | None = None) -> None:
         if not found.frame.image:  # the pretend room has no camera: words only
             return
         with self._lock:
-            self._picture = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS)
+            self._picture = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS, trails)
+
+    def game(self, title: str, detail: str = "") -> None:
+        """The cup game, stage by stage: "Watching the cups", "Replaying the shuffle"."""
+        with self._lock:
+            self._picture, self._drawing, self.sources, self.steps, self.memory = None, None, [], [], None
+            self._game = (title, detail, self._clock() + PICTURE_SECONDS)
 
     def clear(self) -> None:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
-            self.looking_for, self._help_until, self._drawing = "", 0.0, None
+            self.looking_for, self._help_until, self._drawing, self._game = "", 0.0, None, None
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
@@ -152,7 +161,10 @@ class ScreenState:
                    "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None,
                    "quiet": self.quiet_text, "outbox": list(self.outbox),
-                   "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else ""}
+                   "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else "",
+                   "game": None}
+            if self._game and self._clock() < self._game[2]:
+                out["game"] = {"title": self._game[0], "detail": self._game[1], "score": self.score}
             if self._drawing and self._clock() >= self._drawing[3]:
                 self._drawing = None
             if self._drawing:
@@ -171,4 +183,7 @@ class ScreenState:
                     "outline": m.outline, "box": list(m.box), "scale": list(m.outline_scale),
                     "seconds_left": round(p.until - self._clock()),
                 }
+                if p.trails:
+                    out["picture"]["trails"] = [{"d": "M " + " L ".join(f"{x:.0f} {y:.0f}" for x, y in pts),
+                                                 "chosen": chosen} for pts, chosen in p.trails if len(pts) >= 2]
             return out

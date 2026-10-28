@@ -21,11 +21,12 @@ from .agent.tools import SearchTools, side
 from .budget import Budget, BudgetExceeded
 from .companion import answers
 from .companion.attention import face_person
-from .companion import pictures
+from .companion import cupgame, pictures
 from .companion.follow import follow
 from .companion.intents import REFINE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import DISCLOSURE, Disclosure, respond
+from .finder.geometry import LITE, pixel_to_angles
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
 from .memory.places import Places
@@ -43,6 +44,7 @@ REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten 
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
                     r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
+AGAIN = re.compile(r"^\W*(?:yes|yeah|yep|sure|ok(?:ay)?|again|one more|let'?s go|go on|why not)\b(?!\W*(?:but|no)\b)", re.I)
 HISTORY_TURNS, HISTORY_FORGET_S = 4, 30 * 60  # a conversation: its last few exchanges, forgotten after 30 quiet minutes
 CLOUD_TROUBLE = (BudgetExceeded, CloudUnavailable, APIError, RuntimeError)  # RuntimeError: no key set
 
@@ -85,6 +87,9 @@ class Andy:
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
         self._asked: tuple[str, float] | None = None  # a question Andy asked, waiting for its answer
         self.following = False
+        self.playing = False  # the cup game: "done" ends the shuffle
+        self.cup_score = [0, 0]  # Andy, the person: this session's cup games, in memory only
+        self._again_until = 0.0  # Andy just asked "again?" after a cup game
         self._drawing = None  # the last picture Muse Image made, to refine
         self._briefed = None  # the day of the last morning briefing
         self.assistant = Assistant(self)
@@ -235,6 +240,9 @@ class Andy:
                 return "What should I remind you about, and when?"
             r = self.reminders.add(i.text, i.at, i.daily, now=self.clock())
             return f"I'll remind you {'every day ' if r.daily else ''}at {spoken_time(r.at)}: {r.text}."
+        again, self._again_until = self.clock() <= self._again_until and AGAIN.match(text), 0.0
+        if i.kind == "game" or (again and i.kind == "chat"):
+            return self.cup_game()
         if i.kind == "describe":
             return self.describe(i.thing, holding="hold" in text.lower() or bool(re.search(r"\bthis\b", text, re.I)))
         if i.kind == "draw":
@@ -243,7 +251,8 @@ class Andy:
             return self.draw(text, refine=True)
         if i.kind == "help":
             self.screen.show_help()
-            return ("I can find things and point at them, keep an eye on things, remind you, and look things up. "
+            return ("I can find things and point at them, keep an eye on things, remind you, look things up, and play "
+                    "the cup game. "
                     "There are some ideas on the screen. Start with my name.")
         if i.kind == "world":
             return self.look_up(text)
@@ -488,6 +497,89 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def cup_game(self) -> str:
+        """The cup game (companion/cupgame.py): watch the ball go under a cup, record the shuffle, replay it with SAM 3.1
+        Object Multiplex on this computer, and point at the cup. Then watch the reveal, and keep score."""
+        track = getattr(self.segmenter, "track", None)
+        if track is None:
+            return "I can't play the cup game right now: it needs my eyes on this computer."
+        self.screen.clear()
+        yaw = self.person[0] if self.person else getattr(self.body, "yaw", 0.0)
+        self.body.look(yaw, 25.0)  # the table between us
+        self.gesture("searching")  # a still head: the clip needs it
+        self._stop_following.clear()
+        self.following = self.playing = True
+        self.screen.doing("Playing", "Watching the table")
+        self.say("Let's play! Show me the ball, then hide it under a cup and shuffle, not too fast. Say done when "
+                 "you're finished.")
+        try:
+            r = cupgame.play(self.body, self.segmenter, track, self._stop_following.is_set, self._game_stage)
+        except RuntimeError:  # the local SAM 3.1 or the camera didn't answer
+            r = cupgame.Result("broken")
+        finally:
+            self.following = self.playing = False
+            self.screen.doing("Waiting")
+        self.gesture("idle")
+        if r.frames:
+            self.screen.used("SAM 3.1 Object Multiplex", "device", r.frames)
+            self._source = "device"
+            self._reason = f"SAM 3.1 followed every cup through {r.frames} frames, on this computer ({r.seconds:.0f} s)"
+        if r.how != "found":
+            self.screen.game({"lost": "I lost track", "stopped": "Another time"}.get(r.how, "Let's try again"))
+            return {"lost": "I lost track of the cups, sorry. Shall we go again, a little slower?",
+                    "no_cups": "I need to see two or three cups on the table in front of me. Shall we try again?",
+                    "no_ball": "I didn't see the ball. Show it to me first, then hide it under a cup.",
+                    "not_hidden": "I can still see the ball. Hide it under a cup, and we'll play again.",
+                    "stopped": "Okay, another time.",
+                    "broken": "Sorry, my eyes aren't working properly just now."}[r.how]
+        self.body.point(r.yaw, r.pitch)
+        self.gesture("found")
+        cups = [t for t in r.tracks if len(t.path) >= r.frames / 2 or t is r.chosen]  # not a moment's misdetection
+        trails = [([(x, y) for _, x, y in t.path[::max(1, len(t.path) // 40)]], t is r.chosen) for t in cups]
+        found = Found("cup", r.yaw, r.pitch, r.chosen.end.score or 0.5, r.frame, r.chosen.end, r.frames)
+        self.screen.found(found, "It's under this one", trails)
+        self.say("It's under this one! Lift it up.")
+        won = self._reveal(r)
+        self._again_until = self.clock() + ANSWER_WITHIN_S  # "yes" or "again" starts another round
+        if won is None:
+            return "Shall we play again?"
+        self.cup_score[0 if won else 1] += 1
+        andy, you = self.cup_score
+        self.screen.score = f"Andy {andy} · You {you}"
+        self.screen.found(found, ("I got it! " if won else "You got me! ") + self.screen.score, trails)
+        if won:
+            self.gesture("found")
+        score = f"That's {andy} to {you}" + (" to me." if andy > you else " to you." if you > andy else ".")
+        return ("Yes! I kept my eye on it. " if won else "Oh, you got me! Well played. ") + score + " Again?"
+
+    def _game_stage(self, what: str, **info) -> None:
+        if what == "ball":
+            self.screen.game("Show me the ball", "Then hide it under a cup and shuffle.")
+        elif what == "seen":
+            self.gesture("found")  # the antennas only: the head stays still for the clip
+            self.screen.game("I see the ball", "Now hide it under a cup and shuffle.")
+        elif what == "shuffling":
+            self.screen.game("Watching the cups", "Shuffle them, then stop, or say done.")
+        elif what == "replaying":
+            self.gesture("thinking")
+            self.screen.game("Replaying the shuffle", f"SAM 3.1 is following every cup through {info['frames']} "
+                                                      "frames, on this computer.")
+            self.say("Let me replay that.")
+
+    def _reveal(self, r, seconds: float = 8.0) -> bool | None:
+        """After "lift it up": was the ball under the cup Andy pointed at? None if it wasn't seen in time."""
+        cam = LITE.scaled(r.frame.width, r.frame.height)
+        cups = {t.id: pixel_to_angles(*t.end.center, r.frame.yaw, r.frame.pitch, cam) for t in r.tracks if t.end}
+        end = time.monotonic() + seconds
+        while time.monotonic() < end:
+            frame = self.body.capture()
+            balls = [m for m in self.segmenter.find(frame, "ball") if m.score is None or m.score >= 0.4]
+            if balls:
+                at = pixel_to_angles(*max(balls, key=lambda m: m.score or 0.5).center, frame.yaw, frame.pitch,
+                                     LITE.scaled(frame.width, frame.height))
+                return min(cups, key=lambda c: (cups[c][0] - at[0]) ** 2 + (cups[c][1] - at[1]) ** 2) == r.chosen.id
+        return None
 
     def draw(self, what: str, refine: bool = False) -> str:
         """A picture from the person's words, with Muse Image (words only leave the house); shown and saved."""

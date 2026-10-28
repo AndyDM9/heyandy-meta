@@ -159,6 +159,14 @@ class ReachyBody:
         w, h = jpeg_size(data)
         return Frame(data, w, h, self.yaw, self.pitch)
 
+    def grab(self) -> Frame:
+        """The next camera frame as it comes, without waiting for the head: for recording a clip with the head still."""
+        data = self._next_frame(0.5)
+        if not data:
+            raise RuntimeError("the camera returned no frame")
+        w, h = jpeg_size(data)
+        return Frame(data, w, h, self.yaw, self.pitch)
+
     def point(self, yaw: float, pitch: float) -> None:
         """Point with the head: face the thing, dip once towards it, and hold."""
         self.look(yaw, pitch)

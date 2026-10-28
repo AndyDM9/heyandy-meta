@@ -17,6 +17,11 @@ personal in view). The TV page is screen-recorded at the same time.
 | 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), first word about a second after Andy understands, and every Meta model with where it runs: SAM 3.1, Muse Glimmer, Omnilingual ASR on our hardware; Muse Spark and Muse Image in the cloud, words only. |
 | 2:44–3:00 | Robot close-up | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. |
 
+**The cup game, if it scores well with real cups:** it replaces "Follow the mug" at 0:55 to 1:12 and becomes the X clip.
+"Andy, let's play the cup game": the ball goes under a cup, a slow shuffle, "Let me replay that" (a labelled time cut over
+the replay), Andy points, the cup is lifted, and the TV shows every cup's path. It shows SAM 3.1's Object Multiplex
+doing what finding frame by frame can't: telling identical cups apart as they cross.
+
 **Recording the TV:** start `uv run --with playwright python scripts/record_tv.py --seconds 120 --out
 film/tv-take1.webm` just before each take, and line it up with the camera footage in the edit (Andy's first word is an
 easy sync point). `film/` is never committed.

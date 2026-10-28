@@ -88,6 +88,8 @@
   .dial .ring { fill: none; stroke: var(--muted); stroke-width: 0.6; opacity: 0.5; }
   .dial .front { fill: var(--muted); font-size: 9px; text-anchor: middle; }
   .dial .dot { fill: var(--accent); }
+  .trail { fill: none; stroke: var(--muted); stroke-width: 4; stroke-dasharray: 2 10; stroke-linecap: round; opacity: 0.8; }
+  .trail.chosen { stroke: var(--outline); stroke-dasharray: none; stroke-width: 6; opacity: 1; }
   .dial .name { fill: var(--ink); font-size: 11px; font-weight: 700; }
   .dial:not(.big) .name { font-size: 16px; }
   .dial:not(.big) .front { font-size: 12px; }
@@ -182,7 +184,7 @@
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   const svgNS = "http://www.w3.org/2000/svg";
   const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
-               "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”",
+               "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”", "“Andy, let's play the cup game.”",
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
@@ -267,9 +269,16 @@
   }
   function picture(p) {
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", zoom(p)); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", `Where Andy saw the ${p.label}`);
+    // The cup game shows the whole table, with each cup's path through the shuffle.
+    svg.setAttribute("viewBox", p.trails ? `0 0 ${p.width} ${p.height}` : zoom(p)); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", p.trails ? "The cups' paths through the shuffle" : `Where Andy saw the ${p.label}`);
     const img = document.createElementNS(svgNS, "image");
     img.setAttribute("href", p.src); img.setAttribute("width", p.width); img.setAttribute("height", p.height); svg.append(img);
+    for (const t of p.trails || []) {
+      const line = document.createElementNS(svgNS, "path");
+      line.setAttribute("d", t.d); line.setAttribute("class", t.chosen ? "trail chosen" : "trail");
+      line.setAttribute("vector-effect", "non-scaling-stroke"); svg.append(line);
+    }
     if (p.outline) {
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", p.outline);
@@ -295,18 +304,27 @@
         body.replaceChildren(box);
       }
     } else if (s.picture) {
-      kicker = "Found"; title = s.picture.words;
-      const key = s.picture.src.length + ":" + s.picture.box.join(",");
+      kicker = s.game ? "The cup game" : "Found"; title = s.picture.words;
+      const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
       if (key !== pictureKey) {
         pictureKey = key;
         const facts = el("div", null, "facts");
         if (s.seconds !== null) { const f = el("div", "to find it"); f.prepend(el("b", s.seconds.toFixed(1) + " s")); facts.append(f); }
         if (s.steps.length) facts.append(steps(s.steps));
+        if (s.game) {
+          const f = el("div", "SAM 3.1 Object Multiplex followed every cup at once, on this computer");
+          f.prepend(el("b", s.picture.trails ? s.picture.trails.length + " cups" : "")); facts.append(f);
+        }
         const split = el("div", null, "split"); split.append(picture(s.picture), facts); body.replaceChildren(split);
       }
     } else {
       pictureKey = "";
-      if (s.looking_for && s.running) {
+      if (s.game) {
+        kicker = "The cup game"; title = s.game.title;
+        const w = el("div", s.game.detail, "when");
+        if (s.game.score) w.append(el("div", s.game.score, "answer"));
+        body.replaceChildren(w);
+      } else if (s.looking_for && s.running) {
         kicker = `Finding your ${s.looking_for}`; title = s.head || "Looking around the room";
         body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", "If I can't find it, I'll say so.", "when"));
       } else if (s.looking_for && s.seconds !== null) {

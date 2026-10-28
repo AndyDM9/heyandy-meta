@@ -397,3 +397,30 @@ sighting more than 10 degrees from the last place starts a new entry (it moved).
 4.0 s later its place read "on desk in front of monitor, behind keyboard"; "when did you last see the cup?" answered
 from memory without the robot moving. Also built from section 16: a privacy receipt on the TV, quiet mode and calmer
 motion.
+
+## 18. Several things at once: the cup game with SAM 3.1 Object Multiplex (2026-10-27, night)
+
+From section 16's third idea. Measured on GPU 1 (RTX 3090) with `build_sam3_multiplex_video_predictor`, before building:
+
+- **Speed:** 5.7 frames a second on 20 real camera frames shrunk to 960x540 (one or two objects), about 5 on synthetic
+  shuffles of three cups. The image encoder runs on every frame, and there's no setting to detect less often.
+- **Memory:** the first tries ran out of memory on the 24 GB card. It wasn't the clip's length: sam3's builder detects 16
+  frames at a time (`batched_grounding_batch_size=16`) and keeps the previous batch, about 370 MB a frame. At 4 a batch
+  the peak is 10.5 GB with the model, whatever the clip's length, so it fits beside the voice server.
+  `trim_past_non_cond_mem_for_eval` crashes on this model (`KeyError: 'multistep_point_inputs'`) and isn't needed.
+- **bfloat16:** sam3 turns on bfloat16 autocast only for the thread that built the model, so tracking in a server
+  request thread failed on a dtype mismatch until it was wrapped in autocast itself.
+- **Accuracy, synthetic** (three identical red cups on a wooden table, the ball hidden under one, 4 swaps of 0.8 s each,
+  the cups passing in front of and behind each other): at **10 frames a second, 4 of 4** standalone and 4 of 5 through
+  the server; at **5 frames a second, 0 of 4** (lost or swapped mid-swap). Shuffles saved as upscaled JPEGs did worse
+  (3 of 10, with 0.6 s swaps failing every time), which says these drawn frames aren't a fair stand-in for a camera;
+  real cups still need scoring.
+- **Dropped and found again:** where two cups cross, SAM 3.1 sometimes drops one and finds it a frame or two later under a
+  new id. Joining a track that ends early to one starting within 6 frames near where it was heading turned 2 of the
+  misses into right answers.
+
+So Andy records the shuffle at the camera's full 10 frames a second (in memory only), watches with single frames a few
+times a second for the ball to vanish and the cups to settle, then replays the clip from the moment the ball vanished.
+A 4-second shuffle replays in about 9 s; Andy says "Let me replay that" and the TV shows the stage. It asks for a
+shuffle "not too fast". Then it points, says "Lift it up", checks which cup the ball appears under, and keeps score for
+the session.
