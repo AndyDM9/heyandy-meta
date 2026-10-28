@@ -8,6 +8,7 @@ Glimmer unless it needs more thought. When the cloud is refused or unreachable, 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
 import json
+import os
 import re
 import threading
 import time
@@ -448,7 +449,10 @@ class Andy:
             entry["offered"] = now
             self._offered = (thing, now, *where)  # a yes or no answers it
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(asked))
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(asked))
+        os.chmod(tmp, 0o600)  # what the person asked for: theirs only, like places.json
+        tmp.replace(path)
         if not offer:
             return ""
         return (f" You've asked me about your {thing} {len(entry['at'])} times this week. Shall I keep an eye on "
