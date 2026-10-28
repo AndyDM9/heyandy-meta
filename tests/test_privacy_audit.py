@@ -22,6 +22,7 @@ def test_a_piece_missing_from_the_receipt_is_caught():
     assert on_receipt("I see your keys, to my left.", receipt)
     assert on_receipt("a long sentence that was cut where the TV says so", receipt)
     assert not on_receipt("my daughter's address is 12 Elm Street", receipt)
+    assert on_receipt("Possible mug: place 1, place 2", ["look: Possible mug: pla…"])  # a tool's result, shortened
 
 
 def test_images_are_counted_once_each_and_camera_bytes_are_recognised():

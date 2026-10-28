@@ -201,7 +201,8 @@ def norm(s: str) -> str:
 
 def on_receipt(piece: str, receipt: list[str]) -> bool:
     p = norm(piece)
-    return any(p in norm(w) or (w.endswith("…") and p.startswith(norm(w[:-1]))) for w in receipt)
+    cut = [norm(w[:-1]) for w in receipt if w.endswith("…")]  # shortened on the TV, and marked so
+    return any(p in norm(w) for w in receipt) or any(p.startswith(c) or p.startswith(c.split(": ", 1)[-1]) for c in cut)
 
 
 def build(tmp: Path, offline: bool):

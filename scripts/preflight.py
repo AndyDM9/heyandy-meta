@@ -63,6 +63,17 @@ def main() -> None:
             raise RuntimeError("not running: " + ", ".join(down) + " (systemctl --user start ...)")
         return "all five running"
 
+    @check("the robot (Reachy Mini daemon)")
+    def _():
+        import urllib.request
+
+        with urllib.request.urlopen("http://127.0.0.1:8000/api/daemon/status", timeout=5) as r:
+            s = json.load(r)
+        if s.get("state") != "running":  # e.g. started before the robot's power was on: it stays in error until restarted
+            raise RuntimeError(f"{s.get('state')}: {s.get('error') or 'not ready'} -> turn the robot's power on, then "
+                               "systemctl --user restart jarvis-daemon heyandy-app")
+        return f"running, motors found (daemon {s.get('version', '?')})"
+
     @check("Andy's log, last 10 minutes")
     def _():
         log = subprocess.run(["journalctl", "--user", "-u", "heyandy-app", "--since", "10 min ago", "--no-pager"],

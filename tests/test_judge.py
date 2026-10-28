@@ -172,3 +172,29 @@ def test_where_it_is_and_place_names_as_models_write_them():
     out = tools.call("compare", {"object": "mug", "description": "blue, next to the laptop",
                                  "places": ["place 1", "Place 2"]})
     assert "fits" in out and tools.pointed is not None
+
+
+def test_when_the_person_said_which_one_a_guess_is_never_pointed_at():
+    room = Room([Thing("phone", 40.0, 15.0, looks="red"), Thing("phone", -20.0, 15.0, looks="black")])
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))
+    tools.call("look", {"object": "red phone", "views": ["far left", "left", "right"]})
+    out = tools.call("look_closer", {"object": "red phone", "place": "1"})
+    assert out.startswith("refused: there is more than one phone") and tools.pointed is None
+    out = tools.call("compare", {"object": "phone", "description": "red", "places": ["1", "2"]})
+    assert "fits" in out and tools.pointed.yaw > 0  # the red one, on the left
+
+
+def test_one_found_that_isnt_the_one_described_isnt_pointed_at():
+    room = Room([Thing("phone", -20.0, 15.0, looks="black")])
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))
+    tools.call("look", {"object": "red phone", "views": ["far left", "left", "right"]})
+    out = tools.call("look_closer", {"object": "phone", "place": "1"})
+    assert "doesn't look like 'red'" in out and tools.pointed is None
+
+
+def test_a_direction_in_the_object_isnt_taken_for_which_one():
+    room = Room([Thing("glasses", 120.0, 20.0)])
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))
+    tools.call("look", {"object": "glasses behind you", "views": ["behind left"]})
+    assert tools.described == ""
+    assert tools.call("look_closer", {"object": "glasses", "place": "1"}).startswith("Confirmed")

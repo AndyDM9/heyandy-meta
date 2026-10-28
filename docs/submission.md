@@ -78,14 +78,15 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 ## Measured
 
 *Search, simulated* (the robot's camera model, seeded rooms): with look-alikes described, the fixed sweep pointed at the
-wrong one 20 times in 100; **Glimmer's plan 17 of 20, 1 wrong** (Muse Spark 16 of 20, 1 wrong). Things behind the robot:
-**20 of 20 in 3.9 looks** (Spark 3.2; fixed sweep 92 of 100 in 6.2). Nothing there: no false finds.
+wrong one 20 times in 100; **Glimmer's plan 19 of 20, 1 wrong** (Muse Spark 18 of 20, 1 wrong). Things behind the robot:
+**19 of 20 in 3.8 looks** (Spark 18 in 3.3; fixed sweep 92 of 100 in 6.2). Nothing there: no false finds.
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12** (6 of 12 before the fixes
 this scorecard showed were needed), **Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every request the program made recorded on its way
-out): **no camera picture reached the cloud** (21 taken); **every word from the home that was sent was on its turn's
+out): **no camera picture reached the cloud** (18 taken); **every word from the home that was sent was on its turn's
 receipt** (the rest were Andy's own instructions); crisis words reached no model; offline, nothing at all went.
-*Spanish:* **40 of 41** written requests and **37 of 41** spoken ones reach the right ability.
+*Spanish:* **41 of 41** written requests and **40 of 41** spoken ones reach the right ability (after two translation
+rules this scorecard showed were needed).
 *On the robot:* a cup found in 7.5 s and a keyboard in 7.1 s; first word 0.7 to 1 s after Andy understands you;
 [the physical scorecard: N of M].
 *Not yet tried on the robot with real things or a person:* the cup game (synthetic shuffles: 3 of 5), my mug, "what's

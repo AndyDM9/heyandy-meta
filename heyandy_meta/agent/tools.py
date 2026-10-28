@@ -26,6 +26,7 @@ OBJECT = re.compile(r"^[a-zA-Z][a-zA-Z '\-]{0,39}$")  # a short noun phrase for 
 # "blue mug" finds every mug and compare picks the blue one, rather than a look that misses a mug in odd light.
 COLOURS = {"red", "blue", "green", "yellow", "black", "white", "grey", "gray", "brown", "pink", "purple", "orange",
            "silver", "gold", "golden", "beige", "navy", "dark", "light"}
+AROUND = {"you", "your", "me", "my", "left", "right", "behind", "front", "here", "there"}  # where, not which one
 WHERE = re.compile(r"\s+(?:in|on|by|near|next to|under|behind|beside|at|from|with|in front of)\s.*$")  # "mug next to the laptop"
 DESCRIPTION = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9 ,'\-]{0,79}$")  # the person's words about which one
 
@@ -84,6 +85,8 @@ class SearchTools:
     looked: set = field(default_factory=set)  # (object, view) already searched
     confirmed: dict[str, Found] = field(default_factory=dict)
     pointed: Found | None = None
+    described: str = ""  # which one the person meant ("red", "next to the laptop"), taken out of the object for compare
+    compared: bool = False
     auto_point: bool = True  # a confirmed closer look points at once: one model call fewer
     on_tool: object = None  # told True before a tool runs and False after (the body holds still while it looks)
     max_looks: int = 10  # frames a search may take; the simulated scorecard's absent rooms took 22 without it
@@ -120,9 +123,16 @@ class SearchTools:
     def _object(self, obj) -> str | None:
         if not isinstance(obj, str) or not OBJECT.match(obj.strip()):
             return None
-        words = WHERE.sub("", obj.strip().lower()).split()  # where it is is for compare too
-        plain = [w for w in words if w not in COLOURS]
-        return " ".join(plain or words)
+        text = obj.strip().lower()
+        where = WHERE.search(text)
+        words = WHERE.sub("", text).split()  # where it is is for compare too
+        plain = [w for w in words if w not in COLOURS] or words
+        seen = [w for w in words if w not in plain]  # what a picture can show: a colour, what it's next to
+        if where and not set(where.group().split()) & AROUND:
+            seen.append(where.group().strip())
+        if seen:
+            self.described = " ".join(seen)
+        return " ".join(plain)
 
     def _recall(self, object) -> str:
         obj = self._object(object)
@@ -173,9 +183,17 @@ class SearchTools:
             return f"refused: no place {place!r}; places so far: {list(self.candidates) or 'none'}"
         if self._looks_left() < 1:
             return "refused: you've looked enough for one search. Stop, and tell the person you couldn't find it."
+        several = len([p for p in self.candidates if p != "remembered"]) > 1
+        if self.described and several and not self.compared:  # the person said which one: never point at a guess
+            return (f"refused: there is more than one {obj}; use compare with the person's description "
+                    f"('{self.described}') on places {', '.join(p for p in self.candidates if p != 'remembered')} first")
         found = self.finder.confirm(obj, *self.candidates[place])
         if found is None:
             return f"Looked closer at place {place}: {self.finder.why or 'not there'}."
+        if self.described and not self.compared and self.judge is not None:  # only one: is it the one they meant?
+            if self.judge.pick([(found.frame, found.mask)], f"the {obj} that is {self.described}") is None:
+                return (f"Looked closer at place {place}: a {obj}, but it doesn't look like '{self.described}'. "
+                        "Look in other views, or tell the person what you found.")
         self.confirmed[place] = found
         if self.auto_point:
             return "Confirmed. " + self._point(place)
@@ -190,7 +208,9 @@ class SearchTools:
         if not isinstance(places, list) or not 2 <= len(places) <= 4 or any(p not in self.candidates for p in places):
             return f"refused: give 2 to 4 places from {list(self.candidates) or 'none'}"
         if self.judge is None:
+            self.described = ""  # nothing to compare with: look_closer may go ahead
             return "I can't compare pictures right now; look_closer at the likeliest place instead."
+        self.compared = True
         if self._looks_left() < 1:
             return "refused: you've looked enough for one search. Stop, and tell the person you couldn't find it."
         seen, notes = [], []

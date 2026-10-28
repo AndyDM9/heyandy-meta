@@ -50,7 +50,7 @@ trademark application.
    ("every morning at 8").
 16. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Kokoro
    speaks with a Spanish voice, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
-   a sentence), so the abilities work in Spanish too (40 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
+   a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
 17. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
@@ -195,16 +195,24 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 | Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
 |---|---|---|---|
 | The thing in front | 96 found, 0 wrong | 19, 0 wrong | 19, 0 wrong |
-| Behind the robot, with a hint | 92, 0 wrong, 6.2 looks | **20**, 0 wrong, 3.9 looks | **20**, 0 wrong, 3.2 looks |
-| A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | **20**, 0 wrong |
+| Behind the robot, with a hint | 92, 0 wrong, 6.2 looks | **19**, 0 wrong, 3.8 looks | **18**, 0 wrong, 3.3 looks |
+| A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | 19, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
-| Two look-alikes, "the blue one" | 80, **20 wrong** | 17, 1 wrong | 16, 1 wrong |
-| Planning time (model only) | none | 7 to 24 s | **3 to 9 s** |
+| Two look-alikes, "the blue one" | 80, **20 wrong** | **19**, 1 wrong | **18**, 1 wrong |
+| Planning time (model only) | none | 6 to 12 s | **4 to 8 s** |
 
 Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. The
-agents' scores are after the tool fixes of October 27 (no repeat looks; compare points at once); before them, Spark found
-only 12 look-alikes and 14 TV cases (`evals/results/*-before-tool-fixes.json`). Glimmer's times in this run were slowed by
-the robot sharing its GPU; with 20 rooms a scenario, a few points either way is noise. Results: `evals/results/`.
+agents' columns are on the code of October 28. Two rounds of fixes came from this scorecard, and every earlier run is
+kept:
+- **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
+  Glimmer's look-alikes went from 20 to 17 (`*-before-tool-fixes.json`).
+- **October 28 (a colour or "next to" is for compare, and when the person said which one, nothing is pointed at before
+  compare has picked):** look-alikes went to 19 (Glimmer) and 18 (Spark) (`*-before-colour-fix.json`). Spark's three
+  new misses (behind 2, TV 1) were all its ten looks spent trying other names where the thing wasn't.
+
+The one wrong look-alike left for each agent is the simulation's own stand-in for Glimmer's picture check, which
+matches words and mixes up "the big one" and "the small one". With 20 rooms a scenario, a point or two either way is
+noise. Results: `evals/results/`.
 
 **On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included
 (7.1 s for the keyboard once Glimmer's picture check went straight to its answer; research.md, 24);
@@ -214,16 +222,19 @@ pointing within about 3 degrees after the head's correction.
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of
 12; what failed and what changed is in `docs/research.md`, section 26.
 
-**Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 40 of 41 reach the
-right ability; said by Kokoro's Spanish voice and heard by Omnilingual ASR, 37 of 41 (two hearing slips, one ambiguous
-word, one misread). Glimmer translates each in a median 0.44 s, on the computer beside the robot.
+**Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 41 of 41 reach the
+right ability; said by Kokoro's Spanish voice and heard by Omnilingual ASR, 40 of 41 (one hearing slip: "¿qué es esto?"
+heard as "qué eres esto"). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
+a question stays a question when speech-to-text drops the question marks): 40 and 37 before. Glimmer translates each in
+a median 0.45 s, on the computer beside the robot.
 
 **The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
 reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every
 HTTP request the program made was recorded on its way out, and the simulated camera took real pictures. **21 of 21
-turns pass:** none of the 21 camera pictures reached the cloud; the one image that did was a web page's screenshot, on
-its receipt; every word sent was on its turn's receipt (49 of 52 pieces word for word; the other 3 are the person's
-words inside Andy's own instructions); the crisis words reached no model at all. 11 of the 21 turns sent nothing. With
+turns pass:** none of the 18 camera pictures reached the cloud; the one image that did was a web page's screenshot, on
+its receipt; every word from the home that was sent was on its turn's receipt (40 of 43 pieces word for word; the other
+3 are the person's words inside Andy's own instructions, for a picture and the web); the crisis words reached no model
+at all. 11 of the 21 turns sent nothing. With
 the network off, the same day sent nothing to the cloud, and Andy answered every turn.
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4

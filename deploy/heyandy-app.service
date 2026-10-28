@@ -1,7 +1,7 @@
 [Unit]
 Description=HeyAndy: Andy on the Reachy Mini (voice, finding, reminders); nothing said is logged
-After=heyandy-glimmer.service heyandy-sam.service heyandy-voice.service
-Wants=heyandy-glimmer.service heyandy-sam.service heyandy-voice.service
+After=jarvis-daemon.service heyandy-glimmer.service heyandy-sam.service heyandy-voice.service heyandy-guard.service
+Wants=heyandy-glimmer.service heyandy-sam.service heyandy-voice.service heyandy-guard.service
 
 [Service]
 WorkingDirectory=%h/Documents/GitHub/heyandy-meta

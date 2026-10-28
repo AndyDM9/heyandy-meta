@@ -609,3 +609,40 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
 - On the robot, with SAM 3.1 on this computer: "keyboard" found straight ahead in 5.6 s, "coffee mug" a little to the
   right in 4.1 s.
 - Not published yet: it links to this repository, which goes public on November 4 (submission checklist, step 7).
+
+## 31. Privacy you can ask about, and an audit of it (2026-10-28)
+
+- **"What did you send to the cloud today?"** Every turn's receipt is also counted for the day, in memory: turns, the
+  turns that sent anything, to which model, words, screenshots of web pages, staged-scene pictures. Only counts, never
+  the words (they stay on their own turn's receipt). Asking is answered on this computer before anything that could use
+  the cloud, so the question sends nothing. Spanish phrasings reach it through Glimmer's translation (5 of 5 tried).
+- **The privacy audit** (`evals/privacy.py`): a day of 21 requests with the real models, recording every HTTP request
+  the program makes (the OpenAI client's and urllib's) and giving the simulated camera real JPEG pictures, so a picture
+  that went anywhere would be found by its bytes. Its first run said all was well because it recorded nothing: the
+  OpenAI client had moved to a renamed HTTP library (`httpx2`). It now records both and refuses to report if it saw no
+  cloud traffic at all. 21 of 21 turns pass, on the code of this section's end (`evals/results/privacy-audit.json`).
+- **Colours and places are for compare.** In the audit's room, "find the blue mug next to the laptop" failed with both
+  planners: they asked SAM for "blue mug" (or "mug next to the laptop"), found nothing, then ran out of looks. The
+  search tools now look for the thing itself and tell the planner to compare the candidates by the person's words, on
+  this computer; "place 1" is read as "1". On that request: Glimmer 5 of 5 and Muse Spark 5 of 5, from 0.
+- **A guess is never pointed at.** The first Spark run on that change pointed at the wrong phone once: asked for "the
+  red phone", it was told both phones were there and to compare them, and instead looked closer at the first (a closer
+  look points at once). Now, when the person said which one, a closer look is refused until compare has picked; when
+  only one turns up, Glimmer checks it's "the phone that is red" before Andy points. Directions ("behind you", "on the
+  left") aren't taken for which one: a picture can't show them.
+- **The simulated scorecard on the final code** (`evals/results/sim-*.json`; the runs before are kept as
+  `*-before-colour-fix.json`): look-alikes, Glimmer 19 of 20 (17 before; 20 before the tool changes of October 27,
+  section 26, so that change had cost some and this one wins it back) and Muse Spark 18 of 20 (16), one wrong each, both
+  the simulation's word-matching stand-in for Glimmer mixing up "the big one" and "the small one". Behind the robot:
+  Glimmer 19, Spark 18 (20 and 20 before): every miss is the ten looks spent on other names ("TV remote", "remote
+  control") in views where it wasn't, none touched by this change. Glimmer plans in 6 to 12 s a search (7 to 24).
+- **The agent and the audit again, on the final code:** agent 12 of 12 with Muse Spark and with Glimmer; privacy audit
+  21 of 21 (none of 18 camera pictures sent; 40 of 43 pieces word for word, the other 3 the person's words inside Andy's
+  own instructions); offline, nothing sent.
+- **Spanish:** two translation rules the scorecard's misses called for: "vaso" is a cup ("vamos a jugar con los vasos"
+  had become "play with the glasses"), and a question stays a question when speech-to-text drops the question marks
+  ("se me olvida algo" had become "I forgot something"). Written 41 of 41 (40 before), spoken 40 of 41 (37 before);
+  the one left is a hearing slip.
+- **A GPU fell off the bus.** About 15 minutes into a full-load scorecard, GPU 0 dropped off the PCIe bus (NVIDIA Xid
+  79), and the driver needed a restart for both cards. Preflight now checks both GPUs answer, and that the robot's
+  daemon found its motors (after a restart with the robot switched on later, it stays in error until restarted).
