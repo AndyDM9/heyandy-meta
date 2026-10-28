@@ -149,3 +149,26 @@ def test_describe_asks_glimmer_about_the_view_or_a_crop():
     assert "in the person's hands" in g.requests[0]["messages"][1]["content"][0]["text"]
     assert judge.describe(FRAME, "on the table") == "A laptop and a mug."
     assert "never what to do with it" in g.requests[1]["messages"][1]["content"][0]["text"]
+
+
+def test_a_colour_in_the_object_is_left_to_compare():
+    room = Room([Thing("mug", 40.0, 15.0, looks="white, by the sink"),
+                 Thing("mug", -20.0, 15.0, looks="blue, next to the laptop")])
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))
+    out = tools.call("look", {"object": "Blue mug", "views": ["far left", "left", "right"]})
+    assert out.startswith("Possible mug: place 1") and "use compare" in out  # every mug found, not none
+    assert "already looked for the mug" in tools.call("look", {"object": "mug", "views": ["left"]})
+    out = tools.call("compare", {"object": "blue mug", "description": "blue, next to the laptop",
+                                 "places": list(tools.candidates)})
+    assert "fits" in out and tools.pointed is not None and tools.pointed.yaw < 0
+
+
+def test_where_it_is_and_place_names_as_models_write_them():
+    room = Room([Thing("mug", 40.0, 15.0, looks="white, by the sink"),
+                 Thing("mug", -20.0, 15.0, looks="blue, next to the laptop")])
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))
+    assert tools.call("look", {"object": "mug next to the laptop", "views": ["far left", "left", "right"]}).startswith(
+        "Possible mug: place 1")
+    out = tools.call("compare", {"object": "mug", "description": "blue, next to the laptop",
+                                 "places": ["place 1", "Place 2"]})
+    assert "fits" in out and tools.pointed is not None

@@ -101,11 +101,22 @@ def main() -> None:
             raise RuntimeError("tracked nothing")
         return f"{len(tracks)} track(s) through 3 frames"
 
+    @check("both GPUs answering")
+    def _():
+        out = subprocess.run(["nvidia-smi", "-L"], capture_output=True, text=True)
+        gpus = [line for line in out.stdout.splitlines() if line.startswith("GPU ")]
+        lost = [line for line in (out.stdout + out.stderr).splitlines() if "Unknown Error" in line]
+        if lost or len(gpus) < 2:  # a card that fell off the bus (Xid 79) only comes back after a reboot
+            raise RuntimeError(f"{len(gpus)} of 2 GPUs answer ({(lost or ['missing'])[0][:70]}): restart the computer, "
+                               "then run this again")
+        return "GPU 0 (Glimmer) and GPU 1 (SAM 3.1, voice, guards)"
+
     @check("GPU memory for the cup game")
     def _():
         out = subprocess.run(["nvidia-smi", "--query-gpu=index,memory.used,memory.total", "--format=csv,noheader,nounits"],
                              capture_output=True, text=True).stdout.strip().splitlines()
-        used, total = (int(x) for x in out[1].split(",")[1:])
+        gpu1 = next(line for line in out if line.startswith("1,"))
+        used, total = (int(x) for x in gpu1.split(",")[1:])
         free = (total - used) / 1024
         if free < 4:
             raise RuntimeError(f"GPU 1 has {free:.1f} GB free; tracking needs about 2.7 GB more (detection batch 2)")

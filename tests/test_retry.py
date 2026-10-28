@@ -69,3 +69,22 @@ def test_sam_retries_and_charges_only_once():
     budget = Budget()
     Sam31Segmenter(client=Flaky(), budget=budget, sleep=lambda s: None).find(b"jpeg", "glasses")
     assert Flaky.n == 2 and budget.spent() == pytest.approx(0.0025)
+
+
+def test_a_failing_server_on_this_computer_isnt_blamed_on_the_cloud():
+    from types import SimpleNamespace
+
+    from heyandy_meta.models.retry import CloudUnavailable, with_retry
+
+    class Down(Exception):
+        status_code, request = 503, SimpleNamespace(url="http://127.0.0.1:8080/v1/chat/completions")
+
+    def call():
+        raise Down()
+
+    try:
+        with_retry(call, sleep=lambda s: None)
+    except CloudUnavailable as e:
+        assert str(e) == "the model on this computer kept failing after 3 tries (last: HTTP 503)"
+    else:
+        raise AssertionError("expected CloudUnavailable")

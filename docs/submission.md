@@ -19,9 +19,9 @@ table, looks around the room for you, points at the thing, and keeps what it see
 
 ## What it does, in the room
 
-- **"Andy, where are my glasses?"** Andy turns to your voice, sweeps the room with its head (and base), looks closer, and
-  points; the TV shows the picture it saw them in, with SAM 3.1's outline. A picture of glasses on the TV is skipped;
-  "the blue mug, next to the laptop" picks the right look-alike; "behind you, on the left" goes straight there.
+- **"Andy, where are my glasses?"** Andy turns to your voice, looks around the room, and points; the TV shows what it
+  saw, outlined by SAM 3.1. It skips a picture of glasses on the TV, picks "the blue mug, next to the laptop" from
+  look-alikes, and goes straight "behind you, on the left".
 - **"Keep an eye on my keys."** Andy remembers where your chosen things were last seen, in words ("on the desk, behind
   the keyboard"), and when they moved. Never a picture.
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it.
@@ -32,8 +32,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
 - **"Andy, what's that?"** while pointing: Andy looks where you point, finds it, points at it too: "You mean the lamp?"
 - **"Andy, let's play the cup game."** Andy records the shuffle, replays it through SAM 3.1 Object Multiplex (every cup
   tracked at once), and points at the cup with the ball. The TV draws each cup's path.
-- **"Show me the weather radar on the TV."** Muse Spark picks the page; its computer use brings the radar into view in a
-  clean browser, each step on the TV.
+- **"Show me the weather radar on the TV."** Muse Spark picks the page and its computer use brings the radar into view,
+  each step on the TV.
 - **"Draw me a lighthouse at dawn"**, **"draw me a map of my things"** (Muse Image, from words only), questions about
   the world with their sources, conversation, and **"habla español"**: Andy hears, speaks and shows the TV in Spanish.
 - **Several things at once:** "find my glasses, then my keys, then remind me in an hour to leave" goes to an agent with
@@ -53,25 +53,23 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
 | *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice |
 
-**Pictures and voice from a home never leave it.** Meta can't turn off data retention for hackathon credits, so the
-camera and microphone reach only models on the computer beside the robot. Every turn, the TV shows a privacy receipt:
-exactly which words went to which cloud model, or "Nothing left this house". "Andy, what did you send to the cloud
-today?" adds up the day's receipts, on this computer. Unplug the network and Andy carries on.
+**Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
+the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
+this house"; "Andy, what did you send to the cloud today?" adds up the day's. Unplug the network and Andy carries on.
 
 ## Technical depth (what was hard)
 
 - **A closed-loop head.** The robot's head falls short and sags (asked for 55 degrees, it reached 40.5); the adapter
   reads the pose back, corrects once, and every frame carries the measured direction: pointing within about 3 degrees.
 - **Agents that can't move the robot by themselves:** named views and numbered places, never motor values; every
-  argument checked in code; Andy's words built from the tools' results, never the model's.
+  argument checked in code; Andy's words built from what the tools did.
 - **Identical cups, crossing.** Object Multiplex tracks about 4 frames a second on a 3090; at 5 frames a second of
   video the cups were lost every time, so Andy records at 10 and replays. Small detection batches fit it on one 24 GB
   card beside the voice, Prompt Guard and Llama Guard.
 - **Telling my mug from yours.** DINOv2 ignores colour (a blue and a red mug of one shape: 0.94 alike), so half the
   likeness is a colour fingerprint of the mug's own pixels: red 0.55, the same thing from other angles 0.79 to 0.98.
-- **Straight to the answer.** Glimmer reasons privately before every answer, whatever its setting. Starting its reply
-  past the reasoning made its picture checks 1.1 s instead of 1.9 (same 10 of 10 on public photos), a find on the robot
-  7.1 s instead of 8.5, and Spanish translation 0.4 s a sentence, on this computer.
+- **Straight to the answer.** Glimmer reasons before every answer, whatever its setting. Starting its reply past the
+  reasoning cut its picture checks from 1.9 s to 1.1 s (same accuracy) and a find on the robot from 8.5 s to 7.1 s.
 - **Computer use with a reviewer.** Every batch of actions is reviewed in code before Meta's safety check is
   acknowledged: nothing personal is typed, sign-in and payment pages end the run, the browser can't reach the home
   network, and Llama Prompt Guard 2 reads each page first (hidden "ignore your instructions" text: stopped in 0.06 s).
@@ -94,11 +92,10 @@ that?" (public photos: 4 of 6), going out (robot simulated). Every result, failu
 
 ## Safety and honesty
 
-Andy says it's an AI at the start of a conversation and every three hours; crisis words, in English or Spanish, get
-the 988 line in code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3, which
-caught 3 of 8 phrasings the list missed, with no false alarms on 12 ordinary ones, in 0.04 s); no medical advice; it
-never asks for money or passwords. Speech that isn't for Andy is dropped and never shown or kept. Model API spend has a
-hard cap.
+Andy says it's an AI at the start of a conversation and every three hours. Crisis words, in English or Spanish, get
+the 988 line from code and reach no other model, checked twice on this computer: a word list, then Llama Guard 3 (it
+caught 3 of 8 phrasings the list missed, no false alarms on 12 ordinary ones, 0.04 s). No medical advice; it never
+asks for money or passwords. Speech that isn't for Andy is dropped, never shown or kept. Model API spend is capped.
 
 ## What's next
 

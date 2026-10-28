@@ -34,6 +34,10 @@ def with_retry(call, attempts: int = 3, delays=(0.4, 1.2), sleep=time.sleep):
             if not _transient(err):
                 raise
             request_ids.append(getattr(err, "request_id", None) or "?")
+            last = err
             if i < attempts - 1:
                 sleep(delays[min(i, len(delays) - 1)])
-    raise CloudUnavailable(f"the Meta Model API kept failing after {attempts} tries", request_ids)
+    url = str(getattr(getattr(last, "request", None), "url", "") or "")  # the same helper serves the local servers
+    where = "the model on this computer" if "127.0.0.1" in url or "localhost" in url else "the Meta Model API"
+    raise CloudUnavailable(f"{where} kept failing after {attempts} tries (last: HTTP "
+                           f"{getattr(last, 'status_code', '?')})", request_ids)

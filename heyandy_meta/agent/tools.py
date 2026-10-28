@@ -22,6 +22,11 @@ VIEWS = {  # name -> (yaw, pitch); the names are what the model sees
     "floor in front": (0.0, 32.0),
 }
 OBJECT = re.compile(r"^[a-zA-Z][a-zA-Z '\-]{0,39}$")  # a short noun phrase for SAM 3.1
+# Colours are for compare, which checks them in the pictures on this computer: SAM 3.1 looks for the thing itself, so
+# "blue mug" finds every mug and compare picks the blue one, rather than a look that misses a mug in odd light.
+COLOURS = {"red", "blue", "green", "yellow", "black", "white", "grey", "gray", "brown", "pink", "purple", "orange",
+           "silver", "gold", "golden", "beige", "navy", "dark", "light"}
+WHERE = re.compile(r"\s+(?:in|on|by|near|next to|under|behind|beside|at|from|with|in front of)\s.*$")  # "mug next to the laptop"
 DESCRIPTION = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9 ,'\-]{0,79}$")  # the person's words about which one
 
 
@@ -99,6 +104,9 @@ class SearchTools:
                    "point": self._point}.get(name)
         if handler is None:
             return f"refused: there is no tool called {name!r}"
+        if isinstance(args, dict):  # "place 2" for "2", as models sometimes write it
+            args = {k: _place(v) if k == "place" else [_place(x) for x in v] if k == "places" and isinstance(v, list)
+                    else v for k, v in args.items()}
         if self.on_tool:
             self.on_tool(True)
         try:
@@ -110,7 +118,11 @@ class SearchTools:
                 self.on_tool(False)
 
     def _object(self, obj) -> str | None:
-        return obj.strip().lower() if isinstance(obj, str) and OBJECT.match(obj.strip()) else None
+        if not isinstance(obj, str) or not OBJECT.match(obj.strip()):
+            return None
+        words = WHERE.sub("", obj.strip().lower()).split()  # where it is is for compare too
+        plain = [w for w in words if w not in COLOURS]
+        return " ".join(plain or words)
 
     def _recall(self, object) -> str:
         obj = self._object(object)
@@ -144,7 +156,11 @@ class SearchTools:
             pid = str(len(self.candidates) + 1)
             self.candidates[pid] = (s.yaw, s.pitch)
             lines.append(f"place {pid}: {side(s.yaw)}, confidence {s.score:.2f}, seen in {s.views} view(s)")
-        return "Possible " + obj + ": " + "; ".join(lines)
+        out = "Possible " + obj + ": " + "; ".join(lines)
+        if obj != object.strip().lower():  # the person said which one: the colour is checked by compare
+            out += (f". I looked for any {obj}; use compare with the person's description to tell them apart"
+                    if len(found) > 1 else f". I looked for any {obj}; check it's the right one with look_closer")
+        return out
 
     def _places_so_far(self) -> str:
         return "; ".join(f"place {p}: {side(yaw)}" for p, (yaw, _) in self.candidates.items()) or "none"
@@ -207,3 +223,7 @@ class SearchTools:
         if not found.reachable:
             return f"I can't turn far enough to point; it's {side(found.yaw)}. Tell the person."
         return f"Pointing at the {found.label}, {side(found.yaw)}."
+
+
+def _place(p):
+    return re.sub(r"^\s*place\s+", "", p, flags=re.I).strip() if isinstance(p, str) else p
