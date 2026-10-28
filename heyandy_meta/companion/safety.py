@@ -18,8 +18,11 @@ CRISIS = re.compile(
     r"\b(kill(ing)? myself|end(ing)? (it all|my life)|suicid\w*|hurt(ing)? myself|harm(ing)? myself|self[- ]harm"
     r"|(don'?t|do not) want to (live|be alive|be here)|want to die|better off dead"
     # Spanish (Andy can speak it): checked on the person's own words, before any translation
-    r"|suicidarme|matarme|quitarme la vida|acabar con (todo|mi vida)|no quiero (vivir|seguir viviendo)|quiero morir(me)?"
-    r"|hacerme daño|estar[ií]a mejor muert[oa])\b", re.IGNORECASE)
+    r"|suicid[ao]r(me|se)?|matarme|quitarme la vida|lastimarme|hacerme da[nñ]o"
+    r"|me (quiero|voy a|pienso|deseo) (matar|suicidar|morir|quitar la vida|hacer da[nñ]o|lastimar)"
+    r"|(acabar|terminar) con (todo|mi vida)|no quiero (vivir|seguir viviendo|estar aqu[ií]|seguir aqu[ií])"
+    r"|quiero morir(me)?|(estar[ií]a|quisiera estar|mejor) muert[oa]|quisiera estar muert[oa]|no vale la pena vivir)\b",
+    re.IGNORECASE)
 
 
 def crisis(text: str) -> bool:

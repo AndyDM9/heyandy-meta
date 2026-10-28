@@ -127,8 +127,8 @@ def _looping(text: str) -> bool:
     return max(grams.count(g) for g in set(grams)) >= 4 or len(set(words)) / len(words) < 0.35
 
 
-STOP = re.compile(r"\b(?:stop|enough|that's enough|okay thanks|thank you|basta|para|detente|alto|ya basta|gracias)\b",
-                  re.I)
+STOP = re.compile(r"\b(?:stop|enough|that's enough|okay thanks|thank you|basta|detente|ya basta)\b|^\W*(?:para|alto)\W*$",
+                  re.I)  # "para" and "alto" only alone: "es para mi hija", "habla más alto"
 DONE = re.compile(r"\b(?:done|ready|finished|where(?:'s| is) (?:it|the ball)|which (?:one|cup)|your turn|go ahead|"
                   r"listo|lista|ya está|terminé|cuál|dónde está)\b",
                   re.I)  # the cup game: the shuffle is over

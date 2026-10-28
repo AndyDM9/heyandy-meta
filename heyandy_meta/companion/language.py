@@ -60,6 +60,10 @@ PHRASES = {"es": {
 }}
 
 
+class Untranslated(Exception):
+    pass
+
+
 class Translator:
     """Muse Glimmer on this computer, as a translator. If it can't be reached, the words go through unchanged."""
 
@@ -77,19 +81,28 @@ class Translator:
             out = glimmer_fast.answer(self.endpoint, messages, max(40, len(text)), stop=STOP, timeout=self.timeout)
         except glimmer_fast.FastUnavailable:
             self.failures += 1
-            return text
+            return None
         out = out.replace("<<<", "").strip().strip('"').strip()
-        return out or text
+        return out or None
 
     def to_english(self, text: str, language: str) -> str:
         if language == "en" or not text.strip():
             return text
-        return self._translate(TO_ENGLISH.format(name=LANGUAGES[language].name), text, EXAMPLES.get(language, ()))
+        return self._translate(TO_ENGLISH.format(name=LANGUAGES[language].name), text, EXAMPLES.get(language, ())) or text
 
     def _from_english(self, text: str, language: str) -> str:
         if language == "en" or not text.strip():
             return text
-        return self._translate(FROM_ENGLISH.format(name=LANGUAGES[language].name), text)
+        out = self._translate(FROM_ENGLISH.format(name=LANGUAGES[language].name), text)
+        if out is None:
+            raise Untranslated(text)  # not cached: once Glimmer is back, it's translated
+        return out
+
+    def _said(self, sentence: str, language: str) -> str:
+        try:
+            return self.from_english(sentence, language)
+        except Untranslated:
+            return sentence
 
     def spoken(self, text: str, language: str, disclosure: str, crisis: str) -> str:
         """Andy's English words in the person's language: the AI disclosure and the crisis reply by hand, each sentence
@@ -105,14 +118,15 @@ class Translator:
             text = text[len(disclosure):]
         if text.strip() in PHRASES.get(language, {}):
             return " ".join(out + [PHRASES[language][text.strip()]])
-        out += [PHRASES.get(language, {}).get(s) or self.from_english(s, language)
+        out += [PHRASES.get(language, {}).get(s) or self._said(s, language)
                 for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s.strip()]
         return " ".join(out)
 
 
-LANGUAGE = re.compile(r"\b(?:speak|talk|answer|reply)(?: to me)?(?: in)? (?P<a>spanish|english)\b|"
-                      r"\bh[aá]bla(?:me)?(?: en)? (?P<b>español|espanol|inglés|ingles)\b|\bin (?P<c>spanish|english),? please\b",
-                      re.I)
+LANGUAGE = re.compile(r"(?<!not )(?<!n't )(?<!never )(?<!to )(?<!can )(?<!cannot )\b(?:speak|talk|answer|reply)"
+                      r"(?: to me)?(?: in)? (?P<a>spanish|english)\b|"
+                      r"(?<!no )\bh[aá]bla(?:me)?(?: en)? (?P<b>español|espanol|inglés|ingles)\b|"
+                      r"^\W*(?:andy\W+)?in (?P<c>spanish|english),? please\W*$", re.I)
 
 
 def asked_for(text: str) -> str | None:

@@ -22,7 +22,7 @@ REFINE = re.compile(r"^\W*(?:(?:now|and|ok|okay)\s+)?(?:make (?:it|him|her|them|
 FOLLOW = re.compile(r"\b(?:follow|track)\s+" + THING + r"(?:\s+with your eyes)?(?:\?|$|[,.!]| please)", re.I)
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
-DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have) in my hands?\b|\bwhat(?:'s| is) this\b(?! (?:song|noise|sound))"
+DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have)(?: this| that)? in my hands?\b|\bwhat(?:'s| is) this\b(?! (?:song|noise|sound))"
                       r"|\bwhat(?:'s| is) on the (?P<place>table|desk|counter|shelf|floor|sofa|couch|bed|chair)\b"
                       r"|\bwhat (?:can|do) you see\b|\bdescribe what you see\b|\bwhat colou?r is (?:this|it)\b", re.I)
 VOICE = {  # how Andy speaks, set by voice and remembered
@@ -35,7 +35,8 @@ VOICE = {  # how Andy speaks, set by voice and remembered
     "slower": re.compile(r"\b(?:(?:speak |talk )?(?:more )?slow(?:er|ly)|slow down|too fast)\b", re.I),
     "faster": re.compile(r"\b(?:(?:speak |talk )?(?:a bit |a little )?faster|speed up|too slow(?:ly)?)\b", re.I),
 }
-QUIET = re.compile(r"\b(?:be quiet|(?:stay|keep) (?:quiet|silent)|quiet mode|leave me alone|(?:do not|don'?t) disturb(?: me)?|give me some peace|"
+QUIET = re.compile(r"\b(?:be quiet|^\W*(?:andy\W+)?(?:please\s+)?(?:stay|keep) (?:quiet|silent)|(?:can|could|would|will) "
+                   r"you (?:please )?(?:stay|keep) (?:quiet|silent)|quiet mode|leave me alone|(?:do not|don'?t) disturb(?: me)?|give me some peace|"
                    r"stop looking around)\b", re.I)
 UNQUIET = re.compile(r"\b(?:you can (?:talk|look around|move) again|quiet mode off|stop being quiet|you can go back to "
                      r"normal)\b", re.I)
@@ -53,11 +54,11 @@ MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:
         re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
         re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),
         re.compile(r"\blearn (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now|by sight))", re.I)]
-POINTING = re.compile(r"\bwhat(?:'s| is) that\b(?! (?:song|noise|sound|smell|about|for))(?!\s+\w+ing\b)|"
+POINTING = re.compile(r"\bwhat(?:'s| is) that(?: thing| one)?(?: over there| there| called)?\W*$|"
                       r"\b(?:look|see) (?:at )?(?:what|where) i(?:'?m| am) pointing\b|\bwhat am i pointing at\b|"
                       r"\b(?:look|see) over there\b|\bwhat(?:'s| is) (?:that|the thing) over there\b", re.I)
 GOING_OUT = re.compile(r"\b(?:i'?m|i am|we'?re|we are) (?:just )?(?:going out|heading out|off out|popping out|leaving(?: now| "
-                       r"the house)?|going to the (?:store|shops|supermarket|beach|bank|park|post office|mall)|off to the "
+                       r"the house)?(?=\s*(?:[,.!?]|$|for\b|to\b|in\b))|going to the (?:store|shops|supermarket|beach|bank|park|post office|mall)|off to the "
                        r"(?:store|shops|beach|park))\b|\bdo i have everything\b|\bam i forgetting anything\b|"
                        r"\bhave i got everything\b", re.I)
 MAP_OF_THINGS = re.compile(r"\b(?:draw|make|paint|show)(?: me| us)? (?:a |the )?(?:map|picture|postcard|drawing) of "
@@ -190,8 +191,6 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("game", text=t)
     if POINTING.search(t):
         return Intent("pointing", text=t)
-    if GOING_OUT.search(t):
-        return Intent("going_out", text=t)
     if MAP_OF_THINGS.search(t):
         return Intent("things_map", text=t)
     if any(rx.search(t) for rx in WEB):
@@ -206,6 +205,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())
                     if w not in FILLER]
             return Intent(kind, thing=snap(thing.strip()), text=t, hint=kind == "find" and len(rest) >= 2)
+    if GOING_OUT.search(t):  # after finding and watching: "where are my keys? I'm going out" is a find
+        return Intent("going_out", text=t)
     if m := DESCRIBE.search(t):
         return Intent("describe", thing=(m.group("place") or "").lower(), text=t)
     if DRAW_START.search(t):

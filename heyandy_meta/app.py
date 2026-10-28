@@ -97,7 +97,7 @@ class Andy:
         self.playing = False  # the cup game: "done" ends the shuffle
         self.cup_score = [0, 0]  # Andy, the person: this session's cup games, in memory only
         self._again_until = 0.0  # Andy just asked "again?" after a cup game
-        self._offered: tuple[str, float] | None = None  # Andy offered to keep an eye on this thing
+        self._offered: tuple | None = None  # (thing, when, yaw, pitch): Andy offered to keep an eye on it
         self.language = "en"  # "es": Andy hears and speaks Spanish (companion/language.py)
         self.translator = None  # Muse Glimmer on this computer, translating; set where Glimmer runs
         self._browser = None  # a clean browser on this computer, made when first asked to use the web
@@ -143,7 +143,8 @@ class Andy:
                 self.say(rest)
             self.refresh_panels()
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
-            self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
+            if reply != CRISIS_REPLY:  # crisis words never go to a model, not even as history
+                self.history = (self.history + [(text, reply.removeprefix(DISCLOSURE).strip())])[-HISTORY_TURNS:]
             if parse(text).kind != "voice":
                 self._last_said = reply.removeprefix(DISCLOSURE).strip()
             return reply
@@ -210,12 +211,19 @@ class Andy:
     def _answer(self, text: str) -> str:
         offered, self._offered = self._offered, None
         if offered and self.clock() - offered[1] <= ANSWER_WITHIN_S:
-            if AGAIN.match(text) or re.match(r"^\W*(?:please do|go ahead|do that|that would be (?:great|nice))\W*$", text, re.I):
-                self.places.watch(offered[0])
+            thing, _, yaw, pitch = offered
+            yes = AGAIN.match(text) or re.match(r"^\W*(?:yes\W+)?(?:please do|go ahead|do that|that would be (?:great|nice)|"
+                                                r"keep an eye on (?:it|them)(?: please)?)\W*$", text, re.I)
+            if yes:
+                self.places.watch(thing)
+                self.places.saw(thing, yaw, pitch, when=self.clock())  # where it was just found: the first place
                 self.refresh_panels()
-                return f"I'll keep an eye on your {offered[0]}. I only remember where I last saw {_it(offered[0])}, never a picture."
-            if re.match(r"^\W*(?:no|nope|not now|no thanks?(?: you)?|that'?s ok(?:ay)?)\b", text, re.I):
+                return f"I'll keep an eye on your {thing}. I only remember where I last saw {_it(thing)}, never a picture."
+            no = re.match(r"^\W*(?:no thanks?(?: you)?|not now|nope|that'?s ok(?:ay)?|no)\b[\s,.!]*", text, re.I)
+            if no and not text[no.end():].strip():
                 return "Okay. Just ask me whenever you need it."
+            if no:  # "No, where are my keys?": the rest is a request of its own
+                text = text[no.end():]
         i = parse(text, _now(self.clock))
         if self._asked and i.kind == "chat" and self.clock() - self._asked[1] <= ANSWER_WITHIN_S:
             i = parse(self._asked[0] + " " + text, _now(self.clock))  # the answer to Andy's question
@@ -421,9 +429,9 @@ class Andy:
         self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
-        return words + self._offer_to_watch(found.label)
+        return words + self._offer_to_watch(found.label, (found.yaw, found.pitch))
 
-    def _offer_to_watch(self, thing: str, times: int = 3, within_s: float = 7 * 24 * 3600) -> str:
+    def _offer_to_watch(self, thing: str, where=(0.0, 0.0), times: int = 3, within_s: float = 7 * 24 * 3600) -> str:
         """Asked for the same thing a few times this week, and not kept an eye on: offer, once a week. Only the word and
         when it was asked are kept, on this computer."""
         path = self.places.path.parent / "asked.json"
@@ -438,7 +446,7 @@ class Andy:
                  and now - entry["offered"] > within_s)
         if offer:
             entry["offered"] = now
-            self._offered = (thing, now)  # a plain yes or no answers it
+            self._offered = (thing, now, *where)  # a yes or no answers it
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(asked))
         if not offer:
@@ -504,11 +512,13 @@ class Andy:
         """"Andy, habla español" / "speak English": hearing, voice and captions switch, and it's remembered."""
         if to != "en" and self.translator is None:
             return "I can only speak English on this computer for now."
+        if self.voice is not None:
+            self._own_voice  # noqa: B018 - the voice it was started with, remembered before the first switch
         if to == self.language:
             return "Okay." if to == "en" else "I'm already speaking Spanish."
         self.language = to
         if self.voice is not None:
-            self.voice.voice = LANGUAGES[to].voice
+            self.voice.voice = LANGUAGES[to].voice if to != "en" else self._own_voice
         self.screen.notice("Español" if to == "es" else "English")
         self.screen.language = "Español · on this computer" if to == "es" else ""
         self.save_voice()
@@ -523,8 +533,17 @@ class Andy:
             saved.update(speed=self.voice.speed, loudness=self.voice.loudness)
         path.write_text(json.dumps(saved))
 
+    @property
+    def _own_voice(self) -> str:
+        """The voice Andy was started with (--voice-name), for English."""
+        if not hasattr(self, "_started_voice"):
+            self._started_voice = getattr(self.voice, "voice", LANGUAGES["en"].voice)
+        return self._started_voice
+
     def load_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
+        if self.voice is not None:
+            self._own_voice  # noqa: B018 - remembered before anything changes it
         if path.exists():
             saved = json.loads(path.read_text())
             if self.voice is not None:
@@ -534,7 +553,7 @@ class Andy:
             if saved.get("language", "en") in LANGUAGES and (saved.get("language") == "en" or self.translator):
                 self.language = saved.get("language", "en")
                 self.screen.language = "Español · on this computer" if self.language == "es" else ""
-                if self.voice is not None:
+                if self.voice is not None and self.language != "en":
                     self.voice.voice = LANGUAGES[self.language].voice
 
     def agent(self, request: str, brief: bool = False) -> str | None:
@@ -804,6 +823,7 @@ class Andy:
         if ask is None:
             return "I can't tell where you're pointing right now. Could you tell me what it is?"
         self.screen.clear()
+        self.finder.looks = 0
         self.say("Let me see where you're pointing.")
         self.screen.doing("Working", "Looking where you point")
         self.gesture("searching")
@@ -838,8 +858,9 @@ class Andy:
         finally:
             self.gesture("idle")
             self.screen.doing("Waiting")
-        self.screen.used("SAM 3.1", "device", max(1, self.finder.looks))
-        self._source, self._reason = "device", "Glimmer saw where you pointed; SAM 3.1 found it, on this computer"
+        self.screen.used("SAM 3.1", "device", 1)  # the first picture: always the local SAM
+        self.screen.used("SAM 3.1", self.vision_where, self.finder.looks)
+        self._source, self._reason = "device", "Glimmer saw where you pointed; SAM 3.1 found it"
         if found is None:
             return f"I think you're pointing at the {thing}, but I can't find it from here. Could you show me?"
         self._pointed = True
@@ -869,6 +890,7 @@ class Andy:
             asking = threading.Thread(target=ask, daemon=True)
             asking.start()  # the cloud works while the robot looks
         watched = self.places.watching()
+        self.finder.looks = 0
         if watched:
             self.say("Let me check you have everything.")
         items, here = [], []
@@ -892,7 +914,7 @@ class Andy:
         finally:
             self.gesture("idle")
             self.screen.doing("Waiting")
-        self.screen.used("SAM 3.1", "device", self.finder.looks)
+        self.screen.used("SAM 3.1", self.vision_where, self.finder.looks)
         up = [r for r in self.reminders.upcoming() if r.at - self.clock() <= 6 * 3600][:1]
         next_up = f"at {spoken_time(up[0].at)}, {up[0].text}" if up else ""
         if asking:

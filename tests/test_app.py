@@ -409,3 +409,21 @@ def test_no_thanks_and_once_a_week(tmp_path):
     assert "Just ask me" in a.hear("no thanks") and a.places.watching() == []
     clock.t += 600
     assert "Shall I keep an eye" not in a.hear("where are my keys?")  # offered once this week
+
+
+def test_no_but_a_new_request_is_answered(tmp_path):
+    a, body, clock = andy(Thing("glasses", -48.0, 22.0), Thing("keys", 30.0, 25.0), tmp_path=tmp_path)
+    for _ in range(3):
+        clock.t += 600
+        reply = a.hear("where are my glasses?")
+    assert "Shall I keep an eye" in reply
+    assert "keys" in a.hear("No, where are my keys?")
+
+
+def test_yes_keeps_the_place_it_was_just_found(tmp_path):
+    a, body, clock = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    for _ in range(3):
+        clock.t += 600
+        a.hear("where are my glasses?")
+    a.hear("yes, please do")
+    assert a.places.last_seen("glasses", now=clock()) is not None

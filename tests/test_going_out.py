@@ -37,3 +37,9 @@ def test_nothing_watched_asks_about_the_usual_things(tmp_path):
     a, body, _ = andy(tmp_path=tmp_path, online=False)
     reply = a.hear("I'm heading out")
     assert "keys, your wallet and your phone" in reply and not [e for e in body.log if e[0] == "point"]
+
+
+@pytest.mark.parametrize("text,kind", [("where are my keys? I'm going out", "find"), ("I'm leaving you a note", "chat"),
+                                       ("I'm leaving for work", "going_out"), ("I'm going out, keep an eye on my keys", "watch")])
+def test_going_out_doesnt_swallow_other_requests(text, kind):
+    assert parse(text).kind == kind

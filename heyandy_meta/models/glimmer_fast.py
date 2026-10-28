@@ -6,6 +6,7 @@ template (/apply-template), and the reply is started at " to=user<|message|>", s
 0.15 to 0.7 s (research.md, 23 and 24). Pictures go in as llama-server's multimodal data, in the order the template
 placed their markers. Used only for short, fixed-format answers; planning and conversation keep their reasoning.
 """
+import http.client
 import json
 import urllib.error
 import urllib.request
@@ -37,6 +38,6 @@ def answer(endpoint: str, messages: list[dict], max_tokens: int = 64, stop=(), t
         prompt = prompt.replace("Reasoning strength: high.", "Reasoning strength: low.") + " to=user<|message|>"
         out = post("/completion", {"prompt": {"prompt_string": prompt, "multimodal_data": images} if images else prompt,
                                    "n_predict": max_tokens, "temperature": 0, "stop": STOP + list(stop)})
-    except (urllib.error.URLError, OSError, ValueError, KeyError) as e:
+    except (urllib.error.URLError, http.client.HTTPException, OSError, ValueError, KeyError, TypeError, AttributeError) as e:
         raise FastUnavailable(f"Glimmer at {base}: {e}") from e
     return (out.get("content") or "").strip()

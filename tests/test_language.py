@@ -93,3 +93,42 @@ def test_the_voice_loop_tells_asr_the_language():
     from heyandy_meta.voice.loop import STOP, WAKE
 
     assert WAKE.match("oye Andy, ¿dónde están mis llaves?") and STOP.search("basta")
+
+
+@pytest.mark.parametrize("text", ["I don't speak Spanish", "I can't speak Spanish", "how do you say thank you in Spanish, please",
+                                  "my neighbour wants to talk in English"])
+def test_talking_about_a_language_isnt_switching(text):
+    assert asked_for(text) is None
+
+
+def test_switching_back_restores_the_voice_it_was_started_with(tmp_path):
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="af_heart", speed=1.0, loudness=-21.0)
+    a.hear("speak Spanish")
+    a.hear("speak English")
+    assert a.voice.voice == "af_heart"
+
+
+def test_a_failed_translation_isnt_remembered():
+    class Flaky(Glimmer):
+        down = True
+
+        def _translate(self, system, text, examples=()):
+            return None if self.down else "traducido"
+
+    t = Flaky()
+    assert t.spoken("Something new.", "es", DISCLOSURE, CRISIS_REPLY) == "Something new."
+    t.down = False
+    assert t.spoken("Something new.", "es", DISCLOSURE, CRISIS_REPLY) == "traducido"
+
+
+@pytest.mark.parametrize("text", ["me quiero matar", "me voy a quitar la vida", "quiero lastimarme", "no quiero estar aquí",
+                                  "hacerme dano"])
+def test_spanish_crisis_words_are_caught_before_any_model(tmp_path, text):
+    a, body, _ = andy(tmp_path=tmp_path)
+    glimmer = Glimmer()
+    a.translator, a.voice = glimmer, SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.hear("habla español")
+    glimmer.asked.clear()
+    assert a.hear(text) == CRISIS_REPLY and glimmer.asked == [] and a.device.prompts == []
+    assert all(CRISIS_REPLY not in r and text not in q for q, r in a.history)  # not kept for the next chat either

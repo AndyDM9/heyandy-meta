@@ -42,3 +42,11 @@ def test_in_view_it_points_at_once(tmp_path):
 def test_no_pointing_no_guessing(tmp_path):
     a, body, _ = andy(Thing("mug", 8.0, 12.0), tmp_path=tmp_path)
     assert "can't tell what you're pointing at" in a.hear("what's that?") and not points(body)
+
+
+@pytest.mark.parametrize("text,kind", [("what's that mean?", "chat"), ("what's that supposed to mean", "chat"),
+                                       ("what's that in my hand?", "describe"), ("what's that movie with Tom Hanks", "chat"),
+                                       ("what's that over there?", "pointing"), ("the kids won't stay quiet", "chat"),
+                                       ("Andy, stay quiet for an hour", "quiet")])
+def test_what_s_that_only_when_it_means_pointing(text, kind):
+    assert parse(text).kind == kind
