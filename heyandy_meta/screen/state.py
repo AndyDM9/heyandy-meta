@@ -3,9 +3,10 @@
 The picture lives only here, in memory, and is dropped after two minutes. Nothing on this page is saved.
 """
 import base64
+import datetime as dt
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 
 from ..finder.search import Found
 
@@ -24,9 +25,28 @@ class _Picture:
     trails: list | None = None  # the cup game: each cup's path through the shuffle, [(points, is_the_one)]
 
 
+@dataclass
+class Day:
+    """What left the house today, as counts from the receipts (never the words themselves): for "what did you send
+    today?". Kept in memory only, so it starts again when Andy does (since says when)."""
+    date: dt.date
+    since: float  # when counting began: midnight, or when Andy started, epoch seconds
+    turns: int = 0  # finished turns
+    went: int = 0  # of those, the turns that sent anything to a cloud model
+    words: int = 0  # words sent, in all (earlier exchanges sent along with a request count again)
+    to: dict = field(default_factory=dict)  # "Muse Spark" -> the turns it was sent something on
+    screenshots: int = 0  # screenshots of web pages the person asked to see
+    pictures: int = 0  # camera pictures of a staged scene (never a lived-in room)
+
+
+def _family(model: str) -> str:
+    """"Muse Spark (agent)" and "Muse Spark + web search" are both Muse Spark."""
+    return model.split(" (")[0].split(" + ")[0]
+
+
 class ScreenState:
-    def __init__(self, clock=time.monotonic):
-        self._clock, self._lock = clock, threading.Lock()
+    def __init__(self, clock=time.monotonic, now=time.time):
+        self._clock, self._lock, self._now = clock, threading.Lock(), now
         self.caption = ""
         self.source, self.reason = "", ""
         self.online = True
@@ -56,6 +76,9 @@ class ScreenState:
         self.checklist: dict | None = None  # "I'm going out": each watched thing, still here or not; the weather
         self._web: dict | None = None  # the web page Andy is using: the screenshot, what's happening, where it clicks
         self.webs = 0  # a version, so the page fetches each screenshot once
+        self.privacy: dict | None = None  # "what did you send today?": {"title", "rows": [{"mark", "text"}]}
+        self._day = Day(dt.date.fromtimestamp(now()), now())
+        self._in_turn = False
 
     def doing(self, state: str, head: str = "") -> None:
         with self._lock:
@@ -63,6 +86,7 @@ class ScreenState:
 
     def looking(self, thing: str) -> None:
         with self._lock:
+            self.privacy = None
             self.looking_for = thing
 
     def reminder_next(self, text: str | None, at: float = 0.0) -> None:
@@ -75,6 +99,7 @@ class ScreenState:
 
     def drawn(self, image: bytes, prompt: str, saved: str) -> None:
         with self._lock:
+            self.privacy = None
             self._picture, self.sources, self.steps, self.memory, self._timer, self.looking_for = None, [], [], None, None, ""
             self._drawing, self._web = (image, prompt, saved, self._clock() + DRAWING_SECONDS), None
             self.drawings += 1
@@ -82,6 +107,7 @@ class ScreenState:
     def web(self, jpeg: bytes, request: str, words: str = "", point=None, size=(1280, 800), url: str = "") -> None:
         """A screenshot of the web page Andy is using (never the camera), as each step happens."""
         with self._lock:
+            self.privacy = None
             self._picture, self._drawing, self.sources, self.memory, self._game = None, None, [], None, None
             before = self._web or {}
             self._web = {"jpeg": jpeg, "request": request, "words": words or before.get("words", ""),
@@ -93,6 +119,7 @@ class ScreenState:
     def going_out(self, items: list[dict], weather: str = "", next_up: str = "") -> None:
         """The going-out check: [{"thing", "here": True/False/None, "words"}], the weather and the next reminder."""
         with self._lock:
+            self.privacy = None
             self._picture, self._drawing, self._web, self._game, self.memory, self.sources = None, None, None, None, None, []
             self.checklist = {"items": list(items), "weather": weather, "next": next_up}
 
@@ -119,13 +146,45 @@ class ScreenState:
 
     def new_turn(self) -> None:
         with self._lock:
+            if self._in_turn:  # the turn before, counted for the day
+                day = self._today()
+                went = {_family(o["to"]) for o in self.outbox}
+                day.turns, day.went = day.turns + 1, day.went + bool(went)
+                for f in went:
+                    day.to[f] = day.to.get(f, 0) + 1
+            self._in_turn = True
             self.models, self.outbox = {}, []
+
+    def _today(self) -> Day:
+        """Today's counts (the lock is held): a new day starts them again, from midnight."""
+        now = self._now()
+        if dt.date.fromtimestamp(now) != self._day.date:
+            date = dt.date.fromtimestamp(now)
+            self._day = Day(date, dt.datetime.combine(date, dt.time()).timestamp())
+        return self._day
+
+    def day(self) -> Day:
+        """What left the house today, over the finished turns (a copy)."""
+        with self._lock:
+            d = self._today()
+            return replace(d, to=dict(d.to))
 
     def sent(self, model: str, words: str, earlier: int = 0) -> None:
         """Words that left the house this turn, and to which model (earlier: past exchanges sent along with them)."""
+        with self._lock:
+            self._today().words += len(words.split())
         words = words if len(words) <= 200 else words[:199] + "…"  # cut where the TV says so, never silently
         with self._lock:
             self.outbox.append({"to": model, "words": words, "earlier": earlier})
+
+    def screenshots_sent(self, model: str, n: int) -> None:
+        """Screenshots of web pages that left the house this turn (for "show me ... on the TV"), never the camera."""
+        if n <= 0:
+            return
+        with self._lock:
+            self._today().screenshots += n
+            self.outbox.append({"to": model, "words": f"{n} screenshot{'s' if n != 1 else ''} of the web page",
+                                "earlier": 0})
 
     def used(self, name: str, where: str = "device", times: int = 1) -> None:
         """A model worked on this turn: "device" (this computer) or "cloud" (words only)."""
@@ -134,6 +193,7 @@ class ScreenState:
         with self._lock:
             self.models.setdefault(name, [where, 0])[1] += times
             if name.startswith("SAM 3.1") and where == "cloud":  # a staged scene: camera pictures went, and the receipt says so
+                self._today().pictures += times
                 self.outbox.append({"to": "SAM 3.1 (Model API, staged scene)", "words": f"{times} camera pictures",
                                     "earlier": 0, "pictures": True})
 
@@ -145,11 +205,13 @@ class ScreenState:
         if not found.frame.image:  # the pretend room has no camera: words only
             return
         with self._lock:
+            self.privacy = None
             self._picture, self._web = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS, trails), None
 
     def game(self, title: str, detail: str = "") -> None:
         """The cup game, stage by stage: "Watching the cups", "Replaying the shuffle"."""
         with self._lock:
+            self.privacy = None
             self._picture, self._drawing, self.sources, self.steps, self.memory = None, None, [], [], None
             self._game, self._web = (title, detail, self._clock() + PICTURE_SECONDS), None
 
@@ -157,10 +219,19 @@ class ScreenState:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
+            self.checklist, self.privacy = None, None
+
+    def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
+        """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera
+        pictures). Whatever is shown next takes its place."""
+        with self._lock:
+            self._picture, self._drawing, self._web, self._game, self.memory, self.sources = None, None, None, None, None, []
             self.checklist = None
+            self.privacy = {"title": title, "rows": [{"mark": m, "text": t} for m, t in rows]}
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
+            self.privacy = None
             self.caption, self.source, self.reason, self.sources = text, source, reason, list(sources)[:3]
             self._web = None
 
@@ -170,6 +241,7 @@ class ScreenState:
 
     def remember_list(self, lines: list[str]) -> None:
         with self._lock:
+            self.privacy = None
             self.memory = list(lines)
 
     def timer_start(self) -> None:
@@ -196,7 +268,7 @@ class ScreenState:
                    "staged": self.staged, "drawing": None,
                    "quiet": self.quiet_text, "outbox": list(self.outbox), "language": self.language,
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else "",
-                   "game": None, "checklist": self.checklist}
+                   "game": None, "checklist": self.checklist, "privacy": self.privacy}
             if self._web and self._clock() >= self._web["until"]:
                 self._web = None
             out["web"] = {"v": self.webs, **{k: v for k, v in self._web.items() if k not in ("jpeg", "until")}} \
@@ -248,6 +320,9 @@ def _in(out: dict, tr) -> dict:
         c = out["checklist"]
         out["checklist"] = {**c, "weather": tr(c["weather"]), "next": tr(c["next"]),
                             "items": [{**i, "thing": tr(i["thing"]), "words": tr(i["words"])} for i in c["items"]]}
+    if out["privacy"]:
+        p = out["privacy"]
+        out["privacy"] = {"title": tr(p["title"]), "rows": [{**r, "text": tr(r["text"])} for r in p["rows"]]}
     if out["web"]:
         out["web"] = {**out["web"], "request": tr(out["web"]["request"]), "words": tr(out["web"]["words"])}
     if out["drawing"]:

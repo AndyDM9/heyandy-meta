@@ -55,7 +55,9 @@ trademark application.
 18. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
    computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
    plan steps, questions), plus screenshots of a web page you ask to see on the TV; Muse Image gets words. The TV's
-   privacy receipt shows exactly what went, every turn.
+   privacy receipt shows exactly what went, every turn. **"Andy, what did you send to the cloud today?"** adds up the
+   day's receipts on the computer beside the robot (so asking sends nothing): "Today, 21 of your 24 requests stayed in
+   this house. For the other 3, I sent 68 words to Muse Spark..." Only the counts are kept, in memory, never the words.
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
@@ -158,6 +160,7 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 - **answers with their sources;**
 - **which Meta models worked on this turn,** on this computer or in the cloud (words only);
 - **a privacy receipt:** exactly which words went to which cloud model this turn, or "✓ Nothing left this house";
+- **the day's privacy,** when asked: how many requests stayed in the house, and what went to which model;
 - **captions of Andy's words** (never the person's).
 
 "Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every

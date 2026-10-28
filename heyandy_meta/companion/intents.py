@@ -50,6 +50,9 @@ HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
 REMIND = re.compile(r"\bremind me\b", re.I)
+PRIVACY = re.compile(r"\bwhat (?:did|have) you (?:send|sent|shared?)\b|\bwhat(?:'s| has)? (?:left|gone out of|went out of) "
+                     r"(?:the|this|my) (?:house|home)\b|\bwhat (?:went|goes|has gone) (?:to|up to|out to) the "
+                     r"(?:cloud|internet)\b|\bprivacy (?:report|summary|receipt)s?\b|\bwhat do you send\b", re.I)
 MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now))", re.I),
         re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
         re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),
@@ -177,6 +180,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
     for name, rx in VOICE.items():
         if rx.search(t):
             return Intent("voice", thing=name, text=t)
+    if PRIVACY.search(t):
+        return Intent("privacy", text=t)
     if REMIND.search(t):
         when = parse_time(t, now)
         words = _reminder_words(when[1]) if when else ""

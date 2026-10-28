@@ -24,7 +24,8 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "help")
+SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "privacy",
+          "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
 
@@ -182,7 +183,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("Muse Spark (web search)", "cloud")
         state.used("Muse Spark (computer use)", "cloud", 1)
         state.sent("Muse Spark (uses the web)", "show me what banana bread is on the TV")
-        state.sent("Muse Spark (computer use)", "1 screenshot of the web page")
+        state.screenshots_sent("Muse Spark (computer use)", 1)
     elif scene == "answer":
         state.answered("Sunny tomorrow, with a high of 61 and a light breeze in the afternoon. That's according to "
                        "weather.gov.", [("Forecast for your area", "https://forecast.weather.gov/sample"),
@@ -206,6 +207,18 @@ def show(state: ScreenState, scene: str) -> None:
                              "remote: seen 25 minutes ago, behind me on my left"])
         state.said("I'm keeping an eye on your keys and your glasses. It's on the screen.", "device")
         state.doing("Speaking", "Looking at you")
+    elif scene == "privacy":
+        state.privacy_day("21 of 24 requests stayed in this house",
+                          [("✓", "21 requests answered on this computer: nothing sent"),
+                           ("→", "Muse Spark: words from 3 requests"),
+                           ("→", "68 words in all, each one shown on its turn's receipt"),
+                           ("→", "2 screenshots of web pages you asked to see"),
+                           ("✓", "No camera pictures and no sound left the house")])
+        state.said("Today, 21 of your 24 requests stayed in this house. For the other 3, I sent 68 words to Muse Spark, "
+                   "and 2 screenshots of web pages you asked to see. No camera pictures and no sound left the house. "
+                   "It's on the screen.", "device", "counted on this computer from today's privacy receipts")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
     elif scene == "help":
         state.show_help()
         state.said("I can find things and point at them, keep an eye on things, remind you, and look things up.")

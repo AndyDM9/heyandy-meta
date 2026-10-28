@@ -239,6 +239,8 @@ class Andy:
         brief = bool(MORNING.search(text)) and self._briefed != today
         if (to := asked_for(text)) is not None:
             return self.set_language(to)
+        if i.kind == "privacy":  # before anything that might use the cloud: asking sends nothing
+            return self.privacy_today()
         if brief or needs_agent(text):
             done = self.agent(text, brief)
             if done is not None:
@@ -353,6 +355,37 @@ class Andy:
         self.screen.sent("Muse Spark", text)
         for asked, said in self.history:
             self.screen.sent("Muse Spark (earlier in this conversation)", f"{asked} / {said}")
+
+    def privacy_today(self) -> str:
+        """What left the house today, from the privacy receipts' own counts: said, and shown on the TV. Counted and
+        answered on this computer, so asking what went to the cloud sends nothing to it."""
+        d = self.screen.day()
+        self._source, self._reason = "device", "counted on this computer from today's privacy receipts"
+        midnight = _now(lambda: d.since).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        when = "Today" if d.since <= midnight else f"Since I started at {spoken_time(d.since)}"
+        stayed, to = d.turns - d.went, sorted(d.to, key=lambda f: -d.to[f])
+        rows = [("✓", f"{_n(stayed, 'request')} answered on this computer: nothing sent")] if stayed else []
+        rows += [("→", f"{f}: words from {_n(d.to[f], 'request')}") for f in to]
+        if d.words:
+            rows.append(("→", f"{_n(d.words, 'word')} in all, each one shown on its turn's receipt"))
+        if d.screenshots:
+            rows.append(("→", f"{_n(d.screenshots, 'screenshot')} of web pages you asked to see"))
+        if d.pictures:
+            rows.append(("!", f"{_n(d.pictures, 'camera picture')} of the staged scene, to SAM 3.1"))
+        rows.append(("✓", "No sound left the house" if d.pictures else "No camera pictures and no sound left the house"))
+        if not d.went:
+            self.screen.privacy_day("Nothing has left this house", rows)
+            if d.turns > 1:
+                return f"{when}, nothing has left this house: all {d.turns} of your requests were answered on this computer."
+            return f"{when}, nothing has left this house."
+        self.screen.privacy_day(f"{stayed} of {d.turns} requests stayed in this house", rows)
+        names = to[0] if len(to) == 1 else ", ".join(to[:-1]) + " and " + to[-1]
+        went = (f"{when}, {stayed} of your {d.turns} requests stayed in this house. For the other {d.went}" if stayed
+                else f"{when}, each of your {d.turns} requests needed the cloud. For them")
+        shots = f", and {_n(d.screenshots, 'screenshot')} of web pages you asked to see" if d.screenshots else ""
+        pictures = (f" {_n(d.pictures, 'camera picture')} of the staged scene went to SAM 3.1; no sound did."
+                    if d.pictures else " No camera pictures and no sound left the house.")
+        return f"{went}, I sent {_n(d.words, 'word')} to {names}{shots}.{pictures} It's on the screen."
 
     def look_up(self, question: str) -> str:
         if not self.online or self.spark is None:
@@ -830,7 +863,7 @@ class Andy:
         finally:
             self.screen.doing("Waiting")
             if shots[0]:
-                self.screen.sent("Muse Spark (computer use)", f"{shots[0]} screenshots of the web page")
+                self.screen.screenshots_sent("Muse Spark (computer use)", shots[0])
                 self.screen.used("Muse Spark (computer use)", "cloud", shots[0])
         self._web = (first, None if run.stopped else run.response_id, self.clock())
         if run.guarded:
@@ -1186,6 +1219,10 @@ def _now(clock):
     import datetime as dt
 
     return dt.datetime.fromtimestamp(clock())
+
+
+def _n(n: int, word: str) -> str:
+    return f"{n} {word}{'s' * (n != 1)}"
 
 
 def _join(items: list[str]) -> str:

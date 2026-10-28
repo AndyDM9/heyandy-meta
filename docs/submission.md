@@ -55,7 +55,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
 
 **Pictures and voice from a home never leave it.** Meta can't turn off data retention for hackathon credits, so the
 camera and microphone reach only models on the computer beside the robot. Every turn, the TV shows a privacy receipt:
-exactly which words went to which cloud model, or "Nothing left this house". Unplug the network and Andy carries on.
+exactly which words went to which cloud model, or "Nothing left this house". "Andy, what did you send to the cloud
+today?" adds up the day's receipts, on this computer. Unplug the network and Andy carries on.
 
 ## Technical depth (what was hard)
 
@@ -92,8 +93,9 @@ that?" (public photos: 4 of 6), going out (robot simulated). Every result, failu
 
 Andy says it's an AI at the start of a conversation and every three hours; crisis words, in English or Spanish, get
 the 988 line in code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3, which
-caught 3 of 8 phrasings the list missed, with no false alarms on 12 ordinary ones, in 0.04 s); no medical advice; it never asks for money or passwords. Speech that isn't for
-Andy is dropped and never shown or kept. Model API spend has a hard cap.
+caught 3 of 8 phrasings the list missed, with no false alarms on 12 ordinary ones, in 0.04 s); no medical advice; it
+never asks for money or passwords. Speech that isn't for Andy is dropped and never shown or kept. Model API spend has a
+hard cap.
 
 ## What's next
 

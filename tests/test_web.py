@@ -129,7 +129,7 @@ def test_andy_shows_a_page_and_takes_follow_ups(tmp_path, monkeypatch):
     assert "The recipe is on the TV." in reply and a._browser.opened == "https://www.allrecipes.com/recipe/1"
     snap = a.screen.snapshot()
     assert snap["web"]["host"] == "allrecipes.com" and snap["source"] == "cloud"
-    assert any("screenshots of the web page" in o["words"] for o in snap["outbox"])  # the privacy receipt says so
+    assert any("of the web page" in o["words"] for o in snap["outbox"])  # the privacy receipt says so
     assert "Scrolled to the ingredients." in a.hear("scroll down")
     assert spark.sent[-1]["previous_response_id"] == "r1"
     assert "closed" in a.hear("close the browser") and a.screen.snapshot()["web"] is None

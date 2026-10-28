@@ -195,7 +195,7 @@
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
     <div><h3>Find things</h3><p>“Andy, where are my glasses?”</p><p>“Andy, the blue mug, next to the laptop.”</p><p>“Andy, follow the mug.” (then move it; say “stop”)</p></div>
-    <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p></div>
+    <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p><p>“Andy, what did you send to the cloud today?”</p></div>
     <div><h3>Talk, look, make</h3><p>“Andy, what am I holding?” · “What's on the table?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
 </div>
@@ -204,7 +204,7 @@
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
     <div><h3>Encontrar cosas</h3><p>“Andy, ¿dónde están mis gafas?”</p><p>“Andy, la taza azul, junto a la computadora.”</p><p>“Andy, sigue la taza.” (muévala; diga “basta”)</p></div>
-    <div><h3>Recordar cosas</h3><p>“Andy, vigila mis llaves.”</p><p>“Andy, ¿qué recuerdas?”</p><p>“Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p></div>
+    <div><h3>Recordar cosas</h3><p>“Andy, vigila mis llaves.”</p><p>“Andy, ¿qué recuerdas?”</p><p>“Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Andy, ¿qué enviaste a la nube hoy?”</p></div>
     <div><h3>Hablar, mirar, crear</h3><p>“Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Andy, ¿qué tiempo hará mañana?”</p><p>“Andy, dibújame un faro al amanecer.”</p></div>
   </div>
   </div></div></div>
@@ -214,7 +214,7 @@
   const svgNS = "http://www.w3.org/2000/svg";
   const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
                "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”", "“Andy, let's play the cup game.”", "“Andy, this is my mug.”", "“Andy, show me the weather radar on the TV.”",
-               "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
+               "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what did you send to the cloud today?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The TV in Spanish, while Andy speaks it: every fixed label by hand (Andy's own words come translated, from Glimmer).
   let LANG = "en";
@@ -223,7 +223,7 @@
     "“Andy, remind me at 3 pm to call Sam.”": "“Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
     "Nothing yet. “Andy, keep an eye on my keys.”": "Nada todavía. “Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
-    "What I found": "Lo que encontré", "Going out": "Antes de salir", "Have you got everything?": "¿Lleva todo?",
+    "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
     "What I remember": "Lo que recuerdo", "Where I last saw things": "Dónde vi las cosas por última vez",
     "Nothing yet": "Nada todavía", "Try asking": "Pruebe a decir", "to find it": "para encontrarlo",
     "If I can't find it, I'll say so.": "Si no lo encuentro, se lo diré.", "Looking around the room": "Mirando por la habitación",
@@ -260,10 +260,10 @@
   const TRY_ES = ["“Andy, ¿dónde están mis gafas?”", "“Andy, vigila mis llaves.”", "“Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
                   "“Andy, dibújame un gato en un jardín soleado.”", "“Andy, ¿qué tengo en la mano?”", "“Andy, juguemos al juego de los vasos.”",
                   "“Andy, esta es mi taza.”", "“Andy, muéstrame el radar del tiempo en la tele.”", "“Andy, me voy, ¿llevo todo?”",
-                  "“Andy, ¿qué recuerdas?”", "“Andy, habla inglés.”"];
+                  "“Andy, ¿qué recuerdas?”", "“Andy, ¿qué enviaste a la nube hoy?”", "“Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
   const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
-                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", help: "What can I ask?" };
+                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   function demoBar() {
@@ -430,6 +430,14 @@
         const src = el("div", null, "sources");
         for (const x of s.sources) src.append(el("div", x.title + " · " + new URL(x.url).hostname.replace(/^www\./, "")));
         body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
+      } else if (s.privacy) {  // "what did you send today?": the day's receipts, counted
+        kicker = T("Today's privacy"); title = s.privacy.title;
+        const box = el("div", null, "check");
+        for (const r of s.privacy.rows) {
+          const row = el("div", null, "row " + (r.mark === "✓" ? "gone" : r.mark === "!" ? "here" : "unknown"));
+          row.append(el("div", r.mark, "mark"), el("div", r.text)); box.append(row);
+        }
+        body.replaceChildren(box);
       } else if (s.checklist) {
         kicker = T("Going out"); title = T("Have you got everything?");
         const box = el("div", null, "check");
