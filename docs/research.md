@@ -471,3 +471,12 @@ API's `computer` tool; each `computer_call` carries a batch of `actions`, and th
 - **The follow-up quirk:** a screenshot can be sent as an input image only in a run's first request ("native computer
   input images are supported only in the initial request"), so follow-ups send words and the model asks for a
   screenshot.
+
+## 21. A map of where things are, drawn from words (2026-10-27, night)
+
+Section 16's cheap extra. "Andy, draw me a map of my things": the watched things' last places, as words (Glimmer's "near"
+words and the direction from the robot, "to the robot's left"), go to Muse Image with a fixed style (watercolor, seen
+from above, the robot in the middle facing the top, large capital labels). Measured: 10 to 16 s; the labels came out
+legible and the directions right (left, right, behind) in both tries; the things themselves are sometimes drawn, sometimes
+only labelled. Andy says it's a drawing from memory, not a photo, and the receipt shows the words about the home rather
+than the style instructions (the receipt shows 160 characters, and the instructions came first).

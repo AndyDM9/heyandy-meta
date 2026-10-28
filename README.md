@@ -28,7 +28,9 @@ trademark application.
    before it runs: nothing personal is typed, and a sign-in or payment page ends it. Screenshots of web pages go to the
    cloud; the camera never does, and the TV's privacy receipt says which went.
 10. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
-   saved to your Pictures folder to print or share. "Make it sunset" changes it.
+   saved to your Pictures folder to print or share. "Make it sunset" changes it. **"Draw me a map of my things"** paints
+   where the things Andy keeps an eye on were last seen, from words only (what each is near, and which way), labelled
+   large: a drawing from memory, not a photo.
 11. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
    at the table) and Glimmer says what it sees, on the computer beside the robot.
 12. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark

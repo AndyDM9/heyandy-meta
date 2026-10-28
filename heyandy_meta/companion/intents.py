@@ -53,6 +53,8 @@ MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:
         re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
         re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),
         re.compile(r"\blearn (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now|by sight))", re.I)]
+MAP_OF_THINGS = re.compile(r"\b(?:draw|make|paint|show)(?: me| us)? (?:a |the )?(?:map|picture|postcard|drawing) of "
+                           r"(?:where )?(?:all )?(?:my|our|the) things\b|\bmap of (?:where )?(?:all )?(?:my|our) things\b", re.I)
 WEB = [re.compile(r"\b(?:show|put|pull up|bring up|open|find|look up|display|get)\b.{2,120}?\bon (?:the|my|your) "
                   r"(?:tv|telly|screen|television)\b", re.I),
        re.compile(r"\bshow me (?:some |a few )?(?:pictures?|photos?|images?|a map|the map|a video|videos|the radar|"
@@ -79,7 +81,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | web | mine | describe | draw | help | world
+    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -179,6 +181,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("remember")
     if GAME.search(t):
         return Intent("game", text=t)
+    if MAP_OF_THINGS.search(t):
+        return Intent("things_map", text=t)
     if any(rx.search(t) for rx in WEB):
         return Intent("web", text=t)
     for rx in MINE:

@@ -256,6 +256,8 @@ class Andy:
                 return "Okay, I've closed it."
             if WEB_MORE.search(text):
                 return self.use_the_web(text, more=True)
+        if i.kind == "things_map":
+            return self.draw_my_things()
         if i.kind == "web":
             return self.use_the_web(text)
         again, self._again_until = self.clock() <= self._again_until and AGAIN.match(text), 0.0
@@ -704,6 +706,38 @@ class Andy:
         if run.stopped:  # out of steps or time: say so plainly rather than the model's half-finished narration
             return "That's as far as I could get. What I found is on the TV."
         return (run.answer or "It's on the TV.") + ("" if more else " You can say scroll down, or go back.")
+
+    def draw_my_things(self) -> str:
+        """"Draw me a map of my things": Muse Image paints where the watched things were last seen, from words only
+        (what each is near, and which way from the robot). A drawing from memory, not a picture of the room."""
+        places = []
+        for label in self.places.watching():
+            last = self.places.last_seen(label, now=self.clock())
+            if last:
+                history = self.places.history(label)
+                places.append((label, (history[-1]["near"] or "") if history else "", side(last[0])))
+        if not places:
+            return "I haven't seen any of your things yet. Say 'keep an eye on my keys' to start."
+        if not self.online or self.spark is None:
+            return "I can only make pictures when I'm connected. " + " ".join(f"Your {t}: {s}." for t, _, s in places)
+        prompt = pictures.things_map(places)
+        self.say("Let me draw where your things are. It takes a little while.")
+        self.screen.doing("Working", "Drawing")
+        try:
+            self.screen.sent("Muse Image", pictures.things_words(places))  # the receipt: the words about the home
+            drawing = pictures.draw(self.spark, prompt, budget=self.budget)
+        except (*CLOUD_TROUBLE, pictures.NoPicture):
+            self._source, self._reason = "device", "the picture didn't come back"
+            return "I couldn't make that picture just now. Please try again in a little while."
+        finally:
+            self.screen.doing("Waiting")
+        self._drawing = drawing
+        path = pictures.save(drawing)
+        self._source, self._reason = "cloud", "a map from what Andy remembers, in words (Muse Image)"
+        self.screen.used("Muse Image", "cloud")
+        self.screen.drawn(drawing.image, "where your things are",
+                          f"A drawing from what I remember, not a photo. Saved in Pictures, Andy, as {path.name}")
+        return "Here's where your things are, on the screen. It's a drawing from what I remember, not a photo."
 
     def draw(self, what: str, refine: bool = False) -> str:
         """A picture from the person's words, with Muse Image (words only leave the house); shown and saved."""

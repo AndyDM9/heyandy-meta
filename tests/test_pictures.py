@@ -75,3 +75,21 @@ def test_the_tv_serves_the_picture_itself(tmp_path):
         assert json.load(urllib.request.urlopen(url + "/state.json"))["drawing"]["v"] == 1
     finally:
         srv.shutdown()
+
+
+def test_a_map_of_my_things_is_drawn_from_words(tmp_path, pictures_folder):
+    from heyandy_meta.robot.sim import Thing
+
+    image = MuseImage()
+    a, _, clock = andy(Thing("keys", 40.0, 20.0), tmp_path=tmp_path, spark=image)
+    assert parse("Andy, draw me a map of my things").kind == "things_map"
+    assert "haven't seen" in a.hear("draw me a map of my things")
+    a.places.watch("keys")
+    a.places.saw("keys", 40.0, 20.0, when=clock())
+    reply = a.hear("draw me a map of my things")
+    assert "not a photo" in reply
+    sent = image.requests[0]["input"]
+    assert "KEYS" in sent and "to the robot's left" in sent and "image" not in str(image.requests[0].get("tools", ""))
+    snap = a.screen.snapshot()
+    assert snap["drawing"]["prompt"] == "where your things are" and "not a photo" in snap["drawing"]["saved"]
+    assert any(o["to"] == "Muse Image" and "KEYS" in o["words"] for o in snap["outbox"])

@@ -17,6 +17,25 @@ MODEL = "muse-image-1.0"
 FOLDER = Path.home() / "Pictures" / "Andy"
 
 
+THINGS_MAP = ("A cozy hand-drawn watercolor map of one room, seen from above, warm colors, simple and uncluttered. In "
+              "the middle, a small friendly white robot with two antennas, facing the top of the picture, so its left is "
+              "the left of the picture and behind it is the bottom. Around it, drawn small and clearly, each with a short, "
+              "large, easy-to-read label in capital letters: {things}. No other words.")
+
+
+def things_words(places: list[tuple[str, str, str]]) -> str:
+    """Where things are, in words: (thing, what it's near, which way from the robot). The only part about the home."""
+    def way(w: str) -> str:
+        return w.replace("behind me", "behind the robot").replace("my ", "the robot's ").replace("straight ahead",
+                                                                                                    "in front of the robot")
+    return "; ".join(f"{thing.upper()} {near + ', ' if near else ''}{way(side)}" for thing, near, side in places)
+
+
+def things_map(places: list[tuple[str, str, str]]) -> str:
+    """The words for Muse Image's map of where things are."""
+    return THINGS_MAP.format(things=things_words(places))
+
+
 class NoPicture(RuntimeError):
     pass
 

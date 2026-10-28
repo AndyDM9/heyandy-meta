@@ -47,6 +47,9 @@ the house.
   clean browser; Muse Spark's computer use clicks and scrolls until the radar (or the recipe, or the pictures) is in
   view, while the TV shows each step. Every action is reviewed in code first: nothing personal is typed, and a sign-in
   or payment page ends the run.
+- **"Andy, draw me a map of my things."** Muse Image paints where the things Andy keeps an eye on were last seen, with
+  large labels, from words only ("KEYS on the desk, next to the lamp, to the robot's left"): a drawing from memory, not a
+  photo, and the privacy receipt shows exactly those words.
 - **"Andy, draw me a lighthouse at dawn."** Muse Image paints it from the person's words; it fills the TV and is
   saved to print or share; "make it sunset" changes it.
 - **Questions about the world** are answered in a sentence or two with web search, naming the source aloud and listing
