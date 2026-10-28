@@ -27,6 +27,22 @@ blue one": "Andy, this is my mug" (held up and turned), then with a second mug o
 where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", "91%: yours"). It shows a Meta open model
 (DINOv2) and the privacy story in one line: "I keep what it looks like as numbers, never a picture."
 
+## Filming day, step by step
+
+1. **Preflight** (a minute): `uv run python scripts/preflight.py --cloud` must end with "READY". Anything listed as
+   FAIL says what to do; most often `systemctl --user restart heyandy-app` and run it again.
+2. **The room:** staged. Nobody else in view, nothing personal (letters, photos, a phone or screen with anything
+   private on it). The things for the takes in place: glasses (and a picture of glasses on the TV), the blue mug and a
+   look-alike, keys, the remote; three opaque cups and a small bright ball if the cup game is in.
+3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Andy, speak English".
+4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
+   each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/take1.webm --room-is-staged`.
+5. **Takes,** in the storyboard's order. Speak at a normal distance, start with "Andy", and wait for Andy to finish.
+   Something goes wrong: "Andy, stop", then the next take; if Andy stops answering, restart it (step 1's command, 20 s)
+   and run the preflight again.
+6. **Between takes:** nothing to delete on this computer (Andy keeps no pictures or audio); `film/` is never committed.
+   Keep every take that's used, uncut, for the "autonomous · uncut · 1× speed" badge.
+
 **Recording the TV:** start `uv run --with playwright python scripts/record_tv.py --seconds 120 --out
 film/tv-take1.webm --room-is-staged` just before each take, and line it up with the camera footage in the edit (Andy's first word is an
 easy sync point). `film/` is never committed.

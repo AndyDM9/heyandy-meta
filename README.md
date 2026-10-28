@@ -115,6 +115,7 @@ On the robot computer, keep the robot and the web extras (an exact sync removes 
 ```bash
 uv sync --extra dev --extra robot --extra browse && uv run playwright install --only-shell chromium
 ```
+Before a demo, `uv run python scripts/preflight.py` checks everything answers (about a minute, no camera).
 The models on this computer (Glimmer on GPU 0, SAM 3.1 on GPU 1, two 24 GB cards) are set up by
 `scripts/setup-local-models.sh` and run as the user services in `deploy/`. Muse Spark is used when `MODEL_API_KEY` is set
 and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
