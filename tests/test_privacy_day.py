@@ -91,3 +91,11 @@ def test_since_andy_started_when_it_started_today():
     started = dt.datetime(2026, 11, 3, 9, 12).timestamp()
     a = NS(screen=ScreenState(now=lambda: started), _source="", _reason="")
     assert Andy.privacy_today(a) == "Since I started at 9:12, nothing has left this house."
+
+
+def test_the_rest_of_a_combined_request_is_answered_too(tmp_path):
+    a, _, _ = andy(Thing("keys", 20.0, 20.0), tmp_path=tmp_path, online=False)
+    reply = a.hear("Andy, what did you send to the cloud today, and where are my keys?")
+    assert "nothing has left this house." in reply and reply.endswith("I see your keys, a little to my left.")
+    assert a.hear("privacy report please").endswith("nothing has left this house.")  # the combined request: one turn
+    assert a.screen.day().turns == 1  # a turn counts once the next one starts

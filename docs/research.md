@@ -1,4 +1,4 @@
-# Research for the build plan
+# Research notes
 
 **Gathered 2026-10-27.** Prices, versions and dates change, so each
 one is dated. ⚠ marks a fact we couldn't confirm from Meta or the organizers; check it before relying on it.

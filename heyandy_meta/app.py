@@ -24,7 +24,7 @@ from .companion.attention import face_person
 from .companion import cupgame, pictures, web
 from .companion.language import LANGUAGES, TVWords, asked_for
 from .companion.follow import follow
-from .companion.intents import REFINE, WEB_CLOSE, WEB_MORE, parse
+from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
@@ -240,7 +240,10 @@ class Andy:
         if (to := asked_for(text)) is not None:
             return self.set_language(to)
         if i.kind == "privacy":  # before anything that might use the cloud: asking sends nothing
-            return self.privacy_today()
+            rest = " ".join(part for part in CLAUSES.split(text) if part.strip() and not PRIVACY.search(part))
+            if len(re.findall(r"[a-z']+", rest.lower())) < 3:  # only the question ("please", "Andy")
+                return self.privacy_today()
+            return self.privacy_today(on_screen=False) + " " + self._answer(rest)  # then the rest, as asked
         if brief or needs_agent(text):
             done = self.agent(text, brief)
             if done is not None:
@@ -356,9 +359,10 @@ class Andy:
         for asked, said in self.history:
             self.screen.sent("Muse Spark (earlier in this conversation)", f"{asked} / {said}")
 
-    def privacy_today(self) -> str:
+    def privacy_today(self, on_screen: bool = True) -> str:
         """What left the house today, from the privacy receipts' own counts: said, and shown on the TV. Counted and
-        answered on this computer, so asking what went to the cloud sends nothing to it."""
+        answered on this computer, so asking what went to the cloud sends nothing to it. on_screen: the card stays
+        (False when the rest of the request will show something else)."""
         d = self.screen.day()
         self._source, self._reason = "device", "counted on this computer from today's privacy receipts"
         midnight = _now(lambda: d.since).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
@@ -385,7 +389,7 @@ class Andy:
         shots = f", and {_n(d.screenshots, 'screenshot')} of web pages you asked to see" if d.screenshots else ""
         pictures = (f" {_n(d.pictures, 'camera picture')} of the staged scene went to SAM 3.1; no sound did."
                     if d.pictures else " No camera pictures and no sound left the house.")
-        return f"{went}, I sent {_n(d.words, 'word')} to {names}{shots}.{pictures} It's on the screen."
+        return f"{went}, I sent {_n(d.words, 'word')} to {names}{shots}.{pictures}" + (" It's on the screen." * on_screen)
 
     def look_up(self, question: str) -> str:
         if not self.online or self.spark is None:
@@ -1219,6 +1223,9 @@ def _now(clock):
     import datetime as dt
 
     return dt.datetime.fromtimestamp(clock())
+
+
+CLAUSES = re.compile(r"[,;.?!]+\s*(?:and\s+(?:then\s+)?|then\s+|also\s+)?|\s+and\s+(?:then\s+)?|\s+then\s+", re.I)
 
 
 def _n(n: int, word: str) -> str:

@@ -141,10 +141,11 @@ heyandy_meta/network.py    whether the cloud is reachable right now
 heyandy_meta/budget.py     the hard cap on Model API spend
 local/                     SAM 3.1 (finding, /track for the cup game) and DINOv2 (/embed), and hearing and speaking,
                            served on 127.0.0.1 only
-evals/                     the scorecards (search simulated, agent, Spanish; physical, to run) and their results
+evals/                     the scorecards (search simulated, agent, Spanish, the privacy audit; physical, to run) and
+                           their results
 scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
 config/                    config.example.yaml (no secrets)
-docs/                      the build plan, the hackathon's rules, research, the video plan, open weights
+docs/                      the hackathon's rules, research, the video plan, open weights
 tests/
 ```
 
@@ -210,6 +211,14 @@ pointing within about 3 degrees after the head's correction.
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 40 of 41 reach the
 right ability; said by Kokoro's Spanish voice and heard by Omnilingual ASR, 37 of 41 (two hearing slips, one ambiguous
 word, one misread). Glimmer translates each in a median 0.44 s, on the computer beside the robot.
+
+**The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
+reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every
+HTTP request the program made was recorded on its way out, and the simulated camera took real pictures. **21 of 21
+turns pass:** none of the 21 camera pictures reached the cloud; the one image that did was a web page's screenshot, on
+its receipt; every word sent was on its turn's receipt (49 of 52 pieces word for word; the other 3 are the person's
+words inside Andy's own instructions); the crisis words reached no model at all. 11 of the 21 turns sent nothing. With
+the network off, the same day sent nothing to the cloud, and Andy answered every turn.
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second
