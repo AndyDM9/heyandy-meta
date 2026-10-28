@@ -10,6 +10,8 @@ import re
 import threading
 import time
 
+from ..companion.safety import crisis
+
 log = logging.getLogger(__name__)
 
 # "Andy" as speech-to-text writes it: the name, and what it was heard as on 2026-10-27 ("and they", "earndy").
@@ -25,6 +27,7 @@ class VoiceLoop:
         self.awake_until = float("-inf")
         self.utterance_end = 0.0  # time.monotonic() when the last utterance ended
         self.busy = False  # a turn is running (on its own thread, so "stop" and "done" can still be heard)
+        self._pending = None  # crisis words heard during a turn: answered straight after it
 
     def stops(self, text: str) -> bool:
         """Words that end what Andy is doing right now: "stop" a follow, "done" shuffling the cups."""
@@ -34,7 +37,9 @@ class VoiceLoop:
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
         text = " ".join(text.split())
-        if self.stops(text):
+        if crisis(text) and not self.stops(text) and getattr(self.andy, "following", False):
+            self.andy.stop_following()  # whatever Andy is doing, this comes first
+        if self.stops(text) and not crisis(text):
             self.andy.stop_following()  # no lock: the follow holds it, and this must reach it at once
             return "Stopped."
         if _looping(text):
@@ -43,6 +48,8 @@ class VoiceLoop:
         if not text or (not called and self._clock() > self.awake_until):
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
+        if crisis(text):
+            rest = text  # "I want to die. Andy, what time is it": the whole of it, so nothing is missed
         with getattr(self.andy, "lock", _NoLock()):
             if voice_yaw is not None:  # the voice gives the direction; keep the last seen face's height
                 before = getattr(self.andy, "person", None)
@@ -90,10 +97,14 @@ class VoiceLoop:
                 log.warning("hearing failed: %s: %s", type(e).__name__, e)
                 continue
             if self.busy:
+                if crisis(text):  # never dropped: stop what's running, and answer it as soon as the turn ends
+                    self.andy.stop_following()
+                    self._pending = (text, yaw, utterance)
+                    continue
                 stopped = self.stops(text)
                 if stopped:
                     self.andy.stop_following()  # no lock: the turn holds it, and this must reach it at once
-                self._report(text if stopped else None, "Stopped." if stopped else None, utterance, endpointer)
+                self._report(None, "Stopped." if stopped else None, utterance, endpointer)  # its length only
                 continue
             self.busy = True
             turns.put((text, yaw, utterance))
@@ -110,7 +121,11 @@ class VoiceLoop:
             except Exception as e:  # noqa: BLE001 - one bad turn must not leave Andy deaf
                 log.warning("a turn failed: %s: %s", type(e).__name__, e)
             finally:
-                self.busy = False
+                pending, self._pending = self._pending, None
+                if pending:  # crisis words said during that turn: answered now, before anything else
+                    turns.put(pending)
+                else:
+                    self.busy = False
             self._report(text if reply is not None else None, reply, utterance, endpointer)
 
     def _report(self, text, reply, utterance, endpointer) -> None:

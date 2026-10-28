@@ -1,4 +1,5 @@
 """Serve the TV page on this computer only. It reads the screen state; nothing on the network can change it."""
+import ipaddress
 import json
 import threading
 from urllib.parse import parse_qs, urlsplit
@@ -23,6 +24,17 @@ OUTLINE = "#ffd166"  # the found thing's outline, drawn on the camera picture
 FONTS = {name: "font/ttf" for name in ("AtkinsonHyperlegibleNext.ttf", "AtkinsonHyperlegibleMono.ttf")}
 
 
+def _home_address(host_header: str) -> bool:
+    """A TV elsewhere in the home asking by this computer's address: an address, not a name, so it can't be rebound."""
+    host = host_header.rsplit(":", 1)[0].strip("[]") if host_header.count(":") <= 1 or host_header.startswith("[") \
+        else host_header
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return ip.is_private or ip.is_loopback
+
+
 def page() -> str:
     html = files(__package__).joinpath("page.html").read_text()
     for part, colours in THEMES.items():
@@ -32,13 +44,21 @@ def page() -> str:
 
 
 def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes: dict | None = None,
-          frame_ancestors: str = "'none'") -> ThreadingHTTPServer:
+          frame_ancestors: str = "'none'", any_host: bool = False) -> ThreadingHTTPServer:
     """The TV page and its state, read-only. scenes (the public demo only): name -> a snapshot made on request, so
     each visitor picks a scene for themselves and nobody can change what anyone else sees."""
     body = page().encode()
+    # Only asked for by its own name: a page that tricks a browser into "andy.localhost" (DNS rebinding) gets nothing,
+    # because the TV's state holds the last camera picture. The public sample demo (any_host) has no pictures.
+    hosts = ("127.0.0.1", "localhost", "[::1]", host)
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
+            bound = self.server.server_address[1]  # the port it really got (0 asks for any)
+            names = {f"{h}:{bound}" for h in hosts} | set(hosts)
+            asked = (self.headers.get("Host") or "").lower()
+            if not any_host and asked not in names and not _home_address(asked):
+                return self._send(421, "text/plain", b"not this name")
             url = urlsplit(self.path)
             if url.path == "/":
                 self._send(200, "text/html; charset=utf-8", body)

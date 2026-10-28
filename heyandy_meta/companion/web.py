@@ -12,12 +12,15 @@ Muse Wonder doesn't take the computer tool on our account yet (400 "Unsupported 
 loop, as Meta's docs allow.
 """
 import base64
+import ipaddress
 import logging
 import queue
+import socket
 import time
 import re
 import threading
 from dataclasses import dataclass, field
+from functools import lru_cache
 from urllib.parse import quote_plus, urlsplit
 
 from ..budget import WEB_SEARCH, Budget, chat_cost
@@ -57,12 +60,38 @@ class BrowserTrouble(RuntimeError):
     """The browser didn't start, crashed, or stopped answering: make a new one next time."""
 
 
-def at_home(url: str) -> bool:
-    """An address on this computer or the home network: never opened (the TV page itself is one, with its pictures)."""
+def at_home(url: str, resolve: bool = True) -> bool:
+    """An address on this computer or the home network: never opened (the TV page itself is one, with its pictures).
+    By name, and by where the name actually leads: "andy.localhost" or a name that resolves to 127.0.0.1 counts too."""
     from ..models.common import is_local
 
-    host = (urlsplit(url).hostname or "").lower()
-    return not host or is_local(url) or "." not in host or host.endswith((".local", ".lan", ".home", ".internal", ".arpa"))
+    parts = urlsplit(url)
+    if parts.scheme in ("about", "data", "blob") or url.startswith("about:"):
+        return False
+    host = (parts.hostname or "").lower().rstrip(".")
+    if not host or is_local(url) or "." not in host or host == "localhost" or host.endswith(
+            (".localhost", ".local", ".lan", ".home", ".internal", ".arpa", ".home.arpa")):
+        return True
+    if not resolve:
+        return False
+    return any(_private(ip) for ip in _addresses(host))
+
+
+def _private(ip: str) -> bool:
+    try:
+        a = ipaddress.ip_address(ip.split("%")[0])
+    except ValueError:
+        return True
+    return a.is_private or a.is_loopback or a.is_link_local or a.is_reserved or a.is_unspecified or a.is_multicast \
+        or a in ipaddress.ip_network("100.64.0.0/10")
+
+
+@lru_cache(maxsize=512)
+def _addresses(host: str) -> tuple[str, ...]:
+    try:
+        return tuple({i[4][0] for i in socket.getaddrinfo(host, None)})
+    except OSError:
+        return ()  # doesn't resolve: the browser can't reach it either
 
 
 def review(actions: list[dict], url: str) -> str | None:
@@ -120,7 +149,8 @@ class Browser:
             try:
                 browser = pw.chromium.launch()
                 ctx = browser.new_context(viewport={"width": self.size[0], "height": self.size[1]},
-                                          accept_downloads=False, locale="en-US", user_agent=AGENT)
+                                          accept_downloads=False, locale="en-US", user_agent=AGENT,
+                                          service_workers="block")  # they'd fetch past the check below
                 # Nothing on this computer or the home network, whatever a page links to: the web only.
                 ctx.route("**/*", lambda route: route.abort() if at_home(route.request.url) else route.continue_())
                 self.page = ctx.new_page()
@@ -163,6 +193,9 @@ class Browser:
         return self._call(self._screenshot)
 
     def _screenshot(self) -> bytes:
+        if at_home(self.page.url):  # a redirect the request check didn't see: never photographed, never sent
+            self.page.goto("about:blank")
+            raise BrowserTrouble("the page led to this computer or the home network")
         for _ in range(3):  # a page in the middle of a redirect can't be captured: a moment later it can
             try:
                 return self.page.screenshot(type="jpeg", quality=70)

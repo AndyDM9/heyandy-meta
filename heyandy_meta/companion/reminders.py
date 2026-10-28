@@ -6,11 +6,12 @@ The file holds only the words, the time and whether it was said, readable only b
 """
 import datetime as dt
 import json
-import os
 import time
 import uuid
 from dataclasses import asdict, dataclass
 from pathlib import Path
+
+from ..private import write_private
 
 DEFAULT_PATH = Path.home() / ".local/share/heyandy-meta/reminders.json"
 RETRY_S, TRIES = 5 * 60, 3
@@ -101,8 +102,4 @@ class Reminders:
         return len(missed)
 
     def _save(self) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps([asdict(r) for r in self.items]))
-        os.chmod(tmp, 0o600)
-        tmp.replace(self.path)
+        write_private(self.path, json.dumps([asdict(r) for r in self.items]))

@@ -180,3 +180,56 @@ def test_stop_is_heard_while_a_turn_is_running():
         stop.wait(0.02)
     stop.set()
     assert replies == ["Stopped.", "stopped"] and not loop.busy
+
+
+def test_crisis_words_during_a_turn_stop_it_and_are_answered_next():
+    import threading
+
+    stop, said = threading.Event(), iter(["andy follow the mug", "andy stop, I want to kill myself"])
+    heard, stopped = [], threading.Event()
+
+    class Busy(Andy):
+        following = False
+
+        def hear(self, text):
+            heard.append(text)
+            if len(heard) == 1:
+                self.following = True
+                stopped.wait(3.0)
+                self.following = False
+                return "Okay, I've stopped."
+            return "crisis reply"
+
+        def stop_following(self):
+            stopped.set()
+
+    class Ears:
+        active, rate, end_silence_s, floor = False, RATE, 0.5, 0.0
+
+        def feed(self, samples, flag):
+            return samples
+
+    def mic(stop):
+        yield np.zeros(RATE, np.float32), True, None
+        while not a.following:
+            stop.wait(0.01)
+        yield np.zeros(RATE, np.float32), True, None
+        stop.wait(3.0)
+
+    a = Busy()
+    loop = VoiceLoop(a)
+    t = threading.Thread(target=loop.run, args=(mic, SimpleNamespace(transcribe=lambda audio: next(said)), Ears(), stop),
+                         daemon=True)
+    t.start()
+    for _ in range(200):
+        if len(heard) == 2:
+            break
+        stop.wait(0.02)
+    stop.set()
+    assert stopped.is_set() and heard[1] == "andy stop, I want to kill myself"  # the whole of it, not dropped
+
+
+def test_the_whole_utterance_is_checked():
+    a = Andy()
+    VoiceLoop(a).heard("I want to kill myself. Andy, what time is it")
+    assert a.heard == ["I want to kill myself. Andy, what time is it"]

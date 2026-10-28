@@ -203,3 +203,8 @@ def test_a_drawing_replaces_the_web_page_on_the_tv():
                                        ("find me a banana bread recipe on the TV", "web")])
 def test_the_tv_stand_is_furniture(text, kind):
     assert parse(text).kind == kind
+
+
+@pytest.mark.parametrize("url", ["http://andy.localhost:8765/", "http://localhost.:8765", "http://100.100.1.1/"])
+def test_names_that_lead_home_are_home_too(url):
+    assert web.at_home(url)

@@ -189,7 +189,7 @@ From our earlier prototype (public, Apache-2.0), read on 2026-10-27. Its finder 
 - **Desktop:** 2× RTX 3090, 24 GB each. Both were in use by our earlier prototype on October 27: 21.7 GB and 7.2 GB.
 - **No Jetson** is owned yet.
 
-## 7. A physical companion: what older adults use, competitors, rules (read 2026-10-27)
+## 7. A physical robot for people who live at home: what older adults use, competitors, rules (read 2026-10-27)
 
 **What gets used** (strongest evidence first):
 - **Answers to questions** (news, weather, facts) is the use that held steady in a 3-week, 7-home Echo Dot study,
@@ -221,7 +221,7 @@ points at physical objects. Alexa Together was discontinued May 21, 2025.
 - No health, medication, mood or wellbeing features or claims.
 - Memory is opt-in, visible and deletable.
 
-**From Meta's API for companion functions:**
+**From Meta's API for the robot's functions:**
 - **Muse Spark's `web_search` tool:** $2.50 per 1,000 searches plus tokens. It returns `url_citation`
   annotations, which give the sources ([search grounding](https://dev.meta.ai/docs/search-grounding)).
 - **Muse Voice Transcribe:** detects when someone stops speaking, labels speakers, and can be primed with names

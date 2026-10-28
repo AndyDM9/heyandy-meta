@@ -366,7 +366,7 @@ def test_the_privacy_receipt_says_what_left_the_house(tmp_path):
     b.hear("what's the weather tomorrow?")
     sent = b.screen.snapshot()["outbox"]
     assert sent == [{"to": "Muse Spark + web search", "earlier": 0,
-                     "words": "what's the weather tomorrow? (home: Sunny Isles Beach, Florida)"}]
+                     "words": "(home: Sunny Isles Beach, Florida) what's the weather tomorrow?"}]  # the home first: never cut
 
 
 def test_when_did_you_last_see_my_keys_answers_from_memory_with_what_it_was_near(tmp_path):
@@ -427,3 +427,26 @@ def test_yes_keeps_the_place_it_was_just_found(tmp_path):
         a.hear("where are my glasses?")
     a.hear("yes, please do")
     assert a.places.last_seen("glasses", now=clock()) is not None
+
+
+def test_the_receipt_lists_earlier_exchanges_word_for_word_and_counts_a_failed_attempt(tmp_path):
+    from heyandy_meta.models.retry import CloudUnavailable
+
+    class Down:
+        def chat(self, prompt, history=()):
+            raise CloudUnavailable("down", [])
+
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.router.cloud = Down()
+    a.hear("my neighbour's door code is 4512")
+    a.hear("explain why the sky is blue, in detail please, and how sunsets get their colours")
+    sent = a.screen.snapshot()["outbox"]
+    assert sent[0]["to"] == "Muse Spark" and "sky is blue" in sent[0]["words"]  # recorded although the cloud failed
+    assert any("door code is 4512" in o["words"] for o in sent[1:])  # the history that went with it, in words
+
+
+def test_a_staged_scene_says_camera_pictures_went(tmp_path):
+    a, _, _ = andy(Thing("keys", 20.0, 20.0), tmp_path=tmp_path)
+    a.vision_where = "cloud"
+    a.hear("where are my keys")
+    assert any(o.get("pictures") and "camera pictures" in o["words"] for o in a.screen.snapshot()["outbox"])

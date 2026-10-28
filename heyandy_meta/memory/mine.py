@@ -8,10 +8,11 @@ Stored in a small JSON file on this computer, readable only by its owner. "Forge
 """
 import json
 import math
-import os
 import threading
 import time
 from pathlib import Path
+
+from ..private import write_private
 
 ALIKE = 0.75  # the same thing seen from other views scored 0.79 to 0.98 on the robot; a red twin of a blue mug 0.55
 #               (research.md, 19)
@@ -77,8 +78,4 @@ class Mine:
         return max(likeness(vector, v) for v in self._things[key]["views"])
 
     def _save(self) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(self._things))
-        os.chmod(tmp, 0o600)
-        tmp.replace(self.path)
+        write_private(self.path, json.dumps(self._things))

@@ -241,6 +241,9 @@
     "Sent to the cloud this turn (words, and screenshots of web pages): ":
       "Enviado a la nube en este turno (palabras y capturas de páginas web): ",
     "✓ Nothing left this house this turn.": "✓ Nada salió de esta casa en este turno.", "Why: ": "Por qué: ",
+    "Sent to the cloud this turn (words, and camera pictures from the staged scene): ":
+      "Enviado a la nube en este turno (palabras e imágenes de la cámara de la escena preparada): ",
+    "In the cloud, words and camera pictures (staged scene):": "En la nube, palabras e imágenes de la cámara (escena preparada):",
     "Andy sends Muse Spark screenshots of this web page, never the camera":
       "Andy envía a Muse Spark capturas de esta página web, nunca de la cámara",
     "SAM 3.1 Object Multiplex followed every cup at once, on this computer":
@@ -466,8 +469,10 @@
     if (!s.models || !s.models.length) { r.replaceChildren(); return; }
     if (!s.outbox || !s.outbox.length) { r.replaceChildren(el("b", T("✓ Nothing left this house this turn."))); return; }
     const web = s.outbox.some(o => o.to.includes("computer use"));  // web pages' screenshots went too: say so
-    r.replaceChildren(el("span", T(web ? "Sent to the cloud this turn (words, and screenshots of web pages): "
-                                       : "Sent to the cloud this turn, words only: ")));
+    const camera = s.outbox.some(o => o.pictures);  // a staged scene: camera pictures went too
+    r.replaceChildren(el("span", T(camera ? "Sent to the cloud this turn (words, and camera pictures from the staged scene): "
+                                   : web ? "Sent to the cloud this turn (words, and screenshots of web pages): "
+                                   : "Sent to the cloud this turn, words only: ")));
     s.outbox.forEach((o, i) => {
       if (i) r.append(" · ");
       r.append(o.to + " ← ", el("q", o.words));
@@ -477,10 +482,12 @@
   function models(list) {
     const m = $("models"); m.replaceChildren();
     const web = (list || []).some(x => x.name.includes("computer use"));
+    const camera = (list || []).some(x => x.name.startsWith("SAM 3.1") && x.where === "cloud");
     for (const where of ["device", "cloud"]) {
       const these = (list || []).filter(x => x.where === where);
       if (!these.length) continue;
-      m.append(el("b", T(where === "device" ? "On this computer:" : web ? "In the cloud, words and web pages:" : "In the cloud, words only:")));
+      m.append(el("b", T(where === "device" ? "On this computer:" : camera ? "In the cloud, words and camera pictures (staged scene):"
+                         : web ? "In the cloud, words and web pages:" : "In the cloud, words only:")));
       for (const x of these) m.append(el("span", x.name + (x.times > 1 ? " ×" + x.times : ""), where));
     }
   }

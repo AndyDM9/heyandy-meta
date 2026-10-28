@@ -226,7 +226,7 @@ def main() -> None:
             show(st, scene)
             return st.snapshot()
 
-        serve(state, host=args.host, port=args.port, frame_ancestors="https://huggingface.co https://*.hf.space",
+        serve(state, host=args.host, port=args.port, frame_ancestors="https://huggingface.co https://*.hf.space", any_host=True,
               scenes={name: functools.partial(snapshot, name) for name in SCENES})
         print(f"public demo on http://{args.host}:{args.port}")
         while True:

@@ -148,3 +148,17 @@ def test_the_public_demo_gives_each_visitor_their_own_scene():
         assert b["demo"] == ["found", "idle"] and "caption" in b
     finally:
         srv.shutdown()
+
+
+def test_the_tv_answers_only_to_its_own_name():
+    import urllib.error
+
+    srv = serve(ScreenState(), port=0)
+    url = f"http://127.0.0.1:{srv.server_address[1]}"
+    try:
+        assert urllib.request.urlopen(url + "/state.json").status == 200
+        with pytest.raises(urllib.error.HTTPError) as e:  # a page that tricked a browser into another name for it
+            urllib.request.urlopen(urllib.request.Request(url + "/state.json", headers={"Host": "andy.localhost:8765"}))
+        assert e.value.code == 421
+    finally:
+        srv.shutdown()

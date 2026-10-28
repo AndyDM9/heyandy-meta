@@ -123,8 +123,9 @@ class ScreenState:
 
     def sent(self, model: str, words: str, earlier: int = 0) -> None:
         """Words that left the house this turn, and to which model (earlier: past exchanges sent along with them)."""
+        words = words if len(words) <= 200 else words[:199] + "…"  # cut where the TV says so, never silently
         with self._lock:
-            self.outbox.append({"to": model, "words": words[:160], "earlier": earlier})
+            self.outbox.append({"to": model, "words": words, "earlier": earlier})
 
     def used(self, name: str, where: str = "device", times: int = 1) -> None:
         """A model worked on this turn: "device" (this computer) or "cloud" (words only)."""
@@ -132,6 +133,9 @@ class ScreenState:
             return
         with self._lock:
             self.models.setdefault(name, [where, 0])[1] += times
+            if name.startswith("SAM 3.1") and where == "cloud":  # a staged scene: camera pictures went, and the receipt says so
+                self.outbox.append({"to": "SAM 3.1 (Model API, staged scene)", "words": f"{times} camera pictures",
+                                    "earlier": 0, "pictures": True})
 
     def said(self, text: str, source: str = "", reason: str = "") -> None:
         with self._lock:

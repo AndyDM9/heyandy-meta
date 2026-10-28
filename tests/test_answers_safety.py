@@ -88,3 +88,20 @@ def test_only_the_final_answer_is_spoken_not_the_commentary():
     client = NS(responses=NS(create=lambda **kw: resp))
     a = ask(client, "weather tomorrow?")
     assert a.text == "Sunny tomorrow, high of 84." and a.sources == [("Miami forecast", "https://www.weather.gov/mia")]
+
+
+@pytest.mark.parametrize("text", ["I want to take my own life", "I wanna die", "I don’t want to live anymore",
+                                  "I wish I was dead", "life isn't worth living", "there's no reason to live",
+                                  "sería mejor estar muerto", "quisiera morirme", "me dan ganas de morirme"])
+def test_more_ways_of_saying_it(text):
+    from heyandy_meta.companion.safety import crisis
+
+    assert crisis(text)
+
+
+@pytest.mark.parametrize("text", ["I'm dying to see the new film", "this bread is to die for", "kill the lights please",
+                                  "my phone died", "the plant is dead"])
+def test_everyday_words_arent_a_crisis(text):
+    from heyandy_meta.companion.safety import crisis
+
+    assert not crisis(text)

@@ -15,18 +15,23 @@ NEW_CONVERSATION_AFTER_S = 30 * 60
 CRISIS_REPLY = ("I'm a robot, so I can't help with this the way a person can. You can call or text 988, the Suicide "
                 "and Crisis Lifeline, any time, day or night. If you're in danger right now, please call 911.")
 CRISIS = re.compile(
-    r"\b(kill(ing)? myself|end(ing)? (it all|my life)|suicid\w*|hurt(ing)? myself|harm(ing)? myself|self[- ]harm"
-    r"|(don'?t|do not) want to (live|be alive|be here)|want to die|better off dead"
+    r"\b(kill(ing)? myself|end(ing)? (it all|my (own )?life)|tak(e|ing) my (own )?life|suicid\w*|hurt(ing)? myself"
+    r"|harm(ing)? myself|self[- ]harm|(hang|shoot|drown|cut)(ing)? myself|overdos(e|ing) on purpose"
+    r"|(don'?t|do not|no longer) want to (live|be alive|be here|wake up)|(want|going) to die|wanna die|better off dead"
+    r"|wish (i was|i were|i'?d) (dead|never born)|life (isn'?t|is not|'s not|ain'?t) worth (it|living)|no reason to (live|go on)"
+    r"|can'?t go on (anymore|any more|living)|end(ing)? it (all )?(tonight|today|now)"
     # Spanish (Andy can speak it): checked on the person's own words, before any translation
     r"|suicid[ao]r(me|se)?|matarme|quitarme la vida|lastimarme|hacerme da[nñ]o"
     r"|me (quiero|voy a|pienso|deseo) (matar|suicidar|morir|quitar la vida|hacer da[nñ]o|lastimar)"
     r"|(acabar|terminar) con (todo|mi vida)|no quiero (vivir|seguir viviendo|estar aqu[ií]|seguir aqu[ií])"
-    r"|quiero morir(me)?|(estar[ií]a|quisiera estar|mejor) muert[oa]|quisiera estar muert[oa]|no vale la pena vivir)\b",
+    r"|quiero morir(me)?|quisiera morir(me)?|ganas de morir(me)?|(estar[ií]a|quisiera estar|mejor) muert[oa]"
+    r"|quisiera estar muert[oa]|ser[ií]a mejor estar muert[oa]|no vale la pena vivir|no tengo raz[oó]n para vivir)\b",
     re.IGNORECASE)
 
 
 def crisis(text: str) -> bool:
-    return bool(CRISIS.search(text or ""))
+    t = (text or "").replace("\u2019", "'").replace("\u2018", "'")  # speech-to-text and keyboards write ’ too
+    return bool(CRISIS.search(t))
 
 
 class Disclosure:

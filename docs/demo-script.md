@@ -28,7 +28,7 @@ where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", 
 (DINOv2) and the privacy story in one line: "I keep what it looks like as numbers, never a picture."
 
 **Recording the TV:** start `uv run --with playwright python scripts/record_tv.py --seconds 120 --out
-film/tv-take1.webm` just before each take, and line it up with the camera footage in the edit (Andy's first word is an
+film/tv-take1.webm --room-is-staged` just before each take, and line it up with the camera footage in the edit (Andy's first word is an
 easy sync point). `film/` is never committed.
 
 **Rules for filming:** no Meta logos; no music we don't own; subtitles burned in; no condition names and no health,

@@ -8,7 +8,6 @@ Glimmer unless it needs more thought. When the cloud is refused or unreachable, 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
 import json
-import os
 import re
 import threading
 import time
@@ -16,7 +15,7 @@ from dataclasses import dataclass, field
 
 from openai import APIError
 
-from .agent.assistant import MORNING, Assistant, needs_agent
+from .agent.assistant import MORNING, Assistant, needs_agent, where_they_live
 from .agent.loop import plan_search
 from .agent.tools import SearchTools, side
 from .budget import Budget, BudgetExceeded
@@ -35,7 +34,8 @@ from .memory.mine import Mine
 from .memory.places import Places
 from .models.common import Chat, Mask, Reply
 from .models.retry import CloudUnavailable
-from .router import Router
+from .private import write_private
+from .router import Router, decide
 from .robot.body import Body
 from .screen.state import ScreenState
 
@@ -131,7 +131,8 @@ class Andy:
             if self.clock() - self._last_turn > HISTORY_FORGET_S:
                 self.history = []  # a new conversation
             self._last_turn = self.clock()
-            self.reminders.mention_missed(self.say)
+            if not crisis(text):  # a crisis turn is the crisis reply, and nothing before it
+                self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
             self._pointed, self._said = False, []
             self.screen.doing("Thinking", "Looking at you")
@@ -325,10 +326,10 @@ class Andy:
         """Conversation, spoken sentence by sentence as the model writes it. Each sentence is checked first: one that
         claims an action the robot's own code didn't take stops the answer and is replaced with how to ask for it."""
         parts = []
+        if decide(text, self.online).where == "cloud" and not isinstance(self.router.cloud, NoCloud):
+            self._receipt_conversation(text)  # before the attempt: words that went count even if the answer doesn't come
         try:
             for sentence in self.router.stream(text, self.online, self.history):
-                if self._source != self.router.last.where and self.router.last.where == "cloud":
-                    self.screen.sent("Muse Spark", text, len(self.history))
                 self._source, self._reason = self.router.last.where, self.router.last.reason  # known once it answers
                 if CLAIMS.search(sentence):
                     self._reason += "; a promise the model can't keep was replaced"
@@ -342,6 +343,12 @@ class Andy:
             self.screen.used("Muse Spark" if self._source == "cloud" else "Muse Glimmer", self._source)
         return " ".join(parts)
 
+    def _receipt_conversation(self, text: str) -> None:
+        """What a turn sent Muse Spark: the words, and the earlier exchanges that go with them, word for word."""
+        self.screen.sent("Muse Spark", text)
+        for asked, said in self.history:
+            self.screen.sent("Muse Spark (earlier in this conversation)", f"{asked} / {said}")
+
     def look_up(self, question: str) -> str:
         if not self.online or self.spark is None:
             self._source, self._reason = "device", "offline: no web search"
@@ -349,7 +356,7 @@ class Andy:
         self.say("Let me look that up.")  # a web answer takes a few seconds
         self.screen.doing("Working", "Looking it up")
         try:
-            self.screen.sent("Muse Spark + web search", question + (f" (home: {self.home})" if self.home else ""))
+            self.screen.sent("Muse Spark + web search", (f"(home: {self.home}) " if self.home else "") + question)
             ans = answers.ask(self.spark, question, budget=self.budget, home=self.home)
         except CLOUD_TROUBLE:
             self._source, self._reason = "device", "the web search didn't answer"
@@ -404,6 +411,8 @@ class Andy:
                 self.finder.on_look = on_look
             for tool, _args, result in plan.steps:
                 self.screen.step(f"{tool}: {result}")
+                if paid:
+                    self.screen.sent("Muse Spark (plans the search)", f"{tool}: {result}")
             found, words = tools.pointed, ""  # found: Andy's words come from the tools, never the model's guesses
             self.screen.used(("Muse Spark" if paid else "Muse Glimmer") + " (plans)", source, plan.calls)
             self._source, self._reason = source, reason
@@ -448,11 +457,7 @@ class Andy:
         if offer:
             entry["offered"] = now
             self._offered = (thing, now, *where)  # a yes or no answers it
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(asked))
-        os.chmod(tmp, 0o600)  # what the person asked for: theirs only, like places.json
-        tmp.replace(path)
+        write_private(path, json.dumps(asked))  # what the person asked for: theirs only, like places.json
         if not offer:
             return ""
         return (f" You've asked me about your {thing} {len(entry['at'])} times this week. Shall I keep an eye on "
@@ -538,11 +543,10 @@ class Andy:
 
     def save_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
-        path.parent.mkdir(parents=True, exist_ok=True)
         saved = {"liveliness": self.liveliness, "language": self.language}
         if self.voice is not None:
             saved.update(speed=self.voice.speed, loudness=self.voice.loudness)
-        path.write_text(json.dumps(saved))
+        write_private(path, json.dumps(saved))
 
     @property
     def _own_voice(self) -> str:
@@ -584,6 +588,10 @@ class Andy:
                 continue
             for tool, _args, result in turn.steps:
                 self.screen.step(f"{tool}: {result}")
+                if paid:
+                    self.screen.sent("Muse Spark (agent)", f"{tool}: {result}")
+            if paid:
+                self.screen.sent("Muse Spark (agent)", where_they_live(self.home))
             name = "Muse Spark" if paid else "Muse Glimmer"
             self.screen.used(f"{name} (agent)", where, turn.calls)
             self._source = where
@@ -800,7 +808,7 @@ class Andy:
                 run = web.use_the_web(self.spark, self._browser, task, step, previous=previous, budget=self.budget,
                                       max_steps=2, within_s=40.0, shots=shots)
             else:
-                self.screen.sent("Muse Spark (web search)", request + (f" (home: {self.home})" if self.home else ""))
+                self.screen.sent("Muse Spark (web search)", (f"(home: {self.home}) " if self.home else "") + request)
                 url = web.best_page(self.spark, request, self.home, budget=self.budget)
                 self._browser.open(url) if url else self._browser.search(request)
                 self.screen.used("Muse Spark (web search)", "cloud")
@@ -889,7 +897,7 @@ class Andy:
         if self.online and self.spark is not None:
             question = ("Going out now: will I need an umbrella, a jacket or sun protection? Answer in at most 12 words, "
                         "without the source.")
-            self.screen.sent("Muse Spark + web search", question + (f" (home: {self.home})" if self.home else ""))
+            self.screen.sent("Muse Spark + web search", (f"(home: {self.home}) " if self.home else "") + question)
 
             def ask():
                 try:
@@ -1139,7 +1147,9 @@ class Andy:
             self.screen.quiet("")
             self._set_liveliness(self.liveliness)
         for r in self.reminders.due(now):  # asked for, so said even in quiet time; but without searching the room
-            self.reminders.deliver(r, (lambda: True) if self.quiet() else self._find_person, self.say, now)
+            # Andy speaks first here, so it says it's an AI when that's due, as at the start of any conversation
+            self.reminders.deliver(r, (lambda: True) if self.quiet() else self._find_person,
+                                   lambda words: self.say(self.disclosure.prefix() + words), now)
         if not self.quiet() and self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
             self.gesture("searching")

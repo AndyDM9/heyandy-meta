@@ -1,10 +1,12 @@
 """Muse Glimmer on the computer beside the robot, through llama.cpp's or Ollama's OpenAI-compatible server."""
-from .common import Reply
+from .common import Reply, is_local
 from .openai_chat import chat, stream
 
 
 class GlimmerModel:
     def __init__(self, model: str = "muse-glimmer-30B", endpoint: str = "http://127.0.0.1:8080/v1", client=None):
+        if not is_local(endpoint):  # the person's words, and what the camera saw, stay on this computer
+            raise ValueError(f"Glimmer runs on this computer or the home network, not at {endpoint}")
         self.model, self.endpoint, self._client = model, endpoint, client
 
     @property

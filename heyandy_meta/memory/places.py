@@ -5,10 +5,11 @@ keys" removes both the wish and the place. The file is readable only by its owne
 """
 import json
 import math
-import os
 import threading
 import time
 from pathlib import Path
+
+from ..private import write_private
 
 DEFAULT_PATH = Path.home() / ".local/share/heyandy-meta/places.json"
 MOVED_DEG = 10.0  # further than this from the last place: it moved
@@ -81,8 +82,4 @@ class Places:
             self._write()
 
     def _write(self) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(self._data))
-        os.chmod(tmp, 0o600)
-        tmp.replace(self.path)
+        write_private(self.path, json.dumps(self._data))

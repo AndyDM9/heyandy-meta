@@ -160,7 +160,7 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 - **captions of Andy's words** (never the person's).
 
 "Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every
-text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (made for low vision) served
+text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (large, high-contrast type) served
 by Andy itself: the TV asks nothing of anyone outside the house.
 
 ![Found: the picture with the mug outlined, the plan, the time and the models used](docs/images/tv-found.png)
