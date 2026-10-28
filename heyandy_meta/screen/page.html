@@ -101,6 +101,11 @@
   .web .click { position: absolute; width: 2.4rem; height: 2.4rem; margin: -1.2rem 0 0 -1.2rem; border-radius: 50%;
                 border: 0.35rem solid var(--outline); box-shadow: 0 0 0 0.3rem #0006; }
   .web small { font-size: 1.3rem; color: var(--muted); }
+  .check { display: grid; gap: 0.7rem; align-content: start; }
+  .check .row { display: grid; grid-template-columns: 3.2rem 1fr; gap: 1.2rem; align-items: baseline; font-size: 2.1rem; line-height: 1.2; }
+  .check .mark { font-weight: 800; text-align: center; }
+  .check .here .mark { color: var(--outline); } .check .gone .mark { color: var(--accent); } .check .unknown .mark { color: var(--muted); }
+  .check b { font-weight: 750; } .check small { display: block; font-size: 1.6rem; color: var(--muted); }
   .trail { fill: none; stroke: var(--muted); stroke-width: 4; stroke-dasharray: 2 10; stroke-linecap: round; opacity: 0.8; }
   .trail.chosen { stroke: var(--outline); stroke-dasharray: none; stroke-width: 6; opacity: 1; }
   .dial .name { fill: var(--ink); font-size: 11px; font-weight: 700; }
@@ -128,6 +133,7 @@
   #captions { min-height: 6.1rem; border-radius: 1.6rem; padding: 1.2rem 2.25rem; background: var(--caption-bg);
               color: var(--caption); font-size: 2.6rem; line-height: 1.3; opacity: 0; transition: opacity 0.4s ease-out; }
   #captions.on { opacity: 1; }
+  #captions.long { font-size: 2.1rem; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 
   #help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: grid; place-items: center; background: rgba(10, 18, 15, 0.55); }
   #help[hidden] { display: none; }
@@ -201,7 +207,7 @@
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game",
+  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -366,6 +372,18 @@
         const src = el("div", null, "sources");
         for (const x of s.sources) src.append(el("div", x.title + " · " + new URL(x.url).hostname.replace(/^www\./, "")));
         body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
+      } else if (s.checklist) {
+        kicker = "Going out"; title = "Have you got everything?";
+        const box = el("div", null, "check");
+        for (const i of s.checklist.items) {  // still here: it isn't with you (Andy points at it)
+          const row = el("div", null, "row " + (i.here === true ? "here" : i.here === false ? "gone" : "unknown"));
+          const what = el("div"); what.append(el("b", i.thing[0].toUpperCase() + i.thing.slice(1)), el("small", i.words));
+          row.append(el("div", i.here === true ? "!" : i.here === false ? "✓" : "?", "mark"), what); box.append(row);
+        }
+        if (s.checklist.weather) {  // the next reminder is already on the left
+          const row = el("div", null, "row unknown"); row.append(el("div", "☂", "mark"), el("div", s.checklist.weather)); box.append(row);
+        }
+        body.replaceChildren(box);
       } else if (s.memory) {
         kicker = "What I remember"; title = s.memory.length ? "Where I last saw things" : "Nothing yet";
         const box = el("div", null, "memory"); box.append(dial(s.map, true), steps(s.memory, "ul"));
@@ -421,7 +439,8 @@
     receipt(s);
     if (s.caption !== lastCaption || s.state === "Speaking") captionAt = Date.now();
     lastCaption = s.caption;
-    $("captions").textContent = s.caption;  // Andy's words only, never the person's
+    $("captions").textContent = s.caption;
+    $("captions").classList.toggle("long", s.caption.length > 150);  // a long answer: smaller, and never over the cards  // Andy's words only, never the person's
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
     $("help").hidden = !s.help;
     if (s.demo && !scenes) { scenes = s.demo; demoBar(); }

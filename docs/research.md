@@ -485,3 +485,12 @@ from above, the robot in the middle facing the top, large capital labels). Measu
 legible and the directions right (left, right, behind) in both tries; the things themselves are sometimes drawn, sometimes
 only labelled. Andy says it's a drawing from memory, not a photo, and the receipt shows the words about the home rather
 than the style instructions (the receipt shows 160 characters, and the instructions came first).
+
+## 22. "I'm going out": the things still here, pointed at (2026-10-27, night)
+
+New, from the same needs as section 16 (keeping track of things; the moment before leaving is when it matters). Andy
+confirms each watched thing at its last place (one centred look each, with the same checks as a find), points at any
+still here, and counts the rest as probably with the person; the next reminder within six hours; and the weather from
+Muse Spark's web search, asked on its own thread while the robot looks, in at most 12 words. Measured with the robot
+simulated and the web live: 7.2 to 8.4 s for three things. The TV shows a checklist (! still here, ✓ not where it was,
+? not seen lately). Long captions are now smaller and stop at three lines, so a long reply can't cover the cards.

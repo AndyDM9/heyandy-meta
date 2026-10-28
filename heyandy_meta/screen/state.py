@@ -50,6 +50,7 @@ class ScreenState:
         self.drawings = 0  # a version for the page, so it fetches each new picture once
         self._game: tuple[str, str, float] | None = None  # the cup game: (what's happening, the detail, until)
         self.score = ""  # "Andy 2 · You 1", for this session's cup games
+        self.checklist: dict | None = None  # "I'm going out": each watched thing, still here or not; the weather
         self._web: dict | None = None  # the web page Andy is using: the screenshot, what's happening, where it clicks
         self.webs = 0  # a version, so the page fetches each screenshot once
 
@@ -85,6 +86,12 @@ class ScreenState:
                          "host": url.split("/")[2].removeprefix("www.") if url.count("/") >= 2 else before.get("host", ""),
                          "until": self._clock() + WEB_SECONDS}
             self.webs += 1
+
+    def going_out(self, items: list[dict], weather: str = "", next_up: str = "") -> None:
+        """The going-out check: [{"thing", "here": True/False/None, "words"}], the weather and the next reminder."""
+        with self._lock:
+            self._picture, self._drawing, self._web, self._game, self.memory, self.sources = None, None, None, None, None, []
+            self.checklist = {"items": list(items), "weather": weather, "next": next_up}
 
     def web_bytes(self) -> bytes | None:
         with self._lock:
@@ -143,6 +150,7 @@ class ScreenState:
         with self._lock:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
+            self.checklist = None
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
@@ -181,7 +189,7 @@ class ScreenState:
                    "staged": self.staged, "drawing": None,
                    "quiet": self.quiet_text, "outbox": list(self.outbox),
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else "",
-                   "game": None}
+                   "game": None, "checklist": self.checklist}
             if self._web and self._clock() >= self._web["until"]:
                 self._web = None
             out["web"] = {"v": self.webs, **{k: v for k, v in self._web.items() if k not in ("jpeg", "until")}} \

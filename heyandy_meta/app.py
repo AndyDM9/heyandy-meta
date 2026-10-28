@@ -258,6 +258,8 @@ class Andy:
                 return "Okay, I've closed it."
             if WEB_MORE.search(text):
                 return self.use_the_web(text, more=True)
+        if i.kind == "going_out":
+            return self.going_out()
         if i.kind == "things_map":
             return self.draw_my_things()
         if i.kind == "web":
@@ -726,6 +728,79 @@ class Andy:
         if run.stopped:  # out of steps or time: say so plainly rather than the model's half-finished narration
             return "That's as far as I could get. What I found is on the TV."
         return (run.answer or "It's on the TV.") + ("" if more else " You can say scroll down, or go back.")
+
+    def going_out(self) -> str:
+        """"I'm going out": look again where each watched thing was last seen, and point at any still here (it isn't
+        with the person); meanwhile, on its own thread, Muse Spark looks up the weather. Then the next reminder."""
+        self.screen.clear()
+        weather: dict = {}
+        asking = None
+        if self.online and self.spark is not None:
+            question = ("Going out now: will I need an umbrella, a jacket or sun protection? Answer in at most 12 words, "
+                        "without the source.")
+            self.screen.sent("Muse Spark + web search", question + (f" (home: {self.home})" if self.home else ""))
+
+            def ask():
+                try:
+                    text = answers.ask(self.spark, question, budget=self.budget, home=self.home).text.strip()
+                    weather["text"] = text + ("" if text.endswith((".", "!", "?")) else ".")
+                except CLOUD_TROUBLE:
+                    pass
+
+            asking = threading.Thread(target=ask, daemon=True)
+            asking.start()  # the cloud works while the robot looks
+        watched = self.places.watching()
+        if watched:
+            self.say("Let me check you have everything.")
+        items, here = [], []
+        self.gesture("searching")
+        self.screen.doing("Working", "Checking your things")
+        try:
+            for label in watched:
+                last = self.places.last_seen(label, now=self.clock())
+                found = self.finder.confirm(label, *last) if last else None
+                if found:
+                    self.finder.point(found)
+                    self.places.saw(label, found.yaw, found.pitch, when=self.clock())
+                    near = (self.places.history(label) or [{}])[-1].get("near") or side(found.yaw)
+                    self.say(f"Your {label} {'are' if _it(label) == 'them' else 'is'} still here, {near}.")
+                    here.append(label)
+                    items.append({"thing": label, "here": True, "words": f"Still here, {near}"})
+                else:
+                    items.append({"thing": label, "here": None if not last else False,
+                                  "words": "Not seen lately" if not last else "Not where I last saw it: with you?"})
+                self.screen.going_out(items)
+        finally:
+            self.gesture("idle")
+            self.screen.doing("Waiting")
+        self.screen.used("SAM 3.1", "device", self.finder.looks)
+        up = [r for r in self.reminders.upcoming() if r.at - self.clock() <= 6 * 3600][:1]
+        next_up = f"at {spoken_time(up[0].at)}, {up[0].text}" if up else ""
+        if asking:
+            asking.join(timeout=20.0)
+            if weather.get("text"):
+                self.screen.used("Muse Spark + web search", "cloud")
+        self.screen.going_out(items, weather.get("text", ""), next_up)
+        self._source = "device" if not weather.get("text") else "cloud"
+        self._reason = "looked again where your things were last seen; the weather from the web" if weather.get("text") \
+            else "looked again where your things were last seen, on this computer"
+        words = []
+        if not watched:
+            words.append("Have you got your keys, your wallet and your phone? If you say 'keep an eye on my keys', I'll "
+                         "check for you next time.")
+        else:
+            away = [i["thing"] for i in items if i["here"] is False]
+            if here:
+                words.append(f"Don't forget {_join(here)}.")
+            if away:
+                them = _it(away[0]) if len(away) == 1 else "them"
+                words.append(f"I didn't see {_join(away)} where I last saw {them}, so I hope "
+                             f"{'it’s' if them == 'it' else 'they’re'} with you.")
+        if next_up:
+            words.append(f"Remember: {next_up}.")
+        if weather.get("text"):
+            words.append(weather["text"])
+        return " ".join(words + ["Have a lovely time!"])
 
     def draw_my_things(self) -> str:
         """"Draw me a map of my things": Muse Image paints where the watched things were last seen, from words only

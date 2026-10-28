@@ -37,6 +37,9 @@ the house.
   own words. If you're out, it tries again and tells you later.
 - **"Andy, what am I holding?" / "What's on the table?"** Andy looks at your hands (found with SAM 3.1) or down at
   the table, and Glimmer says what it sees, all on the computer beside the robot.
+- **"Andy, I'm going out."** Andy looks again where it last saw your keys, wallet and glasses, and points at any still
+  here: "Don't forget your keys." Meanwhile Muse Spark looks up whether you'll need an umbrella. About 7 seconds, both
+  at once; the TV shows the checklist.
 - **"Andy, let's play the cup game."** Hide a ball under a cup and shuffle. Andy records the shuffle, replays it
   through SAM 3.1's Object Multiplex (every cup tracked at once, on the computer beside the robot), points at the cup
   with the ball, and keeps score. The TV draws each cup's path through the shuffle.
