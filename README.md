@@ -112,6 +112,7 @@ A TV or monitor beside the robot shows, in large type read from across a room:
   the plan step by step; the time it took;
 - **answers with their sources;**
 - **which Meta models worked on this turn,** on this computer or in the cloud (words only);
+- **a privacy receipt:** exactly which words went to which cloud model this turn, or "✓ Nothing left this house";
 - **captions of Andy's words** (never the person's).
 
 "Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every

@@ -34,6 +34,7 @@ class ScreenState:
         self.memory: list[str] | None = None  # shown while "what do you remember?" is answered
         self._timer: tuple[float, float | None] | None = None  # (started, stopped)
         self.models: dict[str, list] = {}  # this turn's Meta models: name -> [where, times used]
+        self.outbox: list[dict] = []  # the privacy receipt: exactly what words went to which cloud model this turn
         self.state, self.head = "Waiting", ""  # the pill: what Andy is doing, and what its head is turned to
         self.looking_for = ""  # "your cup", while a search runs and after
         self.next_reminder: tuple[str, float] | None = None  # (the person's words, when), epoch seconds
@@ -87,7 +88,12 @@ class ScreenState:
 
     def new_turn(self) -> None:
         with self._lock:
-            self.models = {}
+            self.models, self.outbox = {}, []
+
+    def sent(self, model: str, words: str, earlier: int = 0) -> None:
+        """Words that left the house this turn, and to which model (earlier: past exchanges sent along with them)."""
+        with self._lock:
+            self.outbox.append({"to": model, "words": words[:160], "earlier": earlier})
 
     def used(self, name: str, where: str = "device", times: int = 1) -> None:
         """A model worked on this turn: "device" (this computer) or "cloud" (words only)."""
@@ -145,7 +151,7 @@ class ScreenState:
                    "watching": list(self.watching), "map": list(self.watching_map),
                    "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None,
-                   "quiet": self.quiet_text,
+                   "quiet": self.quiet_text, "outbox": list(self.outbox),
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else ""}
             if self._drawing and self._clock() >= self._drawing[3]:
                 self._drawing = None

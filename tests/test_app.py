@@ -351,3 +351,19 @@ def test_quiet_can_end_early_and_motion_is_remembered(tmp_path):
     b, _, _ = andy(tmp_path=tmp_path)
     b.load_voice()
     assert b.liveliness == 0.65
+
+
+def test_the_privacy_receipt_says_what_left_the_house(tmp_path):
+    from types import SimpleNamespace as NS
+
+    a, _, _ = andy(Thing("keys", 20.0, 20.0), tmp_path=tmp_path)
+    a.hear("where are my keys")
+    assert a.screen.snapshot()["outbox"] == []  # found on this computer: nothing sent
+    cite = NS(type="url_citation", url="https://www.weather.gov/x", title="Forecast")
+    resp = NS(output_text="Sunny.", usage=None, output=[NS(content=[NS(annotations=[cite])])])
+    b, _, _ = andy(spark=NS(responses=NS(create=lambda **kw: resp)), tmp_path=tmp_path / "b")
+    b.home = "Sunny Isles Beach, Florida"
+    b.hear("what's the weather tomorrow?")
+    sent = b.screen.snapshot()["outbox"]
+    assert sent == [{"to": "Muse Spark + web search", "earlier": 0,
+                     "words": "what's the weather tomorrow? (home: Sunny Isles Beach, Florida)"}]

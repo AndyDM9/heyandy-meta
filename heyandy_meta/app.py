@@ -258,6 +258,8 @@ class Andy:
         parts = []
         try:
             for sentence in self.router.stream(text, self.online, self.history):
+                if self._source != self.router.last.where and self.router.last.where == "cloud":
+                    self.screen.sent("Muse Spark", text, len(self.history))
                 self._source, self._reason = self.router.last.where, self.router.last.reason  # known once it answers
                 if CLAIMS.search(sentence):
                     self._reason += "; a promise the model can't keep was replaced"
@@ -278,6 +280,7 @@ class Andy:
         self.say("Let me look that up.")  # a web answer takes a few seconds
         self.screen.doing("Working", "Looking it up")
         try:
+            self.screen.sent("Muse Spark + web search", question + (f" (home: {self.home})" if self.home else ""))
             ans = answers.ask(self.spark, question, budget=self.budget, home=self.home)
         except CLOUD_TROUBLE:
             self._source, self._reason = "device", "the web search didn't answer"
@@ -322,6 +325,8 @@ class Andy:
             tools = SearchTools(self.finder, self.places, self.judge, on_tool=self._tool_moves)
             on_look, self.finder.on_look = self.finder.on_look, None  # the plan's own steps show the progress
             try:
+                if paid:
+                    self.screen.sent("Muse Spark (plans the search)", request)
                 plan = plan_search(client, request, tools, model=model, budget=self.budget, paid=paid)
             except CLOUD_TROUBLE as e:
                 self.screen.step(f"{model} is unavailable ({type(e).__name__})")
@@ -438,6 +443,8 @@ class Andy:
             brains.append((self.glimmer, "muse-glimmer-30B", False, "device"))
         for client, model, paid, where in brains:
             try:
+                if paid:
+                    self.screen.sent("Muse Spark (agent)", request)
                 turn = self.assistant.run(client, request, model, paid, self.budget, brief=brief)
             except CLOUD_TROUBLE:
                 continue
@@ -486,6 +493,7 @@ class Andy:
         self.say("Let me draw that. It takes a little while." if not refine else "Let me change it.")
         self.screen.doing("Working", "Drawing")
         try:
+            self.screen.sent("Muse Image", what)
             drawing = pictures.draw(self.spark, what, self._drawing if refine else None, budget=self.budget)
         except (*CLOUD_TROUBLE, pictures.NoPicture):
             self._source, self._reason = "device", "the picture didn't come back"

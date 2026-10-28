@@ -91,6 +91,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.doing("Speaking", "Looking at you")
         state.used("Omnilingual ASR (hearing)", "device")
         state.used("Muse Spark + web search", "cloud")
+        state.sent("Muse Spark + web search", "what's the weather tomorrow? (home: Sunny Isles Beach, Florida)")
     elif scene == "drawing":
         state.drawn(SAMPLE_DRAWING.read_bytes(), "a lighthouse at dawn, in soft watercolor",
                     "Saved in Pictures, Andy, as andy-2026-10-27-191724.webp")
@@ -99,6 +100,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.doing("Speaking", "Looking at you")
         state.used("Omnilingual ASR (hearing)", "device")
         state.used("Muse Image", "cloud")
+        state.sent("Muse Image", "a lighthouse at dawn, in soft watercolor")
     elif scene == "memory":
         state.remember_list(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",
                              "remote: seen 25 minutes ago, behind me on my left"])
