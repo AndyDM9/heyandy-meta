@@ -90,7 +90,7 @@
   .dial .dot { fill: var(--accent); }
   /* A web page needs the room: no side cards, and a one-line date */
   main:has(.web) { grid-template-columns: 1fr; } main:has(.web) .side { display: none; }
-  .stage:has(.web) { padding-top: 2.25rem; gap: 1.25rem; }
+  .stage:has(.web) { gap: 1.25rem; }
   .stage:has(.web) header { align-items: center; }
   .stage:has(.web) #day { font-size: 3rem; display: inline; } .stage:has(.web) #date { font-size: 2rem; display: inline; margin-left: 1rem; }
   .stage:has(.web) .badges { display: none; } .stage:has(.web) #pill { padding: 0.6rem 1.6rem 0.6rem 1rem; }
@@ -201,8 +201,8 @@
                "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", answer: "An answer", drawing: "A picture",
-                  memory: "Memory", help: "What can I ask?" };
+  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game",
+                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   function demoBar() {

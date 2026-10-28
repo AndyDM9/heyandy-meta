@@ -47,6 +47,7 @@ def main() -> None:
     (OUT / "README.md").write_text(readme)
     shutil.copy(ROOT / "LICENSE", OUT / "LICENSE")
     shutil.copy(ROOT / "docs" / "images" / "sample-drawing.webp", OUT / "drawing.webp")  # the "A picture" scene
+    shutil.copy(ROOT / "docs" / "images" / "sample-web.jpg", OUT / "web.jpg")  # the "On the web" scene (Wikipedia)
     for f in OUT.rglob("*"):
         if f.is_file() and f.suffix in (".html", ".json", ".md") and KEYS.search(f.read_text(errors="ignore")):
             raise SystemExit(f"something that looks like a key is in {f}; stopping")

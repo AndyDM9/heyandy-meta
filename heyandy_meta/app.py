@@ -650,7 +650,7 @@ class Andy:
         except RuntimeError:
             return True  # can't tell: SAM 3.1 and Glimmer already agreed it's a real one
         self.screen.used("DINOv2 (knows it by sight)", "device")
-        self.screen.step(f"a {mask.label}, {alike:.0%} like yours")
+        self.screen.step(f"a {mask.label}, {alike:.0%} like yours: " + ("yours" if alike >= self.mine.alike else "not yours"))
         self._alike = alike
         if alike < self.mine.alike:
             self.finder.rejected = f"a {mask.label}, but not yours"

@@ -5,7 +5,7 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: idle, finding, found, answer, drawing, memory, help.
+Scenes: idle, finding, found, mine, cups, web, answer, drawing, memory, help.
 """
 import argparse
 import functools
@@ -24,8 +24,9 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("idle", "finding", "found", "answer", "drawing", "memory", "help")
+SCENES = ("idle", "finding", "found", "mine", "cups", "web", "answer", "drawing", "memory", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
+SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
 
 
 @functools.lru_cache(maxsize=1)
@@ -45,6 +46,27 @@ def sample_frame() -> tuple[bytes, Mask]:
     l, t, r, b = box
     outline = f"M 0 0 L {r - l} 0 L {r - l} {b - t} L 0 {b - t} Z"
     return out.getvalue(), Mask("mug", box, 0.91, ((l + r) / 2, (t + b) / 2), (r - l) * (b - t), outline, (1.0, 1.0))
+
+
+CUPS = ((560.0, 1360.0), (960.0, 960.0), (1360.0, 560.0))  # where each cup started and ended: 0 and 2 swapped
+
+
+@functools.lru_cache(maxsize=1)
+def cups_frame() -> tuple[bytes, Mask]:
+    """A drawn table with three identical red cups, after the shuffle, and the outline of the one with the ball."""
+    img = Image.new("RGB", (1920, 1080), (196, 184, 168))
+    d = ImageDraw.Draw(img)
+    d.rectangle((0, 560, 1920, 1080), fill=(139, 104, 74))
+    for _, x in CUPS:
+        d.polygon([(x - 90, 520), (x + 90, 520), (x + 65, 760), (x - 65, 760)], fill=(186, 34, 40))
+        d.ellipse((x - 90, 500, x + 90, 540), fill=(226, 206, 200))
+    img = img.filter(ImageFilter.GaussianBlur(1.2))
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=88)
+    x = CUPS[0][1]
+    box = (int(x - 92), 500, int(x + 92), 762)
+    outline = "M 2 0 L 182 0 L 157 262 L 27 262 Z"
+    return out.getvalue(), Mask("cup", box, 0.93, (x, 640.0), 184 * 262, outline, (1.0, 1.0))
 
 
 def show(state: ScreenState, scene: str) -> None:
@@ -83,6 +105,50 @@ def show(state: ScreenState, scene: str) -> None:
         for name, times in (("Omnilingual ASR (hearing)", 1), ("Muse Glimmer (plans)", 2), ("SAM 3.1", 3),
                             ("Muse Glimmer (picture check)", 2), ("Kokoro (voice)", 1)):
             state.used(name, "device", times)
+    elif scene == "mine":
+        state.looking("mug")
+        state.timer_start()
+        for s in ("look: a little to my left, a little to my right", "a mug, 58% like yours: not yours",
+                  "a mug, 91% like yours: yours"):
+            state.step(s)
+        state.timer_stop()
+        state._timer = (time.monotonic() - 11.2, time.monotonic())
+        jpeg, mask = sample_frame()
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=4)
+        words = "I see your mug, the one you showed me, a little to my right."
+        state.found(found, words)
+        state.said(words, "device", "fixed search on this computer")
+        state.doing("Pointing", "At your mug")
+        for name, times in (("Omnilingual ASR (hearing)", 1), ("SAM 3.1", 4), ("DINOv2 (knows it by sight)", 2),
+                            ("Muse Glimmer (picture check)", 2), ("Kokoro (voice)", 1)):
+            state.used(name, "device", times)
+    elif scene == "cups":
+        jpeg, mask = cups_frame()
+        state.game("Replaying the shuffle", "SAM 3.1 is following every cup through 46 frames, on this computer.")
+        trails = []
+        for i, (a, b) in enumerate(CUPS):
+            pts = [(a + (b - a) * t / 20, 640 + (60 if i == 0 else -60 if i == 2 else 0) * (1 - abs(10 - t) / 10))
+                   for t in range(21)]
+            trails.append((pts, i == 0))
+        found = Found("cup", -18.0, 22.0, 0.93, Frame(jpeg, 1920, 1080, 0.0, 25.0), mask, looks=46)
+        state.score = "Andy 2 · You 1"
+        state.found(found, "I got it! Andy 2 · You 1", trails)
+        state.said("Yes! I kept my eye on it. That's 2 to 1 to me. Again?", "device",
+                   "SAM 3.1 followed every cup through 46 frames, on this computer (9 s)")
+        state.doing("Pointing", "At the cup")
+        state.used("SAM 3.1 Object Multiplex", "device", 46)
+        state.used("Omnilingual ASR (hearing)", "device")
+    elif scene == "web":
+        state.web(SAMPLE_WEB.read_bytes(), "Show me what banana bread is", "Opening the page", (378, 273),
+                  url="https://en.wikipedia.org/wiki/Banana_bread")
+        state.said("The TV is showing Wikipedia's page on banana bread: a sweet quick bread made from mashed bananas.",
+                   "cloud", "Muse Spark used the web: screenshots of web pages, never the camera")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
+        state.used("Muse Spark (web search)", "cloud")
+        state.used("Muse Spark (computer use)", "cloud", 1)
+        state.sent("Muse Spark (uses the web)", "show me what banana bread is on the TV")
+        state.sent("Muse Spark (computer use)", "1 screenshot of the web page")
     elif scene == "answer":
         state.answered("Sunny tomorrow, with a high of 61 and a light breeze in the afternoon. That's according to "
                        "weather.gov.", [("Forecast for your area", "https://forecast.weather.gov/sample"),
