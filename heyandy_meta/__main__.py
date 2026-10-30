@@ -125,7 +125,10 @@ def main() -> None:
 
     def ticks():
         while not stop.wait(10):
-            andy.tick()
+            try:
+                andy.tick()
+            except Exception as e:  # noqa: BLE001 - one bad tick (a camera frame that didn't come) must not end
+                print(f"tick: {type(e).__name__}: {e}"[:200], file=sys.stderr, flush=True)  # reminders for good
 
     threading.Thread(target=ticks, daemon=True).start()
     if not args.offline:  # follow the real network: unplug it and Andy carries on, on this computer
