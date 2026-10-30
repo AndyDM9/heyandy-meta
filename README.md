@@ -14,7 +14,8 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points, then checks
    the point landed with its own camera. **MapAnything** (Meta's 3D model) says how far: "on the armchair, to my left,
    about 5 feet away", and the TV's map of your things becomes a floor plan, in feet.
-3. **The TV shows the picture it saw them in,** with the mask drawn. The picture is kept in memory only, never saved.
+3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
+   picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
    agent: Muse Spark through the Meta Model API, or Muse Glimmer on the computer beside the robot, so the robot keeps
    working with no internet. A plain "where are my glasses?" uses a fixed sweep, which needs no model to plan.
