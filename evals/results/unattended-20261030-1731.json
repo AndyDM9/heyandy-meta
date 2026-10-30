@@ -1,0 +1,230 @@
+{
+ "things": "monitor,keyboard,chair",
+ "check": true,
+ "summary": {
+  "trials": 12,
+  "errors": 0,
+  "pointed": 12,
+  "seconds_median": 10.2,
+  "looks_median": 3,
+  "aim_deg_median": 5.6,
+  "aim_deg_worst": 21.1,
+  "reaimed": 8,
+  "aim_not_seen": 4,
+  "metres_by_thing": {
+   "chair": [
+    0.91,
+    0.94,
+    0.95,
+    0.99
+   ],
+   "keyboard": [
+    0.59,
+    0.63,
+    0.65,
+    0.67
+   ],
+   "monitor": [
+    1.23,
+    2.93,
+    2.96,
+    3.08
+   ]
+  }
+ },
+ "note": "nobody checked what was pointed at: this measures the robot, not the finding",
+ "trials": [
+  {
+   "round": 1,
+   "thing": "monitor",
+   "from": [
+    -4.8,
+    9.0
+   ],
+   "pointed": true,
+   "seconds": 9.3,
+   "looks": 3,
+   "aim_deg": 2.0,
+   "reaimed": true,
+   "metres": 2.93,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "keyboard",
+   "from": [
+    42.4,
+    6.6
+   ],
+   "pointed": true,
+   "seconds": 10.8,
+   "looks": 3,
+   "aim_deg": 8.2,
+   "reaimed": true,
+   "metres": 0.63,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "chair",
+   "from": [
+    0.8,
+    9.7
+   ],
+   "pointed": true,
+   "seconds": 7.2,
+   "looks": 2,
+   "aim_deg": null,
+   "reaimed": false,
+   "metres": 0.94,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "monitor",
+   "from": [
+    -31.5,
+    7.8
+   ],
+   "pointed": true,
+   "seconds": 10.5,
+   "looks": 2,
+   "aim_deg": 3.6,
+   "reaimed": true,
+   "metres": 1.23,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "keyboard",
+   "from": [
+    13.0,
+    14.8
+   ],
+   "pointed": true,
+   "seconds": 11.5,
+   "looks": 3,
+   "aim_deg": 13.5,
+   "reaimed": true,
+   "metres": 0.67,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "chair",
+   "from": [
+    -40.6,
+    2.6
+   ],
+   "pointed": true,
+   "seconds": 7.5,
+   "looks": 2,
+   "aim_deg": null,
+   "reaimed": false,
+   "metres": 0.95,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "monitor",
+   "from": [
+    -40.9,
+    15.2
+   ],
+   "pointed": true,
+   "seconds": 10.2,
+   "looks": 3,
+   "aim_deg": 0.6,
+   "reaimed": true,
+   "metres": 3.08,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "keyboard",
+   "from": [
+    19.3,
+    -4.0
+   ],
+   "pointed": true,
+   "seconds": 11.4,
+   "looks": 3,
+   "aim_deg": 5.6,
+   "reaimed": true,
+   "metres": 0.65,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "chair",
+   "from": [
+    48.2,
+    19.1
+   ],
+   "pointed": true,
+   "seconds": 7.2,
+   "looks": 2,
+   "aim_deg": null,
+   "reaimed": false,
+   "metres": 0.99,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 4,
+   "thing": "monitor",
+   "from": [
+    15.4,
+    10.4
+   ],
+   "pointed": true,
+   "seconds": 9.3,
+   "looks": 3,
+   "aim_deg": 2.2,
+   "reaimed": true,
+   "metres": 2.96,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 4,
+   "thing": "keyboard",
+   "from": [
+    -34.3,
+    -4.6
+   ],
+   "pointed": true,
+   "seconds": 11.8,
+   "looks": 3,
+   "aim_deg": 21.1,
+   "reaimed": true,
+   "metres": 0.59,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 4,
+   "thing": "chair",
+   "from": [
+    2.8,
+    -3.5
+   ],
+   "pointed": true,
+   "seconds": 7.1,
+   "looks": 2,
+   "aim_deg": null,
+   "reaimed": false,
+   "metres": 0.91,
+   "why": "",
+   "error": null
+  }
+ ]
+}

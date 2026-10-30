@@ -21,7 +21,8 @@ from pathlib import Path
 
 from heyandy_meta.finder.judge import GlimmerJudge
 from heyandy_meta.finder.search import Finder
-from heyandy_meta.models.sam_local import LocalSam31
+from heyandy_meta.models.depth_local import LocalDepth
+from heyandy_meta.models.sam_local import LocalSam31, LocalUnavailable
 from heyandy_meta.robot.reachy_mini import ReachyBody
 
 
@@ -39,7 +40,9 @@ def summarise(trials: list[dict]) -> dict:
             "aim_deg_median": median(t["aim_deg"] for t in found),
             "aim_deg_worst": max((t["aim_deg"] for t in found if t["aim_deg"] is not None), default=None),
             "reaimed": sum(t["reaimed"] for t in found),
-            "aim_not_seen": sum(t["aim_deg"] is None for t in found)}
+            "aim_not_seen": sum(t["aim_deg"] is None for t in found),
+            "metres_by_thing": {th: sorted(t["metres"] for t in found if t["thing"] == th and t.get("metres"))
+                                for th in sorted({t["thing"] for t in found})}}
 
 
 def main() -> None:
@@ -54,6 +57,7 @@ def main() -> None:
     body = ReachyBody()
     judge = None if args.no_check else GlimmerJudge()
     finder = Finder(body, LocalSam31(), check=judge.real if judge else None)
+    depth = LocalDepth()
     trials = []
     try:
         for r in range(args.rounds):
@@ -63,9 +67,15 @@ def main() -> None:
                 t0, row = time.monotonic(), {"round": r + 1, "thing": thing, "from": [round(v, 1) for v in start_from]}
                 try:
                     found = finder.find(thing)
+                    metres = None
+                    if found is not None:
+                        try:  # how far, as Andy would say it (MapAnything on this computer)
+                            metres = depth.distances(found.frame, [found.mask], finder._cam(found.frame))[0]
+                        except LocalUnavailable:
+                            pass
                     row.update(pointed=found is not None, seconds=round(time.monotonic() - t0, 1), looks=finder.looks,
                                aim_deg=found.aim_deg if found else None, reaimed=bool(found and found.reaimed),
-                               why=finder.why, error=None)
+                               metres=metres, why=finder.why, error=None)
                 except Exception as e:  # noqa: BLE001 - a failure is a result here, and the run goes on
                     row.update(pointed=False, seconds=round(time.monotonic() - t0, 1), looks=finder.looks,
                                aim_deg=None, reaimed=False, why="", error=f"{type(e).__name__}: {e}"[:160])
