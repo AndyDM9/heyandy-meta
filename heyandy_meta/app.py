@@ -465,7 +465,7 @@ class Andy:
             break
         if found is None:
             self._source, self._reason = "device", "fixed search on this computer"
-            last = self.places.last_seen(thing)
+            last = self.places.last_seen(thing, now=self.clock())
             self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting"))
             self.gesture("searching")
             found = self.finder.find(thing, last)
