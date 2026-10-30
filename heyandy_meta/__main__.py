@@ -12,6 +12,7 @@ import os
 import sys
 import threading
 import time
+import traceback
 
 from .app import Andy
 from .budget import Budget
@@ -107,7 +108,12 @@ def main() -> None:
                     help="where the TV page listens: this computer only (default), or a home-network address for a "
                          "smart TV; never a public one")
     args = ap.parse_args()
-    andy = build(args)
+    try:
+        andy = build(args)
+    except Exception:  # noqa: BLE001 - the robot's SDK leaves threads running: exit, so the service starts again
+        traceback.print_exc()
+        sys.stdout.flush(), sys.stderr.flush()
+        os._exit(1)
     from .models.common import is_local
 
     if not is_local(f"http://{args.tv_host}"):

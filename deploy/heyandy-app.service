@@ -13,6 +13,12 @@ Environment=PYTHONWARNINGS=ignore
 #   HEYANDY_PAID_CALLS=1
 # (chmod 600). Without it, Andy runs entirely on this computer.
 EnvironmentFile=-%h/.config/heyandy-meta/env
+# The robot's camera arrives over WebRTC: GStreamer's webrtc element is a local build (gst-plugins-rs), found
+# only through this path. Without it the robot's media can't start (it happened after the Oct 30 restart).
+Environment=GST_PLUGIN_PATH=%h/.local/gst-plugins-rs/lib/x86_64-linux-gnu/gstreamer-1.0
+# At boot, wait (up to 2 minutes) for the robot's driver to say it's ready, not just for its process to start.
+ExecStartPre=/bin/sh -c 'for i in $(seq 120); do curl -sf -m 2 http://127.0.0.1:8000/api/daemon/status | grep -q ready.:true && exit 0; sleep 1; done; exit 1'
+TimeoutStartSec=150
 ExecStart=%h/Documents/GitHub/heyandy-meta/.venv/bin/python -u -m heyandy_meta --robot --voice --quiet
 StandardInput=null
 Restart=on-failure

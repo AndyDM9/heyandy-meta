@@ -122,6 +122,16 @@ def main() -> None:
                                "then run this again")
         return "GPU 0 (Glimmer) and GPU 1 (SAM 3.1, voice, guards)"
 
+    @check("GPU power capped (a full-power card fell off the bus once)")
+    def _():
+        out = subprocess.run(["nvidia-smi", "--query-gpu=index,power.limit", "--format=csv,noheader,nounits"],
+                             capture_output=True, text=True).stdout
+        high = [f"GPU {i.strip()} at {float(w):.0f} W" for i, w in (r.split(",") for r in out.strip().splitlines())
+                if float(w) > 300]
+        if high:  # the desktop's display server puts the factory limits back when it starts
+            raise RuntimeError(", ".join(high) + ": run `sudo nvidia-smi -pl 300`, then this again")
+        return "both at 300 W or less"
+
     @check("GPU memory for the cup game")
     def _():
         out = subprocess.run(["nvidia-smi", "--query-gpu=index,memory.used,memory.total", "--format=csv,noheader,nounits"],
