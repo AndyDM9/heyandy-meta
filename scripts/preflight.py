@@ -122,6 +122,21 @@ def main() -> None:
                                "then run this again")
         return "GPU 0 (Glimmer) and GPU 1 (SAM 3.1, voice, guards)"
 
+    @check("the robot's camera and sound card, as its daemon found them")
+    def _():
+        since = subprocess.run(["systemctl", "--user", "show", "jarvis-daemon", "-p", "ActiveEnterTimestamp",
+                                "--value"], capture_output=True, text=True).stdout.strip()
+        log = subprocess.run(["journalctl", "--user", "-u", "jarvis-daemon", "--since", since or "-1h", "--no-pager",
+                              "-o", "cat"], capture_output=True, text=True).stdout
+        # The daemon looks for them once, as it starts: started before the login that allows opening them, it
+        # runs with no camera, and Andy is blind (Oct 30). Only the daemon's own words are read, never a picture.
+        missing = [what for what, said in (("camera", "No camera found"), ("sound card", "No Reachy Mini audio card"))
+                   if said in log]
+        if missing:
+            raise RuntimeError(f"the daemon started without the robot's {' and '.join(missing)}: "
+                               "systemctl --user restart jarvis-daemon heyandy-app, then this again")
+        return "both found"
+
     @check("GPU power capped (a full-power card fell off the bus once)")
     def _():
         out = subprocess.run(["nvidia-smi", "--query-gpu=index,power.limit", "--format=csv,noheader,nounits"],
