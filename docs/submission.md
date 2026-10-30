@@ -61,7 +61,7 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 ## Technical depth (what was hard)
 
 - **A closed-loop head.** The robot's head falls short and sags (asked for 55 degrees, it reached 40.5); the adapter
-  reads the pose back, corrects once, and every frame carries the measured direction: pointing within about 3 degrees.
+  reads the pose back, corrects once, and every frame carries the measured direction. After pointing, Andy checks with its own camera and corrects again: things in front end within 2 degrees of the middle of its view (about 7 before); past the head's reach, where the base turns, 5 to 9.
 - **Agents that can't move the robot by themselves:** named views and numbered places, never motor values; every
   argument checked in code; Andy's words built from what the tools did.
 - **Identical cups, crossing.** Object Multiplex tracks about 4 frames a second on a 3090; at 5 frames a second of

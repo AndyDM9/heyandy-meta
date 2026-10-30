@@ -225,7 +225,15 @@ noise. Results: `evals/results/`.
 
 **On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included
 (7.1 s for the keyboard once Glimmer's picture check went straight to its answer; research.md, 24);
-pointing within about 3 degrees after the head's correction.
+pointing within about 3 degrees after the head's correction, as its motors report it.
+
+**Measured by Andy's own camera** (`evals/unattended.py`, 2026-10-30; the robot alone in the room, nobody checking
+what it pointed at, so this measures the aim and the reliability, not the finding): the check after pointing found
+the head sags about 4 degrees after its pointing dip, so Andy now corrects its aim from what the frame shows. A
+monitor in front, 3 of 3 finds: **0.5, 1.6 and 1.8 degrees** from the middle of the view after the correction (about
+7 before it). A keyboard far to the left, where the base turns too, 3 of 3 finds but **5.6 to 9.1 degrees** off: past
+the head's own reach the head and base don't yet move together as precisely. 6 of 6 searches ended in a point, none
+failed; 8.7 to 11.5 s each, the check included.
 
 **The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of

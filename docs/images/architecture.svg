@@ -80,7 +80,7 @@
   <rect x="374" y="396" width="372" height="170" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>
   <text x="392" y="426" class="h" style="font-size:18px">Seeing</text>
   <text x="392" y="454" class="t">SAM 3.1: finds the thing; its mask</text>
-  <text x="392" y="478" class="t">becomes the head's angle (about 3°)</text>
+  <text x="392" y="478" class="t">becomes the head's angle, then checked</text>
   <text x="392" y="504" class="t">Object Multiplex: every cup at once</text>
   <text x="392" y="530" class="t">DINOv2 + colour: "this is my mug"</text>
   <text x="392" y="554" class="meta">META OPEN WEIGHTS · GPU 1</text>

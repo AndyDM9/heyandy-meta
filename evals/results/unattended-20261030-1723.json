@@ -1,0 +1,108 @@
+{
+ "things": "monitor,keyboard",
+ "check": true,
+ "summary": {
+  "trials": 6,
+  "errors": 0,
+  "pointed": 6,
+  "seconds_median": 11.1,
+  "looks_median": 3,
+  "aim_deg_median": 5.6,
+  "aim_deg_worst": 9.1,
+  "reaimed": 6,
+  "aim_not_seen": 0
+ },
+ "note": "nobody checked what was pointed at: this measures the robot, not the finding",
+ "trials": [
+  {
+   "round": 1,
+   "thing": "monitor",
+   "from": [
+    -17.6,
+    -1.2
+   ],
+   "pointed": true,
+   "seconds": 9.2,
+   "looks": 2,
+   "aim_deg": 0.5,
+   "reaimed": true,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "keyboard",
+   "from": [
+    15.1,
+    -3.2
+   ],
+   "pointed": true,
+   "seconds": 11.1,
+   "looks": 3,
+   "aim_deg": 5.6,
+   "reaimed": true,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "monitor",
+   "from": [
+    3.6,
+    4.1
+   ],
+   "pointed": true,
+   "seconds": 9.9,
+   "looks": 3,
+   "aim_deg": 1.6,
+   "reaimed": true,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "keyboard",
+   "from": [
+    -44.2,
+    7.7
+   ],
+   "pointed": true,
+   "seconds": 11.4,
+   "looks": 3,
+   "aim_deg": 8.4,
+   "reaimed": true,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "monitor",
+   "from": [
+    -46.3,
+    5.8
+   ],
+   "pointed": true,
+   "seconds": 8.7,
+   "looks": 2,
+   "aim_deg": 1.8,
+   "reaimed": true,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "keyboard",
+   "from": [
+    -43.0,
+    -2.7
+   ],
+   "pointed": true,
+   "seconds": 11.5,
+   "looks": 3,
+   "aim_deg": 9.1,
+   "reaimed": true,
+   "why": "",
+   "error": null
+  }
+ ]
+}

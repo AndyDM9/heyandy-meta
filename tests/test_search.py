@@ -87,15 +87,15 @@ def test_weak_detections_are_ignored():
 
 
 class SaggingBody(SimBody):
-    """A head that falls short the first time it points, like the real one before its correction."""
+    """A head that lands lower than it's sent, every time, as the real one does after its dip (measured on the
+    robot: about 4 degrees); the frames say where it really is."""
 
-    def __init__(self, room, short_by=9.0):
+    def __init__(self, room, sag=5.0):
         super().__init__(room)
-        self.short_by = short_by
+        self.sag = sag
 
-    def point(self, yaw, pitch):
-        super().point(yaw, pitch - self.short_by)
-        self.short_by = 0.0
+    def look(self, yaw, pitch, precise=True):
+        super().look(yaw, pitch + self.sag, precise)
 
 
 def test_the_check_after_pointing_measures_the_aim():
@@ -105,12 +105,14 @@ def test_the_check_after_pointing_measures_the_aim():
     assert found.looks == 2  # the check is one more frame, not one more look in the search
 
 
-def test_a_point_that_falls_short_is_aimed_again_once():
+def test_a_head_that_sags_is_corrected_from_what_the_frame_shows():
     room = Room([Thing("glasses", 30.0, 20.0)])
     body = SaggingBody(room)
     found = Finder(body, SimSegmenter(room)).find("glasses")
-    assert found.reaimed and found.aim_deg <= 1.0
-    assert len(pointed(body)) == 2 and pointed(body)[-1][2] == pytest.approx(20.0, abs=0.5)
+    assert found.reaimed and found.aim_deg <= 1.0  # sending the same angles again would sag the same way
+    assert body.pitch == pytest.approx(20.0, abs=1.0)  # the head really faces it: the command was lowered by the sag
+    assert found.pitch == pytest.approx(20.0, abs=1.0)  # and memory keeps where the thing is, not the command
+    assert len(pointed(body)) == 1  # one nod; the correction is a quiet look
 
 
 def test_a_thing_gone_after_pointing_gives_no_aim():

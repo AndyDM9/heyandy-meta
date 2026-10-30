@@ -2,7 +2,7 @@
 
 Each step is a direction for the body and a frame for SAM 3.1. A sighting only becomes a point after a second,
 centred look confirms it; one look is never enough. After pointing, one more frame checks the thing is in the middle
-of the view (re-aiming once if not), so every find says how far off it ended. The frame it was confirmed in is
+of the view (correcting the head's aim if not), so every find says how far off it ended. The frame it was confirmed in is
 returned in memory, for the TV, and never saved.
 """
 import math
@@ -53,7 +53,8 @@ class Finder:
     on_look: Callable[[float, float], None] | None = None  # told each direction as the head turns (the TV's progress)
     rejected: str = ""  # set by ``check`` to say why it said no ("a mug, but not yours")
     verify: bool = True  # after pointing, look once more: is it in the middle of the view?
-    aim_tolerance: float = 4.0  # degrees off the middle before the head re-aims once
+    aim_tolerance: float = 3.0  # degrees off the middle before the head's command is corrected
+    aim_corrections: int = 2  # at most this many, each from what the last frame showed
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
         """The fixed search: the remembered place, then a sweep, then behind. A confident sighting is checked as soon
@@ -130,21 +131,31 @@ class Finder:
         return found
 
     def _check_aim(self, found: Found) -> None:
-        """Did the point land? One more frame from where the head now faces: the thing nearest the middle, and how
-        far off it is. Too far, and the head re-aims once (a sagging head, a thing nudged while Andy looked)."""
-        for attempt in range(2):
+        """Did the point land? A frame from where the head now faces: the same thing (the mask nearest the middle,
+        of about the size it was confirmed at), and how far off the middle it is. Past the tolerance, the command
+        is corrected by what the frame shows, up to twice, without another nod: the real head sags a few degrees
+        after its dip and falls short when the base turns, and sending the same angles again lands the same way.
+        Near the middle of the frame the lens model is good, so each correction is small and sure."""
+        size = max(1.0, found.mask.box[2] - found.mask.box[0])
+        cmd_yaw, cmd_pitch = found.yaw, found.pitch
+        for attempt in range(self.aim_corrections + 1):
             frame = self.body.capture()
             masks = self._masks(frame, found.label)
             if not masks:
                 return  # not in view after pointing (moved, or hidden by the dip): aim_deg stays None
             cam = self._cam(frame)
-            best = min(masks, key=lambda m: (m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
-            y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
-            found.aim_deg = round(math.hypot(y - frame.yaw, p - frame.pitch), 1)
-            if found.aim_deg <= self.aim_tolerance or attempt or not self.body.reach.allows(y, p):
+            best = min(masks, key=lambda m: ((m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
+                       * (1 + abs(math.log(max(1.0, m.box[2] - m.box[0]) / size))))
+            off_yaw, off_pitch = pixel_to_angles(*best.center, 0.0, 0.0, cam)  # from the middle of this frame
+            found.aim_deg = round(math.hypot(off_yaw, off_pitch), 1)
+            found.yaw, found.pitch = frame.yaw + off_yaw, frame.pitch + off_pitch  # where it really is, for memory
+            if found.aim_deg <= self.aim_tolerance or attempt == self.aim_corrections:
                 return
-            found.yaw, found.pitch, found.reaimed = y, p, True
-            self.body.point(y, p)
+            cmd_yaw, cmd_pitch = cmd_yaw + off_yaw, cmd_pitch + off_pitch
+            if not self.body.reach.allows(cmd_yaw, cmd_pitch):
+                return
+            found.reaimed = True
+            self.body.look(cmd_yaw, cmd_pitch, precise=False)  # the correction is the frame's; no motor second guess
 
     looks: int = 0
     last_found: Found | None = None
