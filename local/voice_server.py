@@ -1,4 +1,11 @@
-"""Hearing and speaking on this computer: Meta's Omnilingual ASR in, Kokoro-82M out (both Apache-2.0).
+"""Hearing and speaking on this computer: Meta's Omnilingual ASR in (Apache-2.0); Meta's SeamlessM4T v2 out (CC-BY-NC 4.0).
+
+Every model Andy runs must be Meta's (the hackathon's rule, docs/rules.md), and Meta's Model API has no voice, so Andy
+speaks with Meta's open text-to-speech. SeamlessM4T v2's speech part (facebook/seamless-m4t-v2-large, 1.7B parameters,
+0.2 to 0.3 s a sentence in fp16) is clear: Omnilingual ASR misheard 9% of its words on Andy's own lines, against 23 to
+28% for MMS-TTS (facebook/mms-tts-eng and -spa, 36M parameters), which stays as the fallback. MMS reads lowercase words
+only, so for it heyandy_meta/voice/spoken.py cuts the text into phrases and puts the pauses back; for both, numbers,
+times and units become words first. Seamless runs on the second GPU this process sees (--tts-device), beside Glimmer.
 
 Runs in its own environment (scripts/setup-local-models.sh) on GPU 1 beside SAM 3.1, and listens on 127.0.0.1 only.
 Audio is held in memory for one request; nothing is written or logged.
@@ -8,14 +15,16 @@ Audio is held in memory for one request; nothing is written or logged.
 POST /transcribe  body: float32 little-endian mono samples; headers X-Sample-Rate (default 16000), X-Language
                   (Omnilingual ASR's code, default eng_Latn; spa_Latn for Spanish)
   -> {"text": "where are my glasses", "seconds": 0.04}
-POST /speak       {"text": "I see your glasses.", "voice": "am_michael", "rate": 16000, "speed": 1.0, "loudness": -21}
-                  The voice's first letter is Kokoro's language: a(merican English), e(spañol: em_alex, ef_dora), ...
-  -> body: float32 little-endian mono samples at "rate" (default 24000, Kokoro's own); headers X-Sample-Rate, X-Seconds
+POST /speak       {"text": "I see your glasses.", "voice": "eng", "rate": 16000, "speed": 1.0, "loudness": -21}
+                  The voice is the language, eng or spa (the old mms-eng and mms-spa still work).
+  -> body: float32 little-endian mono samples at "rate" (default 16000, MMS-TTS's own); headers X-Sample-Rate, X-Seconds
 """
 import argparse
 import json
 import re
+import sys
 import threading
+from pathlib import Path
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -23,13 +32,21 @@ import numpy as np
 import torch
 import torchaudio
 
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[1]))
+from heyandy_meta.voice.spoken import phrases, words  # noqa: E402
+
 MAX_SECONDS = 30  # Omnilingual ASR's CTC models take clips under 40 s
-VOICE = "am_michael"
+VOICE = "eng"
+TTS_RATE = 16000  # both Seamless and MMS-TTS speak at 16 kHz
+SEAMLESS = "facebook/seamless-m4t-v2-large"
+# Its tokenizer, saved once by scripts/setup-local-models.sh: loaded offline from the hub cache, it turned every word into
+# "unknown" and Seamless spoke noise (2026-10-30); from this copy it's right.
+PROCESSOR = Path.home() / "models" / "seamless-m4t-v2-processor"
 LANG = "eng_Latn"
 
 
 def louder(audio: np.ndarray, target_db: float = -21.0) -> np.ndarray:  # -18 was "a little loud" (founder)
-    """Kokoro speaks at about -28 dBFS: bring it up to target_db (RMS), with a soft limiter so peaks never clip."""
+    """Bring the voice up to target_db (RMS), with a soft limiter so peaks never clip."""
     rms = float(np.sqrt(np.mean(audio ** 2))) if audio.size else 0.0
     if rms < 1e-5:
         return audio
@@ -37,21 +54,59 @@ def louder(audio: np.ndarray, target_db: float = -21.0) -> np.ndarray:  # -18 wa
     return (0.95 * np.tanh(gain * audio / 0.95)).astype(np.float32)
 
 
-def load(asr_card: str):
-    from kokoro import KPipeline
-    from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
+def stretch(audio: np.ndarray, speed: float) -> np.ndarray:
+    """Faster or slower without changing the pitch (a phase vocoder): Seamless has no speaking rate of its own."""
+    if abs(speed - 1.0) < 0.03 or audio.size < 2048:
+        return audio
+    n_fft, hop = 512, 128
+    window = torch.hann_window(n_fft)
+    spec = torch.stft(torch.from_numpy(audio), n_fft, hop, window=window, return_complex=True)
+    advance = torch.linspace(0, np.pi * hop, n_fft // 2 + 1)[..., None]
+    out = torchaudio.functional.phase_vocoder(spec, speed, advance)
+    return torch.istft(out, n_fft, hop, window=window).numpy().astype(np.float32)
 
-    english = KPipeline(lang_code="a", repo_id="hexgrad/Kokoro-82M")
-    pipelines = {"a": english}
+
+def load(asr_card: str, tts_device: str = "cuda:1", speaker: int = 0):
+    from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
+    from transformers import AutoTokenizer, VitsModel
+
+    voices = {}
+    try:  # Meta's clearer voice; if it can't load (no room on the GPU), MMS-TTS speaks instead
+        from transformers import AutoProcessor, SeamlessM4Tv2ForTextToSpeech
+
+        seamless = (AutoProcessor.from_pretrained(PROCESSOR if PROCESSOR.exists() else SEAMLESS),
+                    SeamlessM4Tv2ForTextToSpeech.from_pretrained(
+            SEAMLESS, dtype=torch.float16).to(tts_device).eval())
+    except Exception as e:  # noqa: BLE001 - say so in the log, and speak with MMS
+        print(f"SeamlessM4T v2 didn't load ({type(e).__name__}: {e}); speaking with MMS-TTS", flush=True)
+        seamless = None
+
+    def mms(text, lang, speed):
+        if lang not in voices:
+            name = f"facebook/mms-tts-{lang}"
+            voices[lang] = (AutoTokenizer.from_pretrained(name), VitsModel.from_pretrained(name).to("cuda").eval())
+        tok, model = voices[lang]
+        model.speaking_rate = speed
+        out = []
+        for said, pause in phrases(text, "es" if lang == "spa" else "en"):
+            out.append(model(**tok(said, return_tensors="pt").to("cuda")).waveform[0].float().cpu().numpy())
+            out.append(np.zeros(int(pause * TTS_RATE), np.float32))
+        return np.concatenate(out) if out else np.zeros(0, np.float32)
 
     def tts(text, voice, speed):
-        """Kokoro, in the voice's own language: one pipeline per language, all sharing the one model."""
-        code = voice[:1] if voice[:1] in "abefhijpz" else "a"
-        if code not in pipelines:
-            pipelines[code] = KPipeline(lang_code=code, repo_id="hexgrad/Kokoro-82M", model=english.model)
-        return pipelines[code](text, voice=voice, speed=speed)
+        """Andy's voice in the language asked for (eng or spa): 16 kHz samples."""
+        lang = "spa" if voice.endswith("spa") else "eng"
+        with torch.inference_mode():
+            if seamless is None or voice.startswith("mms"):
+                return mms(text, lang, speed)
+            processor, model = seamless
+            said = words(text, "es" if lang == "spa" else "en")
+            inputs = processor(text=said, src_lang=lang, return_tensors="pt").to(tts_device)
+            with torch.cuda.device(tts_device):  # each request is a new thread, whose current GPU would be the first
+                audio = model.generate(**inputs, tgt_lang=lang, speaker_id=speaker)[0].float().cpu().numpy().squeeze()
+        return stretch(audio.astype(np.float32), speed)
 
-    return ASRInferencePipeline(model_card=asr_card, device="cuda"), tts
+    return ASRInferencePipeline(model_card=asr_card, device="cuda:0"), tts
 
 
 def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
@@ -85,7 +140,7 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                 try:
                     req = json.loads(self.rfile.read(min(n, 8192)))
                     text, voice = str(req["text"])[:600], str(req.get("voice") or VOICE)
-                    rate = int(req.get("rate") or 24000)
+                    rate = int(req.get("rate") or TTS_RATE)
                     speed = min(1.3, max(0.7, float(req.get("speed") or 1.0)))
                     loudness = min(-12.0, max(-30.0, float(req.get("loudness") or -21.0)))
                 except (ValueError, KeyError):
@@ -93,12 +148,11 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                 start = time.monotonic()
                 try:
                     with lock:
-                        parts = [np.asarray(a, dtype=np.float32) for _, _, a in tts(text, voice=voice, speed=speed)]
+                        audio = tts(text, voice=voice, speed=speed)
                 except Exception as e:  # noqa: BLE001 - e.g. a voice that isn't downloaded; say so, don't drop the line
                     return self._json(500, {"error": f"{type(e).__name__}: {e}"[:300]})
-                audio = np.concatenate(parts) if parts else np.zeros(0, np.float32)
-                if rate != 24000 and audio.size:
-                    audio = torchaudio.functional.resample(torch.from_numpy(audio), 24000, rate).numpy()
+                if rate != TTS_RATE and audio.size:
+                    audio = torchaudio.functional.resample(torch.from_numpy(audio), TTS_RATE, rate).numpy()
                 audio = louder(audio, loudness)
                 data = audio.astype("<f4").tobytes()
                 self.send_response(200)
@@ -128,5 +182,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--asr", default="omniASR_LLM_1B_v2")  # told the language; see research.md section 10
     ap.add_argument("--port", type=int, default=8092)
+    ap.add_argument("--tts-device", default="cuda:1", help="where SeamlessM4T v2 runs (this process sees GPU 1, then 0)")
+    ap.add_argument("--speaker", type=int, default=0, help="which of SeamlessM4T v2's voices")
     args = ap.parse_args()
-    serve(*load(args.asr), args.asr, "127.0.0.1", args.port)
+    serve(*load(args.asr, args.tts_device, args.speaker), args.asr, "127.0.0.1", args.port)

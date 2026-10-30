@@ -52,7 +52,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **Llama Guard 3 8B** (open weights, 4-bit, converted here) | GPU 1 | A second crisis check on what the person says, before any other model |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers with sources; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
-| *(not Meta)* Kokoro-82M | GPU 1 | Andy's voice |
+| **SeamlessM4T v2** (open weights, its speech half) | GPU 0 | Andy's voice, English and Spanish (0.3 s a sentence); **every model Andy runs is Meta's** |
 
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left

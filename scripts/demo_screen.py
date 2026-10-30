@@ -105,7 +105,7 @@ def show(state: ScreenState, scene: str) -> None:
                    "search planned by Muse Glimmer on this computer")
         state.doing("Pointing", "At your mug")
         for name, times in (("Omnilingual ASR (hearing)", 1), ("Muse Glimmer (plans)", 2), ("SAM 3.1", 4),
-                            ("Muse Glimmer (picture check)", 2), ("MapAnything (how far)", 1), ("Kokoro (voice)", 1)):
+                            ("Muse Glimmer (picture check)", 2), ("MapAnything (how far)", 1), ("SeamlessM4T v2 (voice)", 1)):
             state.used(name, "device", times)
     elif scene == "mine":
         state.looking("mug")
@@ -122,7 +122,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.said(words, "device", "fixed search on this computer")
         state.doing("Pointing", "At your mug")
         for name, times in (("Omnilingual ASR (hearing)", 1), ("SAM 3.1", 4), ("DINOv2 (knows it by sight)", 2),
-                            ("Muse Glimmer (picture check)", 2), ("Kokoro (voice)", 1)):
+                            ("Muse Glimmer (picture check)", 2), ("SeamlessM4T v2 (voice)", 1)):
             state.used(name, "device", times)
     elif scene == "cups":
         jpeg, mask = cups_frame()
@@ -172,7 +172,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.said("Veo su taza azul, un poco a mi derecha.", "device", "búsqueda en esta computadora")
         state.doing("Pointing", "Señalando su taza")
         for name, times in (("Omnilingual ASR (hearing, Spanish)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
-                            ("Kokoro (voice, Spanish)", 1)):
+                            ("SeamlessM4T v2 (voice, Spanish)", 1)):
             state.used(name, "device", times)
     elif scene == "web":
         state.web(SAMPLE_WEB.read_bytes(), "Show me what banana bread is", "Opening the page", (378, 273),

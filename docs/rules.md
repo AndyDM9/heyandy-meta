@@ -143,8 +143,8 @@ app, to "Would using multiple models and external inference providers have any n
 > can be combined with each other, and open-source Meta models count however you run them, including through partner
 > inference. You can still use any coding tools during development, such as Claude Code or Copilot, without
 > disclosing them. Say in your README and demo which Meta models you use and where they run."
-- **For us:** every model Andy runs is Meta's except its voice, Kokoro-82M (Meta's Model API has no text-to-speech).
-  The voice moves to one of Meta's own open text-to-speech models (MMS-TTS or SeamlessM4T v2). Runtime software that
+- **For us (done Oct 30):** the voice was the only non-Meta model (Kokoro-82M); Andy now speaks with Meta's
+  SeamlessM4T v2 (MMS-TTS as the fallback), so every model it runs is Meta's. Runtime software that
   isn't a model (llama.cpp, the robot's SDK, the browser) isn't affected.
 
 **Spend limits** (the FAQ): "Don't assume a 'Spend Limit' notification automatically stops billing." That's why our

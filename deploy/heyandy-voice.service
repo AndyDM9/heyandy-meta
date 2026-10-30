@@ -1,11 +1,13 @@
 [Unit]
-Description=HeyAndy: hearing (Omnilingual ASR) and speaking (Kokoro-82M) on GPU 1 (this computer only)
+Description=HeyAndy: hearing (Omnilingual ASR, GPU 1) and speaking (SeamlessM4T v2, GPU 0), Meta's, this computer only
 
 [Service]
-Environment=CUDA_VISIBLE_DEVICES=1
+# GPU 1 first (hearing, and MMS-TTS if it's needed), then GPU 0 (SeamlessM4T v2's voice, beside Glimmer)
+Environment=CUDA_DEVICE_ORDER=PCI_BUS_ID
+Environment=CUDA_VISIBLE_DEVICES=1,0
 Environment=PYTHONWARNINGS=ignore
 Environment=HF_HUB_OFFLINE=1
-ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py
+ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py --tts-device cuda:1
 Restart=on-failure
 
 [Install]

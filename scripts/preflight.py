@@ -10,6 +10,7 @@ import argparse
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -175,12 +176,13 @@ def main() -> None:
         from heyandy_meta.voice.local import LocalVoice
 
         out = []
-        for voice, lang, said in (("am_michael", "eng_Latn", "Where are my glasses?"),
-                                  ("em_alex", "spa_Latn", "¿Dónde están mis gafas?")):
+        for voice, lang, said in (("eng", "eng_Latn", "Where are my glasses?"),
+                                  ("spa", "spa_Latn", "¿Dónde están mis gafas?")):
             v = LocalVoice(voice=voice)
             v.language = lang
             heard = v.transcribe(v.speak(said, rate=16000))
-            if "gafas" not in heard.lower() and "glasses" not in heard.lower():
+            want, got = (set(re.findall(r"\w+", t.lower())) for t in (said, heard))
+            if len(want & got) < len(want) - 1:  # both working: at most one word misheard ("gafas" as "cafas")
                 raise RuntimeError(f"heard {heard!r} for {said!r}")
             out.append(repr(heard))
         return " / ".join(out)

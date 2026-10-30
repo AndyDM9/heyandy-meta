@@ -1,6 +1,6 @@
 """Andy in Spanish: "Andy, habla español." Hearing, speaking and the TV's captions switch; everything else stays.
 
-Omnilingual ASR (Meta's, on this computer) is told it will hear Spanish; Kokoro speaks with a Spanish voice. In
+Omnilingual ASR (Meta's, on this computer) is told it will hear Spanish; SeamlessM4T v2 (Meta's) speaks Spanish. In
 between, Andy's request rules and tools work in English, so Muse Glimmer, also on this computer, translates what the
 person said into English and Andy's words into Spanish: 0.25 to 1 s a sentence, so the person's words never leave
 the house for it. Glimmer is started at its answer, past its private reasoning (models/glimmer_fast.py), which otherwise
@@ -22,14 +22,14 @@ from ..models.common import is_local
 class Language:
     name: str
     asr: str  # Omnilingual ASR's code
-    voice: str  # Kokoro's voice: its first letter is the language
+    voice: str  # Meta's voice for the language: eng or spa (local/voice_server.py)
     disclosure: str = ""  # said by hand, never translated
     crisis: str = ""
 
 
 LANGUAGES = {
-    "en": Language("English", "eng_Latn", "am_michael"),
-    "es": Language("Spanish", "spa_Latn", "em_alex", disclosure="Soy Andy, un robot con inteligencia artificial.",
+    "en": Language("English", "eng_Latn", "eng"),
+    "es": Language("Spanish", "spa_Latn", "spa", disclosure="Soy Andy, un robot con inteligencia artificial.",
                    crisis="Soy un robot, así que no puedo ayudarle con esto como lo haría una persona. Puede llamar o "
                           "enviar un mensaje de texto al 988, la Línea de Prevención del Suicidio y Crisis, a cualquier "
                           "hora, de día o de noche; tienen ayuda en español. Si está en peligro ahora mismo, por favor "

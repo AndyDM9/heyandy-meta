@@ -1,7 +1,7 @@
 """The Spanish scorecard: does a request said in Spanish reach the same ability it would in English?
 
 Each request goes through what Andy does in Spanish: Muse Glimmer on this computer translates it into English, and the
-request rules sort it. With --spoken, it's first said by Kokoro's Spanish voice and heard by Omnilingual ASR (told
+request rules sort it. With --spoken, it's first said by Andy's Spanish voice (SeamlessM4T v2) and heard by Omnilingual ASR (told
 spa_Latn), so speech-to-text slips count too. Nothing leaves this computer. Only the requests, the English, the
 ability reached and the timings are saved.
 
@@ -48,14 +48,14 @@ def kind(english: str) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--spoken", action="store_true", help="say each with Kokoro and hear it with Omnilingual ASR first")
+    ap.add_argument("--spoken", action="store_true", help="say each with Andy's voice and hear it with Omnilingual ASR first")
     ap.add_argument("--out", default="")
     args = ap.parse_args()
     translator = Translator()
     if args.spoken:
         from heyandy_meta.voice.local import LocalVoice
 
-        mouth, ears = LocalVoice(voice="ef_dora"), LocalVoice()
+        mouth, ears = LocalVoice(voice="spa"), LocalVoice()
         ears.language = "spa_Latn"
     rows = []
     for spanish, want in REQUESTS:

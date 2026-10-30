@@ -99,7 +99,7 @@ def main() -> None:
     ap.add_argument("--voice", action="store_true", help="listen and speak through the robot (needs --robot)")
     ap.add_argument("--voice-url", default="http://127.0.0.1:8092")
     ap.add_argument("--depth", default="http://127.0.0.1:8096", help="MapAnything on this computer: how far away")
-    ap.add_argument("--voice-name", default="am_michael", help="a Kokoro voice")
+    ap.add_argument("--voice-name", default="eng", help="eng or spa (Meta's SeamlessM4T v2 voice)")
     ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
     ap.add_argument("--home", default=os.environ.get("HEYANDY_HOME", ""),
                     help="where the person lives, e.g. 'Miami, Florida' (or HEYANDY_HOME), for the weather; never guessed")

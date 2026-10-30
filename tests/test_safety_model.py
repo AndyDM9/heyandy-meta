@@ -40,7 +40,7 @@ def test_in_spanish_it_reads_the_persons_own_words_before_the_translator(tmp_pat
     said = "creo que todos estarían mejor sin mí"
     a, body, _ = andy(tmp_path=tmp_path)
     glimmer = Glimmer()
-    a.translator, a.voice = glimmer, SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.translator, a.voice = glimmer, SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     a.guard = Guard([said])
     a.hear("habla español")
     glimmer.asked.clear()

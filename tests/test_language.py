@@ -38,9 +38,9 @@ def said(body):
 
 def test_andy_hears_and_speaks_spanish(tmp_path):
     a, body, _ = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
-    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     a.hear("habla español")
-    assert a.language == "es" and a.voice.voice == "em_alex" and a.asr_language == "spa_Latn"
+    assert a.language == "es" and a.voice.voice == "spa" and a.asr_language == "spa_Latn"
     assert said(body)[0] == DISCLOSURE  # said before the switch, in English
     assert "De acuerdo, desde ahora le hablo en español." in said(body)  # by hand (PHRASES)
     body.log.clear()
@@ -49,23 +49,23 @@ def test_andy_hears_and_speaks_spanish(tmp_path):
     assert said(body) == ["Déjeme buscar.", "¡Ahí están! Veo sus gafas, a mi derecha."]  # the opener by hand
     assert a.screen.snapshot()["caption"] == "¡Ahí están! Veo sus gafas, a mi derecha."
     a.hear("habla inglés")
-    assert a.language == "en" and a.voice.voice == "am_michael"
+    assert a.language == "en" and a.voice.voice == "eng"
 
 
 def test_the_language_is_remembered(tmp_path):
     a, _, _ = andy(tmp_path=tmp_path)
-    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     a.hear("speak Spanish")
     b, _, _ = andy(tmp_path=tmp_path)
-    b.translator, b.voice = Glimmer(), SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    b.translator, b.voice = Glimmer(), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     b.load_voice()
-    assert b.language == "es" and b.voice.voice == "em_alex"
+    assert b.language == "es" and b.voice.voice == "spa"
 
 
 def test_the_crisis_reply_in_spanish_is_written_by_hand_and_never_translated(tmp_path):
     a, body, _ = andy(tmp_path=tmp_path)
     glimmer = Glimmer()
-    a.translator, a.voice = glimmer, SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.translator, a.voice = glimmer, SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     a.hear("habla español")
     glimmer.asked.clear()
     reply = a.hear("ya no quiero vivir")
@@ -127,7 +127,7 @@ def test_a_failed_translation_isnt_remembered():
 def test_spanish_crisis_words_are_caught_before_any_model(tmp_path, text):
     a, body, _ = andy(tmp_path=tmp_path)
     glimmer = Glimmer()
-    a.translator, a.voice = glimmer, SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.translator, a.voice = glimmer, SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     a.hear("habla español")
     glimmer.asked.clear()
     assert a.hear(text) == CRISIS_REPLY and glimmer.asked == [] and a.device.prompts == []
@@ -152,7 +152,7 @@ def test_the_tv_shows_andys_words_in_spanish_without_waiting(tmp_path):
 
 def test_the_tv_follows_the_language(tmp_path):
     a, _, _ = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
-    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="am_michael", speed=1.0, loudness=-21.0)
+    a.translator, a.voice = Glimmer(), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
     a.hear("habla español")
     snap = a.screen.snapshot()
     assert snap["lang"] == "es" and snap["language"].startswith("Español")

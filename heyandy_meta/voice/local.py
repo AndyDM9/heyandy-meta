@@ -1,4 +1,4 @@
-"""The voice server on this computer (local/voice_server.py): Omnilingual ASR in, Kokoro-82M out."""
+"""The voice server on this computer (local/voice_server.py): Omnilingual ASR in, SeamlessM4T v2 out (both Meta's)."""
 import json
 import urllib.error
 import urllib.request
@@ -10,7 +10,7 @@ from ..models.sam_local import LocalUnavailable, NotLocal
 
 
 class LocalVoice:
-    def __init__(self, endpoint: str = "http://127.0.0.1:8092", voice: str = "am_michael", timeout: float = 10.0,
+    def __init__(self, endpoint: str = "http://127.0.0.1:8092", voice: str = "eng", timeout: float = 10.0,
                  speed: float = 1.0, loudness: float = -21.0):
         if not is_local(endpoint):
             raise NotLocal(f"speech stays on this computer or the home network, not {endpoint}")
