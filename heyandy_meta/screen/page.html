@@ -71,10 +71,15 @@
   #card h1 { margin: 0.35rem 0 1rem; font-size: 3.3rem; font-weight: 750; line-height: 1.12; }
   #body { min-height: 0; display: grid; align-content: start; overflow: hidden; }
   #body:has(.drawing), #body:has(.web) { align-content: stretch; }
-  .split { display: grid; grid-template-columns: 1.45fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
+  .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   figure { margin: 0; min-height: 0; }
-  figure svg { width: 100%; height: auto; max-height: 30rem; border-radius: 1.4rem; display: block; }
-  .facts { display: grid; gap: 1.1rem; font-size: 1.6rem; }
+  figure svg { width: 100%; height: auto; max-height: 36rem; border-radius: 1.4rem; display: block; }
+  .facts { display: grid; gap: 1.1rem; font-size: 1.6rem; align-content: start; min-height: 0; overflow: hidden; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.9rem 1.4rem; }
+  .stats div { font-size: 1.35rem; color: var(--muted); line-height: 1.2; }
+  .facts .stats b { font-size: 2.9rem; line-height: 1.05; }
+  .facts ol.steps { font-size: 1.3rem; gap: 0.35rem; }
+  #card.found h1 { font-size: 2.7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .facts b { display: block; font-size: 2.6rem; font-weight: 750; color: var(--accent); font-family: "Atkinson Mono", monospace; }
   ol.steps, ul.steps { margin: 0; padding-left: 2rem; display: grid; gap: 0.6rem; font-size: 1.6rem; align-content: start; }
   .steps li::marker { color: var(--accent); font-weight: 750; }
@@ -416,9 +421,14 @@
       const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
       if (key !== pictureKey) {
         pictureKey = key;
-        const facts = el("div", null, "facts");
-        if (s.seconds !== null) { const f = el("div", T("to find it")); f.prepend(el("b", s.seconds.toFixed(1) + " s")); facts.append(f); }
-        if (s.steps.length) facts.append(steps(s.steps));
+        const facts = el("div", null, "facts"), stats = el("div", null, "stats");
+        const stat = (big, small) => { const f = el("div", small); f.prepend(el("b", big)); stats.append(f); };
+        if (s.seconds !== null) stat(s.seconds.toFixed(1) + " s", T("to find it"));
+        if (s.picture.aim_deg != null) stat(Math.round(s.picture.aim_deg) + "°", LANG === "es" ? "del centro, comprobado con la cámara" : "off target, checked by its camera");
+        if (s.picture.metres != null) stat(LANG === "es" ? s.picture.metres.toFixed(1) + " m" : Math.round(s.picture.metres * 3.281) + " ft",
+                                           LANG === "es" ? "de distancia (MapAnything)" : "away (MapAnything)");
+        if (stats.children.length) facts.append(stats);
+        if (s.steps.length) facts.append(steps(s.steps.slice(-3)));  // the latest steps; the figures above say the rest
         if (s.game) {
           const f = el("div", T("SAM 3.1 Object Multiplex followed every cup at once, on this computer"));
           f.prepend(el("b", s.picture.trails ? s.picture.trails.length + " cups" : "")); facts.append(f);
@@ -482,6 +492,7 @@
       }
     }
     $("kicker").textContent = kicker; $("title").textContent = title; $("title").hidden = !title;
+    $("card").classList.toggle("found", !!(s.picture && !s.game));  // the found shot: the picture large, the title short
     $("timer").textContent = s.running && s.seconds !== null ? s.seconds.toFixed(1) + " s" : "";
   }
   // The privacy receipt: on every turn, exactly which words went to which cloud model, or that nothing did.

@@ -99,7 +99,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.timer_stop()
         state._timer = (time.monotonic() - 9.4, time.monotonic())  # a typical find on the robot, for the picture
         jpeg, mask = sample_frame()
-        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3)
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
         state.found(found, "There it is! I see your blue mug, a little to my right, about 4 feet away.")
         state.said("There it is! I see your blue mug, a little to my right, about 4 feet away.", "device",
                    "search planned by Muse Glimmer on this computer")
@@ -116,7 +116,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.timer_stop()
         state._timer = (time.monotonic() - 11.2, time.monotonic())
         jpeg, mask = sample_frame()
-        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=4)
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=4, aim_deg=2.0, metres=1.2)
         words = "Found it! I see your mug, the one you showed me, a little to my right. The other mug isn't yours."
         state.found(found, words)
         state.said(words, "device", "fixed search on this computer")
@@ -155,7 +155,7 @@ def show(state: ScreenState, scene: str) -> None:
                                               "(home: Sunny Isles Beach, Florida)")
     elif scene == "spanish":
         jpeg, mask = sample_frame()
-        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3)
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
         state.language, state.lang = "Español · en esta computadora", "es"
         state.reminder_next("Llamar a Sam", time.time() + 25 * 60)
         state.keeping(["llaves: vistas hace 2 horas, a mi izquierda", "gafas: vistas hace 10 minutos, un poco a mi derecha",
