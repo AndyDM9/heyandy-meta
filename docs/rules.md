@@ -144,7 +144,7 @@ app, to "Would using multiple models and external inference providers have any n
 > inference. You can still use any coding tools during development, such as Claude Code or Copilot, without
 > disclosing them. Say in your README and demo which Meta models you use and where they run."
 - **For us (done Oct 30):** the voice was the only non-Meta model (Kokoro-82M); Andy now speaks with Meta's
-  MMS-TTS (picked by ear on the robot), so every model it runs is Meta's. Runtime software that
+  SeamlessM4T v2 (picked by ear on the robot), so every model it runs is Meta's. Runtime software that
   isn't a model (llama.cpp, the robot's SDK, the browser) isn't affected.
 
 **Spend limits** (the FAQ): "Don't assume a 'Spend Limit' notification automatically stops billing." That's why our

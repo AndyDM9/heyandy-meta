@@ -63,7 +63,7 @@ class VoiceLoop:
                 screen = getattr(self.andy, "screen", None)
                 if screen:
                     screen.used("Omnilingual ASR (hearing)", "device")
-                    screen.used("MMS-TTS (voice)", "device")
+                    screen.used("SeamlessM4T v2 (voice)", "device")
             else:
                 reply = "Yes?"
                 self.andy.say(reply)

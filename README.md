@@ -56,12 +56,12 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
    moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
    ("every morning at 8").
 16. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
-   MMS-TTS speaks it, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
+   SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
    a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
 17. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
-   Omnilingual ASR) and speaking (Meta's MMS-TTS) run on the computer beside the robot. **Every model Andy
+   Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
 18. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
    computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
@@ -97,7 +97,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
   Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
-  found thing is, from one camera frame: metric depth, about 0.2 s), MMS-TTS (Andy's voice), Llama Prompt Guard 2 (reading each web page before the
+  found thing is, from one camera frame: metric depth, about 0.2 s), SeamlessM4T v2 (Andy's voice), Llama Prompt Guard 2 (reading each web page before the
   cloud model sees it), Llama Guard 3 (a second crisis check); with
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
@@ -112,10 +112,10 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **Memory with a history, in words:** an opt-in idle glance notes where chosen things are; Glimmer describes each new
   place by what's near it ("on the desk in front of the monitor, behind the keyboard"), and Andy notes when a thing
   moved. "When did you last see my keys?" is answered from memory without moving. Never a picture.
-- **Voice on this computer, all Meta's:** Omnilingual ASR hears; MMS-TTS speaks, chosen by ear on the robot's own
-  speaker (a speech recogniser preferred Meta's larger SeamlessM4T v2; a person at the robot understood MMS best),
-  slowed 8%, without rumble, the consonants brought forward and never clipped; numbers, times and units become words
-  first, and the pauses punctuation makes are put back; the robot's microphone array (and the voice's direction),
+- **Voice on this computer, all Meta's:** Omnilingual ASR hears; SeamlessM4T v2's speech half speaks (speaker 51, a
+  man's voice), chosen by ear from five versions played on the robot's own speaker: slowed 8%, without rumble, the
+  consonants brought forward (6 dB around 3 kHz) and never clipped; numbers, times and units become words first
+  (Meta's MMS-TTS is wired in too); the robot's microphone array (and the voice's direction),
   "Andy" as the wake word with its common mishearings, answers spoken sentence by sentence: the first word about a
   second after Andy understands.
 - **Reminders delivered in person,** with Andy's questions taking the next answer.
@@ -252,9 +252,8 @@ failed; 8.7 to 11.5 s each, the check included.
 12; what failed and what changed is in `docs/research.md`, section 26.
 
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 41 of 41 reach the
-right ability; said by Andy's voice (Meta's MMS-TTS) and heard by Omnilingual ASR, 38 of 41 (hearing slips on the synthetic
-voice, such as "inglés" heard as "indies"; 40 of 41 with the earlier non-Meta voice, before every model had to be
-Meta's). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
+right ability; said by Andy's voice (Meta's SeamlessM4T v2) and heard by Omnilingual ASR, 34 of 41 (hearing slips on the
+synthetic voice; 40 of 41 with the earlier non-Meta voice, before every model had to be Meta's). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
 a question stays a question when speech-to-text drops the question marks): 40 and 37 before. Glimmer translates each in
 a median 0.45 s, on the computer beside the robot.
 
@@ -284,8 +283,8 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
   and held conversations (first word 0.7 to 1 s after it understands); the scored runs come next
   (`docs/research.md` sections 8 to 11).
-- **English and Spanish** for now: Omnilingual ASR can hear far more languages; MMS-TTS has voices for over a thousand, and
-  adding one is a few hand-written phrases. While Andy speaks Spanish the TV is in Spanish too (labels by hand, Andy's
+- **English and Spanish** for now: Omnilingual ASR can hear far more languages; SeamlessM4T v2 speaks 35, and adding one
+  is a few hand-written phrases. While Andy speaks Spanish the TV is in Spanish too (labels by hand, Andy's
   own words translated by Glimmer). Spanish is scored on written and synthesised speech; not yet with a person.
 
 ## Licence
