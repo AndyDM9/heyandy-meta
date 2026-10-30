@@ -64,6 +64,13 @@ trademark application.
    One switch is the exception, for filming only: `--staged-scene`, in a staged room with nobody in it, sends the camera's
    pictures to SAM 3.1 through the Model API, and the TV and the receipt say so every time.
 
+## How it works
+
+![What runs in the house and what goes to the cloud: the robot and the TV in the room; on the computer beside the
+robot, a crisis check before any model, hearing and speaking, SAM 3.1 and DINOv2 for seeing, Muse Glimmer for
+thinking offline, Andy's checked tools, and the web with Prompt Guard 2; in the cloud, Muse Spark gets words and
+screenshots of web pages asked for, and Muse Image gets words only](docs/images/architecture.svg)
+
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
 
