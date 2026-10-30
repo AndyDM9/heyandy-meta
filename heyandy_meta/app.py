@@ -427,7 +427,7 @@ class Andy:
         self.screen.clear()
         self.screen.timer_start()
         checks = getattr(self.judge, "calls", 0)
-        self.finder.looks, self._alike, self._not_yours = 0, None, False
+        self.finder.looks, self.finder.passed, self._alike, self._not_yours = 0, [], None, False
         self.screen.looking(thing)
         self.say("Let me look.")  # answer at once: a search takes a few seconds
         self.screen.doing("Working", "Looking around the room")
@@ -479,6 +479,9 @@ class Andy:
         self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
         self.screen.doing("Pointing", f"At your {found.label}")
+        if found.aim_deg is not None:  # the check after pointing: did it land?
+            self.screen.step(f"checked: pointing at it, {found.aim_deg:.0f}° off the middle"
+                             + (" after aiming again" if found.reaimed else ""))
         self.gesture("found")
         words = words or self._found_words(found)
         self.screen.found(found, words)
@@ -1113,7 +1116,13 @@ class Andy:
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""
-        return f"I see your {f.label}{yours}, {where}." + (" Right where I last saw it." if f.remembered else "")
+        said = f"I see your {f.label}{yours}, {where}." + (" Right where I last saw it." if f.remembered else "")
+        passed = self.finder.passed or []  # what it looked at on the way and passed over: say so, once
+        if any("not yours" in why for why in passed):
+            said += f" The other {f.label} isn't yours."
+        elif any("picture" in why for why in passed):
+            said += " Not the picture of one on the screen."
+        return said
 
     def _not_found(self, thing: str) -> str:
         if self._not_yours or "not yours" in self.finder.why:

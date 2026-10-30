@@ -74,6 +74,8 @@ def main() -> None:
                 trials.append({"n": n, "thing": thing, "place": None if absent else place, "absent": bool(absent),
                                "hint": hint, "verdict": verdict, "seconds": seconds, "looks": finder.looks,
                                "why": finder.why,  # the finder's own reason for a miss ("not there", "only a picture")
+                               "aim_deg": None if found is None else found.aim_deg,  # measured by Andy after pointing
+                               "reaimed": bool(found and found.reaimed),
                                "pointed": None if found is None else [round(found.yaw, 1), round(found.pitch, 1)]})
     except (KeyboardInterrupt, EOFError):
         print("\nstopped; saving what was done")
@@ -85,6 +87,9 @@ def main() -> None:
                "absent_correct": sum(t["verdict"] == "correct" for t in trials if t["absent"]),
                "false_finds": sum(t["verdict"] == "false_find" for t in trials),
                "off": sum(t["verdict"] == "off" for t in done), "missed": sum(t["verdict"] == "missed" for t in done),
+               "aim_deg_median": (lambda a: sorted(a)[len(a) // 2] if a else None)(
+                   [t["aim_deg"] for t in done if t["verdict"] == "correct" and t["aim_deg"] is not None]),
+               "reaimed": sum(t["reaimed"] for t in done),
                "seconds_median": sorted(t["seconds"] for t in trials)[len(trials) // 2] if trials else None}
     path = Path(args.out) / f"physical-{args.policy}-{time.strftime('%Y%m%d-%H%M')}.json"
     path.parent.mkdir(parents=True, exist_ok=True)

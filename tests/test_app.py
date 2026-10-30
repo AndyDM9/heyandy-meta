@@ -60,7 +60,7 @@ def test_crisis_words_never_reach_a_model(tmp_path):
 def test_find_on_this_computer_skips_the_picture_on_the_tv(tmp_path):
     a, body, _ = andy(Thing("glasses", 52.0, 5.0, on_screen=True), Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
     reply = a.hear("Where are my glasses?")
-    assert reply.endswith("I see your glasses, to my right.")
+    assert reply.endswith("I see your glasses, to my right. Not the picture of one on the screen.")
     snap = a.screen.snapshot()
     assert snap["picture"] is None and snap["running"] is False  # the pretend room has no camera picture to show
     assert snap["source"] == "device" and any("looked" in s for s in snap["steps"])
@@ -72,7 +72,8 @@ def test_a_watched_thing_is_found_where_it_was_last_seen(tmp_path):
     a.hear("where are my keys")
     body.log.clear()
     assert a.hear("where are my keys").endswith("Right where I last saw it.")
-    assert [e for e in body.log if e[0] == "capture"] == [("capture",)]  # one look, straight at the remembered place
+    assert [e[0] for e in body.log if e[0] in ("look", "capture")] == ["look", "capture", "look", "capture"]
+    # one look straight at the remembered place, then the point (a look) and its check: no sweep
 
 
 def test_the_cloud_plans_the_search_with_words_only(tmp_path):
@@ -83,7 +84,8 @@ def test_the_cloud_plans_the_search_with_words_only(tmp_path):
         "There they are, on your right.")
     a, _, _ = andy(Thing("glasses", -50.0, 20.0), spark=spark, tmp_path=tmp_path)
     assert a.hear("where are my glasses, I think I left them by the TV").endswith("I see your glasses, to my right.")
-    assert a.screen.source == "cloud" and len(a.screen.snapshot()["steps"]) == 2  # look, then look closer and point
+    steps = a.screen.snapshot()["steps"]  # look, then look closer and point, then the check after pointing
+    assert a.screen.source == "cloud" and len(steps) == 3 and steps[-1].startswith("checked: pointing at it")
     for req in spark.requests:  # nothing but text goes up
         assert all(isinstance(m.get("content"), str) for m in req["messages"])
 

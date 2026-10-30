@@ -1,11 +1,12 @@
 """Find a thing in the room: recall where it was, else sweep four views, then look closer, check, and point.
 
 Each step is a direction for the body and a frame for SAM 3.1. A sighting only becomes a point after a second,
-centred look confirms it; one look is never enough. The frame it was confirmed in is returned in memory, for the
-TV, and never saved.
+centred look confirms it; one look is never enough. After pointing, one more frame checks the thing is in the middle
+of the view (re-aiming once if not), so every find says how far off it ended. The frame it was confirmed in is
+returned in memory, for the TV, and never saved.
 """
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Protocol
 
 from ..models.common import Mask
@@ -32,6 +33,8 @@ class Found:
     looks: int  # frames read to get here
     remembered: bool = False  # found at the place it was last seen
     reachable: bool = True  # False: the body can't point all the way, so say where instead
+    aim_deg: float | None = None  # after pointing, how far the thing was from the middle of the view; None: not seen
+    reaimed: bool = False  # the check after pointing moved the head once more
 
 
 @dataclass
@@ -49,11 +52,13 @@ class Finder:
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
     on_look: Callable[[float, float], None] | None = None  # told each direction as the head turns (the TV's progress)
     rejected: str = ""  # set by ``check`` to say why it said no ("a mug, but not yours")
+    verify: bool = True  # after pointing, look once more: is it in the middle of the view?
+    aim_tolerance: float = 4.0  # degrees off the middle before the head re-aims once
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
         """The fixed search: the remembered place, then a sweep, then behind. A confident sighting is checked as soon
         as it's seen; otherwise the likeliest places get a closer look after the sweep, up to ``closer_looks``."""
-        self.looks = 0
+        self.looks, self.passed = 0, []
         if last_seen is not None:
             found = self.confirm(label, *last_seen)
             if found:
@@ -111,6 +116,7 @@ class Finder:
         best = min(near, key=lambda m: (m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
         if self.check and not self.check(frame, best):
             self.why, self.rejected = self.rejected or "only a picture of one, on a screen or in a photo", ""
+            self.passed.append(self.why)  # what this search looked at and passed over, for Andy's words
             return None
         y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)
@@ -119,10 +125,30 @@ class Finder:
         self.last_found = found
         found.reachable = self.body.reach.allows(found.yaw, found.pitch)
         self.body.point(found.yaw, found.pitch)  # the body clamps an unreachable direction to its limit
+        if self.verify and found.reachable:
+            self._check_aim(found)
         return found
+
+    def _check_aim(self, found: Found) -> None:
+        """Did the point land? One more frame from where the head now faces: the thing nearest the middle, and how
+        far off it is. Too far, and the head re-aims once (a sagging head, a thing nudged while Andy looked)."""
+        for attempt in range(2):
+            frame = self.body.capture()
+            masks = self._masks(frame, found.label)
+            if not masks:
+                return  # not in view after pointing (moved, or hidden by the dip): aim_deg stays None
+            cam = self._cam(frame)
+            best = min(masks, key=lambda m: (m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
+            y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
+            found.aim_deg = round(math.hypot(y - frame.yaw, p - frame.pitch), 1)
+            if found.aim_deg <= self.aim_tolerance or attempt or not self.body.reach.allows(y, p):
+                return
+            found.yaw, found.pitch, found.reaimed = y, p, True
+            self.body.point(y, p)
 
     looks: int = 0
     last_found: Found | None = None
+    passed: list = field(default_factory=list)  # what the search passed over ("a mug, but not yours")
 
     def _look(self, yaw: float, pitch: float, precise: bool = True) -> Frame:
         if self.on_look:

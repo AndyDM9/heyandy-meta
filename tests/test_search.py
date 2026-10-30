@@ -84,3 +84,52 @@ def test_moved_since_last_seen_falls_back_to_the_sweep():
 def test_weak_detections_are_ignored():
     f, _, _ = finder(Thing("glasses", 30.0, 20.0, score=0.1))
     assert f.find("glasses") is None
+
+
+class SaggingBody(SimBody):
+    """A head that falls short the first time it points, like the real one before its correction."""
+
+    def __init__(self, room, short_by=9.0):
+        super().__init__(room)
+        self.short_by = short_by
+
+    def point(self, yaw, pitch):
+        super().point(yaw, pitch - self.short_by)
+        self.short_by = 0.0
+
+
+def test_the_check_after_pointing_measures_the_aim():
+    f, body, _ = finder(Thing("glasses", 30.0, 20.0))
+    found = f.find("glasses")
+    assert found.aim_deg is not None and found.aim_deg <= 1.0 and not found.reaimed
+    assert found.looks == 2  # the check is one more frame, not one more look in the search
+
+
+def test_a_point_that_falls_short_is_aimed_again_once():
+    room = Room([Thing("glasses", 30.0, 20.0)])
+    body = SaggingBody(room)
+    found = Finder(body, SimSegmenter(room)).find("glasses")
+    assert found.reaimed and found.aim_deg <= 1.0
+    assert len(pointed(body)) == 2 and pointed(body)[-1][2] == pytest.approx(20.0, abs=0.5)
+
+
+def test_a_thing_gone_after_pointing_gives_no_aim():
+    f, body, room = finder(Thing("glasses", 30.0, 20.0))
+    point = body.point
+
+    def point_and_take_it(yaw, pitch):
+        point(yaw, pitch)
+        room.things.clear()  # picked up the moment Andy pointed
+
+    body.point = point_and_take_it
+    found = f.find("glasses")
+    assert found is not None and found.aim_deg is None and not found.reaimed
+
+
+def test_what_a_search_passed_over_is_kept_for_andys_words():
+    f, _, room = finder(Thing("keys", 50.0, 10.0, on_screen=True), Thing("keys", -50.0, 15.0))
+    f.check = SimJudge(room).real
+    f.find("keys")
+    assert any("picture" in why for why in f.passed)
+    f.find("glasses")
+    assert f.passed == []  # each search starts afresh

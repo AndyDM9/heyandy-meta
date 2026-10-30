@@ -88,7 +88,7 @@ def test_recall_goes_to_the_remembered_place_first(tmp_path):
         [("point", {"place": "remembered"})],
         "On the right, where you left them.")
     plan_search(spark, "where are my keys", tools)
-    assert sum(1 for e in body.log if e[0] == "capture") == 1  # one look, no sweep
+    assert sum(1 for e in body.log if e[0] == "capture") == 2  # one look, no sweep; then the check after pointing
 
 
 def test_a_runaway_plan_is_stopped():

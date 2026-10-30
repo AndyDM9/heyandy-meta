@@ -46,6 +46,7 @@ def test_andy_learns_my_mug_and_skips_someone_elses(tmp_path):
     body.room.things.append(red)
     reply = a.hear("where is my mug?")
     assert "the one you showed me" in reply and "right" in reply
+    assert reply.endswith("The other mug isn't yours.")  # it looked at that one first, and says why it passed
     steps = a.screen.snapshot()["steps"]
     assert any("like yours" in s for s in steps)
 
