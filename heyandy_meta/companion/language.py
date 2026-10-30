@@ -1,6 +1,6 @@
 """Andy in Spanish: "Andy, habla español." Hearing, speaking and the TV's captions switch; everything else stays.
 
-Omnilingual ASR (Meta's, on this computer) is told it will hear Spanish; SeamlessM4T v2 (Meta's) speaks Spanish. In
+Omnilingual ASR (Meta's, on this computer) is told it will hear Spanish; MMS-TTS (Meta's) speaks Spanish. In
 between, Andy's request rules and tools work in English, so Muse Glimmer, also on this computer, translates what the
 person said into English and Andy's words into Spanish: 0.25 to 1 s a sentence, so the person's words never leave
 the house for it. Glimmer is started at its answer, past its private reasoning (models/glimmer_fast.py), which otherwise

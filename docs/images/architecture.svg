@@ -73,8 +73,8 @@
   <rect x="764" y="260" width="372" height="118" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>
   <text x="782" y="290" class="h" style="font-size:18px">Hearing and speaking</text>
   <text x="782" y="318" class="t">Omnilingual ASR: English, Spanish</text>
-  <text x="782" y="344" class="t">SeamlessM4T v2: Andy's voice</text>
-  <text x="782" y="366" class="meta">META OPEN WEIGHTS · GPU 1 AND 0</text>
+  <text x="782" y="344" class="t">MMS-TTS: Andy's voice</text>
+  <text x="782" y="366" class="meta">META OPEN WEIGHTS · GPU 1</text>
 
   <!-- Seeing -->
   <rect x="374" y="396" width="372" height="170" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>

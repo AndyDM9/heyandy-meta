@@ -516,7 +516,7 @@
         // Every model Andy runs is Meta's: the roster, and where each runs, whenever nothing else is on the card
         const roster = el("div", null, "roster");
         roster.append(el("b", LANG === "es" ? "Todos los modelos de Andy son de Meta. En esta computadora:" : "Every model Andy runs is Meta's. On this computer:"));
-        for (const n of ["Muse Glimmer", "SAM 3.1", "MapAnything", "DINOv2", "Omnilingual ASR", "SeamlessM4T v2", "Llama Guard 3", "Prompt Guard 2"])
+        for (const n of ["Muse Glimmer", "SAM 3.1", "MapAnything", "DINOv2", "Omnilingual ASR", "MMS-TTS", "Llama Guard 3", "Prompt Guard 2"])
           roster.append(el("span", n, "device"));
         roster.append(el("b", LANG === "es" ? "En la nube, nunca imágenes de la cámara:" : "In the cloud, never camera pictures:"));
         for (const n of ["Muse Spark", "Muse Image"]) roster.append(el("span", n, "cloud"));

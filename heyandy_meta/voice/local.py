@@ -1,4 +1,4 @@
-"""The voice server on this computer (local/voice_server.py): Omnilingual ASR in, SeamlessM4T v2 out (both Meta's)."""
+"""The voice server on this computer (local/voice_server.py): Omnilingual ASR in, MMS-TTS out (both Meta's)."""
 import json
 import urllib.error
 import urllib.request

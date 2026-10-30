@@ -1,7 +1,7 @@
 """The Spanish scorecard: does a request said in Spanish reach the same ability it would in English?
 
 Each request goes through what Andy does in Spanish: Muse Glimmer on this computer translates it into English, and the
-request rules sort it. With --spoken, it's first said by Andy's Spanish voice (SeamlessM4T v2) and heard by Omnilingual ASR (told
+request rules sort it. With --spoken, it's first said by Andy's Spanish voice (MMS-TTS) and heard by Omnilingual ASR (told
 spa_Latn), so speech-to-text slips count too. Nothing leaves this computer. Only the requests, the English, the
 ability reached and the timings are saved.
 

@@ -54,7 +54,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **Llama Guard 3 8B** (open weights, 4-bit, converted here) | GPU 1 | A second crisis check on what the person says, before any other model |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers with sources; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
-| **SeamlessM4T v2** (open weights, its speech half) | GPU 0 | Andy's voice, English and Spanish (0.3 s a sentence); **every model Andy runs is Meta's** |
+| **MMS-TTS** (open weights) | GPU 1 | Andy's voice, English and Spanish (0.1 s a sentence); **every model Andy runs is Meta's** |
 
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
@@ -70,10 +70,11 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 - **How far, from one frame.** MapAnything (Meta's open 3D model) gives metric depth for the frame a thing was
   confirmed in, in 0.2 s on the GPU beside SAM 3.1: the same keyboard read 0.59 to 0.67 m from four starting poses.
   Memory keeps each place's distance, and the TV draws a floor plan in feet.
-- **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2's speech half,
-  chosen by measurement: Omnilingual ASR misheard 9% of its words on Andy's own lines against 23 to 28% for MMS-TTS;
-  the voice is the most expressive of its clearly male speakers. Making room for it on a 24 GB card meant running
-  Glimmer without its drafter (39 tokens a second instead of 53; what it says is unchanged).
+- **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with Meta's open MMS-TTS. A speech
+  recogniser preferred Meta's larger SeamlessM4T v2 (9% of words misheard against 23 to 28%), but at the robot a
+  person understood MMS best, once slowed 8%, cleared of rumble and given 6 dB around 3 kHz; the soft clipper that
+  had blurred its consonants is gone. MMS reads lowercase letters only, so numbers, times and units become words
+  and the pauses punctuation makes are put back.
 - **Agents that can't move the robot by themselves:** named views and numbered places, never motor values; every
   argument checked in code; Andy's words built from what the tools did.
 - **Identical cups, crossing.** Object Multiplex tracks about 4 frames a second on a 3090; at 5 frames a second of

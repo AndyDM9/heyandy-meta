@@ -45,13 +45,22 @@ PROCESSOR = Path.home() / "models" / "seamless-m4t-v2-processor"
 LANG = "eng_Latn"
 
 
-def louder(audio: np.ndarray, target_db: float = -21.0) -> np.ndarray:  # -18 was "a little loud" (founder)
-    """Bring the voice up to target_db (RMS), with a soft limiter so peaks never clip."""
-    rms = float(np.sqrt(np.mean(audio ** 2))) if audio.size else 0.0
-    if rms < 1e-5:
+def louder(audio: np.ndarray, target_db: float = -24.0) -> np.ndarray:
+    """As loud as the setting asks, never clipped: the peak at 0.89 at -24 dB (the level the founder picked, by ear,
+    on the robot's speaker, Oct 30), quieter below it. A soft clipper used to lift quiet speech up to 8 times, which
+    blurred the consonants on the robot's small speaker."""
+    peak = float(np.abs(audio).max()) if audio.size else 0.0
+    if peak < 1e-5:
         return audio
-    gain = min(10 ** (target_db / 20) / rms, 8.0)
-    return (0.95 * np.tanh(gain * audio / 0.95)).astype(np.float32)
+    return (audio * min(0.89, 0.89 * 10 ** ((target_db + 24.0) / 20)) / peak).astype(np.float32)
+
+
+def clearer(audio: np.ndarray, speed: float = 1.0) -> np.ndarray:
+    """For the robot's small speaker (picked by ear on the robot, Oct 30): a little slower, no rumble under 120 Hz,
+    and the consonants brought forward (6 dB around 3 kHz)."""
+    audio = stretch(audio.astype(np.float32), 0.92 * speed)
+    t = torchaudio.functional.highpass_biquad(torch.from_numpy(audio).unsqueeze(0), TTS_RATE, 120.0)
+    return torchaudio.functional.equalizer_biquad(t, TTS_RATE, 3000.0, 6.0, 0.8).squeeze(0).numpy().astype(np.float32)
 
 
 def stretch(audio: np.ndarray, speed: float) -> np.ndarray:
@@ -66,27 +75,31 @@ def stretch(audio: np.ndarray, speed: float) -> np.ndarray:
     return torch.istft(out, n_fft, hop, window=window).numpy().astype(np.float32)
 
 
-def load(asr_card: str, tts_device: str = "cuda:1", speaker: int = 0):
+def load(asr_card: str, tts_device: str = "cuda:1", speaker: int = 0, voice_model: str = "mms"):
     from omnilingual_asr.models.inference.pipeline import ASRInferencePipeline
     from transformers import AutoTokenizer, VitsModel
 
     voices = {}
-    try:  # Meta's clearer voice; if it can't load (no room on the GPU), MMS-TTS speaks instead
+    seamless = None
+    try:  # only when asked for (--voice-model seamless); if it can't load, MMS-TTS speaks instead
+        if voice_model != "seamless":
+            raise LookupError("MMS-TTS was asked for")
         from transformers import AutoProcessor, SeamlessM4Tv2ForTextToSpeech
 
         seamless = (AutoProcessor.from_pretrained(PROCESSOR if PROCESSOR.exists() else SEAMLESS),
                     SeamlessM4Tv2ForTextToSpeech.from_pretrained(
             SEAMLESS, dtype=torch.float16).to(tts_device).eval())
+    except LookupError:
+        pass
     except Exception as e:  # noqa: BLE001 - say so in the log, and speak with MMS
         print(f"SeamlessM4T v2 didn't load ({type(e).__name__}: {e}); speaking with MMS-TTS", flush=True)
-        seamless = None
 
     def mms(text, lang, speed):
         if lang not in voices:
             name = f"facebook/mms-tts-{lang}"
             voices[lang] = (AutoTokenizer.from_pretrained(name), VitsModel.from_pretrained(name).to("cuda").eval())
         tok, model = voices[lang]
-        model.speaking_rate = speed
+        model.speaking_rate = 1.0  # the pace is set after, with the rest of what makes it clearer
         out = []
         for said, pause in phrases(text, "es" if lang == "spa" else "en"):
             out.append(model(**tok(said, return_tensors="pt").to("cuda")).waveform[0].float().cpu().numpy())
@@ -98,13 +111,13 @@ def load(asr_card: str, tts_device: str = "cuda:1", speaker: int = 0):
         lang = "spa" if voice.endswith("spa") else "eng"
         with torch.inference_mode():
             if seamless is None or voice.startswith("mms"):
-                return mms(text, lang, speed)
+                return clearer(mms(text, lang, speed), speed)
             processor, model = seamless
             said = words(text, "es" if lang == "spa" else "en")
             inputs = processor(text=said, src_lang=lang, return_tensors="pt").to(tts_device)
             with torch.cuda.device(tts_device):  # each request is a new thread, whose current GPU would be the first
                 audio = model.generate(**inputs, tgt_lang=lang, speaker_id=speaker)[0].float().cpu().numpy().squeeze()
-        return stretch(audio.astype(np.float32), speed)
+        return clearer(audio, speed)
 
     return ASRInferencePipeline(model_card=asr_card, device="cuda:0"), tts
 
@@ -153,7 +166,7 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                     return self._json(500, {"error": f"{type(e).__name__}: {e}"[:300]})
                 if rate != TTS_RATE and audio.size:
                     audio = torchaudio.functional.resample(torch.from_numpy(audio), TTS_RATE, rate).numpy()
-                audio = louder(audio, loudness)
+                audio = louder(audio, loudness)  # clipped never; the founder's setting decides the level
                 data = audio.astype("<f4").tobytes()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/octet-stream")
@@ -184,5 +197,7 @@ if __name__ == "__main__":
     ap.add_argument("--port", type=int, default=8092)
     ap.add_argument("--tts-device", default="cuda:1", help="where SeamlessM4T v2 runs (this process sees GPU 1, then 0)")
     ap.add_argument("--speaker", type=int, default=0, help="which of SeamlessM4T v2's voices")
+    ap.add_argument("--voice-model", choices=["mms", "seamless"], default="mms",
+                    help="Meta's MMS-TTS (the founder's pick on the robot's speaker) or SeamlessM4T v2")
     args = ap.parse_args()
-    serve(*load(args.asr, args.tts_device, args.speaker), args.asr, "127.0.0.1", args.port)
+    serve(*load(args.asr, args.tts_device, args.speaker, args.voice_model), args.asr, "127.0.0.1", args.port)
