@@ -4,7 +4,7 @@ For each trial the operator puts a thing somewhere (or hides it, for an "absent"
 searches with local SAM 3.1 and Glimmer's picture check. The operator then says whether Andy is pointing at it. Only
 numbers are saved: where it pointed, the time, the looks, and the operator's verdict. No picture is kept.
 
-    uv run python -m evals.physical --things cup,keys,glasses --places 5
+    uv run python -m evals.physical --things cup,keys,glasses --places 7 --layout desk
     uv run python -m evals.physical --policy glimmer      # the operator also types the hint they'd say
 """
 import argparse
@@ -34,6 +34,7 @@ def main() -> None:
     ap.add_argument("--absent-every", type=int, default=4, help="every Nth trial, hide the thing")
     ap.add_argument("--policy", choices=["fixed", "glimmer"], default="fixed")
     ap.add_argument("--light", default="day", help="a note on the lighting, saved with the results")
+    ap.add_argument("--layout", default="", help="which table layout this run is (say, 'desk' or 'coffee table')")
     ap.add_argument("--out", default="evals/results")
     args = ap.parse_args()
     body, judge = ReachyBody(), GlimmerJudge()
@@ -72,6 +73,7 @@ def main() -> None:
                         verdict = "false_find"
                 trials.append({"n": n, "thing": thing, "place": None if absent else place, "absent": bool(absent),
                                "hint": hint, "verdict": verdict, "seconds": seconds, "looks": finder.looks,
+                               "why": finder.why,  # the finder's own reason for a miss ("not there", "only a picture")
                                "pointed": None if found is None else [round(found.yaw, 1), round(found.pitch, 1)]})
     except (KeyboardInterrupt, EOFError):
         print("\nstopped; saving what was done")
@@ -82,10 +84,11 @@ def main() -> None:
                "correct": sum(t["verdict"] == "correct" for t in done),
                "absent_correct": sum(t["verdict"] == "correct" for t in trials if t["absent"]),
                "false_finds": sum(t["verdict"] == "false_find" for t in trials),
+               "off": sum(t["verdict"] == "off" for t in done), "missed": sum(t["verdict"] == "missed" for t in done),
                "seconds_median": sorted(t["seconds"] for t in trials)[len(trials) // 2] if trials else None}
     path = Path(args.out) / f"physical-{args.policy}-{time.strftime('%Y%m%d-%H%M')}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps({"policy": args.policy, "light": args.light, "summary": summary, "trials": trials}, indent=1))
+    path.write_text(json.dumps({"policy": args.policy, "light": args.light, "layout": args.layout, "summary": summary, "trials": trials}, indent=1))
     print(json.dumps(summary, indent=1), "\nsaved", path)
     body.robot.__exit__(None, None, None)
 
