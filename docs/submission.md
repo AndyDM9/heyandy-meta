@@ -19,9 +19,11 @@ table, looks around the room for you, points at the thing, and keeps what it see
 
 ## What it does, in the room
 
-- **"Andy, where are my glasses?"** Andy turns to your voice, looks around the room, and points; the TV shows what it
-  saw, outlined by SAM 3.1. It skips a picture of glasses on the TV, picks "the blue mug, next to the laptop" from
-  look-alikes, and goes straight "behind you, on the left".
+- **"Andy, where are my glasses?"** Andy turns to your voice, looks around the room (the TV shows each view live,
+  every candidate outlined by SAM 3.1), points, then checks with its own camera that the point landed: "There they
+  are! On the armchair, to my left, about 5 feet away" (MapAnything, Meta's 3D model, measures how far). It skips a
+  picture of glasses on the TV, picks "the blue mug, next to the laptop" from look-alikes, and goes straight "behind
+  you, on the left".
 - **"Keep an eye on my keys."** Andy remembers where your chosen things were last seen, in words ("on the desk, behind
   the keyboard"), and when they moved. Never a picture.
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it.
@@ -61,13 +63,21 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 
 ## Technical depth (what was hard)
 
-- **A closed-loop head.** The robot's head falls short and sags (asked for 55 degrees, it reached 40.5); the adapter
-  reads the pose back, corrects once, and every frame carries the measured direction. After pointing, Andy checks with its own camera and corrects again: things in front end within 2 degrees of the middle of its view (about 7 before); past the head's reach, where the base turns, 5 to 9.
+- **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its camera said 7. The head
+  sags about 4 degrees after its pointing nod, so sending the same angles again lands the same way. Andy now corrects
+  the command by what the frame shows: things in front end within 2 degrees of the middle of its view (0.5, 1.6, 1.8);
+  past the head's reach, where the base turns too, still 5 to 9, and we say so.
+- **How far, from one frame.** MapAnything (Meta's open 3D model) gives metric depth for the frame a thing was
+  confirmed in, in 0.2 s on the GPU beside SAM 3.1: the same keyboard read 0.59 to 0.67 m from four starting poses.
+  Memory keeps each place's distance, and the TV draws a floor plan in feet.
+- **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2's speech half,
+  chosen by measurement: Omnilingual ASR misheard 9% of its words on Andy's own lines against 23 to 28% for MMS-TTS;
+  the voice is the most expressive of its clearly male speakers. Making room for it on a 24 GB card meant running
+  Glimmer without its drafter (39 tokens a second instead of 53; what it says is unchanged).
 - **Agents that can't move the robot by themselves:** named views and numbered places, never motor values; every
   argument checked in code; Andy's words built from what the tools did.
 - **Identical cups, crossing.** Object Multiplex tracks about 4 frames a second on a 3090; at 5 frames a second of
-  video the cups were lost every time, so Andy records at 10 and replays. Small detection batches fit it on one 24 GB
-  card beside the voice, Prompt Guard and Llama Guard.
+  video the cups were lost every time, so Andy records at 10 and replays.
 - **Telling my mug from yours.** DINOv2 ignores colour (a blue and a red mug of one shape: 0.94 alike), so half the
   likeness is a colour fingerprint of the mug's own pixels: red 0.55, the same thing from other angles 0.79 to 0.98.
 - **Straight to the answer.** Glimmer reasons before every answer, whatever its setting. Starting its reply past the
@@ -89,7 +99,8 @@ receipt** (the rest were Andy's own instructions); crisis words reached no model
 *Spanish:* **41 of 41** written requests and **40 of 41** spoken ones reach the right ability (after two translation
 rules this scorecard showed were needed).
 *On the robot:* a cup found in 7.5 s and a keyboard in 7.1 s; first word 0.7 to 1 s after Andy understands you;
-[the physical scorecard: N of M].
+alone in the room, 12 of 12 unattended searches ended in a point with no errors (8.7 to 11.8 s, the camera check
+included); [the physical scorecard: N of M].
 *Not yet tried on the robot with real things or a person:* the cup game (synthetic shuffles: 3 of 5), my mug, "what's
 that?" (public photos: 4 of 6), going out (robot simulated). Every result, failures included: `evals/results/` and `docs/research.md`.
 
