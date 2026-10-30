@@ -44,6 +44,15 @@ where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", 
    and run the preflight again.
 6. **Between takes:** nothing to delete on this computer (Andy keeps no pictures or audio); `film/` is never committed.
    Keep every take that's used, uncut, for the "autonomous · uncut · 1× speed" badge.
+7. **After a good take** (a minute each, all on this computer): captions from Andy's own hearing, read and corrected by
+   hand, then the piece with the captions and the badge burned in, the robot and the TV side by side:
+   ```bash
+   uv run python scripts/make_film.py captions film/take1.mp4          # -> film/take1.srt; fix any wrong word
+   uv run python scripts/make_film.py burn film/take1.mp4 --tv film/tv-take1.webm --tv-offset 0.8 --out film/find.mp4
+   uv run python scripts/make_film.py burn film/take1.mp4 --start 12 --end 42 --shape vertical --out film/x-clip.mp4
+   ```
+   `--tv-offset` is the second of the TV recording that matches the take's first frame. A piece across a time cut gets
+   its own badge: `--badge "autonomous · 1× speed · two minutes later"`.
 
 **Rules for filming:** no Meta logos; no music we don't own; subtitles burned in; no condition names and no health,
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never
