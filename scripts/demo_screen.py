@@ -93,18 +93,19 @@ def show(state: ScreenState, scene: str) -> None:
         state.looking("mug")
         state.timer_start()
         for s in ("look: a little to my left, a little to my right", "compare: the blue one, next to the laptop",
-                  "look closer and point: confirmed, a little to my right"):
+                  "look closer and point: confirmed, a little to my right",
+                  "checked: pointing at it, 1° off the middle", "MapAnything: 1.2 m away"):
             state.step(s)
         state.timer_stop()
         state._timer = (time.monotonic() - 9.4, time.monotonic())  # a typical find on the robot, for the picture
         jpeg, mask = sample_frame()
         found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3)
-        state.found(found, "I see your blue mug, a little to my right.")
-        state.said("I see your blue mug, a little to my right.", "device",
+        state.found(found, "There it is! I see your blue mug, a little to my right, about 4 feet away.")
+        state.said("There it is! I see your blue mug, a little to my right, about 4 feet away.", "device",
                    "search planned by Muse Glimmer on this computer")
         state.doing("Pointing", "At your mug")
-        for name, times in (("Omnilingual ASR (hearing)", 1), ("Muse Glimmer (plans)", 2), ("SAM 3.1", 3),
-                            ("Muse Glimmer (picture check)", 2), ("Kokoro (voice)", 1)):
+        for name, times in (("Omnilingual ASR (hearing)", 1), ("Muse Glimmer (plans)", 2), ("SAM 3.1", 4),
+                            ("Muse Glimmer (picture check)", 2), ("MapAnything (how far)", 1), ("Kokoro (voice)", 1)):
             state.used(name, "device", times)
     elif scene == "mine":
         state.looking("mug")
@@ -116,7 +117,7 @@ def show(state: ScreenState, scene: str) -> None:
         state._timer = (time.monotonic() - 11.2, time.monotonic())
         jpeg, mask = sample_frame()
         found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=4)
-        words = "I see your mug, the one you showed me, a little to my right."
+        words = "Found it! I see your mug, the one you showed me, a little to my right. The other mug isn't yours."
         state.found(found, words)
         state.said(words, "device", "fixed search on this computer")
         state.doing("Pointing", "At your mug")
