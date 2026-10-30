@@ -146,6 +146,11 @@ class Andy:
             self._source = self._reason = ""
             self._pointed, self._said = False, []
             self.screen.doing("Thinking", "Looking at you")
+            if not (flagged or crisis(text)):  # a feeling of its own at a calm moment: never in a crisis turn
+                if THANKS.search(text):
+                    self.emote("grateful1")
+                elif HELLO.search(text):
+                    self.emote("welcoming1")
             reply = respond(text, self._answer, self.disclosure, opening=self._say_now, flagged=flagged)
             rest = reply
             for part in self._said:  # what was already said as it came (the opening, streamed sentences)
@@ -426,6 +431,17 @@ class Andy:
         g = getattr(self.body, "gesture", None)
         if g:
             g(name)
+
+    def emote(self, name: str) -> None:
+        """One of Pollen's recorded emotions (robot/reachy_mini.py emote), at a calm moment only: not while quiet, not
+        when asked to move less, never while searching or pointing (the callers are the calm moments)."""
+        e = getattr(self.body, "emote", None)
+        if e is None or self.quiet() or self.liveliness < 0.65:
+            return
+        try:
+            e(name)
+        except Exception:  # noqa: BLE001 - a feeling is never worth a failed turn
+            pass
 
     def find(self, thing: str, request: str, hint: bool = False) -> str:
         """A plain "where are my keys" gets the fast fixed sweep; a request with a hint gets an agent that uses it."""
@@ -1017,6 +1033,7 @@ class Andy:
             words.append(f"Remember: {next_up}.")
         if weather.get("text"):
             words.append(weather["text"])
+        self.emote("welcoming2")  # a wave goodbye
         return " ".join(words + ["Have a lovely time!"])
 
     def draw_my_things(self) -> str:
@@ -1147,6 +1164,7 @@ class Andy:
         return said
 
     def _not_found(self, thing: str) -> str:
+        self.emote("oops1")
         if self._not_yours or "not yours" in self.finder.why:
             return f"I saw a {thing}, but not yours. Could you tell me where you last had {_it(thing)}?"
         if "picture" in self.finder.why:
@@ -1283,6 +1301,9 @@ def _ago(seconds: float) -> str:
     hours = minutes // 60
     return f"{hours} hour{'s' * (hours != 1)} ago"
 
+
+THANKS = re.compile(r"\b(thank you|thanks|thank u)\b", re.I)
+HELLO = re.compile(r"^\W*(andy\W+)?(good morning|good afternoon|good evening|hello|hi there)\b", re.I)
 
 FOUND_OPENERS = {"it": ("There it is!", "Found it!", "Ah, there it is!"),
                  "them": ("There they are!", "Found them!", "Ah, there they are!")}

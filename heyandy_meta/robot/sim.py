@@ -61,6 +61,10 @@ class SimBody:
     def say(self, text: str) -> None:
         self.log.append(("say", text))
 
+    def emote(self, name: str, sound: bool = True) -> bool:
+        self.log.append(("emote", name))
+        return True
+
 
 class SimSegmenter:
     """Answers like SAM 3.1 would, from the room's ground truth."""

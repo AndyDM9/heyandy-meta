@@ -452,3 +452,27 @@ def test_a_staged_scene_says_camera_pictures_went(tmp_path):
     a.vision_where = "cloud"
     a.hear("where are my keys")
     assert any(o.get("pictures") and "camera pictures" in o["words"] for o in a.screen.snapshot()["outbox"])
+
+
+def emotes(body):
+    return [e[1] for e in body.log if e[0] == "emote"]
+
+
+def test_andy_shows_a_feeling_at_calm_moments_only(tmp_path):
+    a, body, _ = andy(Thing("keys", 15.0, 28.0), tmp_path=tmp_path)
+    a.hear("Thank you, Andy")
+    a.hear("where are my glasses")  # not here: an "oops", after the search, not during it
+    assert emotes(body) == ["grateful1", "oops1"]
+    body.log.clear()
+    a.hear("where are my keys")
+    assert emotes(body) == []  # found and pointing: the head stays on the thing
+
+
+def test_no_feelings_in_a_crisis_or_when_asked_to_move_less(tmp_path):
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.hear("Thank you. I want to die")
+    assert emotes(body) == []
+    a.hear("move less")
+    a.hear("move less")
+    a.hear("thank you")
+    assert emotes(body) == []

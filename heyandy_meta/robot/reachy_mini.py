@@ -41,6 +41,8 @@ def _yaw_pitch(pose) -> tuple[float, float]:
     return math.degrees(math.atan2(pose[1][0], pose[0][0])), math.degrees(math.asin(-max(-1.0, min(1.0, pose[2][0]))))
 
 
+EMOTIONS = "pollen-robotics/reachy-mini-emotions-library"
+
 class ReachyBody:
     def __init__(self, robot=None, reach: Reach = Reach(), head_yaw: float = 30.0, max_deg_s: float = 70.0,
                  settle_s: float = 0.3, tolerance: float = 1.5, pose=None, say=None, sleep=time.sleep,
@@ -65,6 +67,7 @@ class ReachyBody:
         self.speaking = False  # Andy's voice is playing
         self._sent = (0.0, 0.0, 0.0)  # the last head yaw, pitch and base yaw sent
         self.motion = Motion()
+        self._emotions = None  # Pollen's recorded emotions, loaded the first time one is played
         self._moving = threading.RLock()  # one sender at a time: a move, or the body-language loop
         self._gaze: tuple[float, float] | None = None  # a direction to ease the head towards (the person's face)
         self._stop = threading.Event()
@@ -194,6 +197,24 @@ class ReachyBody:
             self._send(head, pitch, base, 0.25)
         else:
             self.motion.set_mode(name)
+
+    def emote(self, name: str, sound: bool = True) -> bool:
+        """One of Pollen's recorded emotions (pollen-robotics/reachy-mini-emotions-library, Apache-2.0: head, antennas
+        and a sound of its own; recorded moves, not a model), then back to exactly where the head was. Only at calm
+        moments the app chooses, never while a search or a point needs the head still."""
+        try:
+            if self._emotions is None:
+                from reachy_mini.motion.recorded_move import RecordedMoves
+
+                self._emotions = RecordedMoves(EMOTIONS)
+            move = self._emotions.get(name)
+        except Exception:  # noqa: BLE001 - no library (offline, first run): no emotion, and nothing else changes
+            return False
+        with self._moving:  # the body-language loop waits
+            self.robot.play_move(move, initial_goto_duration=0.4, sound=sound)
+            head, pitch, base = self._sent
+            self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=0.5)
+        return True
 
     # --- the speaker and the microphone array (16 kHz) ---
 
