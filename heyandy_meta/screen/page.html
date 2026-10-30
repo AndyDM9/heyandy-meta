@@ -129,6 +129,10 @@
   .does { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
   .does div { border-top: 0.2rem solid var(--accent); padding-top: 1rem; font-size: 1.6rem; }
   .does b { display: block; font-size: 2rem; font-weight: 750; margin-bottom: 0.3rem; }
+  .roster { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; font-size: 1.35rem; margin-top: 2.6rem; }
+  .roster b { color: var(--muted); font-weight: 600; margin-right: 0.2rem; }
+  .roster span { border-radius: 99rem; padding: 0.3rem 1rem; border: 0.12rem solid currentColor; font-weight: 600; }
+  .roster .device { color: var(--accent); } .roster .cloud { color: var(--cloud); }
   #models { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; font-size: 1.2rem; margin-top: 1rem; }
   #models b { color: var(--muted); font-weight: 600; }
   #models span { border-radius: 99rem; padding: 0.25rem 0.9rem; border: 0.12rem solid currentColor; }
@@ -509,7 +513,14 @@
                               ["Reminds you", "Turns to find you when it's time, and says it in your own words."]]) {
           const x = el("div", T(d)); x.prepend(el("b", T(b))); does.append(x);
         }
-        body.replaceChildren(t, does);
+        // Every model Andy runs is Meta's: the roster, and where each runs, whenever nothing else is on the card
+        const roster = el("div", null, "roster");
+        roster.append(el("b", LANG === "es" ? "Todos los modelos de Andy son de Meta. En esta computadora:" : "Every model Andy runs is Meta's. On this computer:"));
+        for (const n of ["Muse Glimmer", "SAM 3.1", "MapAnything", "DINOv2", "Omnilingual ASR", "SeamlessM4T v2", "Llama Guard 3", "Prompt Guard 2"])
+          roster.append(el("span", n, "device"));
+        roster.append(el("b", LANG === "es" ? "En la nube, nunca imágenes de la cámara:" : "In the cloud, never camera pictures:"));
+        for (const n of ["Muse Spark", "Muse Image"]) roster.append(el("span", n, "cloud"));
+        body.replaceChildren(t, does, roster);
       }
     }
     $("kicker").textContent = kicker; $("title").textContent = title; $("title").hidden = !title;
