@@ -72,6 +72,10 @@ class Places:
         """Where it has been, oldest first: each place with when it was first and last seen there, and its words."""
         return [dict(h) for h in self._data.get("history", {}).get(label, [])]
 
+    def metres(self, label: str) -> float | None:
+        """How far away it was when last seen (MapAnything), if that was measured."""
+        return (self._data["seen"].get(label) or {}).get("metres")
+
     def seen_at(self, label: str) -> float | None:
         s = self._data["seen"].get(label)
         return s["at"] if s else None

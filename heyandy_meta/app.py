@@ -1158,7 +1158,9 @@ class Andy:
             history = self.places.history(label)
             where = (history[-1]["near"] if history and history[-1]["near"] else side(last[0]))
             moved = f" (moved at {spoken_time(history[-1]['since'])})" if len(history) > 1 else ""
-            lines.append(f"{label}: seen {_ago(self.clock() - at)}, {where}{moved}")
+            metres = self.places.metres(label)
+            far = f", {how_far(metres)}" if metres is not None else ""
+            lines.append(f"{label}: seen {_ago(self.clock() - at)}, {where}{far}{moved}")
         watched = self.places.watching()
         lines += [f"{k}: I know it by sight" for k in self.mine.known() if k not in watched]
         return lines
@@ -1203,8 +1205,9 @@ class Andy:
         out = []
         for label in self.places.watching():
             last, at = self.places.last_seen(label, now=self.clock()), self.places.seen_at(label)
-            out.append({"label": label, "yaw": last[0], "pitch": last[1], "ago_s": round(self.clock() - at)}
-                       if last else {"label": label})
+            metres = self.places.metres(label) if last else None
+            out.append({"label": label, "yaw": last[0], "pitch": last[1], "ago_s": round(self.clock() - at),
+                        **({"metres": metres} if metres is not None else {})} if last else {"label": label})
         return out
 
     # --- between turns ---

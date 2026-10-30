@@ -38,3 +38,13 @@ def test_without_mapanything_andy_says_the_direction_only(tmp_path):
     a, _, _ = andy(Thing("keys", 15.0, 28.0), tmp_path=tmp_path)
     a.depth = Depth(down=True)
     assert a.hear("where are my keys").endswith("I see your keys, a little to my left.")
+
+
+def test_the_memory_list_and_the_map_carry_the_distance(tmp_path):
+    a, _, _ = andy(Thing("keys", 15.0, 28.0), tmp_path=tmp_path)
+    a.depth = Depth(1.5)
+    a.hear("keep an eye on my keys")
+    a.hear("where are my keys")
+    snap = a.screen.snapshot()
+    assert snap["map"][0]["metres"] == 1.5
+    assert any("about 5 feet away" in line for line in snap["watching"])

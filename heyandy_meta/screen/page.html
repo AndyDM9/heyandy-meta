@@ -87,6 +87,8 @@
   .dial.big { max-width: 28rem; margin: 0; }
   .dial .ring { fill: none; stroke: var(--muted); stroke-width: 0.6; opacity: 0.5; }
   .dial .front { fill: var(--muted); font-size: 9px; text-anchor: middle; }
+  .dial .scale { fill: var(--muted); font-size: 7px; }
+  .dial:not(.big) .scale { display: none; }
   .dial .dot { fill: var(--accent); }
   /* A web page needs the room: no side cards, and a one-line date */
   main:has(.web) { grid-template-columns: 1fr; } main:has(.web) .side { display: none; }
@@ -311,21 +313,32 @@
     $("watching").replaceChildren(...(list.children.length ? (seen ? [dial(s.map), list] : [list])
                                      : [el("div", T("Nothing yet. “Andy, keep an eye on my keys.”"), "when")]));
   }
-  // What Andy remembers, as a map around it: front is up, left is left; lower (nearer) things sit closer in;
-  // older sightings fade. Directions are where the head looked, so this is a dial, not a floor plan.
+  // What Andy remembers, as a map around it: front is up, left is left; older sightings fade. With MapAnything's
+  // distances it's a floor plan: each thing at its measured distance along the floor, rings in feet. Without them
+  // it's a dial: lower (nearer) things sit closer in.
   function dial(places, big) {
     const svg = document.createElementNS(svgNS, "svg"), R = 82;
     svg.setAttribute("viewBox", "-110 -110 220 220"); svg.setAttribute("class", "dial" + (big ? " big" : ""));
     svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Where Andy last saw the things it keeps an eye on");
     const add = (tag, attrs, text) => { const e = document.createElementNS(svgNS, tag);
       for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text) e.textContent = text; svg.append(e); return e; };
-    add("circle", { cx: 0, cy: 0, r: R, class: "ring" }); add("circle", { cx: 0, cy: 0, r: R / 2, class: "ring" });
+    const floor = p => p.metres * Math.cos(Math.min(Math.max(p.pitch, -60), 60) * Math.PI / 180);  // along the floor
+    const measured = (places || []).filter(p => p.yaw !== undefined && p.metres);
+    const far = Math.max(1, ...measured.map(floor)) * 3.281;  // feet to the farthest thing
+    const step = far <= 4 ? 1 : far <= 8 ? 2 : far <= 20 ? 5 : 10, rings = Math.ceil(far / step), perFt = R / (rings * step);
+    add("circle", { cx: 0, cy: 0, r: R, class: "ring" });
+    if (measured.length) {  // a ring every step, labelled in feet (metres in Spanish)
+      for (let i = 1; i < rings; i++) add("circle", { cx: 0, cy: 0, r: i * step * perFt, class: "ring" });
+      for (let i = 1; i <= rings; i++) add("text", { x: 3, y: i * step * perFt - 3, class: "scale" },
+        LANG === "es" ? (i * step / 3.281).toFixed(1) + " m" : i * step + " ft");
+    } else add("circle", { cx: 0, cy: 0, r: R / 2, class: "ring" });
     add("text", { x: 0, y: -R - 6, class: "front" }, LANG === "es" ? "al frente" : "front");
     add("rect", { x: -9, y: -7, width: 18, height: 14, rx: 7, fill: "var(--accent)" });  // Andy
     add("circle", { cx: -3.5, cy: 0, r: 2.2, fill: "var(--panel)" }); add("circle", { cx: 3.5, cy: 0, r: 2.2, fill: "var(--panel)" });
     for (const p of places || []) {
       if (p.yaw === undefined) continue;
-      const a = p.yaw * Math.PI / 180, r = R * (0.95 - 0.5 * Math.min(Math.max(p.pitch, 0), 35) / 35);
+      const a = p.yaw * Math.PI / 180, r = measured.length ? (p.metres ? Math.min(R, floor(p) * 3.281 * perFt) : R)
+        : R * (0.95 - 0.5 * Math.min(Math.max(p.pitch, 0), 35) / 35);
       const x = -r * Math.sin(a), y = -r * Math.cos(a);
       const g = document.createElementNS(svgNS, "g");
       g.setAttribute("opacity", p.ago_s < 600 ? 1 : p.ago_s < 7200 ? 0.75 : 0.5); svg.append(g);

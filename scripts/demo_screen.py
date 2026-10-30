@@ -76,9 +76,9 @@ def show(state: ScreenState, scene: str) -> None:
     state.reminder_next("Call Sam", time.time() + 25 * 60)
     state.keeping(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",
                    "remote: seen 25 minutes ago, behind me on my left"],
-                  [{"label": "keys", "yaw": 48.0, "pitch": 20.0, "ago_s": 7300},
-                   {"label": "glasses", "yaw": -22.0, "pitch": 14.0, "ago_s": 600},
-                   {"label": "remote", "yaw": 125.0, "pitch": 26.0, "ago_s": 1500}])
+                  [{"label": "keys", "yaw": 48.0, "pitch": 20.0, "ago_s": 7300, "metres": 1.7},
+                   {"label": "glasses", "yaw": -22.0, "pitch": 14.0, "ago_s": 600, "metres": 0.9},
+                   {"label": "remote", "yaw": 125.0, "pitch": 26.0, "ago_s": 1500, "metres": 2.6}])
     state.doing("Waiting")
     state.said("")
     if scene == "finding":
@@ -159,9 +159,9 @@ def show(state: ScreenState, scene: str) -> None:
         state.reminder_next("Llamar a Sam", time.time() + 25 * 60)
         state.keeping(["llaves: vistas hace 2 horas, a mi izquierda", "gafas: vistas hace 10 minutos, un poco a mi derecha",
                        "control remoto: visto hace 25 minutos, detrás de mí a la izquierda"],
-                      [{"label": "llaves", "yaw": 48.0, "pitch": 20.0, "ago_s": 7300},
-                       {"label": "gafas", "yaw": -22.0, "pitch": 14.0, "ago_s": 600},
-                       {"label": "control remoto", "yaw": 125.0, "pitch": 26.0, "ago_s": 1500}])
+                      [{"label": "llaves", "yaw": 48.0, "pitch": 20.0, "ago_s": 7300, "metres": 1.7},
+                       {"label": "gafas", "yaw": -22.0, "pitch": 14.0, "ago_s": 600, "metres": 0.9},
+                       {"label": "control remoto", "yaw": 125.0, "pitch": 26.0, "ago_s": 1500, "metres": 2.6}])
         state.looking("taza")
         state.timer_start()
         state.step("miré: un poco a mi izquierda, un poco a mi derecha")
@@ -203,8 +203,9 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("Muse Image", "cloud")
         state.sent("Muse Image", "a lighthouse at dawn, in soft watercolor")
     elif scene == "memory":
-        state.remember_list(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",
-                             "remote: seen 25 minutes ago, behind me on my left"])
+        state.remember_list(["keys: seen 2 hours ago, to my left, about 6 feet away",
+                             "glasses: seen 10 minutes ago, a little to my right, about 3 feet away",
+                             "remote: seen 25 minutes ago, behind me on my left, about 9 feet away"])
         state.said("I'm keeping an eye on your keys and your glasses. It's on the screen.", "device")
         state.doing("Speaking", "Looking at you")
     elif scene == "privacy":
