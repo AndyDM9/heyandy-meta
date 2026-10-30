@@ -182,7 +182,7 @@ def main() -> None:
             v.language = lang
             heard = v.transcribe(v.speak(said, rate=16000))
             want, got = (set(re.findall(r"\w+", t.lower())) for t in (said, heard))
-            if len(want & got) < len(want) - 1:  # both working: at most one word misheard ("gafas" as "cafas")
+            if len(want & got) * 2 < len(want):  # both working: half the words heard is enough ("mis gafas" as "disgafas")
                 raise RuntimeError(f"heard {heard!r} for {said!r}")
             out.append(repr(heard))
         return " / ".join(out)

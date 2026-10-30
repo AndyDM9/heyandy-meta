@@ -1,14 +1,14 @@
 [Unit]
-Description=HeyAndy: hearing (Omnilingual ASR) and speaking (MMS-TTS), Meta's, on GPU 1 (this computer only)
+Description=HeyAndy: hearing (Omnilingual ASR, GPU 1) and speaking (SeamlessM4T v2, GPU 0), Meta's, this computer only
 
 [Service]
-# Every model Andy runs is Meta's. The voice is MMS-TTS with the clarity processing the founder picked by ear on the
-# robot's speaker (Oct 30); SeamlessM4T v2 is there too (--voice-model seamless; it would need about 3.3 GB on GPU 0).
+# Every model Andy runs is Meta's. The voice is SeamlessM4T v2, speaker 51, with the clarity processing: the founder's
+# pick by ear on the robot's speaker (Oct 30, option 2 of 5; MMS-TTS sounded like an older person). On GPU 0.
 Environment=CUDA_DEVICE_ORDER=PCI_BUS_ID
 Environment=CUDA_VISIBLE_DEVICES=1,0
 Environment=PYTHONWARNINGS=ignore
 Environment=HF_HUB_OFFLINE=1
-ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py --voice-model mms
+ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py --voice-model seamless --speaker 51 --tts-device cuda:1
 Restart=on-failure
 
 [Install]
