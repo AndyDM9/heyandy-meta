@@ -9,7 +9,7 @@ personal in view). The TV page is screen-recorded at the same time.
 | 0:00–0:06 | Title card | **Required first line (FAQ):** what existed before (a Reachy Mini; our own earlier object-finding prototype) and that everything shown was built this week on Meta's models. *(the founder's exact words)* |
 | (in the close, or a caption over 0:06–0:16) | One plain line, as the organizers asked (Oct 30 ruling): | "Andy gives no health advice. It finds things, remembers where they are, and reminds you of what you asked." |
 | 0:06–0:16 | A person patting their pockets | The problem in one line: the same few things go missing every day, and a camera that streams your home to the cloud is a camera most people won't have. |
-| 0:16–0:55 | **The uncut find**, robot and TV side by side, badge "autonomous · uncut · 1× speed" | "Andy, where are my glasses?" Andy turns to the voice, "Let me look", sweeps, **skips the glasses on the TV**, looks closer and points: "There they are! I see your glasses, to my right, about 5 feet away. Not the picture of one on the screen." The TV: the frame with SAM 3.1's outline, the plan, "checked: pointing at it, 1° off the middle", MapAnything's distance, the timer, the models used. |
+| 0:16–0:55 | **The uncut find**, robot and TV side by side, badge "autonomous · uncut · 1× speed" | "Andy, where are my glasses?" Andy turns to the voice, "Let me look", sweeps, **skips the glasses on the TV**, looks closer and points: "There they are! I see your glasses, to my right, about 5 feet away. Not the picture of one on the screen." The TV, filmed beside the robot: **while it looks, each view live with SAM 3.1's outlines on every candidate**; then the found picture with three large figures (seconds to find it, degrees off target checked by its camera, feet away from MapAnything) and the models used. |
 | 0:55–1:12 | **Follow the mug** | "Andy, follow the mug." The person slides it around the table; Andy's eyes stay on it, the base turning past the head's reach. "Stop." |
 | 1:12–1:32 | **Several things at once** | "Andy, find the cup and remind me in two minutes to drink some water." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
 | 1:32–1:46 | **Unplug the network** | The TV says Offline; "Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
@@ -27,6 +27,10 @@ doing what finding frame by frame can't: telling identical cups apart as they cr
 blue one": "Andy, this is my mug" (held up and turned), then with a second mug of another colour on the table, "Andy,
 where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", "91%: yours"). It shows a Meta open model
 (DINOv2) and the privacy story in one line: "I keep what it looks like as numbers, never a picture."
+
+**The X clip (30 s, vertical, `make_film.py --shape vertical`):** the first second is the head turning to point; the
+TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
+model is Meta's."
 
 ## Filming day, step by step
 
