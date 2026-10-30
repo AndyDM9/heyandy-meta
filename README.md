@@ -93,7 +93,9 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **On the Reachy Mini Lite:** a closed-loop adapter (the only module that imports Pollen's SDK). The head falls short and
   sags, so it reads the pose back, corrects once, and every frame carries the measured direction; the base turns past
   the head's reach. Body language in a 50 Hz loop: breathing, listening, thinking, moving with its own words, a
-  found-wiggle; it keeps its eyes on the person.
+  found-wiggle; it keeps its eyes on the person. At calm moments a feeling of its own from Pollen's recorded emotions library
+  (Apache-2.0; moves, not a model): grateful for a thank-you, welcoming for good morning, an oops after a miss, a wave
+  goodbye; never during a search or a point.
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
   Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
