@@ -93,7 +93,9 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
   sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;
-  close names in one request ("cup" also finds the mug).
+  close names in one request ("cup" also finds the mug). **After pointing, Andy checks the point landed:** one more
+  frame measures how far the thing is from the middle of the view (re-aiming once past 4 degrees), the TV shows it,
+  and Andy says what it passed over on the way ("The other mug isn't yours").
 - **Agents that plan the search with the robot's tools:** Muse Spark online, Muse Glimmer on this computer, with the
   same checked tools (named views and numbered places, never motor values), ten looks at most, no repeat looks, and
   Andy's words written from the tools' results, never the model's.
