@@ -7,7 +7,9 @@ trademark application.
 
 ## What it does
 1. **Ask "where are my glasses?"** The robot looks around the room.
-2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points.
+2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points, then checks
+   the point landed with its own camera. **MapAnything** (Meta's 3D model) says how far: "on the armchair, to my left,
+   about 5 feet away", and the TV's map of your things becomes a floor plan, in feet.
 3. **The TV shows the picture it saw them in,** with the mask drawn. The picture is kept in memory only, never saved.
 4. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
    agent: Muse Spark through the Meta Model API, or Muse Glimmer on the computer beside the robot, so the robot keeps
@@ -88,7 +90,8 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
   found-wiggle; it keeps its eyes on the person.
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
-  Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), Llama Prompt Guard 2 (reading each web page before the
+  Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
+  found thing is, from one camera frame: metric depth, about 0.2 s), Llama Prompt Guard 2 (reading each web page before the
   cloud model sees it), Llama Guard 3 (a second crisis check); with
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident

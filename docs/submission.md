@@ -47,6 +47,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; says what it sees; translates Spanish |
 | **Omnilingual ASR** (open weights) | GPU 1 | Hears the person, in English or Spanish |
 | **DINOv2** (open weights) | GPU 1 | Knows the person's own things by sight |
+| **MapAnything** (open weights, Apache-2.0) | GPU 1 | How far away a found thing is, from one frame; the TV's floor plan of your things |
 | **Llama Prompt Guard 2** (open weights) | GPU 1 | Reads each web page first: one that tries to instruct Andy ends the run |
 | **Llama Guard 3 8B** (open weights, 4-bit, converted here) | GPU 1 | A second crisis check on what the person says, before any other model |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers with sources; computer use |
