@@ -61,6 +61,9 @@ PHRASES = {"es": {
     "Let me draw where your things are. It takes a little while.": "Déjeme dibujar dónde están sus cosas. Tarda un poco.",
     "Let me draw that. It takes a little while.": "Déjeme dibujarlo. Tarda un poco.",
     "Okay, I'll speak Spanish now.": "De acuerdo, desde ahora le hablo en español.",
+    # how a find begins (app.FOUND_OPENERS): no gender, so they fit any thing
+    "There it is!": "¡Ahí está!", "Found it!": "¡Listo, ahí está!", "Ah, there it is!": "¡Ah, ahí está!",
+    "There they are!": "¡Ahí están!", "Found them!": "¡Listo, ahí están!", "Ah, there they are!": "¡Ah, ahí están!",
     # the going-out checklist, on the TV
     "Not where I last saw it: with you?": "No está donde lo vi: ¿lo lleva usted?",
     "Not where I last saw them: with you?": "No están donde los vi: ¿los lleva usted?",

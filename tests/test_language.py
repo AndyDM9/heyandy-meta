@@ -46,8 +46,8 @@ def test_andy_hears_and_speaks_spanish(tmp_path):
     body.log.clear()
     reply = a.hear("¿dónde están mis gafas?")
     assert reply.endswith("I see your glasses, to my right.")  # the rules worked in English
-    assert said(body) == ["Déjeme buscar.", "Veo sus gafas, a mi derecha."]
-    assert a.screen.snapshot()["caption"] == "Veo sus gafas, a mi derecha."
+    assert said(body) == ["Déjeme buscar.", "¡Ahí están! Veo sus gafas, a mi derecha."]  # the opener by hand
+    assert a.screen.snapshot()["caption"] == "¡Ahí están! Veo sus gafas, a mi derecha."
     a.hear("habla inglés")
     assert a.language == "en" and a.voice.voice == "am_michael"
 

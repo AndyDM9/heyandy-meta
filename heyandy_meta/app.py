@@ -86,6 +86,7 @@ class Andy:
         self._alike: float | None = None  # how like the person's own the last checked thing was
         self._not_yours = False  # this find saw one, but someone else's
         self.depth = None  # MapAnything on this computer (models/depth_local.py): how far away a found thing is
+        self._finds = 0  # which opener the next find gets ("There they are!", "Found them!")
         self.finder = Finder(self.body, self.segmenter, check=self._check,
                              on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"))
         self.router = Router(self.device, self.cloud or NoCloud())
@@ -1134,6 +1135,9 @@ class Andy:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""
         said = f"I see your {f.label}{yours}, {where}." + (" Right where I last saw it." if f.remembered else "")
+        opener = FOUND_OPENERS[_it(f.label)][self._finds % len(FOUND_OPENERS["it"])]  # said like a person, in turn
+        self._finds += 1
+        said = f"{opener} {said}"
         passed = self.finder.passed or []  # what it looked at on the way and passed over: say so, once
         if any("not yours" in why for why in passed):
             said += f" The other {f.label} isn't yours."
@@ -1146,7 +1150,7 @@ class Andy:
             return f"I saw a {thing}, but not yours. Could you tell me where you last had {_it(thing)}?"
         if "picture" in self.finder.why:
             return f"I only saw a picture of {thing} on a screen. Could you tell me where you last had {_it(thing)}?"
-        return f"I couldn't find your {thing}. Could you tell me where you last had {_it(thing)}?"
+        return f"Hmm, I couldn't find your {thing} from here. Where did you last have {_it(thing)}?"
 
     def _memory(self) -> list[str]:
         lines = []
@@ -1277,6 +1281,10 @@ def _ago(seconds: float) -> str:
         return f"{minutes} minute{'s' * (minutes != 1)} ago"
     hours = minutes // 60
     return f"{hours} hour{'s' * (hours != 1)} ago"
+
+
+FOUND_OPENERS = {"it": ("There it is!", "Found it!", "Ah, there it is!"),
+                 "them": ("There they are!", "Found them!", "Ah, there they are!")}
 
 
 def _it(thing: str) -> str:
