@@ -74,6 +74,9 @@ def build(args) -> Andy:
         from .companion.safety_model import LlamaGuard
 
         andy.guard = LlamaGuard(args.guard)
+        from .models.depth_local import LocalDepth
+
+        andy.depth = LocalDepth(args.depth)  # how far away a found thing is (deploy/heyandy-depth.service)
     andy.load_voice()
     if args.staged_scene:
         if not args.robot:
@@ -95,6 +98,7 @@ def main() -> None:
     ap.add_argument("--sam", default="http://127.0.0.1:8090")
     ap.add_argument("--voice", action="store_true", help="listen and speak through the robot (needs --robot)")
     ap.add_argument("--voice-url", default="http://127.0.0.1:8092")
+    ap.add_argument("--depth", default="http://127.0.0.1:8096", help="MapAnything on this computer: how far away")
     ap.add_argument("--voice-name", default="am_michael", help="a Kokoro voice")
     ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
     ap.add_argument("--home", default=os.environ.get("HEYANDY_HOME", ""),

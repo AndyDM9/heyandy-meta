@@ -37,22 +37,27 @@ class Places:
         self._data.get("history", {}).pop(label, None)
         self._save()
 
-    def saw(self, label: str, yaw: float, pitch: float, when: float | None = None) -> bool:
+    def saw(self, label: str, yaw: float, pitch: float, when: float | None = None, metres: float | None = None) -> bool:
         """Remember a sighting, only of a watched thing. Returns whether it was kept. A sighting away from the last
         place starts a new entry in its history (it moved); one at the same place only updates the time."""
         if label not in self._data["watching"]:
             return False
         when = when or time.time()
         spot = {"yaw": round(yaw, 1), "pitch": round(pitch, 1), "at": when, "since": when, "near": ""}
+        if metres is not None:  # how far, from MapAnything: with the direction, a place on a real map
+            spot["metres"] = round(metres, 2)
         history = self._data.setdefault("history", {}).setdefault(label, [])
         last = history[-1] if history else None
         if last and math.hypot(last["yaw"] - yaw, last["pitch"] - pitch) <= MOVED_DEG:
             last["at"] = when  # still there
+            if metres is not None:
+                last["metres"] = round(metres, 2)
             spot = last
         else:
             history.append(spot)  # first seen, or it moved
             del history[:-HISTORY]
-        self._data["seen"][label] = {"yaw": spot["yaw"], "pitch": spot["pitch"], "at": when}
+        self._data["seen"][label] = {"yaw": spot["yaw"], "pitch": spot["pitch"], "at": when,
+                                     **({"metres": spot["metres"]} if "metres" in spot else {})}
         self._save()
         return True
 

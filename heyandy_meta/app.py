@@ -33,6 +33,8 @@ from .memory.glance import glance
 from .memory.mine import Mine
 from .memory.places import Places
 from .models.common import Chat, Mask, Reply
+from .models.depth_local import how_far
+from .models.sam_local import LocalUnavailable
 from .models.retry import CloudUnavailable
 from .private import write_private
 from .router import Router, decide
@@ -83,6 +85,7 @@ class Andy:
         self.mine = Mine(self.places.path.parent / "mine.json")  # things Andy knows by sight, as numbers
         self._alike: float | None = None  # how like the person's own the last checked thing was
         self._not_yours = False  # this find saw one, but someone else's
+        self.depth = None  # MapAnything on this computer (models/depth_local.py): how far away a found thing is
         self.finder = Finder(self.body, self.segmenter, check=self._check,
                              on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"))
         self.router = Router(self.device, self.cloud or NoCloud())
@@ -475,7 +478,8 @@ class Andy:
         self.screen.used("Muse Glimmer (picture check)", "device", getattr(self.judge, "calls", 0) - checks)
         if found is None:
             return self._not_found(thing)
-        self.places.saw(found.label, found.yaw, found.pitch, when=self.clock())
+        self._measure(found)
+        self.places.saw(found.label, found.yaw, found.pitch, when=self.clock(), metres=found.metres)
         self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
         self.screen.doing("Pointing", f"At your {found.label}")
@@ -1111,8 +1115,21 @@ class Andy:
         """Still while a tool looks; thinking while the model decides what to do next."""
         self.gesture("searching" if starting else "thinking")
 
+    def _measure(self, found: Found) -> None:
+        """How far away: MapAnything reads the frame the thing was confirmed in, on this computer. Without it (not
+        running, or no sure depth there) Andy says the direction only, as before."""
+        if self.depth is None:
+            return
+        try:
+            found.metres = self.depth.distances(found.frame, [found.mask], self.finder._cam(found.frame))[0]
+        except (LocalUnavailable, KeyError, IndexError):
+            return
+        self.screen.used("MapAnything (how far)", "device")
+        if found.metres is not None:
+            self.screen.step(f"MapAnything: {found.metres:.1f} m away")
+
     def _found_words(self, f: Found) -> str:
-        where = side(f.yaw)
+        where = side(f.yaw) + (f", {how_far(f.metres)}" if f.metres is not None else "")
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""

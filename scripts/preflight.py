@@ -18,7 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 ROOT = Path(__file__).resolve().parents[1]
-SERVICES = ("heyandy-glimmer", "heyandy-sam", "heyandy-voice", "heyandy-guard", "heyandy-app")
+SERVICES = ("heyandy-glimmer", "heyandy-sam", "heyandy-voice", "heyandy-guard", "heyandy-depth", "heyandy-app")
 results: list[tuple[bool, str, str]] = []
 
 
@@ -61,7 +61,7 @@ def main() -> None:
         down = [s for s, state in zip(SERVICES, out) if state != "active"]
         if down:
             raise RuntimeError("not running: " + ", ".join(down) + " (systemctl --user start ...)")
-        return "all five running"
+        return f"all {len(SERVICES)} running"
 
     @check("the robot (Reachy Mini daemon)")
     def _():
@@ -121,6 +121,18 @@ def main() -> None:
             raise RuntimeError(f"{len(gpus)} of 2 GPUs answer ({(lost or ['missing'])[0][:70]}): restart the computer, "
                                "then run this again")
         return "GPU 0 (Glimmer) and GPU 1 (SAM 3.1, voice, guards)"
+
+    @check("MapAnything says how far (a drawn mug)")
+    def _():
+        from heyandy_meta.finder.geometry import LITE
+        from heyandy_meta.models.common import Mask
+        from heyandy_meta.models.depth_local import LocalDepth
+        from heyandy_meta.robot.body import Frame
+
+        depth = LocalDepth(timeout=20.0)
+        metres = depth.distances(Frame(drawn_mug(), 960, 540, 0.0, 0.0), [Mask("mug", (440, 220, 540, 340), 0.9)],
+                                 LITE.scaled(960, 540))[0]
+        return f"{metres} m, {depth.last_latency_s:.2f} s" if metres else f"no sure depth ({depth.last_latency_s:.2f} s)"
 
     @check("the robot's camera and sound card, as its daemon found them")
     def _():

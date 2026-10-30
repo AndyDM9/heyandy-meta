@@ -35,6 +35,7 @@ class Found:
     reachable: bool = True  # False: the body can't point all the way, so say where instead
     aim_deg: float | None = None  # after pointing, how far the thing was from the middle of the view; None: not seen
     reaimed: bool = False  # the check after pointing moved the head once more
+    metres: float | None = None  # how far away, from MapAnything on this computer; None: not measured
 
 
 @dataclass

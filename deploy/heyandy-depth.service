@@ -1,0 +1,16 @@
+[Unit]
+Description=HeyAndy: MapAnything open weights on GPU 1, how far away things are (this computer only)
+After=heyandy-sam.service
+
+[Service]
+Environment=CUDA_VISIBLE_DEVICES=1
+Environment=PYTHONWARNINGS=ignore
+Environment=HF_HOME=%h/opt/mapanything/hf
+Environment=TORCH_HOME=%h/opt/mapanything/torch
+# The weights are already here (scripts/setup-depth.sh): nothing is fetched while Andy runs.
+Environment=HF_HUB_OFFLINE=1
+ExecStart=%h/opt/mapanything/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/depth_server.py
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
