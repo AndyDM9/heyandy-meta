@@ -127,6 +127,15 @@ the last full day for submission questions.
   run is in this one repository. The models are downloaded from their public pages; nothing else is needed to run the
   robot.
 
+**Our entry is clear of the anti-project list** (organizer ruling, posted by the Cerebral Valley app in our #questions
+thread, 2026-10-30, 6:14 PM ET):
+> "The organizer ruling covers this. A companion robot is not on the anti-project list. The medical advice restriction
+> covers advice, interpretations or recommendations nobody is accountable for, so a robot that finds objects,
+> remembers where things are, delivers reminders the person set and gives no medical, medication or mental-health
+> advice stays clear of it. Make the physical robot and what sets it apart the core of the project, and say plainly in
+> your README and demo that it gives no health advice."
+- **For us:** the README says it near the top, and the video says it in one line (docs/demo-script.md).
+
 **Only Meta's models while the project runs** (answered in #questions, 2026-10-30, 4:43 PM ET, by the Cerebral Valley
 app, to "Would using multiple models and external inference providers have any negative impact on judging?"):
 > "Using other AI models alongside Meta's is not allowed at runtime. Every model your project calls at runtime must be

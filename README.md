@@ -5,6 +5,10 @@ home, starting with older adults. Entered in Meta's Global AI Developer Hackatho
 **HeyAndy, Inc.**, a Delaware corporation ([heyandy.ai](https://heyandy.ai)). HEYANDY™ is the subject of a pending US
 trademark application.
 
+**Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
+It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
+who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).
+
 ## What it does
 1. **Ask "where are my glasses?"** The robot looks around the room.
 2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points, then checks
