@@ -242,12 +242,13 @@ noise. Results: `evals/results/`.
 pointing within about 3 degrees after the head's correction, as its motors report it.
 
 **Measured by Andy's own camera** (`evals/unattended.py`, 2026-10-30; the robot alone in the room, nobody checking
-what it pointed at, so this measures the aim and the reliability, not the finding): the check after pointing found
-the head sags about 4 degrees after its pointing dip, so Andy now corrects its aim from what the frame shows. A
-monitor in front, 3 of 3 finds: **0.5, 1.6 and 1.8 degrees** from the middle of the view after the correction (about
-7 before it). A keyboard far to the left, where the base turns too, 3 of 3 finds but **5.6 to 9.1 degrees** off: past
-the head's own reach the head and base don't yet move together as precisely. 6 of 6 searches ended in a point, none
-failed; 8.7 to 11.5 s each, the check included.
+what it pointed at, so this measures the aim and the reliability, not the finding): the check after pointing showed
+the head sags about 4 degrees after its pointing nod, so Andy now corrects its aim from what the frame shows (at most
+twice). Over 34 searches for a monitor, a keyboard and a chair from random starting poses: **34 ended in a point, none
+failed**; after the correction the thing sat a median **5.2 degrees** from the middle of the view (12 of 30 within 3,
+18 within 6, the worst 21, a keyboard far to the left where the base turns too: there the head and base don't yet
+move together precisely); a median 10.8 s each, the check included. **Distances repeat:** the same keyboard read 0.92
+to 1.00 m and the chair 1.28 to 1.35 m from five starting poses (MapAnything).
 
 **The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of

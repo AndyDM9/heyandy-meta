@@ -1,0 +1,39 @@
+{
+ "things": "monitor",
+ "check": true,
+ "summary": {
+  "trials": 1,
+  "errors": 0,
+  "pointed": 1,
+  "seconds_median": 13.3,
+  "looks_median": 5,
+  "aim_deg_median": 0.4,
+  "aim_deg_worst": 0.4,
+  "reaimed": 0,
+  "aim_not_seen": 0,
+  "metres_by_thing": {
+   "monitor": [
+    1.27
+   ]
+  }
+ },
+ "note": "nobody checked what was pointed at: this measures the robot, not the finding",
+ "trials": [
+  {
+   "round": 1,
+   "thing": "monitor",
+   "from": [
+    -17.6,
+    -1.2
+   ],
+   "pointed": true,
+   "seconds": 13.3,
+   "looks": 5,
+   "aim_deg": 0.4,
+   "reaimed": false,
+   "metres": 1.27,
+   "why": "",
+   "error": null
+  }
+ ]
+}

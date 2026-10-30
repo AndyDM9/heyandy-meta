@@ -65,10 +65,10 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 
 - **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its camera said 7. The head
   sags about 4 degrees after its pointing nod, so sending the same angles again lands the same way. Andy now corrects
-  the command by what the frame shows: things in front end within 2 degrees of the middle of its view (0.5, 1.6, 1.8);
-  past the head's reach, where the base turns too, still 5 to 9, and we say so.
+  the command by what the frame shows. Over 34 unattended searches on the robot: 34 pointed, none failed, a median
+  5.2 degrees from the middle of the view (12 of 30 within 3); worst where the base turns too, and we say so.
 - **How far, from one frame.** MapAnything (Meta's open 3D model) gives metric depth for the frame a thing was
-  confirmed in, in 0.2 s on the GPU beside SAM 3.1: the same keyboard read 0.59 to 0.67 m from four starting poses.
+  confirmed in, in 0.2 s on the GPU beside SAM 3.1: the same keyboard read 0.92 to 1.00 m from five starting poses.
   Memory keeps each place's distance, and the TV draws a floor plan in feet.
 - **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with Meta's open SeamlessM4T v2
   (9% of words misheard by a speech recogniser, against 23 to 28% for MMS-TTS). On the robot's small speaker it was
@@ -100,7 +100,7 @@ receipt** (the rest were Andy's own instructions); crisis words reached no model
 *Spanish:* **41 of 41** written requests and **40 of 41** spoken ones reach the right ability (after two translation
 rules this scorecard showed were needed).
 *On the robot:* a cup found in 7.5 s and a keyboard in 7.1 s; first word 0.7 to 1 s after Andy understands you;
-alone in the room, 12 of 12 unattended searches ended in a point with no errors (8.7 to 11.8 s, the camera check
+alone in the room, 34 of 34 unattended searches ended in a point with no errors (a median 10.8 s, the camera check
 included); [the physical scorecard: N of M].
 *Not yet tried on the robot with real things or a person:* the cup game (synthetic shuffles: 3 of 5), my mug, "what's
 that?" (public photos: 4 of 6), going out (robot simulated). Every result, failures included: `evals/results/` and `docs/research.md`.
