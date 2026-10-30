@@ -1,7 +1,8 @@
 [Unit]
 Description=HeyAndy: Andy on the Reachy Mini (voice, finding, reminders); nothing said is logged
 After=jarvis-daemon.service heyandy-glimmer.service heyandy-sam.service heyandy-voice.service heyandy-guard.service
-Wants=heyandy-glimmer.service heyandy-sam.service heyandy-voice.service heyandy-guard.service
+# The robot's own driver (motors, camera, microphone) starts with Andy, not by itself at boot.
+Wants=jarvis-daemon.service heyandy-glimmer.service heyandy-sam.service heyandy-voice.service heyandy-guard.service
 
 [Service]
 WorkingDirectory=%h/Documents/GitHub/heyandy-meta
