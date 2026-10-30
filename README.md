@@ -250,9 +250,9 @@ failed; 8.7 to 11.5 s each, the check included.
 12; what failed and what changed is in `docs/research.md`, section 26.
 
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 41 of 41 reach the
-right ability; said by Andy's Spanish voice (Meta's SeamlessM4T v2) and heard by Omnilingual ASR, 37 of 41 (four hearing
-slips on the synthetic voice, "gafas" heard as "bafas"; 40 of 41 with the earlier non-Meta voice, before every model had to
-be Meta's). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
+right ability; said by Andy's voice (Meta's SeamlessM4T v2, speaker 51) and heard by Omnilingual ASR, 34 of 41 (hearing slips on
+the synthetic voice, such as "gafas" heard as "bafas"; 37 with Seamless's speaker 0, 40 with the earlier non-Meta voice,
+before every model had to be Meta's). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
 a question stays a question when speech-to-text drops the question marks): 40 and 37 before. Glimmer translates each in
 a median 0.45 s, on the computer beside the robot.
 

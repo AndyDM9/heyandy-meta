@@ -7,7 +7,8 @@ Environment=CUDA_DEVICE_ORDER=PCI_BUS_ID
 Environment=CUDA_VISIBLE_DEVICES=1,0
 Environment=PYTHONWARNINGS=ignore
 Environment=HF_HUB_OFFLINE=1
-ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py --tts-device cuda:1
+# Speaker 51: a man's voice (114 Hz), the most expressive of the clearly male ones and every word heard right (Oct 30)
+ExecStart=%h/opt/voice/.venv/bin/python %h/Documents/GitHub/heyandy-meta/local/voice_server.py --tts-device cuda:1 --speaker 51
 Restart=on-failure
 
 [Install]
