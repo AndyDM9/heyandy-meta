@@ -89,6 +89,8 @@ def show(state: ScreenState, scene: str) -> None:
         state.doing("Working", "Looking around the room")
         state.step("recall: no recent sighting")
         state.step("look: a little to my left, a little to my right")
+        jpeg, mask = sample_frame()
+        state.glimpse(Frame(jpeg, 1920, 1080, -6.0, 14.0), [mask])  # what Andy sees as it looks
     elif scene == "found":
         state.looking("mug")
         state.timer_start()

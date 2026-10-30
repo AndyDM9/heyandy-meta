@@ -52,6 +52,7 @@ class Finder:
     check: Callable[[Frame, Mask], bool] | None = None  # optional second opinion, e.g. "is this on a screen?"
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
     on_look: Callable[[float, float], None] | None = None  # told each direction as the head turns (the TV's progress)
+    on_frame: Callable[[Frame, list], None] | None = None  # each frame and what SAM 3.1 found in it (the TV's live view)
     rejected: str = ""  # set by ``check`` to say why it said no ("a mug, but not yours")
     verify: bool = True  # after pointing, look once more: is it in the middle of the view?
     aim_tolerance: float = 3.0  # degrees off the middle before the head's command is corrected
@@ -101,15 +102,21 @@ class Finder:
         if not self.body.reach.allows(yaw, pitch):
             return []
         frame = self._look(yaw, pitch, precise=False)  # the frame says where it was taken; no need to be exact
+        masks = self._masks(frame, label)
+        if self.on_frame:
+            self.on_frame(frame, masks)
         return [Sighting(*pixel_to_angles(*m.center, frame.yaw, frame.pitch, self._cam(frame)),
-                         m.score if m.score is not None else 0.5) for m in self._masks(frame, label)]
+                         m.score if m.score is not None else 0.5) for m in masks]
 
     def confirm(self, label: str, yaw: float, pitch: float) -> Found | None:
         """Look straight at a place; it counts only if the thing is near the centre of that frame."""
         self.why = ""
         frame = self._look(yaw, pitch)
         cam = self._cam(frame)
-        near = [m for m in self._masks(frame, label)
+        masks = self._masks(frame, label)
+        if self.on_frame:
+            self.on_frame(frame, masks)
+        near = [m for m in masks
                 if abs(m.center[0] - cam.cx) <= self.confirm_within_px * frame.width
                 and abs(m.center[1] - cam.cy) <= self.confirm_within_px * frame.width]
         if not near:

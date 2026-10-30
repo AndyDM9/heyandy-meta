@@ -162,3 +162,23 @@ def test_the_tv_answers_only_to_its_own_name():
         assert e.value.code == 421
     finally:
         srv.shutdown()
+
+
+def test_the_live_view_shows_only_while_a_search_runs_and_goes_when_it_ends():
+    from heyandy_meta.finder.search import Found
+    from heyandy_meta.models.common import Mask
+    from heyandy_meta.robot.body import Frame
+
+    s = ScreenState()
+    frame, mask = Frame(b"\xff\xd8jpeg", 1920, 1080, 0.0, 10.0), Mask("mug", (900, 500, 1000, 600), 0.9)
+    s.glimpse(frame, [mask])
+    assert "glimpse" not in s.snapshot()  # no search running: nothing shown
+    s.looking("mug")
+    s.timer_start()
+    s.glimpse(frame, [mask])
+    g = s.snapshot()["glimpse"]
+    assert g["src"].startswith("data:image/jpeg;base64,") and g["masks"][0]["box"] == [900, 500, 1000, 600]
+    s.glimpse(Frame(b"", 1920, 1080, 0.0, 0.0), [])  # the pretend room: no camera, nothing replaces it
+    assert s.snapshot()["glimpse"]["v"] == g["v"]
+    s.found(Found("mug", 0.0, 10.0, 0.9, frame, mask, 2), "There it is!")
+    assert "glimpse" not in s.snapshot()  # the search is over: the live view is gone

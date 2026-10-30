@@ -74,6 +74,8 @@
   .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   figure { margin: 0; min-height: 0; }
   figure svg { width: 100%; height: auto; max-height: 36rem; border-radius: 1.4rem; display: block; }
+  figure.live small { display: block; margin-top: 0.5rem; font-size: 1.25rem; color: var(--muted); }
+  .candidate { fill: none; stroke: var(--outline); stroke-width: 4; stroke-dasharray: 10 7; }
   .facts { display: grid; gap: 1.1rem; font-size: 1.6rem; align-content: start; min-height: 0; overflow: hidden; }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.9rem 1.4rem; }
   .stats div { font-size: 1.35rem; color: var(--muted); line-height: 1.2; }
@@ -382,6 +384,23 @@
     }
     const fig = el("figure"); fig.append(svg); return fig;
   }
+  function glimpse(g) {  // what Andy sees while it searches: the whole view, every candidate SAM 3.1 outlined
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${g.width} ${g.height}`); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "What Andy is looking at now");
+    const img = document.createElementNS(svgNS, "image");
+    img.setAttribute("href", g.src); img.setAttribute("width", g.width); img.setAttribute("height", g.height); svg.append(img);
+    for (const m of g.masks) {
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", m.outline || `M 0 0 H ${m.box[2] - m.box[0]} V ${m.box[3] - m.box[1]} H 0 Z`);
+      path.setAttribute("transform", m.outline ? `translate(${m.box[0]} ${m.box[1]}) scale(${m.scale[0]} ${m.scale[1]})`
+                                               : `translate(${m.box[0]} ${m.box[1]})`);
+      path.setAttribute("class", "candidate"); path.setAttribute("vector-effect", "non-scaling-stroke"); svg.append(path);
+    }
+    const fig = el("figure", null, "live"); fig.append(svg);
+    fig.append(el("small", LANG === "es" ? "Lo que veo ahora · SAM 3.1, en esta computadora" : "What I see now · SAM 3.1, on this computer"));
+    return fig;
+  }
   function steps(list, tag = "ol") { const o = el(tag, null, "steps"); for (const s of list) o.append(el("li", s)); return o; }
   function card(s) {
     const body = $("body");
@@ -444,7 +463,9 @@
         body.replaceChildren(w);
       } else if (s.looking_for && s.running) {
         kicker = LANG === "es" ? `Buscando: ${s.looking_for}` : `Finding your ${s.looking_for}`; title = s.head || T("Looking around the room");
-        body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", T("If I can't find it, I'll say so."), "when"));
+        if (s.glimpse) {  // the live view, beside the plan as it happens
+          const split = el("div", null, "split"); split.append(glimpse(s.glimpse), steps(s.steps.slice(-6))); body.replaceChildren(split);
+        } else body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", T("If I can't find it, I'll say so."), "when"));
       } else if (s.looking_for && s.seconds !== null) {
         kicker = LANG === "es" ? `Busqué: ${s.looking_for}` : `Looked for your ${s.looking_for}`; title = s.caption;
         body.replaceChildren(steps(s.steps));

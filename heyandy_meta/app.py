@@ -88,7 +88,8 @@ class Andy:
         self.depth = None  # MapAnything on this computer (models/depth_local.py): how far away a found thing is
         self._finds = 0  # which opener the next find gets ("There they are!", "Found them!")
         self.finder = Finder(self.body, self.segmenter, check=self._check,
-                             on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"))
+                             on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"),
+                             on_frame=lambda frame, masks: self.screen.glimpse(frame, masks))
         self.router = Router(self.device, self.cloud or NoCloud())
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()

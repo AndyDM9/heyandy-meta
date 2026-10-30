@@ -51,6 +51,8 @@ class ScreenState:
         self.source, self.reason = "", ""
         self.online = True
         self._picture: _Picture | None = None
+        self._glimpse: dict | None = None  # the latest frame of a search, with what SAM 3.1 found in it (memory only)
+        self._glimpses = 0
         self.sources: list[tuple[str, str]] = []  # (title, url) under an answer
         self.steps: list[str] = []  # the plan as it happens: "look: right, far right"
         self.memory: list[str] | None = None  # shown while "what do you remember?" is answered
@@ -87,7 +89,18 @@ class ScreenState:
     def looking(self, thing: str) -> None:
         with self._lock:
             self.privacy = None
-            self.looking_for = thing
+            self.looking_for, self._glimpse = thing, None
+
+    def glimpse(self, frame, masks: list) -> None:
+        """What Andy sees right now, while it searches: the frame and SAM 3.1's outlines, held in memory only and
+        dropped when the search ends (as the found picture is). The pretend room has no camera: nothing to show."""
+        if not getattr(frame, "image", None):
+            return
+        with self._lock:
+            self._glimpses += 1
+            self._glimpse = {"jpeg": frame.image, "width": frame.width, "height": frame.height, "v": self._glimpses,
+                             "masks": [{"outline": m.outline, "box": list(m.box), "scale": list(m.outline_scale),
+                                        "score": m.score} for m in masks[:6]]}
 
     def reminder_next(self, text: str | None, at: float = 0.0) -> None:
         with self._lock:
@@ -202,6 +215,8 @@ class ScreenState:
             self.caption, self.source, self.reason = text, source, reason
 
     def found(self, found: Found, words: str, trails: list | None = None) -> None:
+        with self._lock:
+            self._glimpse = None  # the search is over
         if not found.frame.image:  # the pretend room has no camera: words only
             return
         with self._lock:
@@ -284,6 +299,10 @@ class ScreenState:
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
                 out["running"] = stop is None
             out["lang"] = self.lang
+            g = self._glimpse
+            if g and out.get("running"):  # only while a search runs; never after
+                out["glimpse"] = {"src": "data:image/jpeg;base64," + base64.b64encode(g["jpeg"]).decode(),
+                                  **{k: v for k, v in g.items() if k != "jpeg"}}
             p = self._picture
             if p:
                 f, m = p.found, p.found.mask
