@@ -26,10 +26,16 @@ KEYS = re.compile(r"MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}")
 
 
 def main() -> None:
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--video", default="", help="the 3-minute video's link, for the story's end card")
+    video = ap.parse_args().video
     shutil.rmtree(OUT, ignore_errors=True)
     (OUT / "scenes").mkdir(parents=True)
     (OUT / "fonts").mkdir()
-    html = page().replace("<script>", "<script>window.HEYANDY_STATIC = true;</script>\n<script>", 1)
+    flags = "window.HEYANDY_STATIC = true;" + (f" window.HEYANDY_VIDEO = {json.dumps(video)};" if video else "")
+    html = page().replace("<script>", f"<script>{flags}</script>\n<script>", 1)
     (OUT / "index.html").write_text(html)
     for name in FONTS:
         (OUT / "fonts" / name).write_bytes(files("heyandy_meta.screen").joinpath("fonts", name).read_bytes())

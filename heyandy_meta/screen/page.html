@@ -173,6 +173,58 @@
   #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
                  padding: 0.2rem 0.8rem; cursor: pointer; }
   #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* Story mode (the public demo only): a one-minute guided film of Andy's TV, chapter by chapter, then a call to act */
+  #story { position: fixed; top: 0; left: 0; right: 0; z-index: 7; padding: 1.3rem 5rem 1.4rem; color: #F5F3EF;
+           background: linear-gradient(to bottom, rgba(7, 10, 9, 0.94), rgba(7, 10, 9, 0.86)); backdrop-filter: blur(0.8rem); }
+  #story .bars { display: flex; gap: 0.5rem; margin-bottom: 1.1rem; }
+  #story .bars i { flex: 1; height: 0.35rem; border-radius: 99rem; background: rgba(245, 243, 239, 0.22); overflow: hidden; }
+  #story .bars i b { display: block; height: 100%; width: 0; background: var(--outline); }
+  #story .row { display: flex; align-items: center; gap: 2.5rem; }
+  #story .ch { flex: none; font: 700 1.35rem/1 "Atkinson Mono", monospace; color: var(--outline); letter-spacing: 0.08em; }
+  #story h2 { margin: 0; font-size: 2.6rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; }
+  #story p { margin: 0.35rem 0 0; font-size: 1.6rem; color: rgba(245, 243, 239, 0.78); }
+  #story .text { flex: 1; min-width: 0; }
+  #story .text.fresh { animation: st-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  #story nav { display: flex; gap: 0.6rem; flex: none; }
+  #story button, #end a, #end button { font: 650 1.35rem/1 "Atkinson Next", sans-serif; color: #F5F3EF; cursor: pointer;
+           background: rgba(245, 243, 239, 0.1); border: 0.12rem solid rgba(245, 243, 239, 0.35); border-radius: 99rem;
+           padding: 0.75rem 1.4rem; text-decoration: none; }
+  #story button:hover, #end a:hover, #end button:hover { background: rgba(245, 243, 239, 0.2); }
+  #end { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 8; display: grid; place-items: center;
+         background: radial-gradient(ellipse at 70% 30%, #1d2a24, #070a09 70%); color: #F5F3EF; animation: rv-in 0.6s ease-out; }
+  #end .in { width: min(110rem, 88vw); }
+  #end .sig { height: 3rem; width: auto; color: #F5F3EF; opacity: 0.9; }
+  #end h1 { margin: 2.2rem 0 1rem; font-size: 7.4rem; font-weight: 800; line-height: 0.98; letter-spacing: -0.03em; }
+  #end h1 em { font-style: normal; color: var(--outline); }
+  #end .proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin: 2.8rem 0 3.4rem; }
+  #end .proof div { border-top: 0.2rem solid var(--outline); padding-top: 1.1rem; font-size: 1.6rem; color: rgba(245, 243, 239, 0.8); }
+  #end .proof b { display: block; font-size: 2.3rem; color: #F5F3EF; margin-bottom: 0.4rem; }
+  #end .go { display: flex; flex-wrap: wrap; gap: 1rem; }
+  #end .go .main { background: var(--outline); color: #070a09; border-color: var(--outline); font-weight: 800; }
+  #end small { display: block; margin-top: 2.4rem; font-size: 1.3rem; color: rgba(245, 243, 239, 0.55); }
+  /* the TV, whole and unchanged, a little smaller below the story's band */
+  body.storying .stage { transform: scale(0.85); transform-origin: 50% 100%; }
+  @media (max-aspect-ratio: 1/1) {  /* a phone, held upright: the band on top, the TV below it as a 16:9 TV */
+    body.storying { height: auto; min-height: 100vh; overflow-y: auto; background: #070a09; }
+    body.storying #story { position: relative; padding: 4vw 4.5vw 4.5vw; }
+    #story .bars { margin-bottom: 3.5vw; } #story .bars i { height: 0.9vw; }
+    #story .row { flex-wrap: wrap; gap: 2.5vw; align-items: flex-start; }
+    #story .ch { font-size: 3.2vw; } #story h2 { font-size: 6.4vw; } #story p { font-size: 4vw; margin-top: 1vw; }
+    #story nav { width: 100%; gap: 2vw; }
+    #story button, #end a, #end button { font-size: 3.6vw; padding: 2.2vw 3.6vw; }
+    body.storying .stage { transform: none; height: 56.25vw; }
+    #end { overflow-y: auto; place-items: start center; padding: 10vw 0; }
+    #end .in { width: 88vw; } #end .sig { height: 6vw; } #end h1 { font-size: 10vw; margin-top: 5vw; }
+    #end .proof { grid-template-columns: 1fr; gap: 4vw; margin: 6vw 0; }
+    #end .proof div { font-size: 3.8vw; } #end .proof b { font-size: 5vw; }
+    #end .go { gap: 2.5vw; } #end small { font-size: 3vw; margin-top: 5vw; }
+    html #reveal .words { left: 6vw; right: 6vw; bottom: 9vw; } html #reveal .kick { font-size: 3vw; }
+    html #reveal h1, html #reveal h1.long { font-size: 13vw; max-width: none; } html #reveal .nums { gap: 6vw; }
+    html #reveal .nums b { font-size: 7vw; white-space: nowrap; } html #reveal .nums span { font-size: 3vw; }
+    html #reveal .credit { font-size: 2.8vw; } html #reveal .sig { display: none; }
+  }
+  @keyframes st-in { from { opacity: 0; transform: translateY(0.8rem); } to { opacity: 1; transform: none; } }
+
   /* The Reveal: a find, as a film moment. The room goes dark, a spotlight opens on SAM 3.1's mask, the shot pushes in,
      the outline draws itself, and the thing's name and the three measured figures rise. Five seconds, then the card. */
   #reveal { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 6; overflow: hidden; background: #070a09;
@@ -325,6 +377,82 @@
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
+  // Story mode: what a visitor sees first on the public demo (never on Andy's own TV, and not when a link names a scene).
+  const STORY = [
+    ["idle", 7, "Meet Andy", "A tabletop robot that finds what you've lost and points at it. This is the TV beside it."],
+    ["finding", 7, "You ask", "“Andy, where's my mug?” It looks around the room; SAM 3.1 outlines every candidate, live."],
+    ["found", 9, "It finds it", "It points, checks the point with its own camera, and MapAnything measures how far away."],
+    ["room", 9, "It knows your room", "Five looks become your room in 3D, things pinned. Its shape only, never a picture."],
+    ["cups", 7, "Identical cups, told apart", "SAM 3.1 Object Multiplex follows every cup at once through the shuffle."],
+    ["out", 7, "Before you go", "It points at what you'd leave behind, and Muse Spark checks whether you'll need an umbrella."],
+    ["spanish", 6, "Your language", "It hears and speaks Spanish; Muse Glimmer translates on the computer beside the robot."],
+    ["privacy", 8, "Nothing leaves the house", "Pictures and voice stay home. Every word sent to the cloud is on a receipt."],
+  ];
+  let story = null;  // {at, since, paused}
+  function startStory() {
+    $("demo").hidden = true; document.getElementById("end")?.remove(); document.body.classList.add("storying");
+    story = { at: 0, since: Date.now(), paused: false, left: 0 };
+    chosen = STORY[0][0]; pictureKey = "";
+    const band = el("div"); band.id = "story"; band.setAttribute("role", "region"); band.setAttribute("aria-label", "A one-minute story of Andy");
+    const bars = el("div", null, "bars"); for (let i = 0; i < STORY.length; i++) { const b = el("i"); b.append(el("b")); bars.append(b); }
+    const row = el("div", null, "row"), text = el("div", null, "text"), nav = el("nav");
+    const button = (label, act, name) => { const b = el("button", label); b.onclick = act; if (name) b.setAttribute("aria-label", name); nav.append(b); return b; };
+    button("‹", () => go(story.at - 1), "Back"); const pause = button("Pause", () => {
+      story.paused = !story.paused; pause.textContent = story.paused ? "Play" : "Pause";
+      if (story.paused) story.left = Date.now() - story.since; else story.since = Date.now() - story.left; });
+    button("›", () => go(story.at + 1), "Next"); button("Explore every screen", exploreAll);
+    row.append(el("div", null, "ch"), text, nav); band.append(bars, row); document.body.prepend(band);  // first: on a phone it leads
+    go(0); requestAnimationFrame(storyTick);
+  }
+  function go(i) {
+    if (!story) return;
+    if (i >= STORY.length) return endCard();
+    story.at = Math.max(0, i); story.since = Date.now(); story.left = 0;
+    document.getElementById("reveal")?.remove();  // each chapter starts clean
+    const [name, , title, line] = STORY[story.at], band = $("story");
+    chosen = name; pictureKey = "";
+    band.querySelector(".ch").textContent = `${String(story.at + 1).padStart(2, "0")} / ${String(STORY.length).padStart(2, "0")}`;
+    const text = band.querySelector(".text"); text.replaceChildren(el("h2", title), el("p", line));
+    text.classList.remove("fresh"); void text.offsetWidth; text.classList.add("fresh");
+  }
+  function storyTick() {
+    if (!story) return;
+    const band = $("story"), [, secs] = STORY[story.at];
+    const done = story.paused ? story.left : Date.now() - story.since, f = Math.min(1, done / (secs * 1000));
+    band.querySelectorAll(".bars b").forEach((b, i) => { b.style.width = (i < story.at ? 100 : i === story.at ? f * 100 : 0) + "%"; });
+    if (f >= 1 && !story.paused) go(story.at + 1);
+    if (story) requestAnimationFrame(storyTick);
+  }
+  function exploreAll() {
+    story = null; $("story")?.remove(); document.getElementById("end")?.remove(); document.body.classList.remove("storying");
+    chosen = null; pictureKey = ""; demoBar();
+  }
+  function endCard() {
+    story = null; $("story")?.remove(); document.getElementById("reveal")?.remove(); document.body.classList.remove("storying");
+    const end = el("div"); end.id = "end"; end.setAttribute("role", "dialog"); end.setAttribute("aria-label", "Andy, in one minute");
+    const inner = el("div", null, "in"), sig = document.querySelector("header .brand")?.cloneNode(true);
+    if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }
+    const h1 = el("h1"); h1.append("Andy finds what you've lost. ", el("em", "Every model it runs is Meta's.")); inner.append(h1);
+    const proof = el("div", null, "proof");
+    for (const [b, d] of [["On the robot", "Unattended searches ended in a point 104 times in 104; its own camera checks every point."],
+                          ["Private by design", "The camera and microphone reach only Meta's open models on the computer beside it."],
+                          ["Eleven Meta models", "SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2, Omnilingual ASR, SeamlessM4T v2, Llama Guard 3, Prompt Guard 2, Muse Spark, Muse Image."]]) {
+      const x = el("div", d); x.prepend(el("b", b)); proof.append(x);
+    }
+    inner.append(proof);
+    const go_ = el("div", null, "go"), link = (label, href, main) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; if (main) a.className = "main"; go_.append(a); };
+    if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO, true);
+    link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", !window.HEYANDY_VIDEO);
+    const again = el("button", "Replay the story"); again.onclick = startStory;
+    const all = el("button", "Explore every screen"); all.onclick = exploreAll;
+    go_.append(again, all); inner.append(go_);
+    inner.append(el("small", "Sample data: no robot, camera or home here; the pictures are drawn. Built by HeyAndy, Inc. Andy gives no health advice."));
+    end.append(inner); document.body.append(end);
+  }
+  addEventListener("keydown", e => {
+    if (!story) return;
+    if (e.key === "ArrowRight") go(story.at + 1); else if (e.key === "ArrowLeft") go(story.at - 1);
+  });
   function demoBar() {
     const nav = $("demo"); nav.hidden = false; nav.replaceChildren(el("b", "Sample data · scenes:"));
     for (const name of [...scenes, "auto"]) {
@@ -791,7 +919,10 @@
     $("captions").classList.toggle("long", s.caption.length > 150);  // a long answer: smaller, and never over the cards  // Andy's words only, never the person's
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
     $("help").hidden = !s.help;
-    if (s.demo && !scenes) { scenes = s.demo; demoBar(); }
+    if (s.demo && !scenes) {  // the public demo: the story first, unless a link asked for one scene
+      scenes = s.demo;
+      if (!chosen && !new URLSearchParams(location.search).has("explore") && scenes.includes("room")) startStory(); else demoBar();
+    }
   }
   async function tick() {
     // A static copy (the public Space) reads saved sample scenes; the robot's TV asks its own server.

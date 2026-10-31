@@ -229,3 +229,23 @@ def test_the_reveal_plays_only_for_a_find_made_just_now():
     s = ScreenState()
     show(s, "found")
     assert s.snapshot()["picture"]["seconds_left"] >= 112
+
+
+def test_the_story_opens_only_the_public_demo():
+    """Story mode starts when the page sees demo scenes (the Space, scripts/demo_screen.py), never on Andy's own TV,
+    and not when a link names a scene (?scene=...) or asks to explore (?explore)."""
+    from importlib.resources import files
+
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    assert 'if (s.demo && !scenes) {' in page
+    assert 'if (!chosen && !new URLSearchParams(location.search).has("explore") && scenes.includes("room")) startStory();' in page
+    import re
+
+    story = re.search(r"const STORY = \[(.*?)\n  \];", page, re.S).group(1)
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES
+
+    assert set(re.findall(r'\["(\w+)", \d+,', story)) <= set(SCENES)  # every chapter is a real scene

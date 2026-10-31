@@ -21,6 +21,10 @@ far), DINOv2, Omnilingual ASR, SeamlessM4T v2 (its voice), Llama Guard 3 and Lla
 on the computer beside the robot, and Muse Spark and Muse Image through the Meta Model API. **Andy gives no health
 advice.**
 
+**It opens as a one-minute story:** eight chapters of the TV, each a real scene (you ask; it finds it, with the
+Reveal; your room in 3D; identical cups told apart; before you go; Spanish; nothing leaves the house), then where to
+go next. Pause, skip with the arrow keys, or "Explore every screen".
+
 This page is the robot's TV, the same page and rendering code as on the robot with each scene saved in advance, **on sample data**: no robot, camera,
 models or keys are here, and the picture is drawn, not taken in a home. Pick a scene at the top: what Andy shows while
 it searches (what its camera sees, every candidate outlined by SAM 3.1), what it found (how long it took, how far off
