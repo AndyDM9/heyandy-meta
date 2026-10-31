@@ -783,3 +783,17 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **Tried on the robot (2026-10-31), the remote on 127.0.0.1 only:** paired from a phone-sized browser, tapped "Where
   are my keys?", followed Working, Pointing and Speaking on the phone, and got the find: 10.6 s, 2 ft, 2 degrees off,
   "Nothing left the house". Not turned on in the robot's service: that is for the founder to choose.
+
+## 38. The first five minutes: "Andy, let's get started" (2026-10-31)
+
+- **Why:** Andy waited, silent, for someone who already knew what to say; a new owner (or a judge) needs one
+  sentence to start, and to be shown the one that matters.
+- **Built:** a spoken setup in three steps (app.py start_setup): the introduction and privacy promise, the room in 3D;
+  "what do you lose most often?" (things named in the answer, longest name first: "reading glasses" before "glasses"),
+  watched, found in one glance and pointed at one by one; "now try me", and the promise again at the end. The
+  person's replies go to the setup first (crisis words never do: they're answered before any of this); "skip" ends
+  it; it waits five minutes; setup.json marks it done. The TV: a "Getting started, n of 3" card, and "New here?" on
+  the waiting card and Ambient Andy while nothing is watched.
+- **On the robot (2026-10-31):** three sentences: the room measured (36 s, the 3D scan), the keys and glasses watched,
+  seen and pointed at (24.5 s), the keys found with "You're all set" (27.4 s). It said "your your keys" once: the same
+  doubling was in the noticing notice; both fixed, with tests.

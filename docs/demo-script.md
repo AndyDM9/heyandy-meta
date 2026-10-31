@@ -44,6 +44,11 @@ to them once Andy has seen them), and it wakes the moment the person says "Andy"
 door: "Where are my keys?" tapped on the phone; cut to the robot turning and pointing in the living room; back to the
 phone showing the find with its outline and "Nothing left the house". A companion that isn't stuck in one room.
 
+**An opening that shows everything at once:** "Andy, let's get started." The room appears in 3D; "What do you lose
+most often?" "My keys and my glasses."; Andy looks once and points at each ("There are your keys... and your
+glasses"); "Now try me": "Andy, where are my keys?", the Reveal, "You're all set". About 90 s on the robot: cut it to
+the room, the two points and the Reveal.
+
 **The X clip (30 s, vertical, `make_film.py --shape vertical`):** the first second is the head turning to point; the
 TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
 model is Meta's."

@@ -173,6 +173,16 @@
   #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
                  padding: 0.2rem 0.8rem; cursor: pointer; }
   #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* Getting started: the guided first minutes, a step at a time */
+  .setup { display: grid; gap: 1.8rem; align-content: start; }
+  .setup .say { font-size: 4.2rem; font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; }
+  .setup .say small { display: block; font-size: 1.6rem; font-weight: 600; color: var(--muted); letter-spacing: 0; margin-bottom: 0.6rem; }
+  .setup .chips { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .setup .chips span { font-size: 2rem; font-weight: 700; padding: 0.6rem 1.6rem; border-radius: 99rem; border: 0.18rem solid var(--accent); color: var(--accent); }
+  .setup .steps3 { display: flex; gap: 0.7rem; }
+  .setup .steps3 i { flex: 1; height: 0.45rem; border-radius: 99rem; background: var(--muted); opacity: 0.25; }
+  .setup .steps3 i.on { background: var(--outline); opacity: 1; }
+
   /* Connect your phone: the address and six numbers, read from across the room */
   .pairing { display: grid; gap: 1.6rem; align-content: start; }
   .pairing .url { font: 700 3rem/1.1 "Atkinson Mono", monospace; color: var(--accent); word-break: break-all; }
@@ -435,7 +445,7 @@
                   "“Andy, esta es mi taza.”", "“Andy, muéstrame el radar del tiempo en la tele.”", "“Andy, me voy, ¿llevo todo?”",
                   "“Andy, ¿qué recuerdas?”", "“Andy, ¿qué enviaste a la nube hoy?”", "“Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -943,10 +953,40 @@
         kicker = T("What I remember"); title = T(s.memory.length ? "Where I last saw things" : "Nothing yet");
         const box = el("div", null, "memory"); box.append(dial(s.map, true), steps(s.memory, "ul"));
         body.replaceChildren(s.memory.length ? box : steps(s.memory, "ul"));
+      } else if (s.setup) {
+        const st = s.setup, n = { things: 2, try: 3, done: 3 }[st.step] || 1, es = LANG === "es";
+        kicker = st.step === "done" ? (es ? "Listo" : "You're all set") : (es ? `Primeros pasos · ${n} de 3` : `Getting started · ${n} of 3`);
+        title = st.step === "things" ? (es ? "¿Qué pierde más a menudo?" : "What do you lose most often?")
+              : st.step === "try" ? (es ? "Ahora pruébeme" : "Now try me") : (es ? "Tres cosas para probar" : "Three things to try");
+        const box = el("div", null, "setup"), bar = el("div", null, "steps3");
+        for (let i = 1; i <= 3; i++) bar.append(el("i", null, i <= n ? "on" : ""));
+        if (st.step === "things") {
+          const chips = el("div", null, "chips");
+          for (const t of ["keys", "glasses", "phone", "remote", "wallet", "mug", "watch"]) chips.append(el("span", t));
+          const say = el("div", es ? "«mis llaves y mis gafas»" : "“my keys and my glasses”", "say");
+          say.prepend(el("small", es ? "Dígalo así:" : "Say it like this:")); box.append(bar, chips, say);
+        } else if (st.step === "try") {
+          const them = /s$/.test(st.thing || "") && !/ss$/.test(st.thing || "");
+          const say = el("div", es ? `«Andy, ¿dónde ${them ? "están mis" : "está mi"} ${st.thing}?»` : `“Andy, where ${them ? "are" : "is"} my ${st.thing}?”`, "say");
+          say.prepend(el("small", es ? "Diga:" : "Say:")); box.append(bar, say);
+          if (s.watching && s.watching.length) box.append(steps(s.watching, "ul"));
+        } else {
+          const does = el("div", null, "does");
+          for (const [b, d] of [["“Andy, where are my keys?”", "It looks, points, and says how far."],
+                                ["“What happened to my keys today?”", "Where they've been, as it knew it."],
+                                ["“What did you send to the cloud today?”", "Every word that left, counted. Never a picture."]]) {
+            const x = el("div", d); x.prepend(el("b", b)); does.append(x);
+          }
+          box.append(bar, does);
+        }
+        body.replaceChildren(box);
       } else {
         kicker = T("Try asking");
         const tries = LANG === "es" ? TRY_ES : TRY;
-        const t = el("div", tries[Math.floor(Date.now() / 20000) % tries.length], "try");
+        const fresh = !(s.watching && s.watching.length);  // nothing set up yet: the setup first
+        const t = el("div", fresh ? (LANG === "es" ? "«Andy, empecemos.»" : "“Andy, let's get started.”")
+                                  : tries[Math.floor(Date.now() / 20000) % tries.length], "try");
+        if (fresh) t.prepend(el("small", LANG === "es" ? "¿Es nuevo aquí?" : "New here?"));
         t.append(el("small", T("Andy sees and hears on this computer. Pictures and voice never leave your home.")));
         const does = el("div", null, "does");
         for (const [b, d] of [["Finds things", "Looks around the room and points, and tells a real thing from a picture of it."],
@@ -1002,7 +1042,7 @@
   const AMBIENT_AFTER_MS = 60000, forceAmbient = new URLSearchParams(location.search).get("ambient") === "now";
   let quietSince = Date.now(), gazeAt = null, nextGlance = 0;
   function ambient(s) {
-    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.timeline && !s.pairing && !s.checklist && !s.privacy
+    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.timeline && !s.pairing && !s.setup && !s.checklist && !s.privacy
                   && !s.memory && !s.running && !s.help && !s.game && !(s.caption && Date.now() - captionAt < 12000);
     if (!quiet || story || document.getElementById("end") || (scenes && !forceAmbient)) quietSince = Date.now();
     const on = forceAmbient ? quiet || !!scenes : Date.now() - quietSince > AMBIENT_AFTER_MS;
@@ -1011,7 +1051,9 @@
     const d = new Date(), h = d.getHours() % 12 || 12, m = String(d.getMinutes()).padStart(2, "0");
     $("a-time").textContent = `${h}:${m}`;
     $("a-day").textContent = d.toLocaleDateString(LANG === "es" ? "es" : "en-US", { weekday: "long", month: "long", day: "numeric" });
-    $("a-say").textContent = LANG === "es" ? "Diga «Andy» cuando quiera." : "Say “Andy” anytime.";
+    const fresh = !(s.watching && s.watching.length);
+    $("a-say").textContent = fresh ? (LANG === "es" ? "¿Es nuevo aquí? Diga «Andy, empecemos»." : "New here? Say “Andy, let's get started.”")
+                                   : (LANG === "es" ? "Diga «Andy» cuando quiera." : "Say “Andy” anytime.");
     const notes = $("a-notes"); notes.replaceChildren();
     if (s.next) { const x = el("span"); x.append(el("b", T("Next") + ": "), s.next.text); notes.append(x); }
     if (s.watching && s.watching.length) {

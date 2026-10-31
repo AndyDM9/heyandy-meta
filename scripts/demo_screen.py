@@ -5,7 +5,7 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, room, story, privacy, help.
+Scenes: start, idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, room, story, privacy, help.
 """
 import argparse
 import functools
@@ -24,7 +24,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -255,6 +255,12 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("Omnilingual ASR (hearing)", "device")
         state.used("SAM 3.1", "device", 5)
         state.used("MapAnything (the room in 3D)", "device")
+    elif scene == "start":
+        state.setup("things")
+        state.said("Here's your room, measured in 3D. Now, what do you lose most often? Your keys, your glasses, your "
+                   "phone, the remote?", "device", "getting started, on this computer")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
     elif scene == "story":
         state.timeline("keys", [
             {"when": "yesterday at 6:40", "how": "glanced", "words": "I saw them on the desk, behind the keyboard, in passing"},

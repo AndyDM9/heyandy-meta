@@ -59,6 +59,14 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 Failures are kept too: every scorecard, and what changed because of it, is in `evals/results/` and `docs/research.md`.
 
 ## The details: what it does
+
+**New here? "Andy, let's get started."** Three steps, spoken, the TV showing each: Andy says what it does and that
+what it sees and hears stays in the house, and measures the room in 3D; asks what you lose most ("my keys and my
+glasses"), keeps an eye on them, looks for them all at once and points at each one it sees; then "Now try me: say,
+'Andy, where are my keys?'", and ends with the privacy promise. "Skip" ends it; crisis words still come first; when
+nothing is set up, the TV suggests it. On the robot: the room, the keys and glasses watched and pointed at, the keys
+found, "You're all set", in three sentences.
+
 1. **Ask "where are my glasses?"** The robot looks around the room.
 2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points, then checks
    the point landed with its own camera. **MapAnything** (Meta's 3D model) says how far: "on the armchair, to my left,

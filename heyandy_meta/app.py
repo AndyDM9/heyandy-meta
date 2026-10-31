@@ -117,6 +117,7 @@ class Andy:
         self.voice = None  # the voice server client (speed, loudness), when Andy speaks out loud
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
+        self._setup: dict | None = None  # the guided first minutes: {"step": "things" or "try", "at", ...}
         self.pairing = None  # phones that may ask Andy from another room (screen/remote.py); None: not started with --remote
         self.remote_url = ""
         self._phone_turn = False
@@ -240,6 +241,10 @@ class Andy:
         self.screen.keeping(self._memory(), self._memory_map())
 
     def _answer(self, text: str) -> str:
+        if self._setup and self.clock() - self._setup["at"] <= SETUP_WAIT_S:  # the person answering the setup's step
+            said = self._setup_step(text)
+            if said is not None:
+                return said
         offered, self._offered = self._offered, None
         if offered and self.clock() - offered[1] <= ANSWER_WITHIN_S:
             thing, _, yaw, pitch = offered
@@ -310,6 +315,8 @@ class Andy:
             return self.what_time(day=i.thing == "day")
         if i.kind == "room":
             return self.scan_room()
+        if i.kind == "setup":
+            return self.start_setup()
         if i.kind == "pair_phone":
             return self.pair_phone()
         if i.kind == "forget_phones":
@@ -1226,6 +1233,72 @@ class Andy:
         return ("Here's the room as I measured it, on the screen" + (f": {said}." if said else ".")
                 + " Its shape only, never a picture.")
 
+    # --- the first five minutes: "Andy, let's get started" ---
+
+    @property
+    def setup_done(self) -> bool:
+        return (self.places.path.parent / "setup.json").exists()
+
+    def start_setup(self) -> str:
+        """Andy introduces itself, measures the room, and asks what the person loses most (step 1 of 3)."""
+        self.say("Hi, I'm Andy. I find what you've lost and point at it, and what I see and hear stays in this house."
+                 + (" First, let me look around the room." if self.depth is not None else ""))
+        room = ""
+        if self.depth is not None:
+            measured = self.scan_room()
+            room = "Here's your room, measured in 3D. " if measured.startswith("Here's the room") else ""
+        self._setup = {"step": "things", "at": self.clock(), "again": False}
+        self.screen.setup("things")
+        return room + "Now, what do you lose most often? Your keys, your glasses, your phone, the remote?"
+
+    def _setup_step(self, text: str) -> str | None:
+        """The person's answer to the setup's question; None: not for the setup (it ends, and the turn goes on)."""
+        if SKIP.match(text):
+            self._setup = None
+            self.screen.setup(None)
+            return "Okay, we'll leave it there. Say 'Andy, let's get started' any time."
+        step = self._setup["step"]
+        if step == "things":
+            things = things_in(text)
+            if things:
+                return self._setup_watch(things)
+            if not self._setup["again"]:
+                self._setup.update(again=True, at=self.clock())
+                return "Which things? For example, say: my keys and my glasses."
+            self._setup = {"step": "try", "at": self.clock(), "thing": "keys"}
+            self.screen.setup("try", {"thing": "keys"})
+            return "No problem: tell me later with 'keep an eye on my keys'. Now try me: say, 'Andy, where are my keys?'"
+        self._setup = None  # step "try": whatever they say is answered as usual, and the setup ends with it
+        said = self._answer(text)
+        write_private(self.places.path.parent / "setup.json", json.dumps({"done_at": self.clock()}))
+        self.screen.setup("done")
+        return said + (" You're all set. Pictures and voice stay on the computer beside me: ask me what I sent to the "
+                       "cloud today, any time.")
+
+    def _setup_watch(self, things: list[str]) -> str:
+        """Step 2 of 3: keep an eye on them, look once for them all, and point at each one seen."""
+        for t in things:
+            self.places.watch(t)
+        self.say("Let me look for " + ("them" if len(things) > 1 else f"your {things[0]}") + ".", soon=True)
+        self.gesture("searching")
+        try:
+            noted = glance(self.body, self.segmenter, self.places, on_seen=self._note_place)
+        finally:
+            self.gesture("idle")
+        for label in [t for t in things if t in noted][:3]:
+            self.body.point(*noted[label])
+            self.say(f"There {'are' if _it(label) == 'them' else 'is'} your {label}.")
+        if noted:
+            self.chime("found")
+        self.refresh_panels()
+        missing = [t for t in things if t not in noted]
+        first = next((t for t in things if t in noted), things[0])
+        self._setup = {"step": "try", "at": self.clock(), "thing": first}
+        self.screen.setup("try", {"thing": first})
+        return (f"I'll keep an eye on {_join(things)}."
+                + (f" I couldn't see {_join(missing)} just now; I'll notice when I do." if missing else "")
+                + f" Now try me: say, 'Andy, where {'are' if _it(first) == 'them' else 'is'} my {first}?'")
+
     # --- a phone as a remote (screen/remote.py) ---
 
     def pair_phone(self) -> str:
@@ -1430,9 +1503,9 @@ class Andy:
         if seen["kind"] == "put":
             for label, mask in seen.get("masks", {}).items():
                 self._note_place(label, seen["frame"], mask)
-            self.screen.notice(f"Noticed: your {names}, put down" if self.language == "en" else f"Visto: {names}, dejado")
+            self.screen.notice(f"Noticed: {names}, put down" if self.language == "en" else f"Visto: {names}, dejado")
         else:
-            self.screen.notice(f"Noticed: your {names}, picked up" if self.language == "en" else f"Visto: {names}, recogido")
+            self.screen.notice(f"Noticed: {names}, picked up" if self.language == "en" else f"Visto: {names}, recogido")
         seen.pop("frame", None)
         self.chime("noticed")
         self.screen.used("V-JEPA 2 (noticing)", "device")
@@ -1589,6 +1662,23 @@ def millimetres(points_f16: bytes) -> bytes:
     """MapAnything's float16 metres as int16 millimetres, for the TV page (no half floats in its JavaScript)."""
     n = len(points_f16) // 2
     return struct.pack(f"<{n}h", *(max(-32000, min(32000, round(v * 1000))) for v in struct.unpack(f"<{n}e", points_f16)))
+
+
+SETUP_WAIT_S = 5 * 60  # the setup waits this long for an answer, then steps aside
+SKIP = re.compile(r"^\W*(?:andy\W+)?(?:skip(?: it| that)?|not now|later|stop(?: the setup)?|cancel|never ?mind|no thanks?)\W*$", re.I)
+COMMON_THINGS = ("reading glasses", "sunglasses", "glasses", "keys", "phone", "remote", "wallet", "purse", "watch", "mug",
+                 "cup", "hearing aid", "pills", "book", "bag", "charger", "headphones", "umbrella")
+
+
+def things_in(text: str) -> list[str]:
+    """The everyday things named in an answer ("my keys and my reading glasses"), each once, longest name first."""
+    found, rest = [], " " + text.lower() + " "
+    for name in COMMON_THINGS:
+        if re.search(rf"\b{name}s?\b", rest):
+            found.append(name)
+            rest = re.sub(rf"\b{name}s?\b", " ", rest)
+    order = {name: text.lower().find(name.split()[0]) for name in found}
+    return sorted(found, key=lambda n: order[n])
 
 
 def _it(thing: str) -> str:

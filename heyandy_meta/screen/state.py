@@ -81,6 +81,7 @@ class ScreenState:
         self.webs = 0  # a version, so the page fetches each screenshot once
         self.privacy: dict | None = None  # "what did you send today?": {"title", "rows": [{"mark", "text"}]}
         self._gaze: tuple[float, float, float] | None = None  # where the person is (yaw, pitch, when): a direction only
+        self._setup: dict | None = None  # the guided first minutes: {"step", "thing", "until"}
         self._pairing: dict | None = None  # "connect my phone": {"url", "code", "until"} for three minutes
         self._timeline: dict | None = None  # a watched thing's story: {"thing", "items", "usual"}, words only
         self._room: dict | None = None  # the room in 3D: its shape (millimetres, int16 x, y, z), the things, until
@@ -161,6 +162,12 @@ class ScreenState:
             self._room = {"points": points_mm, "things": list(things), "seconds": seconds,
                           "until": self._clock() + ROOM_SECONDS}
             self.rooms += 1
+
+    def setup(self, step: str | None, info: dict | None = None) -> None:
+        """"Let's get started": which step the TV shows ("things", "try", "done"); None ends it."""
+        with self._lock:
+            self._setup = {"step": step, **(info or {}), "until": self._clock() + (120 if step == "done" else 300)} \
+                if step else None
 
     def pairing(self, url: str, code: str, seconds: float) -> None:
         """The phone pairing card: where to go and the six numbers, until they run out (seconds 0: gone)."""
@@ -344,6 +351,9 @@ class ScreenState:
                 self._room = None
             out["room"] = {"v": self.rooms, "things": self._room["things"], "n": len(self._room["points"]) // 6,
                            "seconds": self._room["seconds"]} if self._room else None
+            if self._setup and self._clock() >= self._setup["until"]:
+                self._setup = None
+            out["setup"] = {k: v for k, v in self._setup.items() if k != "until"} if self._setup else None
             if self._pairing and self._clock() >= self._pairing["until"]:
                 self._pairing = None
             out["pairing"] = {"url": self._pairing["url"], "code": self._pairing["code"],
