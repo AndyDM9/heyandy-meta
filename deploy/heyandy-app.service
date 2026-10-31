@@ -8,6 +8,9 @@ Wants=jarvis-daemon.service heyandy-glimmer.service heyandy-sam.service heyandy-
 WorkingDirectory=%h/Documents/GitHub/heyandy-meta
 Environment=PYTHONPATH=%h/Documents/GitHub/heyandy-meta
 Environment=PYTHONWARNINGS=ignore
+# Everything Andy loads from Hugging Face (Pollen's recorded emotions) is already here: never wait on the network for
+# it, so pulling the cable on camera can't stall a turn.
+Environment=HF_HUB_OFFLINE=1
 # The Model API key, kept out of the repository: a file only its owner can read, with lines
 #   MODEL_API_KEY=...
 #   HEYANDY_PAID_CALLS=1
