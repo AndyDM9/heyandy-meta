@@ -128,6 +128,12 @@
   .drawing { display: grid; gap: 0.8rem; justify-items: start; min-height: 0; height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
   .drawing img { max-width: 100%; height: 100%; object-fit: contain; object-position: left top; border-radius: 1.4rem; display: block; min-height: 0; }
   .drawing small { font-size: 1.3rem; color: var(--muted); }
+  /* The room in 3D: its shape only (MapAnything), the person's things as pins, Andy at the middle */
+  #body:has(.room) { align-content: stretch; }
+  .room { display: grid; gap: 0.8rem; min-height: 0; height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
+  .room canvas { width: 100%; height: 100%; min-height: 0; display: block; border-radius: 1.4rem; }
+  .room small { font-size: 1.3rem; color: var(--muted); }
+  #card.room h1 { font-size: 2.5rem; margin-bottom: 0.4rem; }
   .try { align-self: center; font-size: 3.4rem; font-weight: 650; line-height: 1.2; }
   .try small { display: block; margin-top: 1.2rem; font-size: 1.5rem; font-weight: 500; color: var(--muted); }
   .does { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
@@ -240,6 +246,9 @@
     "Nothing yet. “Andy, keep an eye on my keys.”": "Nada todavía. “Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
     "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
+    "The room in 3D": "La sala en 3D", "Measuring the room in 3D": "Midiendo la sala en 3D", "Your things, as I measured them just now": "Sus cosas, tal como las medí ahora mismo",
+    "Its shape, measured by MapAnything on this computer from five looks. Never a colour or a picture; gone in two minutes.":
+      "Su forma, medida por MapAnything en esta computadora con cinco miradas. Nunca un color ni una imagen; se borra en dos minutos.",
     "What I remember": "Lo que recuerdo", "Where I last saw things": "Dónde vi las cosas por última vez",
     "Nothing yet": "Nada todavía", "Try asking": "Pruebe a decir", "to find it": "para encontrarlo",
     "If I can't find it, I'll say so.": "Si no lo encuentro, se lo diré.", "Looking around the room": "Mirando por la habitación",
@@ -391,6 +400,114 @@
     }
     const fig = el("figure"); fig.append(svg); return fig;
   }
+  // The room in 3D. Points are millimetres (x right, y down, z ahead of Andy); drawn as dots shaded by height, never a
+  // colour from the camera. It swings slowly so the depth reads, and stops when the card changes.
+  let roomRun = 0;
+  function far(m) {
+    if (LANG === "es") return m < 0.95 ? Math.max(10, Math.round(m * 10) * 10) + " cm" : m.toFixed(1).replace(".", ",") + " m";
+    const ft = Math.round(m * 3.281); return ft <= 1 ? "1 ft" : ft + " ft";
+  }
+  function room(r) {
+    const box = el("div", null, "room"), cv = el("canvas");
+    cv.setAttribute("role", "img");
+    cv.setAttribute("aria-label", T("The room in 3D") + ": " + r.things.map(t => t.label + " " + far(t.metres)).join(", "));
+    box.append(cv, el("small", T("Its shape, measured by MapAnything on this computer from five looks. Never a colour or a picture; gone in two minutes.")));
+    const run = ++roomRun;
+    fetch((window.HEYANDY_STATIC ? "room.bin" : "/room.bin") + "?v=" + r.v, { cache: "no-store" })
+      .then(x => x.arrayBuffer()).then(buf => { if (run === roomRun) spin(cv, new Int16Array(buf), r.things, run); }).catch(() => {});
+    return box;
+  }
+  function spin(cv, mm, things, run) {
+    const css = getComputedStyle(document.documentElement), v = name => css.getPropertyValue(name).trim();
+    const ink = v("--ink"), muted = v("--muted"), accent = v("--accent"), outline = v("--outline"), solid = v("--solid");
+    const n = Math.floor(mm.length / 3), P = new Float32Array(n * 3);
+    let k = 0;
+    for (let i = 0; i < n; i++) {
+      const x = mm[3 * i] / 1000, y = mm[3 * i + 1] / 1000, z = mm[3 * i + 2] / 1000;
+      if (Math.hypot(x, z) > 4.5 || z < -1.5) continue;  // the room around the table, not a far wall's guess
+      P[k++] = x; P[k++] = y; P[k++] = z;
+    }
+    const m = k / 3, ys = Array.from({ length: m }, (_, i) => P[3 * i + 1]).sort((a, b) => a - b);
+    const floor = m ? ys[Math.floor(m * 0.97)] : 1.0;  // y is down: the lowest points are the floor
+    const c = things.length ? [things.reduce((a, t) => a + t.point[0], 0) / things.length, floor * 0.45,
+                               things.reduce((a, t) => a + t.point[2], 0) / things.length] : [0, floor * 0.45, 1.2];
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches, t0 = performance.now();
+    const tilt = 0.88, dist = 4.6;  // from above and behind Andy: about 50 degrees down
+    const kept = {}, SPOTS = [[0, 0], [0, -1], [-0.8, 0], [0.8, 0], [-0.8, -1], [0.8, -1], [0, 1.4], [-0.8, 1.2], [0.8, 1.2],
+                              [-1.6, 0], [1.6, 0], [0, -2], [-1.6, -1], [1.6, -1]];
+    function frame(now) {
+      if (run !== roomRun || !cv.isConnected) return;
+      const dpr = devicePixelRatio || 1, W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
+      if (!W || !H) return requestAnimationFrame(frame);
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+      const g = cv.getContext("2d"), f = Math.min(W, H * 1.7) * 1.0;
+      const a = still ? 0.35 : Math.sin((now - t0) / 9000) * 0.6, ca = Math.cos(a), sa = Math.sin(a);
+      const ct = Math.cos(tilt), st = Math.sin(tilt);
+      const view = (x, y, z) => {  // around the middle of the things, then down at them from above and behind Andy
+        x -= c[0]; y -= c[1]; z -= c[2];
+        const x1 = x * ca - z * sa, z1 = x * sa + z * ca;
+        const y2 = y * ct - z1 * st, z2 = y * st + z1 * ct + dist;
+        return z2 < 1.4 ? null : [W / 2 + f * x1 / z2, H * 0.55 + f * y2 / z2, z2];
+      };
+      g.clearRect(0, 0, W, H);
+      g.lineWidth = 1.2 * dpr; g.strokeStyle = muted; g.globalAlpha = 0.45;
+      for (const ring of [1, 2]) {  // a metre and two from Andy, on the floor
+        g.beginPath();
+        for (let i = 0; i <= 72; i++) {
+          const q = view(ring * Math.sin(i / 72 * 2 * Math.PI), floor, ring * Math.cos(i / 72 * 2 * Math.PI));
+          if (q) (i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]));
+        }
+        g.stroke();
+      }
+      // The floor faint, the furniture and the things' surfaces stronger, the walls light: depth reads without colour
+      for (const [lo, hi, colour, alpha] of [[-9, 0.1, muted, 0.22], [1.15, 99, muted, 0.3], [0.1, 1.15, ink, 0.42]]) {
+        g.fillStyle = colour; g.globalAlpha = alpha;
+        for (let i = 0; i < m; i++) {
+          const h = floor - P[3 * i + 1];
+          if (h < lo || h >= hi) continue;
+          const q = view(P[3 * i], P[3 * i + 1], P[3 * i + 2]);
+          if (!q) continue;
+          const r = Math.min(3.2 * dpr, Math.max(1.3 * dpr, 1.9 * dpr * dist / q[2]));
+          g.fillRect(q[0] - r / 2, q[1] - r / 2, r, r);
+        }
+      }
+      g.globalAlpha = 1;
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) * dpr;
+      const me = view(0, 0, 0);
+      if (me) {  // Andy, where it stands
+        g.fillStyle = ink; g.beginPath(); g.arc(me[0], me[1], 0.55 * rem, 0, 2 * Math.PI); g.fill();
+        g.font = `700 ${1.35 * rem}px "Atkinson Next", sans-serif`; g.textAlign = "center";
+        g.fillText("Andy", me[0], me[1] + 2.0 * rem);
+      }
+      // Pins: each label at the first free spot on the canvas, above its thing or beside it, on a pill of its own
+      const placed = [], pins = things.map(t => ({ t, q: view(...t.point) })).filter(p => p.q).sort((a, b) => a.q[1] - b.q[1]);
+      for (const { t, q } of pins) {
+        g.font = `750 ${1.6 * rem}px "Atkinson Next", sans-serif`;
+        const w = Math.max(g.measureText(t.label).width, 3.6 * rem) + 1.6 * rem, h = 3.4 * rem;
+        const fits = (x, y) => y - h > 0 && x - w / 2 > 0 && x + w / 2 < W &&
+                               !placed.some(b => Math.abs(b.x - x) < (b.w + w) / 2 && Math.abs(b.y - y) < h);
+        let spot = null;
+        for (const [dx, dy] of [kept[t.label] || [0, 0], ...SPOTS]) {  // where it was last frame first: no jumping
+          const x = q[0] + dx * w, y = q[1] - 2.6 * rem + dy * h;
+          if (fits(x, y)) { spot = [x, y]; kept[t.label] = [dx, dy]; break; }
+        }
+        spot = spot || [q[0], q[1] - 2.6 * rem];
+        const [x, y] = spot;
+        placed.push({ x, y, w });
+        g.strokeStyle = outline; g.lineWidth = 2.5 * dpr;
+        g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(x, y); g.stroke();
+        g.fillStyle = outline; g.beginPath(); g.arc(q[0], q[1], 0.42 * rem, 0, 2 * Math.PI); g.fill();
+        g.fillStyle = solid; g.globalAlpha = 0.92;
+        g.beginPath(); g.roundRect(x - w / 2, y - h + 0.15 * rem, w, h - 0.3 * rem, 0.9 * rem); g.fill();
+        g.globalAlpha = 1; g.textAlign = "center"; g.fillStyle = ink;
+        g.fillText(t.label, x, y - 1.75 * rem);
+        g.fillStyle = accent; g.font = `700 ${1.3 * rem}px "Atkinson Mono", monospace`;
+        g.fillText(far(t.metres), x, y - 0.45 * rem);
+      }
+      if (!still) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
   function glimpse(g) {  // what Andy sees while it searches: the whole view, every candidate SAM 3.1 outlined
     const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("viewBox", `0 0 ${g.width} ${g.height}`); svg.setAttribute("role", "img");
@@ -442,6 +559,10 @@
         box.append(img, el("small", s.drawing.saved + " · " + T("Made by Muse Image from your words only")));
         body.replaceChildren(box);
       }
+    } else if (s.room) {
+      kicker = T("The room in 3D"); title = T("Your things, as I measured them just now");
+      const key = "room:" + s.room.v + ":" + LANG;
+      if (key !== pictureKey) { pictureKey = key; body.replaceChildren(room(s.room)); }
     } else if (s.picture) {
       kicker = T(s.game ? "The cup game" : "Found"); title = s.picture.words;
       const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
@@ -469,7 +590,8 @@
         if (s.game.score) w.append(el("div", s.game.score, "answer"));
         body.replaceChildren(w);
       } else if (s.looking_for && s.running) {
-        kicker = LANG === "es" ? `Buscando: ${s.looking_for}` : `Finding your ${s.looking_for}`; title = s.head || T("Looking around the room");
+        kicker = s.looking_for === "room" ? T("Measuring the room in 3D")
+               : LANG === "es" ? `Buscando: ${s.looking_for}` : `Finding your ${s.looking_for}`; title = s.head || T("Looking around the room");
         if (s.glimpse) {  // the live view, beside the plan as it happens
           const split = el("div", null, "split"); split.append(glimpse(s.glimpse), steps(s.steps.slice(-6))); body.replaceChildren(split);
         } else body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", T("If I can't find it, I'll say so."), "when"));
@@ -527,7 +649,8 @@
       }
     }
     $("kicker").textContent = kicker; $("title").textContent = title; $("title").hidden = !title;
-    $("card").classList.toggle("found", !!(s.picture && !s.game));  // the found shot: the picture large, the title short
+    $("card").classList.toggle("found", !!(s.picture && !s.game));
+    $("card").classList.toggle("room", !!s.room && !s.web && !s.drawing);  // the found shot: the picture large, the title short
     $("timer").textContent = s.running && s.seconds !== null ? s.seconds.toFixed(1) + " s" : "";
   }
   // The privacy receipt: on every turn, exactly which words went to which cloud model, or that nothing did.

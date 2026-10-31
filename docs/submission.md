@@ -25,6 +25,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
   are! On the armchair, to my left, about 5 feet away" (MapAnything, Meta's 3D model, measures how far). It skips a
   picture of glasses on the TV, picks "the blue mug, next to the laptop" from look-alikes, and goes straight "behind
   you, on the left".
+- **"Andy, show me the room."** Five looks, SAM 3.1 marking your things in each, and MapAnything joins them into the
+  room's shape in 3D on the TV: dots, never a picture, your things as pins with their distances. Gone in two minutes.
 - **"Keep an eye on my keys."** Andy remembers where your chosen things were last seen, in words ("on the desk, behind
   the keyboard") and how far, and the TV draws a floor plan. Never a picture.
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it.
@@ -45,7 +47,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 |---|---|---|
 | **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once |
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; says what it sees; translates Spanish |
-| **MapAnything** (open weights) | GPU 1 | How far away a found thing is, from one frame; the floor plan |
+| **MapAnything** (open weights) | GPU 1 | How far away a found thing is, from one frame; the room in 3D from five looks; the floor plan |
 | **Omnilingual ASR** (open weights) | GPU 1 | Hears the person, in English or Spanish |
 | **SeamlessM4T v2** (open weights, its speech half) | GPU 0 | Andy's voice, English and Spanish |
 | **DINOv2** (open weights) | GPU 1 | Knows the person's own things by sight |
@@ -68,6 +70,9 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
   middle of the view, 8.7 at worst (13.7 before the fix).
 - **How far, from one frame.** MapAnything gives metric depth for the frame a thing was confirmed in, in 0.2 s beside
   SAM 3.1 on one GPU: the same keyboard read 0.92 to 1.00 m from five starting poses.
+- **A robot that measured its own lens.** Checking the 3D room, Andy centred a watch, a cup and glasses, then saw
+  each from 27 head angles: the published focal length put things up to 4.7 degrees out at the edges; the one it
+  measured fits all 80 sightings, and a thing seen from three looks now lands within 2 degrees.
 - **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2 (9% of words
   misheard by a speech recogniser, against 23 to 28% for MMS-TTS). On the robot's small speaker the founder picked,
   by ear, a version slowed 8%, cleared of rumble and lifted around 3 kHz; to fit it, Glimmer runs without its drafter.
@@ -85,7 +90,7 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 
 *Search, simulated* (the robot's camera model, seeded rooms; rerun Oct 30 on the final code): with look-alikes
 described, the fixed sweep pointed at the wrong one 20 times in 100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark
-18 of 20, 1 wrong). Things behind the robot: **Glimmer 20 of 20 in 4.5 looks** (Spark 18 in 4.2; fixed sweep 92 of 100
+18 of 20, 1 wrong). Things behind the robot: **Glimmer 20 of 20 in 4.0 looks** (Spark 18 in 4.2; fixed sweep 92 of 100
 in 7.1). Nothing there: no false finds.
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12** (6 of 12 before the
 fixes this scorecard showed were needed), **Glimmer offline 12 of 12**.

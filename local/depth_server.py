@@ -10,12 +10,20 @@ listens on 127.0.0.1 only. Frames are held in memory for one request and never w
 
     CUDA_VISIBLE_DEVICES=1 ~/opt/mapanything/.venv/bin/python local/depth_server.py
 
-POST /distance {"image": <base64 JPEG>, "fx": 1116, "cx": 953, "cy": 542,
+POST /distance {"image": <base64 JPEG>, "fx": 1054, "cx": 953, "cy": 542,
                 "boxes": [[l, t, r, b], ...]}            (the frame's own pixels)
   -> {"things": [{"metres": 1.42, "point": [x, y, z]} or null, ...], "seconds": 0.16}
      metres: straight-line distance from the camera to the middle of the thing (the median over the inner half of
      its box, where the pixels are the thing's own); point: camera coordinates in metres, x right, y down, z forward.
      null: no reliable depth there (MapAnything masks its unsure edges).
+
+POST /scan {"views": [{"image": <base64 JPEG>, "fx", "cx", "cy", "pose": 4x4 camera-to-room,
+                       "boxes": [{"label": "keys", "box": [l, t, r, b], "score": 0.9}, ...]}, ...]}   (2 to 6 views)
+  -> {"points": <base64 float16, n x 3>, "n": 21000, "things": [{"label", "point": [x, y, z], "metres", "score"}],
+      "seconds": 1.9}
+     The views together, the head's own angles given as each camera's pose, so they join in one room: x right, y
+     down, z ahead of the robot, in metres, the camera at the middle. Shape only: no colour leaves this server, the
+     points are thinned to one per 3 cm cube, and nothing is kept after the answer.
 
 Measured before building (public NYU Depth v2 test frames, ground truth from a Kinect): 13% median error, and it
 reads closer than true by about that much, so Andy says "about". A tape measure in the robot's own room calibrates
@@ -91,6 +99,59 @@ def distances(model, image: Image.Image, fx: float, cx: float, cy: float, boxes)
     return things
 
 
+VOXEL_M = 0.03
+MAX_POINTS = 40000
+MAX_VIEWS = 6
+
+
+def scan(model, views_in: list[dict]) -> dict:
+    """Several frames joined into one room's shape, and where each boxed thing is in it."""
+    from mapanything.utils.image import preprocess_inputs
+
+    views = []
+    for v in views_in:
+        k = torch.tensor([[v["fx"], 0, v["cx"]], [0, v["fx"], v["cy"]], [0, 0, 1]], dtype=torch.float32)
+        views.append({"img": np.asarray(v["image"]), "intrinsics": k,
+                      "camera_poses": torch.tensor(v["pose"], dtype=torch.float32), "is_metric_scale": False})
+    prepared = preprocess_inputs(views)
+    outs = model.infer(prepared, memory_efficient_inference=True, minibatch_size=1, use_amp=True, amp_dtype="bf16",
+                       apply_mask=True, mask_edges=True)
+    # Only MapAnything's depth is used: each pixel's ray comes from Andy's own camera (the intrinsics given, as the
+    # preprocessing scaled them) and is turned into the room by the head's angles as the motors measured them.
+    # Taken whole, the joined views came out about 1.3 times too wide (the robot, 2026-10-31: a watch at -35
+    # degrees read -30 and -41 from two views).
+    cloud, things = [], []
+    for v, out, pv in zip(views_in, outs, prepared):
+        z = out["depth_z"][0, ..., 0].double().cpu().numpy()
+        kk = pv["intrinsics"][0].double().cpu().numpy()
+        h, w = z.shape
+        u, vv = np.meshgrid(np.arange(w) + 0.5, np.arange(h) + 0.5)
+        cam = np.stack([(u - kk[0, 2]) / kk[0, 0] * z, (vv - kk[1, 2]) / kk[1, 1] * z, z], axis=-1)
+        rot = np.asarray(v["pose"], dtype=np.float64)[:3, :3]
+        pts = ((cam @ rot.T) * SCALE).astype(np.float32)
+        keep = out["mask"][0, ..., 0].cpu().numpy().astype(bool) & np.isfinite(pts).all(axis=-1) & (z > 0.05)
+        cloud.append(pts[keep])
+        sc = kk[0, 0] / v["fx"]  # the preprocessing's scale and crop, from the intrinsics it handed back
+        ox, oy = kk[0, 2] - v["cx"] * sc, kk[1, 2] - v["cy"] * sc
+        for b in v["boxes"]:
+            l, t, r, bt = b["box"]
+            rows, cols = inner((l * sc + ox, t * sc + oy, r * sc + ox, bt * sc + oy), w, h, 1.0, 1.0)
+            p, ok = pts[rows, cols].reshape(-1, 3), keep[rows, cols].reshape(-1)
+            if ok.sum() < 4:
+                continue
+            point = np.median(p[ok], axis=0)
+            things.append({"label": b["label"], "score": b.get("score"), "point": [round(float(x), 3) for x in point],
+                           "metres": round(float(np.linalg.norm(point)), 2)})
+    pts = np.concatenate(cloud) if cloud else np.zeros((0, 3), np.float32)
+    pts = pts[np.linalg.norm(pts, axis=1) < 8.0]  # the room, not a far-off guess through a window
+    _, first = np.unique(np.floor(pts / VOXEL_M).astype(np.int32), axis=0, return_index=True)
+    pts = pts[first]
+    if len(pts) > MAX_POINTS:
+        pts = pts[np.random.default_rng(0).choice(len(pts), MAX_POINTS, replace=False)]
+    return {"points": base64.b64encode(pts.astype(np.float16).tobytes()).decode(), "n": int(len(pts)),
+            "things": things}
+
+
 def serve(model, host: str, port: int) -> None:
     lock = threading.Lock()  # one GPU, one frame at a time
 
@@ -99,11 +160,13 @@ def serve(model, host: str, port: int) -> None:
             self._send(200, {"status": "ok"} if self.path == "/health" else {"error": "not found"})
 
         def do_POST(self):
-            if self.path != "/distance":
+            if self.path not in ("/distance", "/scan"):
                 return self._send(404, {"error": "not found"})
             n = int(self.headers.get("Content-Length") or 0)
-            if not 0 < n <= MAX_BODY:
+            if not 0 < n <= MAX_BODY * MAX_VIEWS:
                 return self._send(413, {"error": "body too large or empty"})
+            if self.path == "/scan":
+                return self._scan(n)
             try:
                 req = json.loads(self.rfile.read(n))
                 image = Image.open(io.BytesIO(base64.b64decode(req["image"]))).convert("RGB")
@@ -117,6 +180,31 @@ def serve(model, host: str, port: int) -> None:
             with lock, torch.inference_mode():
                 things = distances(model, image, fx, cx, cy, boxes)
             self._send(200, {"things": things, "seconds": round(time.monotonic() - start, 3)})
+
+        def _scan(self, n):
+            try:
+                req = json.loads(self.rfile.read(n))
+                views = []
+                for v in req["views"][:MAX_VIEWS]:
+                    pose = [[float(x) for x in row][:4] for row in v["pose"]][:4]
+                    boxes = [{"label": str(b["label"])[:40], "box": [float(x) for x in b["box"]][:4],
+                              "score": float(b.get("score") or 0.0)} for b in v.get("boxes", [])][:24]
+                    views.append({"image": Image.open(io.BytesIO(base64.b64decode(v["image"]))).convert("RGB"),
+                                  "fx": float(v["fx"]), "cx": float(v["cx"]), "cy": float(v["cy"]),
+                                  "pose": pose, "boxes": boxes})
+                if len(views) < 2 or any(len(p) != 4 or any(len(r) != 4 for r in p) for p in (v["pose"] for v in views)):
+                    raise ValueError
+            except (ValueError, KeyError, TypeError, OSError):
+                return self._send(400, {"error": "need 'views': 2 to 6 of image, fx, cx, cy, pose (4x4), boxes"})
+            start = time.monotonic()
+            try:
+                with lock, torch.inference_mode():
+                    out = scan(model, views)
+            except (RuntimeError, ValueError) as e:  # out of GPU memory, a view MapAnything refused: say so
+                torch.cuda.empty_cache()
+                return self._send(500, {"error": f"{type(e).__name__}: {str(e)[:200]}"})
+            torch.cuda.empty_cache()
+            self._send(200, {**out, "seconds": round(time.monotonic() - start, 3)})
 
         def _send(self, code, body):
             data = json.dumps(body).encode()

@@ -11,7 +11,10 @@ from dataclasses import dataclass
 class Camera:
     width: int = 1920
     height: int = 1080
-    fx: float = 1116.0  # Pollen's published Reachy Mini Lite calibration, at 1920x1080
+    # Measured on our Lite (2026-10-31): a watch, a cup and glasses each centred, then seen from 27 head angles up to
+    # 42 degrees off; the published 1116 put things up to 4.7 degrees out near the edges, 1054 fits all 80 sightings
+    # (the centre as published). Pollen's published calibration: fx 1116, cx 953, cy 542, at 1920x1080.
+    fx: float = 1054.0
     cx: float = 953.0
     cy: float = 542.0
 

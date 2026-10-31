@@ -688,3 +688,24 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   waiting for camera and sound access at boot (once, after a restart, it started before the login and ran blind).
 - **Every scorecard rerun on the final code** (Oct 30): see the README; the Oct 28 runs are kept as `*-oct28.json`.
 
+
+## 33. The room in 3D, and the robot's own lens (2026-10-31)
+
+- **Why:** MapAnything's strength is many views at once, and Andy already turns its head to look; a room you can see
+  from above, with your things pinned in it, is the spatial memory a finder needs, and it shows what "shape, never a
+  picture" means. `local/depth_server.py` `/scan`: 2 to 6 frames with each head direction as the camera's pose.
+- **Joining the looks:** taken whole, MapAnything joined five looks about 1.3 times too wide (a watch at -35 degrees,
+  centred by the finder, read -30 and -41 from two looks): its own guess at the turns between looks won over the poses
+  given. Using only its depth for each pixel, the ray from Andy's camera and the head's measured angles, the watch read
+  -36.4, -35.4 and -34.5 from three looks, 0.80 to 0.89 m; the cup, the glasses and the keyboard agreed as well.
+- **The lens, measured by the robot:** a watch, a cup and glasses each centred by the finder, then seen from 27 head
+  angles (up to 42 degrees off the middle), 80 sightings in all. The published 1116 px focal length (1920x1080) put
+  things 0.8 degrees out near the middle and 4.7 at the edges; a pinhole of 1054 px fits all 80 to about 2 degrees
+  (RMS, head noise included; equidistant and Kannala-Brandt fits were no better, so the lens is close to a pinhole). The
+  centre fitted 28 px lower, possibly a sag in the head's pitch reading, so the published centre is kept.
+- **On the robot:** "Andy, show me the room": five looks, ten things asked of SAM 3.1 in each, 40,000 points of shape
+  joined in 1.0 s, about 35 s in all with Andy's voice; a thing counts if seen in two looks, or once with SAM 3.1 sure
+  (a keyboard's edge read once as keys). The keys' remembered place came from the scan, and the next "where are my
+  keys?" was one look, 2 degrees off the middle.
+- **Privacy:** shape only: the server sends no colour, the points are thinned to one per 3 cm, the TV holds them two
+  minutes, and nothing is saved. The demo scene and the public Space use a made-up room.

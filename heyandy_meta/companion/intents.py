@@ -50,6 +50,10 @@ LAST_SEEN = re.compile(r"\b(?:(?:when|where) did you (?:last )?see|where did i (
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
+# The room in 3D (MapAnything over several looks): "show me the room", "scan the room", "my things in 3D"
+ROOM = re.compile(r"\b(?:show|map|scan|measure)(?: me)? (?:the|my|this|your) (?:room|living room|space)\b|"
+                  r"\b(?:room|things|space) in 3 ?d\b|\b3 ?d (?:map|view|scan|picture) of\b|"
+                  r"\bwhat does (?:the|my|this) room look like\b", re.I)
 # The time and the day, from the clock: the conversation's model isn't told them, and would guess.
 TIME = re.compile(r"\bwhat(?:'s|s| is) the time\b|\bwhat time is it\b|\bwhat(?:'s|s| is) (?:the date|today'?s date|"
                   r"the day)(?: today)?\b|\bwhat day is (?:it|today)\b|\bwhat(?:'s|s| is) today\b", re.I)
@@ -96,7 +100,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -196,6 +200,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("reminders")
     if TIME.search(t):
         return Intent("time", thing="day" if re.search(r"\b(?:date|day|today)\b", t, re.I) else "time")
+    if ROOM.search(t):
+        return Intent("room", text=t)
     if REMEMBER.search(t):
         return Intent("remember")
     if GAME.search(t):

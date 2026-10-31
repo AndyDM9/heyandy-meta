@@ -5,7 +5,7 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, help.
+Scenes: idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, room, privacy, help.
 """
 import argparse
 import functools
@@ -24,8 +24,8 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "privacy",
-          "help")
+SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+          "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
 
@@ -68,6 +68,36 @@ def cups_frame() -> tuple[bytes, Mask]:
     box = (int(x - 92), 500, int(x + 92), 762)
     outline = "M 2 0 L 182 0 L 157 262 L 27 262 Z"
     return out.getvalue(), Mask("cup", box, 0.93, (x, 640.0), 184 * 262, outline, (1.0, 1.0))
+
+
+def sample_room() -> tuple[bytes, list[dict]]:
+    """A made-up room's shape for the "room" scene, in Andy's axes (metres: x right, y down, z ahead, the camera at the
+    middle), as int16 millimetres: a desk with a monitor and a keyboard, a sofa, the floor and two walls."""
+    import random
+    import struct
+
+    rnd, pts = random.Random(4), []
+
+    def plane(n, x0, x1, y0, y1, z0, z1):
+        for _ in range(n):
+            pts.append((rnd.uniform(x0, x1), rnd.uniform(y0, y1), rnd.uniform(z0, z1)))
+
+    plane(5200, -0.95, 0.95, 0.17, 0.18, 0.15, 1.15)      # the desk's top, just below Andy's camera
+    plane(9000, -3.0, 3.0, 0.94, 0.95, -1.0, 3.4)         # the floor
+    plane(5200, -3.0, 3.0, -1.3, 0.95, 3.39, 3.4)         # the wall ahead
+    plane(3200, -3.0, -2.99, -1.3, 0.95, -1.0, 3.4)       # the wall on the left
+    plane(1500, -0.62, 0.05, -0.32, 0.12, 0.98, 1.0)      # the monitor
+    plane(700, 0.1, 0.55, 0.15, 0.16, 0.55, 0.72)         # the keyboard
+    plane(2600, -2.4, -1.2, 0.45, 0.47, 1.7, 2.6)         # the sofa's seat
+    plane(1600, -2.4, -1.2, 0.0, 0.46, 2.58, 2.6)         # and its back
+    for x0, x1 in ((-0.9, -0.85), (0.85, 0.9)):           # the desk's legs
+        plane(260, x0, x1, 0.18, 0.94, 1.05, 1.1)
+    mm = [max(-32000, min(32000, round(v * 1000))) for p in pts for v in p]
+    things = [{"label": "keys", "point": [0.24, 0.16, 0.48], "metres": 0.56, "views": 3, "yaw": -26.6, "pitch": 16.6},
+              {"label": "cup", "point": [0.42, 0.12, 0.86], "metres": 0.96, "views": 2, "yaw": -26.0, "pitch": 7.2},
+              {"label": "glasses", "point": [-0.3, 0.16, 0.72], "metres": 0.8, "views": 3, "yaw": 22.6, "pitch": 11.6},
+              {"label": "remote", "point": [-1.7, 0.44, 2.1], "metres": 2.74, "views": 2, "yaw": 39.0, "pitch": 9.3}]
+    return struct.pack(f"<{len(mm)}h", *mm), things
 
 
 def show(state: ScreenState, scene: str) -> None:
@@ -211,6 +241,20 @@ def show(state: ScreenState, scene: str) -> None:
                              "remote: seen 25 minutes ago, behind me on my left, about 9 feet away"])
         state.said("I'm keeping an eye on your keys and your glasses. It's on the screen.", "device")
         state.doing("Speaking", "Looking at you")
+    elif scene == "room":
+        points, things = sample_room()
+        state.room(points, things, 1.0)
+        for line in ("looked to my right: cup, keys", "looked a little to my right: cup, glasses, keys",
+                     "looked straight ahead: glasses, keys", "looked to my left: remote", "looked to my left: remote",
+                     f"MapAnything: {len(points) // 6:,} points of shape in 1.0 s"):
+            state.step(line)
+        state.said("Here's the room as I measured it, on the screen: your keys a little to my right, about 2 feet away; "
+                   "your glasses a little to my left, about 3 feet away; your cup a little to my right, about 3 feet "
+                   "away. Its shape only, never a picture.", "device", "the room in 3D, measured on this computer")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
+        state.used("SAM 3.1", "device", 5)
+        state.used("MapAnything (the room in 3D)", "device")
     elif scene == "privacy":
         state.privacy_day("21 of 24 requests stayed in this house",
                           [("✓", "21 requests answered on this computer: nothing sent"),
@@ -243,6 +287,8 @@ def main() -> None:
             show(st, scene)
             return st.snapshot()
 
+        show(state, "room")  # the room's shape is fetched separately (room.bin): kept for every visitor
+        state._room["until"] = float("inf")
         serve(state, host=args.host, port=args.port, frame_ancestors="https://huggingface.co https://*.hf.space", any_host=True,
               scenes={name: functools.partial(snapshot, name) for name in SCENES})
         print(f"public demo on http://{args.host}:{args.port}")

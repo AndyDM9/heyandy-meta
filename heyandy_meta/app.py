@@ -9,7 +9,9 @@ Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer);
 """
 import datetime as dt
 import json
+import math
 import re
+import struct
 import threading
 import time
 from dataclasses import dataclass, field
@@ -295,6 +297,8 @@ class Andy:
                 else "I'm not keeping an eye on anything. Say 'keep an eye on my keys' to start."
         if i.kind == "time":
             return self.what_time(day=i.thing == "day")
+        if i.kind == "room":
+            return self.scan_room()
         if i.kind == "reminders":
             up = self.reminders.upcoming()[:5]
             if not up:
@@ -494,7 +498,8 @@ class Andy:
             self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting"))
             self.gesture("searching")
             found = self.finder.find(thing, last)
-            self.screen.step(f"looked {self.finder.looks} times" + (f"; {self.finder.why}" if self.finder.why else ""))
+            looks = "once" if self.finder.looks == 1 else f"{self.finder.looks} times"
+            self.screen.step(f"looked {looks}" + (f"; {self.finder.why}" if self.finder.why else ""))
         self.screen.timer_stop()
         self.screen.used("SAM 3.1", self.vision_where, self.finder.looks)
         self.screen.used("Muse Glimmer (picture check)", "device", getattr(self.judge, "calls", 0) - checks)
@@ -1138,6 +1143,55 @@ class Andy:
         """Still while a tool looks; thinking while the model decides what to do next."""
         self.gesture("searching" if starting else "thinking")
 
+    def scan_room(self) -> str:
+        """"Show me the room": five looks across the room, SAM 3.1 marking the person's things in each, and MapAnything
+        joining them into the room's shape in 3D, on this computer. The TV shows the shape only, never a colour or a
+        picture, for two minutes; the frames are dropped once measured. Watched things get their place and distance."""
+        if self.depth is None or not hasattr(self.body, "capture"):
+            return "I can't measure the room right now."
+        labels = list(dict.fromkeys(self.places.watching() + list(ROOM_THINGS)))[:10]
+        self.screen.clear()
+        self.screen.timer_start()
+        self.screen.looking("room")  # the TV: "Measuring the room in 3D", each look live
+        self.say("Let me look around the room.")
+        self.screen.doing("Working", "Measuring the room")
+        self.gesture("searching")
+        looks, many = [], getattr(self.segmenter, "find_many", None)
+        try:
+            for yaw in ROOM_VIEWS:
+                if not self.body.reach.allows(yaw, ROOM_PITCH):
+                    continue
+                self.body.look(yaw, ROOM_PITCH, precise=False)
+                frame = self.body.capture()
+                found = many(frame, labels) if many else {label: self.segmenter.find(frame, label) for label in labels}
+                masks = [m for ms in found.values() for m in ms if (m.score if m.score is not None else 0.5) >= 0.6]
+                self.screen.glimpse(frame, masks)
+                self.screen.step(f"looked {side(frame.yaw)}: " + (", ".join(sorted({m.label for m in masks})) or "nothing of yours"))
+                looks.append((frame, self.finder._cam(frame), masks))
+            self.screen.doing("Working", "Joining the views in 3D")
+            out = self.depth.scan(looks)
+        except (LocalUnavailable, RuntimeError):
+            return "I couldn't measure the room just now."
+        finally:
+            looks.clear()  # the frames: measured, then gone
+            self.gesture("idle")
+            self.screen.timer_stop()
+        things = room_things(out["things"])
+        self.screen.used("SAM 3.1", self.vision_where, len(ROOM_VIEWS))
+        self.screen.used("MapAnything (the room in 3D)", "device")
+        self.screen.step(f"MapAnything: {out['n']:,} points of shape in {out.get('seconds', 0):.1f} s")
+        self.screen.room(millimetres(out["points"]), things, out.get("seconds", 0.0))
+        watched = set(self.places.watching())
+        for t in things:
+            if t["label"] in watched:
+                self.places.saw(t["label"], t["yaw"], t["pitch"], when=self.clock(), metres=t["metres"])
+        self.refresh_panels()
+        named = sorted(things, key=lambda t: (t["label"] not in watched, t["metres"]))[:3]
+        metric = self.language != "en"
+        said = "; ".join(f"your {t['label']} {side(t['yaw'])}, {how_far(t['metres'], metric=metric)}" for t in named)
+        return ("Here's the room as I measured it, on the screen" + (f": {said}." if said else ".")
+                + " Its shape only, never a picture.")
+
     def what_time(self, day: bool = False) -> str:
         """From the clock on this computer, never a model's guess."""
         now = dt.datetime.fromtimestamp(self.clock())
@@ -1318,6 +1372,35 @@ HELLO = re.compile(r"^\W*(andy\W+)?(good morning|good afternoon|good evening|hel
 
 FOUND_OPENERS = {"it": ("There it is!", "Found it!", "Ah, there it is!"),
                  "them": ("There they are!", "Found them!", "Ah, there they are!")}
+
+
+ROOM_VIEWS = (-80.0, -40.0, 0.0, 40.0, 80.0)  # overlapping: the camera sees about 84 degrees across
+ROOM_PITCH = 15.0
+ROOM_THINGS = ("keys", "glasses", "cup", "phone", "remote", "watch", "wallet", "keyboard", "laptop", "chair")
+
+
+def room_things(seen: list[dict], within_m: float = 0.2) -> list[dict]:
+    """One entry per thing: the same label within 20 cm in several views is one thing. A thing seen in only one view
+    counts only when SAM 3.1 was sure (a keyboard's edge read once as "keys", on the robot)."""
+    groups: list[list[dict]] = []
+    for t in sorted(seen, key=lambda t: -(t.get("score") or 0.0)):
+        g = next((g for g in groups if g[0]["label"] == t["label"] and math.dist(g[0]["point"], t["point"]) <= within_m), None)
+        (g.append(t) if g else groups.append([t]))
+    out = []
+    for g in groups:
+        if len(g) < 2 and (g[0].get("score") or 0.0) < 0.85:
+            continue
+        x, y, z = (sum(t["point"][i] for t in g) / len(g) for i in range(3))
+        out.append({"label": g[0]["label"], "point": [round(x, 3), round(y, 3), round(z, 3)],
+                    "metres": round(math.sqrt(x * x + y * y + z * z), 2), "views": len(g),
+                    "yaw": round(math.degrees(math.atan2(-x, z)), 1), "pitch": round(math.degrees(math.atan2(y, math.hypot(x, z))), 1)})
+    return sorted(out, key=lambda t: t["metres"])
+
+
+def millimetres(points_f16: bytes) -> bytes:
+    """MapAnything's float16 metres as int16 millimetres, for the TV page (no half floats in its JavaScript)."""
+    n = len(points_f16) // 2
+    return struct.pack(f"<{n}h", *(max(-32000, min(32000, round(v * 1000))) for v in struct.unpack(f"<{n}e", points_f16)))
 
 
 def _it(thing: str) -> str:

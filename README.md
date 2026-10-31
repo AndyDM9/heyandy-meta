@@ -23,54 +23,60 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
    about 5 feet away", and the TV's map of your things becomes a floor plan, in feet.
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
-4. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
+4. **"Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and
+   **MapAnything** (Meta's 3D model) turns the looks into the room's shape, joined by the head's own measured angles,
+   on the computer beside the robot (about 1 s for all five). The TV draws it in 3D, turning slowly: dots for the shape,
+   never a colour or a picture, your things as pins with how far each is. It's gone from the TV after two minutes and
+   never saved; watched things get their place and distance, so the next "where are my keys?" is one look. About 35 s
+   on the robot.
+5. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
    agent: Muse Spark through the Meta Model API, or Muse Glimmer on the computer beside the robot, so the robot keeps
    working with no internet. A plain "where are my glasses?" uses a fixed sweep, which needs no model to plan.
-5. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
+6. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
-6. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
+7. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
    second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
-7. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
+8. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
    points at any still here ("Your keys are still here, on the desk"), says which it didn't see (so they're probably
    with you), reminds you of the next reminder, and, looked up by Muse Spark while the robot was checking, whether to
    take an umbrella. 7 to 8.5 s with the robot simulated, 37 to 42.5 s on the robot; the TV shows the checklist.
-8. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
+9. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
    shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
    cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
    draws each cup's path, and Andy watches the reveal and keeps score.
-9. **"Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
+10. **"Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
    anyone else's. What it looks like is kept as numbers on the computer beside the robot (DINOv2, Meta's open image
    model, plus a colour fingerprint, over SAM 3.1's mask of the mug alone), never a picture. "Forget my mug" deletes it.
-10. **"Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
+11. **"Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
    computer beside the robot opens it (no sign-ins, no downloads), and Muse Spark's computer use brings what was asked
    into view; the TV shows each step, with a dot where Andy clicks. "Scroll down", "go back". Code reviews every action
    before it runs: nothing personal is typed, and a sign-in or payment page ends it. Screenshots of web pages go to the
    cloud; the camera never does, and the TV's privacy receipt says which went.
-11. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
+12. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
    saved to your Pictures folder to print or share. "Make it sunset" changes it. **"Draw me a map of my things"** paints
    where the things Andy keeps an eye on were last seen, from words only (what each is near, and which way), labelled
    large: a drawing from memory, not a photo.
-12. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
+13. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
    at the table) and Glimmer says what it sees, on the computer beside the robot.
-13. **"Andy, what's that?"** (while pointing) Glimmer sees what you're pointing at, SAM 3.1 finds it, and Andy points
+14. **"Andy, what's that?"** (while pointing) Glimmer sees what you're pointing at, SAM 3.1 finds it, and Andy points
    at it too: "You mean the lamp?" On public photos Glimmer named the thing in 4 of 6 and imagined none; not yet tried
    with a person in the room.
-14. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
+15. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
    (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, forget,
    what it remembers, reminders, pictures, look up, show on the TV) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
-15. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
+16. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
    moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
    ("every morning at 8").
-16. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
+17. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
    SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (about 0.5 s
    a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
-17. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+18. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
-18. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
+19. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
    computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
    plan steps, questions), plus screenshots of a web page you ask to see on the TV; Muse Image gets words. The TV's
    privacy receipt shows exactly what went, every turn. **"Andy, what did you send to the cloud today?"** adds up the
@@ -108,7 +114,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
   Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
-  found thing is, from one camera frame: metric depth, about 0.2 s), SeamlessM4T v2 (Andy's voice), Llama Prompt Guard 2 (reading each web page before the
+  found thing is, from one camera frame: metric depth, about 0.2 s; and the room in 3D from five looks, about 1 s), SeamlessM4T v2 (Andy's voice), Llama Prompt Guard 2 (reading each web page before the
   cloud model sees it), Llama Guard 3 (a second crisis check); with
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
@@ -221,6 +227,7 @@ by Andy itself: the TV asks nothing of anyone outside the house.
 | ![Finding: what Andy sees, live, the candidate outlined by SAM 3.1](docs/images/tv-finding.png) | ![An answer with sources](docs/images/tv-answer.png) |
 | ![At night](docs/images/tv-found-night.png) | ![What can I ask?](docs/images/tv-help.png) |
 | ![A picture from your words, by Muse Image](docs/images/tv-drawing.png) | ![What Andy remembers: a floor plan in feet, from MapAnything's distances](docs/images/tv-memory.png) |
+| ![The room in 3D: its shape from MapAnything over five looks, your things pinned with their distances (a made-up room for the demo)](docs/images/tv-room.png) | ![Andy waiting: every model it runs is Meta's, and where each runs](docs/images/tv-idle.png) |
 
 **Try it in your browser:** [huggingface.co/spaces/heyandy-ai/andy](https://huggingface.co/spaces/heyandy-ai/andy), the
 same page on sample data (pick a scene at the top). Or locally, with no robot: `uv run python scripts/demo_screen.py
@@ -235,14 +242,15 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 | Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
 |---|---|---|---|
 | The thing in front | 96 found, 0 wrong | 19, 0 wrong | 19, 0 wrong |
-| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.5 looks | **18**, 0 wrong, 4.2 looks |
+| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.0 looks | **18**, 0 wrong, 4.2 looks |
 | A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | 19, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
 | Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 1 wrong |
-| Planning time (model only; not counting "not there") | none | 9 to 13 s | **6 to 8 s** |
+| Planning time (model only; not counting "not there") | none | 8 to 13 s | **6 to 8 s** |
 
 Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Every
-column was rerun on October 30 on the final code (a look now counts the check after pointing; Glimmer runs without its
+column was rerun on October 30 on the final code, and Glimmer's again on October 31 after the search tools' colour
+fixes, with the same results (a look now counts the check after pointing; Glimmer runs without its
 drafter, so it plans more slowly; the October 28 runs are kept as `*-oct28.json`). Two rounds of fixes came from this scorecard, and the earlier runs are
 kept:
 - **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
@@ -282,6 +290,14 @@ from five starting poses on October 30; on the 31st, four searches each, the key
 0.71, the cup 0.92 to 1.04, the glasses 1.01 to 1.20 (MapAnything; things were moved between runs, and distances aren't
 yet calibrated against a tape measure, which MapAnything reads about 13% short on public test photos, so Andy says
 "about").
+
+**The room in 3D, and the robot's own lens** (2026-10-31, on the robot): MapAnything's depth for each of five looks,
+each pixel's ray from Andy's own camera and turned by the head's measured angles, puts a thing seen from several looks
+in one place: the watch from three looks at -36.4, -35.4 and -34.5 degrees and 0.80 to 0.89 m (letting MapAnything join
+the looks itself, they came out 1.3 times too wide: -30 and -41). Checking that, Andy measured its own lens: a watch, a
+cup and glasses each centred, then seen from 27 head angles up to 42 degrees off. The published focal length (1116 px at
+1080p) put things up to 4.7 degrees out near the edges of the view; 1054 fits all 80 sightings, so the sweep's first
+guesses, the merging of one thing seen in two views, and the room now use it.
 
 **The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of

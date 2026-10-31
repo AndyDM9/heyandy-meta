@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from demo_screen import SCENES, show  # noqa: E402
+from demo_screen import SCENES, sample_room, show  # noqa: E402
 from heyandy_meta.screen.server import FONTS, page  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
@@ -48,6 +48,7 @@ def main() -> None:
     shutil.copy(ROOT / "LICENSE", OUT / "LICENSE")
     shutil.copy(ROOT / "docs" / "images" / "sample-drawing.webp", OUT / "drawing.webp")  # the "A picture" scene
     shutil.copy(ROOT / "docs" / "images" / "sample-web.jpg", OUT / "web.jpg")  # the "On the web" scene (Wikipedia)
+    (OUT / "room.bin").write_bytes(sample_room()[0])  # the "room" scene: a made-up room's shape
     for f in OUT.rglob("*"):
         if f.is_file() and f.suffix in (".html", ".json", ".md") and KEYS.search(f.read_text(errors="ignore")):
             raise SystemExit(f"something that looks like a key is in {f}; stopping")

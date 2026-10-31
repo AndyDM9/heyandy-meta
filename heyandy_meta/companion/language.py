@@ -54,7 +54,7 @@ EXAMPLES = {"es": (("¿dónde dejé mis llaves?", "Where are my keys?"),
                    ("me voy, ¿llevo todo?", "I'm going out, do I have everything?"))}
 # Andy's own short sentences, by hand: too short for a translator to read right ("Let me look" came back "Míreme").
 PHRASES = {"es": {
-    "Let me look.": "Déjeme buscar.", "Let me see.": "Déjeme ver.", "Let me look that up.": "Déjeme buscarlo.",
+    "Let me look.": "Déjeme buscar.", "Let me look around the room.": "Déjeme mirar la sala.", "Let me see.": "Déjeme ver.", "Let me look that up.": "Déjeme buscarlo.",
     "Let me find that for you.": "Déjeme buscárselo.", "Okay.": "De acuerdo.", "Yes?": "¿Sí?", "Stopped.": "Listo.",
     "Let me check you have everything.": "Déjeme ver si lleva todo.", "Let me replay that.": "Déjeme repasarlo.",
     "It's under this one! Lift it up.": "¡Está debajo de este! Levántelo.", "Have a lovely time!": "¡Que lo pase muy bien!",

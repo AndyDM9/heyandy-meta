@@ -13,9 +13,9 @@ def test_left_is_positive_yaw_and_down_is_positive_pitch():
     assert pitch == pytest.approx(45.0)
 
 
-def test_frame_edge_is_about_forty_degrees():
+def test_frame_edge_is_about_forty_two_degrees():
     yaw, _ = pixel_to_angles(0, LITE.cy, 0.0, 0.0)
-    assert 40 < yaw < 41  # half of the Lite camera's ~81 degrees across
+    assert 41.5 < yaw < 42.5  # half of the ~84 degrees across measured on our Lite (published: ~81)
 
 
 def test_scaled_camera_gives_the_same_angle():
