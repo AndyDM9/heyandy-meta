@@ -292,4 +292,5 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   own words translated by Glimmer). Spanish is scored on written and synthesised speech; not yet with a person.
 
 ## Licence
-Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
+Apache-2.0. The HeyAndy name and logo (the face and the HeyAndy lettering on the TV page) are HeyAndy, Inc.'s
+marks (HEYANDY™, a pending US trademark application) and aren't licensed under Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
