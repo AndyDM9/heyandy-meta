@@ -7,6 +7,7 @@ Glimmer unless it needs more thought. When the cloud is refused or unreachable, 
 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
+import datetime as dt
 import json
 import re
 import threading
@@ -292,6 +293,8 @@ class Andy:
             self.screen.remember_list(lines)
             return ("I'm keeping an eye on " + _join(self.places.watching()) + ". It's on the screen.") if lines \
                 else "I'm not keeping an eye on anything. Say 'keep an eye on my keys' to start."
+        if i.kind == "time":
+            return self.what_time(day=i.thing == "day")
         if i.kind == "reminders":
             up = self.reminders.upcoming()[:5]
             if not up:
@@ -1134,6 +1137,13 @@ class Andy:
     def _tool_moves(self, starting: bool) -> None:
         """Still while a tool looks; thinking while the model decides what to do next."""
         self.gesture("searching" if starting else "thinking")
+
+    def what_time(self, day: bool = False) -> str:
+        """From the clock on this computer, never a model's guess."""
+        now = dt.datetime.fromtimestamp(self.clock())
+        if day:
+            return f"It's {now:%A}, {now:%B} {now.day}."
+        return f"It's {spoken_time(self.clock())}."
 
     def _measure(self, found: Found) -> None:
         """How far away: MapAnything reads the frame the thing was confirmed in, on this computer. Without it (not

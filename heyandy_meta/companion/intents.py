@@ -50,6 +50,9 @@ LAST_SEEN = re.compile(r"\b(?:(?:when|where) did you (?:last )?see|where did i (
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
+# The time and the day, from the clock: the conversation's model isn't told them, and would guess.
+TIME = re.compile(r"\bwhat(?:'s|s| is) the time\b|\bwhat time is it\b|\bwhat(?:'s|s| is) (?:the date|today'?s date|"
+                  r"the day)(?: today)?\b|\bwhat day is (?:it|today)\b|\bwhat(?:'s|s| is) today\b", re.I)
 REMIND = re.compile(r"\bremind me\b", re.I)
 PRIVACY = re.compile(r"\bwhat (?:did|have) you (?:send|sent|shared?)\b|\bwhat(?:'s| has)? (?:left|gone out of|went out of) "
                      r"(?:the|this|my) (?:house|home)\b|\bwhat (?:went|goes|has gone) (?:to|up to|out to) the "
@@ -191,6 +194,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("remind", text="")  # asked, but the time or the words are missing: ask again
     if REMINDERS.search(t):
         return Intent("reminders")
+    if TIME.search(t):
+        return Intent("time", thing="day" if re.search(r"\b(?:date|day|today)\b", t, re.I) else "time")
     if REMEMBER.search(t):
         return Intent("remember")
     if GAME.search(t):

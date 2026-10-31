@@ -161,3 +161,15 @@ def test_the_tv_follows_the_language(tmp_path):
     assert a.screen.snapshot()["map"][0]["label"] == "llaves"
     a.hear("habla inglés")
     assert a.screen.snapshot()["lang"] == "en" and a.screen.snapshot()["map"][0]["label"] == "keys"
+
+
+@pytest.mark.parametrize("said, english, meant", [
+    ("Andy, ¿dónde está mi reloj?", "Andy, where are my keys?", "Andy, where are my watch?"),
+    ("¿dónde están mis llaves?", "Where are my keys?", "Where are my keys?"),
+    ("¿dónde está mi taza azul?", "Where is my blue cup?", "Where is my blue cup?"),
+    ("¿dónde están mis gafas y mis llaves?", "Where are my glasses and my keys?", "Where are my glasses and my keys?"),
+    ("¿qué hora es?", "What time is it?", "What time is it?")])
+def test_the_thing_asked_for_survives_the_translation(said, english, meant):
+    from heyandy_meta.companion.language import kept_the_thing
+
+    assert kept_the_thing(said, english, "es") == meant

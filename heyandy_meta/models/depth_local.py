@@ -40,6 +40,6 @@ def how_far(metres: float, metric: bool = False) -> str:
         if metres < 0.95:
             return f"about {max(10, round(metres * 10) * 10)} centimetres away"
         half = round(metres * 2) / 2
-        return "about a metre away" if half == 1 else f"about {half:g} metres away"
+        return "roughly one metre away" if half == 1 else f"about {half:g} metres away"  # "a metre": "unos metros"
     feet = round(metres * 3.281)
     return "about a foot away" if feet <= 1 else f"about {feet} feet away"

@@ -13,7 +13,8 @@ import time
 from dataclasses import dataclass, field
 
 from ..budget import Budget, chat_cost
-from ..companion.intents import DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, WEB, WORLD, normalise, parse_time
+from ..companion.intents import (DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, TIME, WEB, WORLD, normalise,
+                                 parse_time)
 from ..companion.reminders import spoken_time
 from ..finder.names import KNOWN
 from ..models.retry import with_retry
@@ -25,6 +26,7 @@ ABILITIES = {
     "watch": re.compile(r"\bkeep (?:an )?eye on\b", re.I),
     "forget": re.compile(r"\b(?:forget|stop watching)\b", re.I),
     "describe": DESCRIBE, "draw": DRAW_START, "remind": REMIND, "reminders": REMINDERS, "remember": REMEMBER,
+    "time": TIME,
     "last_seen": re.compile(r"\b(?:when|where) did you (?:last )?see\b|\bwhere did i (?:last )?(?:leave|put)\b", re.I),
     "world": WORLD, "web": re.compile("|".join(f"(?:{rx.pattern})" for rx in WEB), re.I)}
 MORNING = re.compile(r"^\W*(?:(?:hey|hi|hello)\s+)?(?:andy[\s,]*)?good morning\b", re.I)
@@ -61,6 +63,7 @@ TOOLS = [
     _fn("set_reminder", "Remind the person, in person, at a time.", what=dict(S),
         when={**S, "description": "as the person said it: 'at 5 pm', 'in 10 minutes', 'at noon'"}),
     _fn("list_reminders", "The person's upcoming reminders."),
+    _fn("what_time", "The time and the day now, from the robot's clock."),
     _fn("draw", "Make a picture from words and show it on the TV.", picture=dict(S)),
     _fn("look_up", "Look something up on the web (weather, opening hours, news).", question=dict(S)),
     _fn("show_on_tv", "Open a web page on the TV and bring what was asked into view (a recipe, the weather radar, "
@@ -157,6 +160,7 @@ class Assistant:
             "look_and_tell": lambda where: a.describe("table" if "table" in where else "", holding="hand" in where),
             "keep_an_eye_on": watch, "forget": forget, "what_i_remember": remember,
             "set_reminder": remind, "list_reminders": reminders,
+            "what_time": lambda: f"{a.what_time()} {a.what_time(day=True)}",
             "draw": lambda picture: a.draw(picture),
             "look_up": lambda question: a.look_up(question),
             "show_on_tv": lambda request: a.use_the_web(request),

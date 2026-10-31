@@ -85,6 +85,32 @@ THINGS = {"es": {
 }}
 
 
+# The everyday things in Spanish, to check a translation kept the thing asked for: on the robot (2026-10-31) Glimmer
+# turned "Andy, ¿dónde está mi reloj?" into "where are my keys?" three times in three, copying its worked example.
+SAID_THINGS = {"es": {
+    "keys": ("llave", "llaves", "llavero"), "watch": ("reloj",), "glasses": ("gafas", "lentes", "anteojos", "espejuelos"),
+    "phone": ("teléfono", "telefono", "móvil", "movil", "celular"), "wallet": ("cartera", "billetera"),
+    "remote": ("control", "mando"), "cup": ("taza", "vaso"), "mug": ("taza",), "bag": ("bolsa", "bolso", "mochila"),
+    "book": ("libro",), "pills": ("pastilla", "pastillas"), "bottle": ("botella",), "umbrella": ("paraguas",),
+    "pen": ("bolígrafo", "boligrafo", "pluma", "lapicero"), "hat": ("sombrero", "gorra"), "charger": ("cargador",),
+    "laptop": ("portátil", "portatil", "laptop"), "keyboard": ("teclado",),
+    "headphones": ("auriculares", "audífonos", "audifonos", "cascos")}}
+
+
+def kept_the_thing(said: str, english: str, language: str) -> str:
+    """If the translation names an everyday thing the person didn't say, and they named exactly one other, use theirs."""
+    things = SAID_THINGS.get(language)
+    if not things:
+        return english
+    heard = re.findall(r"\w+", said.lower())
+    in_said = {t for t, words in things.items() if any(w in heard for w in words)}
+    named = [t for t in things if re.search(rf"\b{t}\b", english, re.I)]
+    wrong = [t for t in named if t not in in_said]
+    if len(wrong) == 1 and len(in_said) == 1 and not set(named) & in_said:
+        return re.sub(rf"\b{wrong[0]}\b", next(iter(in_said)), english, flags=re.I)
+    return english
+
+
 class Untranslated(Exception):
     pass
 
@@ -113,7 +139,8 @@ class Translator:
     def to_english(self, text: str, language: str) -> str:
         if language == "en" or not text.strip():
             return text
-        return self._translate(TO_ENGLISH.format(name=LANGUAGES[language].name), text, EXAMPLES.get(language, ())) or text
+        out = self._translate(TO_ENGLISH.format(name=LANGUAGES[language].name), text, EXAMPLES.get(language, ()))
+        return kept_the_thing(text, out, language) if out else text
 
     def _from_english(self, text: str, language: str) -> str:
         if language == "en" or not text.strip():

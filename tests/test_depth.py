@@ -26,7 +26,7 @@ def test_how_far_is_said_roughly_in_feet():
 def test_in_spanish_how_far_is_said_in_metres():
     assert how_far(0.62, metric=True) == "about 60 centimetres away"
     assert how_far(0.04, metric=True) == "about 10 centimetres away"
-    assert how_far(1.04, metric=True) == "about a metre away"
+    assert how_far(1.04, metric=True) == "roughly one metre away"
     assert how_far(1.3, metric=True) == "about 1.5 metres away"
     assert how_far(2.1, metric=True) == "about 2 metres away"
 

@@ -485,3 +485,15 @@ def test_no_feelings_in_a_crisis_or_when_asked_to_move_less(tmp_path):
     a.hear("move less")
     a.hear("thank you")
     assert emotes(body) == []
+
+
+@pytest.mark.parametrize("asked, answer", [("Andy, what time is it?", "It's 9:54."), ("whats the time", "It's 9:54."),
+                                           ("What day is it today?", "It's Saturday, October 31."),
+                                           ("what's the date", "It's Saturday, October 31.")])
+def test_the_time_and_the_day_come_from_the_clock(tmp_path, asked, answer):
+    """Glimmer isn't told the time and would guess; the clock says it."""
+    import datetime as dt
+
+    a, _, clock = andy(tmp_path=tmp_path)
+    clock.t = dt.datetime(2026, 10, 31, 9, 54).timestamp()
+    assert a.hear(asked).endswith(answer)
