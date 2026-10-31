@@ -27,6 +27,7 @@ HEAD_REACH = 30.0  # past this the base turns too
 # published value put things up to 4.7 degrees out near the edges of the view). The centre as published.
 FX, CX, CY = 1054.0, 953.0, 542.0
 LOCAL = "http://127.0.0.1:8090"
+FOUND_SECONDS = 120  # the found shot stays on the page this long, in memory only
 
 
 def where_to_look(x: float, y: float, w: int, h: int, yaw: float, pitch: float) -> tuple[float, float]:
@@ -47,11 +48,11 @@ class Local:
 
     where = "on this computer"
 
-    def find(self, jpeg: bytes, thing: str) -> list[tuple[float, float, float]]:
+    def find(self, jpeg: bytes, thing: str) -> list[tuple[float, float, float, list]]:
         body = json.dumps({"image": base64.b64encode(jpeg).decode(), "query": thing, "min_score": 0.3}).encode()
         req = urllib.request.Request(LOCAL + "/segment", body, {"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=20) as r:
-            return [(m["center"][0], m["center"][1], m["score"]) for m in json.load(r)["masks"]]
+            return [(m["center"][0], m["center"][1], m["score"], m["box"]) for m in json.load(r)["masks"]]
 
 
 class ModelApi:
@@ -64,7 +65,7 @@ class ModelApi:
 
         self.client = OpenAI(base_url="https://api.meta.ai/v1", api_key=key)
 
-    def find(self, jpeg: bytes, thing: str) -> list[tuple[float, float, float]]:
+    def find(self, jpeg: bytes, thing: str) -> list[tuple[float, float, float, list]]:
         from meta_sam_parser import CompletedOutcome, SegmentationBoxRecord, image_segmentation_format
 
         url = "data:image/jpeg;base64," + base64.b64encode(jpeg).decode()
@@ -78,7 +79,8 @@ class ModelApi:
         for r in parser.finish(CompletedOutcome()).result.records:
             if isinstance(r, SegmentationBoxRecord):
                 b = r.bounds
-                found.append(((b.left + b.right) / 2, (b.top + b.bottom) / 2, r.confidence or 0.5))
+                found.append(((b.left + b.right) / 2, (b.top + b.bottom) / 2, r.confidence or 0.5,
+                              [b.left, b.top, b.right, b.bottom]))
         return found
 
 
@@ -97,8 +99,12 @@ class AndyFinder(ReachyMiniApp):
 
     def run(self, reachy_mini: ReachyMini, stop_event: threading.Event):
         sam = segmenter()
-        state = {"status": "What should I find?", "busy": False,
-                 "where": sam.where if sam else "nowhere yet: start SAM 3.1 on this computer, or set MODEL_API_KEY"}
+        # What the page shows (static/): the search as it happens. Frames are held in memory only: the latest look while
+        # searching, and the shot it was found in for FOUND_SECONDS; then dropped. Nothing is written anywhere.
+        state = {"status": "What should I find?", "busy": False, "phase": "ready", "thing": "",
+                 "where": sam.where if sam else "nowhere yet: start SAM 3.1 on this computer, or set MODEL_API_KEY",
+                 "local": isinstance(sam, Local), "views": [], "look": None, "found": None, "history": [], "frame_v": 0}
+        frame_now: dict = {"jpeg": None, "until": 0.0}
         asked: dict = {"thing": None}
 
         class Find(BaseModel):
@@ -114,7 +120,23 @@ class AndyFinder(ReachyMiniApp):
 
         @self.settings_app.get("/status")
         def status():
+            if frame_now["jpeg"] is not None and not state["busy"] and time.monotonic() > frame_now["until"]:
+                frame_now["jpeg"], state["found"], state["look"] = None, None, None  # the picture goes
+                state["frame_v"] += 1
             return state
+
+        @self.settings_app.get("/frame.jpg")
+        def frame_jpg():
+            from fastapi import Response
+
+            data = frame_now["jpeg"]
+            if data is None:
+                return Response(status_code=404)
+            return Response(data, media_type="image/jpeg", headers={"Cache-Control": "no-store"})
+
+        def show(jpeg: bytes | None, keep_s: float = 0.0) -> None:
+            frame_now["jpeg"], frame_now["until"] = jpeg, time.monotonic() + keep_s
+            state["frame_v"] += 1
 
         def look(yaw: float, pitch: float, duration: float = 0.8) -> None:
             # The daemon takes the head's direction in the room, the base's turn already in it: the head pose is the
@@ -139,29 +161,44 @@ class AndyFinder(ReachyMiniApp):
             reachy_mini.goto_target(antennas=np.array([0.0, 0.0]), duration=0.2)
 
         def search(thing: str) -> str:
-            best = None  # (score, yaw, pitch)
-            for yaw, pitch in VIEWS:
+            started, best = time.monotonic(), None  # (score, yaw, pitch, jpeg, box, w, h)
+            state.update(phase="looking", thing=thing, found=None,
+                         views=[{"yaw": y, "seen": 0, "best": 0.0, "done": False} for y, _ in VIEWS])
+            for i, (yaw, pitch) in enumerate(VIEWS):
                 if stop_event.is_set():
                     return "Stopped."
+                state["look"] = {"view": i, "yaw": yaw, "side": side(yaw), "boxes": [], "w": 0, "h": 0}
                 look(yaw, pitch)
                 jpeg = frame()
                 if jpeg is None:
                     continue
                 w, h = Image.open(io.BytesIO(jpeg)).size
-                for x, y, score in sam.find(jpeg, thing):
+                seen = sam.find(jpeg, thing)
+                show(jpeg)
+                state["look"].update(w=w, h=h, boxes=[[round(v) for v in box] + [round(score, 2)] for _, _, score, box in seen])
+                state["views"][i].update(seen=len(seen), best=round(max((sc for _, _, sc, _ in seen), default=0.0), 2), done=True)
+                for x, y, score, box in seen:
                     if best is None or score > best[0]:
-                        best = (score, *where_to_look(x, y, w, h, yaw, pitch))
+                        best = (score, *where_to_look(x, y, w, h, yaw, pitch), jpeg, box, w, h)
                 if best and best[0] >= SURE:
                     break
             if best is None:
+                show(None)
+                state.update(phase="missing", look=None)
                 look(0.0, 10.0)
                 for y in (-12.0, 12.0, -12.0, 0.0):  # a shake of the head
                     look(y, 10.0, 0.25)
                 return f"I couldn't see your {thing}. Is it somewhere I can't look?"
-            _, yaw, pitch = best
+            score, yaw, pitch, jpeg, box, w, h = best
             look(yaw, pitch)
             look(yaw, pitch + 8.0, 0.3)  # a nod towards it
             look(yaw, pitch, 0.3)
+            seconds = round(time.monotonic() - started, 1)
+            show(jpeg, FOUND_SECONDS)  # the shot it was found in, for the page's reveal; then it goes
+            state.update(phase="found", look=None,
+                         found={"thing": thing, "side": side(yaw), "yaw": round(yaw, 1), "score": round(score, 2),
+                                "box": [round(v) for v in box], "w": w, "h": h, "seconds": seconds})
+            state["history"] = ([{"thing": thing, "side": side(yaw), "at": time.time()}] + state["history"])[:6]
             wiggle()
             return f"There's your {thing}, {side(yaw)}."
 
@@ -174,7 +211,7 @@ class AndyFinder(ReachyMiniApp):
             try:
                 state["status"] = search(thing) if sam else "I can't see yet: " + state["where"]
             except Exception as e:  # noqa: BLE001 - say what went wrong on the page, and keep going
-                state["status"] = f"Something went wrong: {type(e).__name__}"
+                state.update(status=f"Something went wrong: {type(e).__name__}", phase="ready", look=None)
             finally:
                 state["busy"] = False
 

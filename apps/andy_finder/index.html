@@ -7,14 +7,24 @@
 </head>
 <body>
   <main>
-    <h1>Andy Finder</h1>
-    <p class="lede">Tell Reachy Mini what you've lost. It looks around the room, finds it with Meta's SAM 3.1, turns to it
-      and nods. If it can't see it, it shakes its head and says so.</p>
+    <header>
+      <svg class="face" viewBox="0 0 380 210" aria-hidden="true"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
+        <ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></svg>
+      <div><h1>Andy Finder</h1><p class="lede">Tell your Reachy Mini what you've lost. It looks around the room, finds it with
+        Meta's SAM 3.1, turns to it and nods, and shows you what it saw.</p></div>
+    </header>
+    <img class="shot" src="screenshot.png" alt="Andy Finder's page after a find: the picture with the mug outlined, 'Your mug, a little to my right', 6.2 seconds, SAM 3.1 91% sure, and the finds lately (a drawn sample picture)">
+    <ul class="points">
+      <li><b>Tap and it looks.</b> Glasses, keys, phone, remote, wallet, mug, watch, or type any thing.</li>
+      <li><b>See what it sees.</b> Each look live, every candidate SAM 3.1 outlined, five views lighting up as it covers the room.</li>
+      <li><b>The find, revealed.</b> A spotlight on the thing, which way it is, how long it took, how sure SAM 3.1 was.</li>
+      <li><b>Honest when it can't.</b> It shakes its head and says it may be somewhere it can't look.</li>
+    </ul>
     <h2>Where the camera pictures go</h2>
     <ul>
       <li><b>On your computer</b>, if SAM 3.1 runs there (with an NVIDIA GPU; see the HeyAndy repository).</li>
       <li><b>Otherwise Meta's Model API</b>, with your <code>MODEL_API_KEY</code>: one picture per look goes to Meta. The app's
-        page always shows which.</li>
+        page always says which, and shows a picture only while it looks and for two minutes after a find, never saved.</li>
     </ul>
     <p>Install it from the Reachy Mini dashboard: Applications, Discover Apps. Part of
       <a href="https://github.com/AndyDM9/heyandy-meta">HeyAndy</a>, built for Meta's Global AI Developer Hackathon.</p>

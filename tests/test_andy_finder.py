@@ -19,3 +19,13 @@ def test_left_in_the_picture_is_left_for_the_robot_at_any_size():
 
 def test_side_in_words():
     assert side(3) == "straight ahead" and side(-20) == "a little to my right" and side(60) == "to my left"
+
+
+def test_the_page_has_every_element_its_script_uses():
+    import re
+
+    static = Path(__file__).resolve().parents[1] / "apps" / "andy_finder" / "andy_finder" / "static"
+    page, script = (static / "index.html").read_text(), (static / "main.js").read_text()
+    used = set(re.findall(r'\$\("([\w-]+)"\)', script))
+    assert used and used <= set(re.findall(r'id="([\w-]+)"', page))
+    assert (static / "fonts" / "AtkinsonHyperlegibleNext.ttf").exists() and (static / "fonts" / "OFL.txt").exists()
