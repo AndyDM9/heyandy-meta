@@ -149,15 +149,22 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 uv sync --extra dev && uv run pytest -q   # no network calls: the model clients are tested against stand-ins
 uv run python -m heyandy_meta             # talk to Andy by keyboard, in a pretend living room; TV at 127.0.0.1:8765
 ```
-On the robot computer, keep the robot and the web extras (an exact sync removes what isn't named):
+**On the robot computer, everything comes from this repository** (Ubuntu, two 24 GB NVIDIA GPUs, the Reachy Mini Lite
+on USB; the steps download Meta's open weights from their public pages, so accept the gated ones on Hugging Face first:
+SAM 3.1, Llama Guard 3, Llama Prompt Guard 2):
 ```bash
-uv sync --extra dev --extra robot --extra browse && uv run playwright install --only-shell chromium
+sudo usermod -aG dialout,video,audio "$USER"      # the motor port, the camera, the sound card; then log in again
+scripts/setup-robot.sh          # GStreamer's webrtc plugin for the robot's camera, Pollen's daemon, the emotions library
+scripts/setup-local-models.sh   # Muse Glimmer (llama.cpp), SAM 3.1, DINOv2, Prompt Guard 2, Llama Guard 3, the voice
+scripts/setup-depth.sh          # MapAnything
+for u in deploy/heyandy-*.service; do systemctl --user link "$PWD/$u"; done
+systemctl --user enable --now heyandy-glimmer heyandy-sam heyandy-voice heyandy-guard heyandy-depth heyandy-app
+uv run python scripts/preflight.py --cloud        # must end READY
 ```
-Before a demo, `uv run python scripts/preflight.py` checks everything answers (about a minute, no camera).
-The models on this computer (Glimmer on GPU 0, SAM 3.1 on GPU 1, two 24 GB cards) are set up by
-`scripts/setup-local-models.sh` and `scripts/setup-depth.sh` (MapAnything) and run as the user services in `deploy/`
-(the robot's own daemon too: `heyandy-robot`). Muse Spark is used when `MODEL_API_KEY` is set
-and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
+The services: Glimmer and the voice on GPU 0; SAM 3.1, DINOv2, the guards, hearing and MapAnything on GPU 1; Pollen's
+daemon (`heyandy-robot`) and Andy itself (`heyandy-app`). Before a demo, `scripts/preflight.py` checks everything
+answers (about a minute, no camera). Muse Spark is used when `MODEL_API_KEY` is set in `~/.config/heyandy-meta/env`
+(chmod 600) and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
 
 ## Layout
 ```
