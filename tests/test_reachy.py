@@ -166,3 +166,14 @@ def test_facing_eases_the_head_within_its_range():
     for _ in range(100):
         b._ease(0.02)
     assert b._sent[0] == pytest.approx(30.0)  # the head's share; turning further is a move of its own
+
+
+def test_speaking_during_a_search_keeps_the_head_still():
+    """"Let me look." plays while the search turns the head: the body never goes back to swaying mid-search."""
+    b, _ = body()
+    b.motion.set_mode("searching")
+    b.play([0.0] * 160)
+    assert b.motion.mode == "searching"
+    b.motion.set_mode("idle")
+    b.play([0.0] * 160)
+    assert b.motion.mode == "idle"

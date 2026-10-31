@@ -196,10 +196,14 @@ class Andy:
         if face:
             face(yaw, pitch)  # and keep easing towards them while talking
 
-    def say(self, text: str) -> None:
+    def say(self, text: str, soon: bool = False) -> None:
+        """Say it, and wait until it's said; soon: start saying it and carry on (what's said next waits its turn)."""
         if self.language != "en" and self.translator is not None:
             text = self.translator.spoken(text, self.language, DISCLOSURE, CRISIS_REPLY)
         self.screen.said(text, self._source, self._reason)
+        if soon:
+            getattr(self.body, "say_soon", self.body.say)(text)
+            return
         before = (self.screen.state, self.screen.head)
         self.screen.doing("Speaking", before[1] if before[0] == "Pointing" else "Looking at you")
         try:
@@ -457,7 +461,7 @@ class Andy:
         checks = getattr(self.judge, "calls", 0)
         self.finder.looks, self.finder.passed, self._alike, self._not_yours = 0, [], None, False
         self.screen.looking(thing)
-        self.say("Let me look.")  # answer at once: a search takes a few seconds
+        self.say("Let me look.", soon=True)  # answer at once, and start looking while it's said
         self.screen.doing("Working", "Looking around the room")
         self.gesture("thinking")
         try:
@@ -1153,7 +1157,7 @@ class Andy:
         self.screen.clear()
         self.screen.timer_start()
         self.screen.looking("room")  # the TV: "Measuring the room in 3D", each look live
-        self.say("Let me look around the room.")
+        self.say("Let me look around the room.", soon=True)
         self.screen.doing("Working", "Measuring the room")
         self.gesture("searching")
         looks, many = [], getattr(self.segmenter, "find_many", None)

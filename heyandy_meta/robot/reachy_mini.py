@@ -132,7 +132,8 @@ class ReachyBody:
         yaw, pitch = self.reach.clamp(yaw, pitch)
         travel = max(abs(yaw - self.yaw), abs(pitch - self.pitch))
         head, base = self.split(yaw)
-        self._send(head, pitch, base, max(0.6, travel / self.max_deg_s))
+        # a small correction (the camera check's, a few degrees) needs no long, gentle move
+        self._send(head, pitch, base, max(0.3 if travel <= 5.0 else 0.6, travel / self.max_deg_s))
         self._sleep(self.settle_s)  # let the camera stop moving before a frame is read
         now = self.measured()
         if precise and now and max(abs(yaw - now[0]), abs(pitch - now[1])) > self.tolerance:
@@ -183,6 +184,11 @@ class ReachyBody:
         if self._say:
             self._say(text)
 
+    def say_soon(self, text: str) -> None:
+        """Start saying it and carry on (the head can start turning); anything said next waits its turn."""
+        soon = getattr(self._say, "soon", None)
+        (soon or self.say)(text)
+
     def _sway(self, offsets) -> None:
         """Pollen's wobbler turns the speech being played into small head offsets; the loop adds them."""
         self.motion.speech = tuple(offsets)
@@ -227,13 +233,15 @@ class ReachyBody:
                 self.robot.media.enable_wobbling(self._sway)  # Pollen's speech-driven head motion
             self._playing = True
         self.speaking, before = True, self.motion.mode
-        self.motion.set_mode("speaking")
+        if before != "searching":  # a search holds the head still, even while Andy says "Let me look"
+            self.motion.set_mode("speaking")
         try:
             self.robot.media.push_audio_sample(samples)
             self._sleep(len(samples) / rate)
         finally:
             self.speaking = False
-            self.motion.set_mode("idle" if before in ("speaking", "listening") else before)
+            if self.motion.mode == "speaking":  # only if nothing else (a search starting) has changed it meanwhile
+                self.motion.set_mode("idle" if before in ("speaking", "listening") else before)
             self._quiet_until = time.monotonic() + 0.4  # the room's echo of Andy's own voice
 
     def listen(self, stop, poll_s: float = 0.02):

@@ -276,11 +276,12 @@ pointing within about 3 degrees after the head's correction, as its motors repor
 
 **Start to finish, on the robot** (2026-10-31, requests typed to Andy on the Lite with its voice on, nobody in the room;
 from the request to the end of Andy's spoken answer): a plain find 19 to 25 s ("Let me look.", the sweep, the check, the
-point, how far, the answer); "the blue cup" 17.6 to 23 s, planned by Muse Spark or Glimmer; "the red cup" with only a
-blue one there, 40 to 50 s, and no point; "where are my glasses and what time is it?" 30.5 s (the agent, 2 steps); "I'm
-going out" 37 to 42.5 s (two places looked at again, and the weather); the weather radar on the TV 30.9 s; the map of
-things 39.1 s; the time, from the clock, 2.5 to 4.4 s; in Spanish, a find 20.6 to 25.5 s. Slower than the simulated
-figures above, which leave out the robot's moves and Andy's voice.
+point, how far, the answer), then 13 to 19 s once Andy started looking while saying "Let me look." and made the next
+sentence while one played; "the blue cup" 17.6 to 23 s, planned by Muse Spark or Glimmer; "the red cup" with only a blue
+one there, 40 to 50 s, and no point; "where are my glasses and what time is it?" 30.5 s (the agent, 2 steps); "I'm going
+out" 37 to 42.5 s (two places looked at again, and the weather); the weather radar on the TV 30.9 s; the map of things
+39.1 s; the time, from the clock, 2.5 to 4.4 s; in Spanish, a find 20.6 to 25.5 s. Slower than the simulated figures
+above, which leave out the robot's moves and Andy's voice.
 
 **Measured by Andy's own camera** (`evals/unattended.py`; the robot alone in the room, nobody checking what it pointed
 at, so this measures the aim and the reliability, not the finding). On October 30 the check after pointing showed the

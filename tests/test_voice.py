@@ -233,3 +233,65 @@ def test_the_whole_utterance_is_checked():
     a = Andy()
     VoiceLoop(a).heard("I want to kill myself. Andy, what time is it")
     assert a.heard == ["I want to kill myself. Andy, what time is it"]
+
+
+def test_soon_speech_carries_on_and_what_is_said_next_waits_its_turn():
+    """"Let me look." while the head starts turning; the answer only after it."""
+    import threading
+    import time
+
+    gate, played = threading.Event(), []
+
+    class Voice:
+        def speak(self, text, rate=16000):
+            return text
+
+    def play(audio, rate):
+        if audio == "Let me look.":
+            gate.wait(2)  # still playing
+        played.append(audio)
+
+    s = Speaker(Voice(), play)
+    start = time.monotonic()
+    s.soon("Let me look.")
+    assert time.monotonic() - start < 0.5 and played == []  # it carried on at once
+    threading.Timer(0.2, gate.set).start()
+    s("There it is! I see your keys.")
+    assert played == ["Let me look.", "There it is!", "I see your keys."]  # in order, never over each other
+
+
+def test_the_next_sentence_is_made_while_one_plays():
+    import time
+
+    made = []
+
+    class Voice:
+        def speak(self, text, rate=16000):
+            made.append((text, time.monotonic()))
+            time.sleep(0.1)
+            return text
+
+    plays = []
+    Speaker(Voice(), lambda audio, rate: (plays.append((audio, time.monotonic())), time.sleep(0.3)))("One. Two. Three.")
+    assert [p[0] for p in plays] == ["One.", "Two.", "Three."]
+    assert made[1][1] < plays[0][1] + 0.3  # "Two." was being made while "One." played
+
+
+def test_short_phrases_are_made_once_per_voice_setting():
+    made = []
+
+    class Voice:
+        voice, speed, loudness = "eng", 1.0, 0.0
+
+        def speak(self, text, rate=16000):
+            made.append(text)
+            return text
+
+    v = Voice()
+    s = Speaker(v, lambda audio, rate: None)
+    s("There it is! I see your keys, a little to my right.")
+    s("There it is! I see your glasses, straight ahead.")
+    assert made.count("There it is!") == 1 and len(made) == 3  # the long sentences are made each time
+    v.speed = 0.85  # "speak more slowly": made again, at the new speed
+    s("There it is!")
+    assert made.count("There it is!") == 2
