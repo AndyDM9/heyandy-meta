@@ -43,10 +43,10 @@ what you've lost, and points at it.", every model Meta's, no health advice, the 
 2. **The room:** staged. Nobody else in view, nothing personal (letters, photos, a phone or screen with anything
    private on it). The things for the takes in place: glasses (and a picture of glasses on the TV), the blue mug and a
    look-alike, keys, the remote; three opaque cups and a small bright ball if the cup game is in.
-   **Where to put things:** within about 25 degrees of straight ahead of the robot (a third of the way to each side
-   of the table), where the head turns alone: there Andy's camera-checked aim is about 2 to 3.5 degrees (the chair, 2.1 to 3.4 in 5 of 5).
-   Further round, the base turns too and the aim loosens to 5 to 21 degrees (evals/unattended.py). The "behind you"
-   moment is the exception, and it's about finding, not aim.
+   **Where to put things:** anywhere on the table in front of the robot. Since the head fix of October 31 (the base's
+   turn had been counted twice), the camera-checked aim is a median 4.3 degrees, 8.7 at worst, across the table, out to
+   about 50 degrees each side (`unattended-20261031-0924`). Keys: a bunch of keys, not a single key, and not touching
+   a keyboard.
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
    each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/take1.webm --room-is-staged`

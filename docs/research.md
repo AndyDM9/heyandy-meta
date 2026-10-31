@@ -665,6 +665,19 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   On the robot the head sagged a few degrees after its pointing nod, so the command is now corrected by what the frame
   shows (past 3 degrees, at most twice). `evals/unattended.py` (the robot alone, nobody judging the finding): 34 of 34
   searches pointed, a median 5.2 degrees off; the chair in front 2.1 to 3.4; worst where the base turns too.
+- **The base counted twice (found 2026-10-31, on a table of keys, glasses, a watch, two keyboards and a cup).** Pointed
+  at things 40 to 60 degrees round, the check kept the keyboard 11 to 14 degrees off after both corrections. Read back
+  from the motors (head -30 with the base at -30 read -36, not -60) and checked with SAM 3.1 on the camera (the
+  glasses at x 632 and 654, the cup at 836 and 848, the watch at 1151 and 1163, with the base at 0 and at -30): the
+  daemon takes and reports the head's direction in the room, the base's turn already in it. Andy sent the head's
+  turn on the body and added the base again when measuring, so past 30 degrees it faced only 30 degrees round while
+  believing it faced the full direction, and no correction could reach. The simulated body adds the two, so no
+  simulated scorecard could show it. Now the head pose sent is the head's turn plus the base's, read back as is.
+  Same day: asked for "keys", SAM 3.1 outlined every key of a keyboard (28 of 28 masks); "bunch of keys" found the
+  keys alone (0.91 and 0.89 from two views; "set of keys" 0.86; "car keys" a keyboard key), so both SAM 3.1 clients
+  ask for that. And the head now settles 0.3 s after its pointing dip before the check's frame: the watch had
+  blurred out of it (0 of 3 seen, then 8 of 8). Final run (`unattended-20261031-0924`, 20 searches from random
+  poses): 20 pointed, none failed, all seen after the point, a median 4.3 degrees off, 8.7 at worst, 12.0 s.
 - **How far: MapAnything** (`local/depth_server.py`): checked first on public NYU Depth v2 frames (12 to 21% short,
   0.2 s, about 3 GB in bf16 on GPU 1). The same keyboard read 0.92 to 1.00 m from five starting poses.
 - **The TV for the camera:** the live view while searching, the found shot's three measured figures, the floor plan,

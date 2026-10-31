@@ -60,11 +60,12 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 
 ## Technical depth (what was hard)
 
-- **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its own camera showed
-  the head sagging a few degrees after its pointing nod, so sending the same angles again landed the same way: Andy now
-  corrects the command by what the frame shows (at most twice). Over 34 unattended searches on the robot: 34 pointed, none failed, a median 5.2
-  degrees from the middle of the view (the chair in front, where the head turns alone: 2.1 to 3.4; worst where the base
-  turns too).
+- **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its own camera showed the
+  head sagging after its pointing nod, so Andy corrects the command by what the frame shows (at most twice). The same
+  check found that the robot takes the head's direction in the room, with the base's turn already in it: Andy had
+  added the base again and, past 30 degrees, never faced as far round as it thought. Fixed; over 20 unattended
+  searches on a table of keys, glasses, a watch, two keyboards and a cup: 20 pointed, a median 4.3 degrees from the
+  middle of the view, 8.7 at worst (13.7 before the fix).
 - **How far, from one frame.** MapAnything gives metric depth for the frame a thing was confirmed in, in 0.2 s beside
   SAM 3.1 on one GPU: the same keyboard read 0.92 to 1.00 m from five starting poses.
 - **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2 (9% of words
@@ -93,8 +94,8 @@ out): **no camera picture reached the cloud** (24 taken); **every word from the 
 receipt**; crisis words reached no model; offline, nothing at all went.
 *Spanish:* **41 of 41** written requests reach the right ability; **34 of 41** said by Andy's own voice and heard
 back (slips on the synthetic voice).
-*On the robot, alone in the room:* **34 of 34** unattended searches ended in a point with no errors, a median 10.8 s
-with the camera check; [the physical scorecard, judged by a person: N of M].
+*On the robot, alone in the room:* **20 of 20** unattended searches on the final code ended in a point with no errors
+(89 of 89 over two days), a median 12.0 s with the camera check; [the physical scorecard, judged by a person: N of M].
 *Not yet tried on the robot with real things or a person:* the cup game (synthetic shuffles: 3 of 5), my mug, "what's
 that?" (public photos: 4 of 6), going out (robot simulated). Every result, failures included: `evals/results/` and
 `docs/research.md`.

@@ -259,18 +259,21 @@ noise. Results: `evals/results/`.
 (7.1 s for the keyboard once Glimmer's picture check went straight to its answer; research.md, 24);
 pointing within about 3 degrees after the head's correction, as its motors report it.
 
-**Measured by Andy's own camera** (`evals/unattended.py`, 2026-10-30; the robot alone in the room, nobody checking
-what it pointed at, so this measures the aim and the reliability, not the finding): the check after pointing showed
-the head sags about 4 degrees after its pointing nod, so Andy now corrects its aim from what the frame shows (at most
-twice). Over 34 searches for a monitor, a keyboard and a chair from random starting poses (the four runs after that
-correction, `unattended-20261030-1723`, `-1731`, `-1935` and `-1938`; `-1712` had no camera and `-1714` used the earlier
-re-aim): **34 ended in a point, none
-failed**; after the correction the thing sat a median **5.2 degrees** from the middle of the view (12 of 30 within 3,
-18 within 6, the worst 21, a keyboard far to the left where the base turns too: there the head and base don't yet
-move together precisely); a median 10.8 s each, the check included. **Distances repeat within a run:** the same
-keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m from five starting poses (MapAnything; things were moved
-between runs, and distances aren't yet calibrated against a tape measure, which MapAnything reads about 13% short on
-public test photos, so Andy says "about").
+**Measured by Andy's own camera** (`evals/unattended.py`; the robot alone in the room, nobody checking what it pointed
+at, so this measures the aim and the reliability, not the finding). On October 30 the check after pointing showed the
+head sags about 4 degrees after its pointing nod, so Andy corrects its aim from what the frame shows (at most twice): 34
+searches for a monitor, a keyboard and a chair, 34 pointed, a median 5.2 degrees off, but up to 21 where the base
+turned. On October 31, on a table with keys, glasses, a watch, two keyboards and a cup, the numbers found why: the
+daemon takes and reports the head's direction **in the room**, the base's turn already in it (the same view with the
+base at 0 and at -30 degrees), and Andy had added the base's turn again, so past 30 degrees it faced only 30 degrees
+round. Fixed (and SAM 3.1 is asked for "bunch of keys": asked for "keys" it outlined all 28 keys of a keyboard). The
+final run, `unattended-20261031-0924`: **20 of 20 pointed, none failed, the thing seen after every point, a median 4.3
+degrees from the middle of the view, 8.7 at worst** (13.7 before the fix on the same table), a median 12.0 s each, the
+check included. **Distances repeat within a run:** the same keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m
+from five starting poses on October 30; on the 31st, four searches each, the keys 0.59 to 0.64 m, the keyboard 0.65 to
+0.71, the cup 0.92 to 1.04, the glasses 1.01 to 1.20 (MapAnything; things were moved between runs, and distances aren't
+yet calibrated against a tape measure, which MapAnything reads about 13% short on public test photos, so Andy says
+"about").
 
 **The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of
