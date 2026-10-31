@@ -218,14 +218,15 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 | Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
 |---|---|---|---|
 | The thing in front | 96 found, 0 wrong | 19, 0 wrong | 19, 0 wrong |
-| Behind the robot, with a hint | 92, 0 wrong, 6.2 looks | **19**, 0 wrong, 3.8 looks | **18**, 0 wrong, 3.3 looks |
+| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.5 looks | **18**, 0 wrong, 4.2 looks |
 | A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | 19, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
-| Two look-alikes, "the blue one" | 80, **20 wrong** | **19**, 1 wrong | **18**, 1 wrong |
-| Planning time (model only) | none | 6 to 12 s | **4 to 8 s** |
+| Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 1 wrong |
+| Planning time (model only) | none | 9 to 13 s | **6 to 8 s** |
 
-Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. The
-agents' columns are on the code of October 28. Two rounds of fixes came from this scorecard, and every earlier run is
+Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Every
+column was rerun on October 30 on the final code (a look now counts the check after pointing; Glimmer runs without its
+drafter, so it plans more slowly). Two rounds of fixes came from this scorecard, and every earlier run is
 kept:
 - **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
   Glimmer's look-alikes went from 20 to 17 (`*-before-tool-fixes.json`).
@@ -263,7 +264,7 @@ a median 0.45 s, on the computer beside the robot.
 **The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
 reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every
 HTTP request the program made was recorded on its way out, and the simulated camera took real pictures. **21 of 21
-turns pass:** none of the 18 camera pictures reached the cloud; the one image that did was a web page's screenshot, on
+turns pass:** none of the 24 camera pictures reached the cloud (rerun Oct 30 on the final code); the one image that did was a web page's screenshot, on
 its receipt; every word from the home that was sent was on its turn's receipt (40 of 43 pieces word for word; the other
 3 are the person's words inside Andy's own instructions, for a picture and the web); the crisis words reached no model
 at all. 11 of the 21 turns sent nothing. With

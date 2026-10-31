@@ -1,7 +1,7 @@
 # Submission text (for the form on November 4)
 
 *About 1,350 words with the table. Fill in the [brackets] on the day; check every number against `evals/results/` first
-(the lines marked ⟳ are refreshed from the final scorecard run).*
+(every scorecard line is from the final run on October 30).*
 
 ---
 
@@ -80,15 +80,16 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 
 ## Measured
 
-⟳ *Search, simulated* (the robot's camera model, seeded rooms): with look-alikes described, the fixed sweep pointed at
-the wrong one 20 times in 100; **Glimmer's plan 19 of 20, 1 wrong** (Muse Spark 18 of 20, 1 wrong). Things behind the
-robot: **19 of 20 in 3.8 looks** (Spark 18 in 3.3; fixed sweep 92 of 100 in 6.2). Nothing there: no false finds.
-⟳ *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12** (6 of 12 before the
+*Search, simulated* (the robot's camera model, seeded rooms; rerun Oct 30 on the final code): with look-alikes
+described, the fixed sweep pointed at the wrong one 20 times in 100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark
+18 of 20, 1 wrong). Things behind the robot: **Glimmer 20 of 20 in 4.5 looks** (Spark 18 in 4.2; fixed sweep 92 of 100
+in 7.1). Nothing there: no false finds.
+*The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12** (6 of 12 before the
 fixes this scorecard showed were needed), **Glimmer offline 12 of 12**.
-⟳ *The privacy audit* (a day of 21 requests with the real models, every request the program made recorded on its way
-out): **no camera picture reached the cloud** (18 taken); **every word from the home that was sent was on its turn's
+*The privacy audit* (a day of 21 requests with the real models, every request the program made recorded on its way
+out): **no camera picture reached the cloud** (24 taken); **every word from the home that was sent was on its turn's
 receipt**; crisis words reached no model; offline, nothing at all went.
-⟳ *Spanish:* **41 of 41** written requests reach the right ability; **34 of 41** said by Andy's own voice and heard
+*Spanish:* **41 of 41** written requests reach the right ability; **34 of 41** said by Andy's own voice and heard
 back (slips on the synthetic voice).
 *On the robot, alone in the room:* **34 of 34** unattended searches ended in a point with no errors, a median 10.8 s
 with the camera check; [the physical scorecard, judged by a person: N of M].
