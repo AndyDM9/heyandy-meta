@@ -1,0 +1,107 @@
+{
+ "things": "sofa",
+ "check": true,
+ "summary": {
+  "trials": 5,
+  "errors": 0,
+  "pointed": 5,
+  "seconds_median": 14.3,
+  "looks_median": 5,
+  "aim_deg_median": 4.0,
+  "aim_deg_worst": 6.7,
+  "reaimed": 4,
+  "aim_not_seen": 0,
+  "metres_by_thing": {
+   "sofa": [
+    1.21,
+    1.21,
+    1.25,
+    1.25,
+    1.26
+   ]
+  }
+ },
+ "note": "nobody checked what was pointed at: this measures the robot, not the finding",
+ "trials": [
+  {
+   "round": 1,
+   "thing": "sofa",
+   "from": [
+    -33.5,
+    12.2
+   ],
+   "pointed": true,
+   "seconds": 13.9,
+   "looks": 5,
+   "aim_deg": 2.6,
+   "reaimed": false,
+   "metres": 1.21,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "sofa",
+   "from": [
+    13.5,
+    7.0
+   ],
+   "pointed": true,
+   "seconds": 15.0,
+   "looks": 5,
+   "aim_deg": 2.4,
+   "reaimed": true,
+   "metres": 1.25,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "sofa",
+   "from": [
+    -28.4,
+    14.8
+   ],
+   "pointed": true,
+   "seconds": 14.1,
+   "looks": 4,
+   "aim_deg": 6.6,
+   "reaimed": true,
+   "metres": 1.21,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 4,
+   "thing": "sofa",
+   "from": [
+    30.8,
+    7.8
+   ],
+   "pointed": true,
+   "seconds": 16.7,
+   "looks": 5,
+   "aim_deg": 6.7,
+   "reaimed": true,
+   "metres": 1.26,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 5,
+   "thing": "sofa",
+   "from": [
+    0.5,
+    0.9
+   ],
+   "pointed": true,
+   "seconds": 14.3,
+   "looks": 4,
+   "aim_deg": 4.0,
+   "reaimed": true,
+   "metres": 1.25,
+   "why": "",
+   "error": null
+  }
+ ]
+}

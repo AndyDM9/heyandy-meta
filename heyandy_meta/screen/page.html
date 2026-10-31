@@ -288,7 +288,7 @@
                   "“Andy, ¿qué recuerdas?”", "“Andy, ¿qué enviaste a la nube hoy?”", "“Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
   const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
-                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", privacy: "Today's privacy", help: "What can I ask?" };
+                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   function demoBar() {

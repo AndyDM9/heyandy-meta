@@ -295,7 +295,10 @@ the fix, `unattended-20261031-0924`: **20 of 20 pointed, none failed, the thing 
 degrees from the middle of the view, 8.7 at worst** (13.7 before the fix on the same table), a median 12.0 s each, the
 check included; on the final code (the lens's own focal length, which reads the same offset about 6% larger, and quicker
 small corrections), `unattended-20261031-1106`: 15 of 15, a median 5.2, 8.3 at worst, 11.7 s (the same 15 with the old,
-slower corrections: 6.0 and 11.2, so run to run the median moves about a degree). **Distances repeat within a run:** the same keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m
+slower corrections: 6.0 and 11.2, so run to run the median moves about a degree). **Turning far round, for real:** a sofa
+at Andy's left, where the base turns 55 degrees under the head, was pointed at 8 of 8, a median 2.8 degrees off,
+1.21 to 1.38 m (`unattended-20261031-1212` and `-1213`, at 84 to 85 degrees); before the fix the head never faced past
+30. **Distances repeat within a run:** the same keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m
 from five starting poses on October 30; on the 31st, four searches each, the keys 0.59 to 0.64 m, the keyboard 0.65 to
 0.71, the cup 0.92 to 1.04, the glasses 1.01 to 1.20 (MapAnything; things were moved between runs, and distances aren't
 yet calibrated against a tape measure, which MapAnything reads about 13% short on public test photos, so Andy says

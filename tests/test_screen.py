@@ -194,3 +194,17 @@ def test_the_room_in_3d_gives_way_to_what_is_shown_next(next_card):
     {"remember": lambda: s.remember_list(["keys: just now"]), "help": s.show_help,
      "answer": lambda: s.answered("It's sunny.", []), "looking": lambda: s.looking("keys")}[next_card]()
     assert s.snapshot()["room"] is None
+
+
+def test_every_demo_scene_has_a_name_in_the_scene_bar():
+    import re
+    import sys
+    from importlib.resources import files
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES
+
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    names = re.search(r"const NAMES = \{(.*?)\};", page, re.S).group(1)
+    assert set(SCENES) <= set(re.findall(r"(\w+):", names))

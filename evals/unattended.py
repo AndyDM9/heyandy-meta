@@ -75,6 +75,7 @@ def main() -> None:
                             pass
                     row.update(pointed=found is not None, seconds=round(time.monotonic() - t0, 1), looks=finder.looks,
                                aim_deg=found.aim_deg if found else None, reaimed=bool(found and found.reaimed),
+                               at=[round(found.yaw, 1), round(found.pitch, 1)] if found else None,
                                metres=metres, why=finder.why, error=None)
                 except Exception as e:  # noqa: BLE001 - a failure is a result here, and the run goes on
                     row.update(pointed=False, seconds=round(time.monotonic() - t0, 1), looks=finder.looks,

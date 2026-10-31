@@ -735,3 +735,8 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   the published 1116 px 3.41). `evals/room.py`, three scans: looks agree to a median 0.9 degrees within a scan (small
   things up to 2.3; the keyboard, partly out of some looks, 4.9 to 7.6), scan to scan within 1 degree and 8 cm.
   `evals/notice.py`, 10 empty-table clips: nothing noticed, V-JEPA 2 asked once ("put down" 0.015).
+- **Far round, on the robot (2026-10-31, 12:13):** with the head's frame fixed, the measured head reached 113 to 163
+  degrees each way (a survey: a sofa at 113 degrees, 0.95). The finder pointed at the sofa's near end, at 84 to 85
+  degrees left, 8 of 8 (two runs), a median 2.8 degrees off, 1.21 to 1.38 m; typed to Andy, "where's the sofa?" (the
+  fixed sweep, 21.6 s) and "... I think it's behind you, on the left" (Muse Spark: one look, 26.5 s) both pointed.
+  `evals/unattended.py` now records where each point landed (`at`).
