@@ -54,6 +54,15 @@ HOME_CHECK = re.compile(r"\bis everything (?:home|where it belongs|in (?:its|it'
                         r"\beverything in (?:its|it's) place\b|\best[aá] todo en su (?:sitio|lugar)\b", re.I)
 HOME_WHERE = re.compile(r"\bwhere (?:do|does) (?:my|the|our) (?P<a>" + _T + r") (?:live|belong|go)\b", re.I)
 HOME_FORGET = re.compile(r"\b(?:forget|clear|remove) (?:where )?(?:my|the|our) (?P<a>" + _T + r")(?:(?:'s|') home| (?:live|lives|belong|belongs|go|goes))\b", re.I)
+# told (memory/told.py): "I'm putting my passport in the top drawer", "my spare key is in the kitchen drawer"
+_WHERE = r"(?P<where>(?:in|on|under|behind|inside|into|onto|at|by|beside|next to|on top of|underneath|between|in the|at the)\b.{2,80}?)"
+TELL = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:remember(?: that)?\W+)?(?:i'?m |i am |i'?ve |i have |i'?ll |i will |i |we'?re |we are |we'?ve |we )(?:just )?"
+                  r"(?:put(?:ting)?|left|leav(?:e|ing)|keep(?:ing)?|hid(?:e|ing)?|hidden|stor(?:e|ed|ing)|plac(?:e|ed|ing)|tuck(?:ed|ing)?) "
+                  r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,40}?) (?:away |back )?" + _WHERE + r"\W*$|"
+                  r"^\W*(?:(?:hey |oye )?andy\W+)?(?:remember(?: that)?\W+)?(?:my|the|our) (?P<thing2>[a-z][a-z '\-]{1,40}?) "
+                  r"(?:is|are|'s|'re) (?:now |kept |always )?" + _WHERE.replace("where", "where2") + r"\W*$", re.I)
+NOT_THINGS = {"kids", "children", "child", "baby", "dog", "cat", "husband", "wife", "mom", "dad", "mum", "kettle", "tv",
+              "heating", "oven", "washing", "dishwasher", "car", "light", "lights", "music", "radio", "it", "them", "that"}
 IT = {"it", "them", "that", "this", "those", "there", "one", "the thing", "mis cosas"}
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
@@ -154,7 +163,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | tell | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -266,6 +275,10 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("calling", thing="any", text=t)
     if SETUP.search(t):
         return Intent("setup", text=t)
+    if (m := TELL.search(t)) and not WATCH.search(t):
+        thing, where = (m.group("thing") or m.group("thing2")).strip().lower(), (m.group("where") or m.group("where2")).strip()
+        if thing not in NOT_THINGS and not re.search(r"\b(?:here|there)\W*$", where, re.I):
+            return Intent("tell", thing=snap(thing), text=where)
     for kind, rx in (("home_check", HOME_CHECK), ("home_forget", HOME_FORGET), ("home_where", HOME_WHERE), ("home_set", HOME_SET)):
         if m := rx.search(t):
             if kind == "home_check":

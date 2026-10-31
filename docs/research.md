@@ -930,3 +930,20 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   run 1, each line said once, 46.5 s. The misses are the search's, not the check's: SAM 3.1 saw the watch at 0.93 in
   a probe a minute after run 2, and the light was ordinary (mean brightness about 105 of 255).
 
+## 46. What it's told: memory beyond the camera (2026-10-31)
+
+- **Why:** Andy's camera sees one room; the things people dread losing (a passport, the spare key, the warranty)
+  are in drawers, bags and other rooms. People know where they put a thing when they put it, and forget later.
+- **Built:** "I'm putting my passport in the top drawer of the desk", "I put my spare key under the mat", "my spare
+  key is in the kitchen drawer", "remember that the warranty is in the blue folder" (an "I" is needed: "put the
+  radar on the screen" is a command) keep the words with when they were said (`memory/told.py`, private, the last
+  five per thing, a year), said back ("Got it: your passport, in the top drawer of the desk"; "my" becomes "your").
+  "Where's my passport?" is answered from them at once, without moving ("You told me on Tuesday at 3:12: ... If it
+  isn't there, ask me again and I'll look around the room"); asked again within three minutes, Andy searches; a thing
+  the camera has seen since is answered from the camera; a search that misses says what was told. "What do you
+  remember?" lists them; "forget my passport" removes them. The TV shows the person's words as a quote. People,
+  pets and appliances are left out ("I'm putting the kids in bed", "I put the kettle on").
+- **Measured on the robot** (`evals/told.py`, the whole app with its voice): told, then asked: answered from the words
+  with no look and no frame (8.2 s, the speaking); asked again: six looks, nothing found, "At 6:11, you told me it was
+  in the top drawer of the desk" (28.1 s).
+

@@ -1,0 +1,26 @@
+{
+ "when": "2026-10-31 18:11",
+ "turns": [
+  {
+   "said": "Hey Andy, I'm putting my passport in the top drawer of the desk",
+   "andy": "I'm Andy, an AI robot. Got it: your passport, in the top drawer of the desk. I'll remember.",
+   "seconds": 7.3,
+   "looks": 0,
+   "frames": 0
+  },
+  {
+   "said": "Where's my passport?",
+   "andy": "You told me at 6:11: your passport is in the top drawer of the desk. If it isn't there, ask me again and I'll look around the room.",
+   "seconds": 8.2,
+   "looks": 0,
+   "frames": 0
+  },
+  {
+   "said": "Where's my passport?",
+   "andy": "Hmm, I couldn't find your passport from here. At 6:11, you told me it was in the top drawer of the desk. I'll keep looking, and tell you when I see it. Where did you last have it?",
+   "seconds": 28.1,
+   "looks": 6,
+   "frames": 6
+  }
+ ]
+}

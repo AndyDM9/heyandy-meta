@@ -38,6 +38,7 @@ from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
 from .memory.lost import LOOK_EVERY_S, Lost, spot
 from .memory.mine import Mine
+from .memory.told import Told, yours
 from .memory.places import Places
 from .models.common import Chat, Mask, Reply
 from .models.depth_local import how_far
@@ -102,6 +103,8 @@ class Andy:
         self._last_glance = self.clock()
         self.lost = Lost(self.places.path.parent / "lost.json", clock=self.clock)  # what a search missed: Andy keeps looking
         self._last_lost_look = self.clock()
+        self.told = Told(self.places.path.parent / "told.json", clock=self.clock)  # where the person said they put things
+        self._told_given: tuple[str, float] | None = None  # (thing, when) Andy last answered from what it was told
         self._background = False  # a search Andy started itself (lost and found): no "Let me look", no "oops"
         self._no_promise = False  # a search for setting a home: if it misses, no "I'll keep looking"
         self._home_checked = None  # the day of the last evening home check
@@ -313,6 +316,8 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind == "tell":
+            return self.remember_told(i.thing, i.text)
         if i.kind == "home_set":
             return self.set_home(i.thing)
         if i.kind == "home_check":
@@ -340,6 +345,7 @@ class Andy:
                     f"never a picture. Say 'forget my {i.thing}' to stop.")
         if i.kind == "forget":
             self.places.forget(i.thing)
+            self.told.forget(i.thing)
             by_sight = self.mine.forget(i.thing)
             self.screen.remember_list(self._memory())
             return f"I've forgotten your {i.thing}" + (", and what it looks like." if by_sight else ".")
@@ -533,6 +539,9 @@ class Andy:
 
     def find(self, thing: str, request: str, hint: bool = False) -> str:
         """A plain "where are my keys" gets the fast fixed sweep; a request with a hint gets an agent that uses it."""
+        told = None if hint else self._told_first(thing)
+        if told:
+            return told
         self.screen.clear()
         self.screen.timer_start()
         checks = getattr(self.judge, "calls", 0)
@@ -799,6 +808,34 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def remember_told(self, thing: str, where: str) -> str:
+        """"I'm putting my passport in the top drawer of the desk": the words kept (memory/told.py), said back."""
+        where = yours(where)
+        self.told.tell(thing, where)
+        self.screen.told(thing, where, "just now")
+        self._source, self._reason = "device", "your words, kept on this computer"
+        return f"Got it: your {thing}, {where}. I'll remember."
+
+    def _told_first(self, thing: str) -> str | None:
+        """Where the person said they put it, if they did and the camera hasn't seen it since: at once, without moving.
+        Asked again within a few minutes, None: then Andy looks around the room."""
+        if self._background or self._by_sound is not False or self._no_promise:
+            return None
+        note = self.told.latest(thing)
+        seen = self.places.seen_at(thing)
+        if not note or (seen and seen > note["at"]):
+            return None
+        if self._told_given and self._told_given[0] == thing and self.clock() - self._told_given[1] <= TOLD_AGAIN_S:
+            self._told_given = None
+            return None
+        self._told_given = (thing, self.clock())
+        when = self._when(note["at"])
+        self.screen.told(thing, note["words"], when)
+        self._source, self._reason = "device", "what you told me, kept on this computer"
+        them = _it(thing) == "them"
+        return (f"You told me {when}: your {thing} {'are' if them else 'is'} {note['words']}. If {'they are' if them else 'it is'}"
+                f"n't there, ask me again and I'll look around the room.")
 
     def set_home(self, thing: str) -> str:
         """"My keys live here": where Andy sees them now becomes their home (memory/places.py), and Andy keeps an eye on
@@ -1731,6 +1768,9 @@ class Andy:
         self.emote("oops1")
         if self._no_promise:
             return f"I can't see your {thing} from here."
+        note = self.told.latest(thing)
+        told = (f" {self._when(note['at'])[0].upper() + self._when(note['at'])[1:]}, you told me {_it(thing)} "
+                f"{'were' if _it(thing) == 'them' else 'was'} {note['words']}." if note else "")
         again, since = not self.lost.add(thing), self.lost.since(thing)
         looks = self.lost.looks(thing)
         if self.ear is not None and thing in RINGS | BEEPS:
@@ -1746,7 +1786,7 @@ class Andy:
             return f"I saw a {thing}, but not yours.{promise} Could you tell me where you last had {_it(thing)}?"
         if "picture" in self.finder.why:
             return f"I only saw a picture of {thing} on a screen.{promise} Could you tell me where you last had {_it(thing)}?"
-        return f"Hmm, I couldn't find your {thing} from here.{promise} Where did you last have {_it(thing)}?"
+        return f"Hmm, I couldn't find your {thing} from here.{told}{promise} Where did you last have {_it(thing)}?"
 
     def _memory(self) -> list[str]:
         lines = []
@@ -1763,6 +1803,7 @@ class Andy:
             lines.append(f"{label}: seen {_ago(self.clock() - at)}, {where}{far}{moved}")
         watched = self.places.watching()
         lines += [f"{k}: I know it by sight" for k in self.mine.known() if k not in watched]
+        lines += [f"{k}: {n['words']} (you told me {self._when(n['at'])})" for k, n in self.told.all().items()]
         return lines
 
     # --- noticing (memory/notice.py): the head held still between turns, and given back the moment a turn starts ---
@@ -1836,6 +1877,9 @@ class Andy:
 
     def last_seen(self, thing: str, request: str) -> str:
         """"When did you last see my keys?": from memory, without moving. Not watched: look for it instead."""
+        told = self._told_first(thing)
+        if told:
+            return told
         history = self.places.history(thing)
         if not history:
             if thing in self.places.watching():
@@ -2017,6 +2061,7 @@ def millimetres(points_f16: bytes) -> bytes:
     return struct.pack(f"<{n}h", *(max(-32000, min(32000, round(v * 1000))) for v in struct.unpack(f"<{n}e", points_f16)))
 
 
+TOLD_AGAIN_S = 3 * 60  # asked again this soon after an answer from what was told: look around the room instead
 HOME_CHECK_HOUR = 21  # each evening, Andy checks every thing with a home is there (9 pm)
 RINGS = {"phone", "cell phone", "cellphone", "mobile", "mobile phone", "smartphone", "iphone", "tablet", "ipad"}
 BEEPS = {"keys", "key", "wallet", "remote", "bag", "purse"}  # often on a tracker that plays a sound

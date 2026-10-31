@@ -28,7 +28,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "told", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -315,6 +315,13 @@ def show(state: ScreenState, scene: str) -> None:
         state.said("They live there, in the bowl by the door.", "device", "looked at the home of each of 3 things, on this computer")
         state.used("SAM 3.1", "device", 4)
         state.doing("Pointing", "At your keys' home")
+    elif scene == "told":  # "where's my passport?": from what the person told Andy, at once, without moving
+        when = "on " + time.strftime("%A", time.localtime(time.time() - 3 * 86400)) + " at 3:12"
+        state.told("passport", "in the top drawer of the desk", when)
+        state._told["until"] += 3600  # a still for the demo: it stays
+        state.said(f"You told me {when}: your passport is in the top drawer of the desk. If it isn't there, ask me again "
+                   "and I'll look around the room.", "device", "what you told me, kept on this computer")
+        state.doing("Speaking", "Looking at you")
     elif scene == "room":
         points, things = sample_room()
         state.room(points, things, 1.0)

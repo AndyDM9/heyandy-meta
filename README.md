@@ -107,6 +107,11 @@ found, "You're all set", in three sentences.
    pointed at, and then its home is pointed at: "Your keys aren't home: they're a little to my right. They live there,
    in the bowl by the door." Not seen anywhere: Andy keeps looking. The TV lists each one, home or not
    (`memory/places.py`, `app.py home_check`).
+   **"I'm putting my passport in the top drawer."** A camera sees one room; the things people dread losing are in
+   drawers, bags and other rooms. Andy keeps what it's told, as your words with when you said them, and answers from
+   them at once, without moving: "You told me on Tuesday at 3:12: your passport is in the top drawer of the desk."
+   Asked again, it looks around the room; seen since by the camera, the camera wins; a search that misses says what
+   you'd told it. "Forget my passport" removes it (`memory/told.py`).
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and
