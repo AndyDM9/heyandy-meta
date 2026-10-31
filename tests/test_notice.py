@@ -87,3 +87,48 @@ def test_a_watched_thing_picked_up_from_where_it_was_is_noticed(tmp_path):
     places.saw("keys", -16.0, 21.4, when=990.0)  # last seen right where the hand moved
     seen = n.watch_once()
     assert seen["kind"] == "taken" and seen["things"] == ["keys"]
+
+
+def test_a_turn_takes_the_head_back_from_a_noticing_clip(tmp_path):
+    from heyandy_meta.robot.motion import Motion
+    from tests.test_app import andy
+
+    a, body, _ = andy(tmp_path=tmp_path)
+    body.motion = Motion()
+    cancel = a.begin_noticing()
+    assert cancel is not None and body.motion.mode == "searching"
+    a.hear("Good morning")  # a typed turn makes no gesture of its own
+    assert cancel.is_set() and body.motion.mode == "idle"
+    body.motion.set_mode("listening")  # the next turn's own body language
+    a.end_noticing(cancel)
+    assert body.motion.mode == "listening"  # the clip's end never overwrites it
+    cancel = a.begin_noticing()
+    a.end_noticing(cancel)
+    assert body.motion.mode == "listening" and cancel is None  # not idle: no clip starts
+    body.motion.set_mode("idle")
+    import threading
+
+    held, done = threading.Event(), threading.Event()
+
+    def turn():  # a turn running on its own thread, as the voice loop runs them
+        with a.lock:
+            held.set()
+            done.wait(2)
+
+    running = threading.Thread(target=turn)
+    running.start()
+    held.wait(2)
+    assert a.begin_noticing() is None
+    done.set()
+    running.join(2)
+    cancel = a.begin_noticing()
+    a.end_noticing(cancel)
+    assert not cancel.is_set() and body.motion.mode == "idle"
+
+
+def test_a_cancelled_clip_asks_no_model_and_changes_no_memory(tmp_path):
+    seer = Seer(put=0.9, keys_at=880)
+    n, places = noticer(seer, [jpeg(square_at=800 + 5 * i) for i in range(16)], tmp_path)
+    calls = []
+    assert n.watch_once(cancelled=lambda: calls.append(1) or len(calls) > 5) is None
+    assert seer.asked == [] and places.last_seen("keys", now=1000.0) is None

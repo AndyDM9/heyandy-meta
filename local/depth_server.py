@@ -163,7 +163,7 @@ def serve(model, host: str, port: int) -> None:
             if self.path not in ("/distance", "/scan"):
                 return self._send(404, {"error": "not found"})
             n = int(self.headers.get("Content-Length") or 0)
-            if not 0 < n <= MAX_BODY * MAX_VIEWS:
+            if not 0 < n <= (MAX_BODY * MAX_VIEWS if self.path == "/scan" else MAX_BODY):
                 return self._send(413, {"error": "body too large or empty"})
             if self.path == "/scan":
                 return self._scan(n)
@@ -200,10 +200,10 @@ def serve(model, host: str, port: int) -> None:
             try:
                 with lock, torch.inference_mode():
                     out = scan(model, views)
-            except (RuntimeError, ValueError) as e:  # out of GPU memory, a view MapAnything refused: say so
-                torch.cuda.empty_cache()
+            except Exception as e:  # noqa: BLE001 - out of GPU memory, a view MapAnything refused: say so, never hang up
                 return self._send(500, {"error": f"{type(e).__name__}: {str(e)[:200]}"})
-            torch.cuda.empty_cache()
+            finally:
+                torch.cuda.empty_cache()
             self._send(200, {**out, "seconds": round(time.monotonic() - start, 3)})
 
         def _send(self, code, body):

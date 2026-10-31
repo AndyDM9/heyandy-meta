@@ -11,7 +11,8 @@ from ..agent.tools import COLOURS
 from ..finder.names import KNOWN, snap
 
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
-FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced)\s+"
+FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced|"
+                  r"(?:look|search|scan)(?: around)?(?: (?:the|this|my) (?:room|house|table|desk))? for)\s+"
                   + THING
                   + r"(?:\s+(?:is|are|went|go|gone))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
 DRAW = re.compile(r"\b(?:draw|paint|sketch|make|create)\s+(?:me\s+|us\s+)?(?:a\s+|an\s+)?"
@@ -55,8 +56,9 @@ ROOM = re.compile(r"\b(?:show|map|scan|measure)(?: me)? (?:the|my|this|your) (?:
                   r"\b(?:room|things|space) in 3 ?d\b|\b3 ?d (?:map|view|scan|picture) of\b|"
                   r"\bwhat does (?:the|my|this) room look like\b", re.I)
 # The time and the day, from the clock: the conversation's model isn't told them, and would guess.
-TIME = re.compile(r"\bwhat(?:'s|s| is) the time\b|\bwhat time is it\b|\bwhat(?:'s|s| is) (?:the date|today'?s date|"
-                  r"the day)(?: today)?\b|\bwhat day is (?:it|today)\b|\bwhat(?:'s|s| is) today\b", re.I)
+TIME = re.compile(r"\bwhat(?:'s|s| is) the time\b(?! in\b)|\bwhat time is it\b(?! in\b)|"
+                  r"\bwhat(?:'s|s| is) (?:the date|today'?s date|the day)(?: today)?\b|\bwhat day is (?:it|today)\b|"
+                  r"\bwhat(?:'s|s| is) today\b(?!'s|s\b)(?!\s+\w)", re.I)  # not "today's weather", not "in Tokyo"
 REMIND = re.compile(r"\bremind me\b", re.I)
 PRIVACY = re.compile(r"\bwhat (?:did|have) you (?:send|sent|shared?)\b|\bwhat(?:'s| has)? (?:left|gone out of|went out of) "
                      r"(?:the|this|my) (?:house|home)\b|\bwhat (?:went|goes|has gone) (?:to|up to|out to) the "
@@ -198,10 +200,12 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("remind", text="")  # asked, but the time or the words are missing: ask again
     if REMINDERS.search(t):
         return Intent("reminders")
+    if re.search(r"\btime is it in\b|\bthe time in\b", t, re.I):  # somewhere else's time: looked up, never guessed
+        return Intent("world", text=t)
     if TIME.search(t):
         return Intent("time", thing="day" if re.search(r"\b(?:date|day|today)\b", t, re.I) else "time")
-    if ROOM.search(t):
-        return Intent("room", text=t)
+    if ROOM.search(t) and not FIND.search(t) and not re.search(r"\bfind\b|\bwhere\b", t, re.I):
+        return Intent("room", text=t)  # "scan the room for my keys" is a search, below
     if REMEMBER.search(t):
         return Intent("remember")
     if GAME.search(t):

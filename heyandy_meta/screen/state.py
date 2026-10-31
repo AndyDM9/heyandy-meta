@@ -91,6 +91,7 @@ class ScreenState:
 
     def looking(self, thing: str) -> None:
         with self._lock:
+            self._room = None  # whatever is shown next takes the room's place
             self.privacy = None
             self.looking_for, self._glimpse = thing, None
 
@@ -175,6 +176,7 @@ class ScreenState:
 
     def show_help(self) -> None:
         with self._lock:
+            self._room = None  # whatever is shown next takes the room's place
             self._help_until = self._clock() + HELP_SECONDS
 
     def new_turn(self) -> None:
@@ -271,6 +273,7 @@ class ScreenState:
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
+            self._room = None  # whatever is shown next takes the room's place
             self.privacy = None
             self.caption, self.source, self.reason, self.sources = text, source, reason, list(sources)[:3]
             self._web = None
@@ -281,6 +284,7 @@ class ScreenState:
 
     def remember_list(self, lines: list[str]) -> None:
         with self._lock:
+            self._room = None  # whatever is shown next takes the room's place
             self.privacy = None
             self.memory = list(lines)
 

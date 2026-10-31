@@ -135,13 +135,17 @@ class Actions:
     def __init__(self, name: str = ACTION_MODEL):
         self.name, self.model, self.processor = name, None, None
 
-    def judge(self, frames: list[Image.Image], box=None) -> dict:
+    def load(self) -> None:
+        """Outside the GPU lock: a first load (a second or so) shouldn't hold up a search's /segment."""
         if self.model is None:
             from transformers import AutoModelForVideoClassification, AutoVideoProcessor
 
             self.processor = AutoVideoProcessor.from_pretrained(self.name, revision=ACTION_REVISION)
             self.model = AutoModelForVideoClassification.from_pretrained(self.name, revision=ACTION_REVISION,
                                                                           dtype=torch.float16).to("cuda").eval()
+
+    def judge(self, frames: list[Image.Image], box=None) -> dict:
+        self.load()
         if box:  # where something moved, as a square a little larger, so the hands and the thing fill the clip
             l, t, r, b = box
             side = max(r - l, b - t) * 1.4
@@ -369,16 +373,26 @@ def serve(predictor, host: str, port: int) -> None:
         def _action(self, n):
             try:
                 req = json.loads(self.rfile.read(n))
+                if not 8 <= len(req["frames"]) <= 16:  # counted before anything is decoded
+                    return self._send(400, {"error": "need 8 to 16 frames of one size"})
+                box = [float(v) for v in req["box"]] if req.get("box") else None
+                if box is not None and (len(box) != 4 or box[2] - box[0] < 2 or box[3] - box[1] < 2):
+                    raise ValueError
                 frames = [Image.open(io.BytesIO(base64.b64decode(f))).convert("RGB") for f in req["frames"]]
-                box = [float(v) for v in req["box"]][:4] if req.get("box") else None
             except (ValueError, KeyError, OSError, TypeError):
-                return self._send(400, {"error": "need 'frames', a list of base64 JPEGs, and 'box' or null"})
-            if not 8 <= len(frames) <= 16 or len({f.size for f in frames}) != 1:
+                return self._send(400, {"error": "need 'frames', 8 to 16 base64 JPEGs, and 'box' [l, t, r, b] or null"})
+            if len({f.size for f in frames}) != 1:
                 return self._send(400, {"error": "need 8 to 16 frames of one size"})
             start = time.monotonic()
-            with lock, torch.inference_mode():
-                out = actions.judge(frames, box)
-            del frames
+            try:
+                actions.load()
+                with lock, torch.inference_mode():
+                    out = actions.judge(frames, box)
+            except (RuntimeError, ValueError, OSError) as e:  # out of GPU memory, no model files: say so, don't hang up
+                torch.cuda.empty_cache()
+                return self._send(500, {"error": f"{type(e).__name__}: {str(e)[:200]}"})
+            finally:
+                del frames
             self._send(200, {**out, "seconds": round(time.monotonic() - start, 3)})
 
         def _send(self, code, body):

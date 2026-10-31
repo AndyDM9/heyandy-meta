@@ -84,3 +84,14 @@ def test_a_hint_is_more_than_what_to_find(text, hint):
 def test_a_colour_says_which_one_so_the_planner_compares():
     assert parse("Andy, where's the blue mug?").hint and parse("where is my red phone").hint
     assert not parse("where's my mug").hint and not parse("where are my glasses").hint
+
+
+@pytest.mark.parametrize("said, kind, thing", [
+    ("what's today's weather?", "world", ""), ("what is today's news", "world", ""),
+    ("what time is it in Tokyo?", "world", ""), ("what's today?", "time", "day"), ("whats the time", "time", "time"),
+    ("scan the room for my keys", "find", "keys"), ("measure the room and find my phone", "find", "phone"),
+    ("look around the room for my glasses", "find", "glasses"), ("Andy, show me the room in 3D", "room", ""),
+    ("what does the room look like?", "room", "")])
+def test_the_time_the_room_and_a_search_are_told_apart(said, kind, thing):
+    i = parse(said)
+    assert (i.kind, i.thing) == (kind, thing)

@@ -498,7 +498,9 @@
         g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(x, y); g.stroke();
         g.fillStyle = outline; g.beginPath(); g.arc(q[0], q[1], 0.42 * rem, 0, 2 * Math.PI); g.fill();
         g.fillStyle = solid; g.globalAlpha = 0.92;
-        g.beginPath(); g.roundRect(x - w / 2, y - h + 0.15 * rem, w, h - 0.3 * rem, 0.9 * rem); g.fill();
+        g.beginPath();  // roundRect is newer than some TVs' browsers: a plain pill there
+        if (g.roundRect) g.roundRect(x - w / 2, y - h + 0.15 * rem, w, h - 0.3 * rem, 0.9 * rem); else g.rect(x - w / 2, y - h + 0.15 * rem, w, h - 0.3 * rem);
+        g.fill();
         g.globalAlpha = 1; g.textAlign = "center"; g.fillStyle = ink;
         g.fillText(t.label, x, y - 1.75 * rem);
         g.fillStyle = accent; g.font = `700 ${1.3 * rem}px "Atkinson Mono", monospace`;

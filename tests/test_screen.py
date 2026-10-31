@@ -182,3 +182,15 @@ def test_the_live_view_shows_only_while_a_search_runs_and_goes_when_it_ends():
     assert s.snapshot()["glimpse"]["v"] == g["v"]
     s.found(Found("mug", 0.0, 10.0, 0.9, frame, mask, 2), "There it is!")
     assert "glimpse" not in s.snapshot()  # the search is over: the live view is gone
+
+
+@pytest.mark.parametrize("next_card", ["remember", "help", "answer", "looking"])
+def test_the_room_in_3d_gives_way_to_what_is_shown_next(next_card):
+    from heyandy_meta.screen.state import ScreenState
+
+    s = ScreenState()
+    s.room(b"\x00\x00" * 3, [{"label": "keys", "point": [0.1, 0.2, 0.5], "metres": 0.55}])
+    assert s.snapshot()["room"] is not None
+    {"remember": lambda: s.remember_list(["keys: just now"]), "help": s.show_help,
+     "answer": lambda: s.answered("It's sunny.", []), "looking": lambda: s.looking("keys")}[next_card]()
+    assert s.snapshot()["room"] is None

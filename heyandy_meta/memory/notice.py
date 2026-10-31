@@ -48,23 +48,26 @@ class Noticer:
     sleep: object = time.sleep
     last: dict | None = None  # the last clip's verdict, for the TV and the tests
 
-    def watch_once(self) -> dict | None:
-        """One clip. Returns what was noticed ({"kind": "put" or "taken", "things": [...]}), or None."""
+    def watch_once(self, cancelled=lambda: False) -> dict | None:
+        """One clip. Returns what was noticed ({"kind": "put" or "taken", "things": [...]}), or None. ``cancelled`` is
+        asked between frames and before each model and the memory: a turn starting ends the clip, with no change."""
         watching = self.places.watching()
         if not watching:
             return None
         clip = []
         for _ in range(self.frames):
+            if cancelled():
+                return None
             clip.append(self.body.grab())
             self.sleep(self.every_s)
         box, share = moved([f.image for f in clip])
-        if box is None:
+        if box is None or cancelled():
             self.last = {"moved": round(share, 4)}
             return None
         verdict = self.seer.action(clip, box)
         self.last = {"moved": round(share, 4), **verdict}
         kind = "put" if verdict["put"] >= self.sure else "taken" if verdict["taken"] >= self.sure else None
-        if kind is None:
+        if kind is None or cancelled():
             return None
         end = clip[-1]
         del clip
@@ -72,7 +75,10 @@ class Noticer:
         l, t, r, b = box
         pad = max(r - l, b - t) * 0.25
         things, where = [], {}
-        for label, masks in self.seer.find_many(end, watching).items():
+        found = self.seer.find_many(end, watching)
+        if cancelled():
+            return None
+        for label, masks in found.items():
             here = [m for m in masks if (m.score or 0.0) >= 0.5
                     and l - pad <= m.center[0] <= r + pad and t - pad <= m.center[1] <= b + pad]
             if kind == "put" and here:

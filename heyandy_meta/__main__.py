@@ -188,30 +188,31 @@ def main() -> None:
 
         def notice_things():
             """V-JEPA 2: between turns, while Andy keeps an eye on something and someone is in view, it holds still and
-            watches in 4 s clips for a thing put down or picked up (memory/notice.py). A turn always comes first: a clip
-            a turn interrupted is dropped, and the turn sets the body's mode itself."""
-            while not stop.wait(3.0):
+            watches in 4 s clips for a thing put down or picked up (memory/notice.py). A turn comes first: hear() (and
+            a reminder or a glance) interrupts the clip at once and takes the head back; an interrupted clip asks no
+            model and changes no memory."""
+            while not stop.wait(5.0):
                 try:
-                    busy = (time.monotonic() <= loop.awake_until or ears.active or getattr(andy.body, "speaking", False)
-                            or andy.following or andy.playing or andy.quiet() or andy.body.motion.mode != "idle")
+                    busy = (time.monotonic() <= loop.awake_until or ears.active or loop.busy or andy.following
+                            or andy.playing or andy.quiet() or getattr(andy.body, "speaking", False))
                     if busy or not andy.places.watching() or not hasattr(andy.segmenter, "action"):
                         continue
-                    if not andy.lock.acquire(blocking=False):  # a turn is running
-                        continue
-                    andy.lock.release()
                     frame = andy.body.grab()
                     if not [m for m in andy.segmenter.find(frame, "person") if (m.score or 0.0) >= 0.5]:
                         continue  # nobody there to put anything down
                     del frame
-                    turn = andy._last_turn
-                    andy.body.motion.set_mode("searching")  # still, so what moves in the picture is the room
+                    cancel = andy.begin_noticing()
+                    if cancel is None:  # a turn is running, or the body is busy
+                        continue
                     try:
-                        stop.wait(0.5)
-                        seen = noticer.watch_once()
+                        if stop.wait(0.5) or cancel.is_set():
+                            continue
+                        seen = noticer.watch_once(
+                            cancelled=lambda c=cancel: c.is_set() or ears.active or loop.busy
+                            or time.monotonic() <= loop.awake_until)
                     finally:
-                        if andy._last_turn == turn and andy.body.motion.mode == "searching":
-                            andy.body.motion.set_mode("idle")
-                    if seen and andy._last_turn == turn:
+                        andy.end_noticing(cancel)
+                    if seen and not cancel.is_set():
                         andy.noticed(seen)
                 except Exception:  # noqa: BLE001 - a missed clip is fine; noticing must never stop Andy
                     pass

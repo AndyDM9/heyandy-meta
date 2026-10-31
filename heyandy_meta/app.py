@@ -124,6 +124,8 @@ class Andy:
         self._pointed = False  # this turn pointed at something
         self.hold_point_s = 1.2 if hasattr(self.body, "motion") else 0.0  # the real robot holds a point a moment
         self._last_turn = float("-inf")
+        self._noticing: threading.Event | None = None  # set by a turn while a noticing clip holds the head still
+        self._notice_lock = threading.Lock()
         self.refresh_panels()  # last: the panels read the language and the rest set above
 
     # --- a turn ---
@@ -133,6 +135,7 @@ class Andy:
         return LANGUAGES[self.language].asr
 
     def hear(self, text: str) -> str:
+        self.interrupt_noticing()  # a turn comes first: before anything else, the head is the turn's
         with self.lock:
             self.screen.new_turn()
             # Before any other model sees the words (the translator too): the word list, then Llama Guard, both here
@@ -1257,6 +1260,41 @@ class Andy:
         lines += [f"{k}: I know it by sight" for k in self.mine.known() if k not in watched]
         return lines
 
+    # --- noticing (memory/notice.py): the head held still between turns, and given back the moment a turn starts ---
+
+    def begin_noticing(self) -> threading.Event | None:
+        """Hold the head still for a noticing clip, unless a turn is running or the body is busy. The event returned
+        is set if a turn (or a reminder, or a glance) interrupts the clip."""
+        motion = getattr(self.body, "motion", None)
+        with self._notice_lock:
+            if motion is None or not self.lock.acquire(blocking=False):
+                return None
+            try:
+                if motion.mode != "idle":
+                    return None
+                self._noticing = threading.Event()
+                motion.set_mode("searching")  # still, so what moves in the picture is the room
+                return self._noticing
+            finally:
+                self.lock.release()
+
+    def end_noticing(self, cancel: threading.Event) -> None:
+        """The clip is over: the head goes back to its idle body language, unless a turn took it already."""
+        with self._notice_lock:
+            if cancel is not None and self._noticing is cancel:
+                self._noticing = None
+                motion = self.body.motion
+                if not cancel.is_set() and motion.mode == "searching":
+                    motion.set_mode("idle")
+
+    def interrupt_noticing(self) -> None:
+        with self._notice_lock:
+            cancel, self._noticing = self._noticing, None
+            if cancel is not None and not cancel.is_set():
+                cancel.set()
+                if self.body.motion.mode == "searching":  # the clip's stillness: no search runs outside a turn
+                    self.body.motion.set_mode("idle")
+
     def noticed(self, seen: dict) -> None:
         """V-JEPA 2 saw a watched thing put down or picked up (memory/notice.py): the TV says so, and a new place gets
         its words. Andy says nothing: a notice, not an interruption."""
@@ -1330,11 +1368,13 @@ class Andy:
             self.screen.quiet("")
             self._set_liveliness(self.liveliness)
         for r in self.reminders.due(now):  # asked for, so said even in quiet time; but without searching the room
+            self.interrupt_noticing()
             # Andy speaks first here, so it says it's an AI when that's due, as at the start of any conversation
             self.reminders.deliver(r, (lambda: True) if self.quiet() else self._find_person,
                                    lambda words: self.say(self.disclosure.prefix() + words), now)
         if not self.quiet() and self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
+            self.interrupt_noticing()
             self.gesture("searching")
             self.screen.doing("Working", "Glancing around the room")
             try:
