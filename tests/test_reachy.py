@@ -62,15 +62,15 @@ def test_past_the_head_the_base_makes_up_the_rest():
     b, robot = body()
     b.look(74.0, 20.0)
     head, base, _ = robot.moves[-1]
-    assert head == ("pose", 30.0, 20.0)
-    assert math.degrees(base) == pytest.approx(44.0)
+    assert head == ("pose", 74.0, 20.0)  # the daemon takes the head's direction in the room, the base's turn in it
+    assert math.degrees(base) == pytest.approx(44.0)  # the head turns 30 on the body, the base the other 44
 
 
 def test_directions_are_clamped_and_moves_stay_gentle():
     b, robot = body(reach=Reach(yaw=60.0, pitch_down=30.0))
     b.look(-170.0, 80.0)
     head, base, duration = robot.moves[-1]
-    assert head == ("pose", -30.0, 30.0) and math.degrees(base) == pytest.approx(-30.0)
+    assert head == ("pose", -60.0, 30.0) and math.degrees(base) == pytest.approx(-30.0)
     assert duration == pytest.approx(60.0 / 70.0)  # 60 degrees at 70 degrees a second
 
 
@@ -89,6 +89,28 @@ def test_the_base_is_trusted_and_only_the_head_is_corrected():
     b.look(70.0, 15.0)
     bases = [round(math.degrees(m[1]), 3) for m in robot.moves]
     assert bases == [40.0, 40.0]
+
+
+class ExactReachy(FakeReachy):
+    """Like the daemon: the head pose read back is the head's direction in the room, the base's turn already in it."""
+
+    def get_current_head_pose(self):
+        _, yaw, pitch = self.moves[-1][0]
+        y, p = math.radians(yaw), math.radians(pitch)
+        return [[math.cos(y) * math.cos(p), -math.sin(y), 0, 0], [math.sin(y) * math.cos(p), math.cos(y), 0, 0],
+                [-math.sin(p), 0, math.cos(p), 0], [0, 0, 0, 1]]
+
+    def get_current_joint_positions(self):
+        return [self.moves[-1][1]] + [0.0] * 6, [0.0, 0.0]
+
+
+def test_the_head_pose_is_read_in_the_rooms_frame():
+    """Found on the Lite, 2026-10-31: adding the base's turn to the head pose counted it twice, so past 30 degrees
+    Andy thought it faced twice as far round as it did, and never really looked past 30 degrees."""
+    b, robot = body(ExactReachy())
+    b.look(70.0, 15.0)
+    assert len(robot.moves) == 1  # it is where it was sent: no correction
+    assert (round(b.yaw, 6), round(b.pitch, 6)) == (70.0, 15.0)
 
 
 def test_capture_reports_where_the_head_was():
@@ -113,7 +135,8 @@ def test_the_finder_drives_the_adapter_like_any_body():
             return []
 
     assert Finder(b, Nothing()).find("glasses") is None
-    assert [m[0][1] for m in robot.moves] == [18.0, -18.0, 30.0, -30.0, 30.0, -30.0]  # the base makes up the rest
+    assert [m[0][1] for m in robot.moves] == [18.0, -18.0, 55.0, -55.0, 110.0, -110.0]  # the room's directions
+    assert [round(math.degrees(m[1])) for m in robot.moves] == [0, 0, 25, -25, 80, -80]  # the base makes up the rest
 
 
 @pytest.mark.parametrize("name", ["listening", "thinking", "found", "nod", "searching", "idle"])

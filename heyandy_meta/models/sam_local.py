@@ -7,7 +7,7 @@ import urllib.request
 
 from dataclasses import dataclass
 
-from .common import Mask, is_local
+from .common import Mask, is_local, sam_asks
 
 
 @dataclass
@@ -50,12 +50,13 @@ class LocalSam31:
         return out
 
     def find(self, frame_or_bytes, query: str) -> list[Mask]:
-        return [_mask(query, m) for m in self._post("/segment", frame_or_bytes, query=query)["masks"]]
+        return [_mask(query, m) for m in self._post("/segment", frame_or_bytes, query=sam_asks(query))["masks"]]
 
     def find_many(self, frame_or_bytes, queries: list[str]) -> dict[str, list[Mask]]:
         """Several things in one frame, encoded once (SAM 3.1 keeps the frame's features for every prompt)."""
-        out = self._post("/segment_many", frame_or_bytes, queries=list(queries))["masks"]
-        return {q: [_mask(q, m) for m in out.get(q, [])] for q in queries}
+        asked = {q: sam_asks(q) for q in queries}
+        out = self._post("/segment_many", frame_or_bytes, queries=list(dict.fromkeys(asked.values())))["masks"]
+        return {q: [_mask(q, m) for m in out.get(asked[q], [])] for q in queries}
 
 
     def embed(self, frame_or_bytes, masks: list[Mask]) -> list[list[float]]:

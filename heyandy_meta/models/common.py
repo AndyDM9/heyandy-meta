@@ -41,3 +41,13 @@ class Mask:
     area: int = 0  # mask pixels
     outline: str = ""  # SVG path in the mask's own pixels; place it with translate(box[0], box[1]) scale(*outline_scale)
     outline_scale: tuple[float, float] = (1.0, 1.0)
+
+
+# What SAM 3.1 is asked for a thing, where the plain word finds the wrong thing: asked for "keys", it outlines every
+# key of a keyboard (28 of 28 masks on the keyboard, on the Lite, 2026-10-31); "bunch of keys" found only the keys
+# (0.91 and 0.89, from two views). The masks come back under the word Andy used.
+SAM_ASKS = {"keys": "bunch of keys", "key": "set of keys", "car keys": "bunch of keys", "house keys": "bunch of keys"}
+
+
+def sam_asks(query: str) -> str:
+    return SAM_ASKS.get(query.strip().lower(), query)

@@ -7,7 +7,7 @@ snap a word that isn't a known thing to the nearest one that is, one letter away
 ALSO = {  # what else to look for, in the same request
     "cup": ["mug", "coffee cup"], "mug": ["cup", "coffee mug"], "glasses": ["eyeglasses", "spectacles"],
     "reading glasses": ["glasses", "eyeglasses"], "sunglasses": ["glasses"], "phone": ["cell phone", "smartphone"],
-    "mobile": ["cell phone", "phone"], "remote": ["remote control", "tv remote"], "keys": ["key", "keychain"],
+    "mobile": ["cell phone", "phone"], "remote": ["remote control", "tv remote"], "keys": ["keychain", "key"],
     "wallet": ["purse"], "purse": ["wallet", "handbag"], "glass": ["drinking glass", "cup"], "book": ["notebook"],
     "pills": ["pill bottle"], "watch": ["wristwatch"], "bottle": ["water bottle"], "pen": ["pencil"],
     "hat": ["cap"], "bag": ["handbag", "backpack"], "slippers": ["shoes"], "charger": ["phone charger", "cable"],

@@ -13,7 +13,7 @@ from meta_sam_parser import (
 )
 
 from ..budget import SAM_PER_IMAGE, Budget
-from .common import Mask
+from .common import Mask, sam_asks
 from .retry import with_retry
 
 BASE_URL = "https://api.meta.ai/v1"
@@ -95,7 +95,7 @@ class Sam31Segmenter:
         self.budget.check(SAM_PER_IMAGE)
         start = time.monotonic()
         def call():
-            with self.client.responses.stream(**request(image, query)) as stream:
+            with self.client.responses.stream(**request(image, sam_asks(query))) as stream:
                 return stream.get_final_response().output_text or ""
 
         text = with_retry(call, sleep=self._sleep)

@@ -57,5 +57,17 @@ def test_a_stopped_server_is_reported_not_hidden():
 def test_several_things_in_one_frame(server):
     url, got = server
     out = LocalSam31(url).find_many(b"\xff\xd8jpeg", ["keys", "glasses"])
-    assert got[0][0] == "/segment_many" and got[0][1]["queries"] == ["keys", "glasses"]
+    assert got[0][0] == "/segment_many" and got[0][1]["queries"] == ["bunch of keys", "glasses"]
     assert [m.label for m in out["keys"]] == ["keys"] and [m.label for m in out["glasses"]] == ["glasses"]
+
+
+
+def test_keys_are_asked_for_as_a_bunch_of_keys(server):
+    """Asked for "keys", SAM 3.1 outlines every key of a keyboard; the masks still come back under Andy's word."""
+    url, got = server
+    sam = LocalSam31(url)
+    assert [m.label for m in sam.find(b"\xff\xd8jpeg", "keys")] == ["keys"] and got[-1][1]["query"] == "bunch of keys"
+    out = sam.find_many(b"\xff\xd8jpeg", ["keys", "keychain", "key"])
+    assert got[-1][1]["queries"] == ["bunch of keys", "keychain", "set of keys"] and set(out) == {"keys", "keychain", "key"}
+    sam.find(b"\xff\xd8jpeg", "mug")
+    assert got[-1][1]["query"] == "mug"

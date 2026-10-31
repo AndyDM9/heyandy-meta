@@ -80,16 +80,17 @@ class ReachyBody:
         return head, yaw - head
 
     def measured(self) -> tuple[float, float] | None:
-        """Where the head really looks: its yaw on the body plus the base's yaw, and its pitch."""
+        """Where the head really looks. The daemon's head pose is in the room's frame, the base's turn already in it
+        (measured on the Lite, 2026-10-31: the same view with the base at 0 and at -30 degrees)."""
         if not hasattr(self.robot, "get_current_head_pose"):
             return None
-        head_yaw, pitch = _yaw_pitch(self.robot.get_current_head_pose())
-        base = math.degrees(self.robot.get_current_joint_positions()[0][0])
-        return head_yaw + base, pitch
+        return _yaw_pitch(self.robot.get_current_head_pose())
 
     def _send(self, head: float, pitch: float, base: float, duration: float) -> None:
+        """head is the head's turn on the body; the daemon takes the head's direction in the room, so the base's turn
+        is added (sent alone, the head keeps facing the same way while the base turns under it)."""
         with self._moving:
-            self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=duration)
+            self.robot.goto_target(head=self._pose(head + base, pitch), body_yaw=math.radians(base), duration=duration)
             self._sent = (head, pitch, base)
 
     def _live(self, hz: float = 50.0) -> None:
@@ -102,7 +103,7 @@ class ReachyBody:
                     self._ease(period)
                     head, pitch, base = self._sent
                     p = self.motion.pose(start, Pose(yaw=head, pitch=pitch))
-                    self.robot.set_target(head=self._full_pose(z=p.z, roll=p.roll, pitch=p.pitch, yaw=p.yaw, degrees=True),
+                    self.robot.set_target(head=self._full_pose(z=p.z, roll=p.roll, pitch=p.pitch, yaw=p.yaw + base, degrees=True),
                                           antennas=list(p.antennas), body_yaw=math.radians(base))
                 except Exception:  # noqa: BLE001 - a dropped tick is harmless; the loop must not die
                     pass
@@ -176,6 +177,7 @@ class ReachyBody:
         head, sent_pitch, base = self._sent
         self._send(head, min(sent_pitch + 6.0, self.reach.pitch_down + 10.0), base, 0.4)
         self._send(head, sent_pitch, base, 0.4)
+        self._sleep(self.settle_s)  # still before the camera checks the point (a small thing blurs out mid-move)
 
     def say(self, text: str) -> None:
         if self._say:
@@ -212,8 +214,7 @@ class ReachyBody:
             return False
         with self._moving:  # the body-language loop waits
             self.robot.play_move(move, initial_goto_duration=0.4, sound=sound)
-            head, pitch, base = self._sent
-            self.robot.goto_target(head=self._pose(head, pitch), body_yaw=math.radians(base), duration=0.5)
+            self._send(*self._sent, 0.5)
         return True
 
     # --- the speaker and the microphone array (16 kHz) ---
