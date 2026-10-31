@@ -740,3 +740,18 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   degrees left, 8 of 8 (two runs), a median 2.8 degrees off, 1.21 to 1.38 m; typed to Andy, "where's the sofa?" (the
   fixed sweep, 21.6 s) and "... I think it's behind you, on the left" (Muse Spark: one look, 26.5 s) both pointed.
   `evals/unattended.py` now records where each point landed (`at`).
+
+## 35. Typed to Andy on the robot (2026-10-31)
+
+Requests typed to the real Andy on the Lite, its voice on and nobody in the room (the voice loop listening, the words
+entered through a terminal), the TV's own steps read after each. A blue coffee cup was the only cup on the table.
+- **"Where's the red cup?"** First 2 of 5 pointed at the blue cup: the planner looked for plain "cup", so the code never
+  heard "red"; and one blue cup seen as two places, compared side by side, made Glimmer pick one (alone, it said "not
+  red" 4 of 4). After the fixes (the colour from the person's words; a comparison's winner must also pass alone):
+  **no point, 4 of 4**, "Sorry, I couldn't find the red cup"; **"the blue cup": pointed, 2 of 2**, about 20 s.
+- **Several at once:** "where are my glasses and what time is it?" had become a search for "glasses and what time is
+  it"; now 2 steps, both done (30.5 s). "Find my keys and remind me in 10 minutes to call Sam": both (30.1 s).
+- **Spanish:** "¿dónde está mi reloj?" was translated "where are my keys?" 3 of 3 (Glimmer copying its worked
+  example); a list of the everyday things' Spanish words now puts the thing the person said back; then found.
+- **Timings, request to the end of the spoken answer:** a plain find 19 to 25 s, then 13 to 19 s once "Let me look"
+  was said while the head moved; the time from the clock 2.5 to 4.4 s; the weather radar on the TV 30.9 s.

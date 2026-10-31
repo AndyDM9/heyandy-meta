@@ -91,7 +91,7 @@ fixes this scorecard showed were needed), **Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
 *Spanish:* **41 of 41** written requests reach the right ability; **34 of 41** said by Andy's voice and heard back.
-*On the robot, alone in the room:* **104 of 104** unattended searches over two days ended in a point; on the final
+*On the robot, alone in the room:* **112 of 112** unattended searches over two days ended in a point; on the final
 code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. Typed to Andy on the robot: "the red
 cup" with only a blue one there, no point 4 of 4; the blue one, 2 of 2; a find from request to spoken answer, 13 to
 19 s. [The physical scorecard, judged by a person: N of M.]

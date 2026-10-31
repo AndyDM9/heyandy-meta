@@ -7,19 +7,58 @@
 
 # HeyAndy x Meta
 
-**A tabletop robot that finds what you've lost, and points at it.** It's built on Meta's models for people who live at
-home, starting with older adults. Entered in Meta's Global AI Developer Hackathon (startup track, *Push the Frontier*) by
-**HeyAndy, Inc.**, a Delaware corporation ([heyandy.ai](https://heyandy.ai)). HEYANDY™ is the subject of a pending US
-trademark application.
+**A tabletop robot that finds what you've lost, points at it, and keeps your home's pictures in your home.**
+Built on Meta's models for people who live at home, starting with older adults, by **HeyAndy, Inc.**
+([heyandy.ai](https://heyandy.ai)) for Meta's Global AI Developer Hackathon (startup track, *Push the Frontier*).
 
-![The moment Andy finds it: the TV goes dark, a spotlight opens on SAM 3.1's outline of the mug, and the time to find it, how far off target the point landed (checked by Andy's camera) and how far away (MapAnything) count up](docs/images/tv-reveal.png)
-<sub>The Reveal: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
+<p align="center">
+  <img src="docs/images/reveal-loop.webp" width="860" alt="Andy's TV the moment it finds a mug: the room goes dark, a spotlight opens on SAM 3.1's outline of the mug, and the seconds to find it, the degrees off target its camera measured and the distance count up">
+</p>
+
+<p align="center">
+  <a href="https://huggingface.co/spaces/heyandy-ai/andy"><img alt="Try the 1-minute story in your browser" src="https://img.shields.io/badge/%E2%96%B6%20Try%20it-the%201--minute%20story-ffcf5c?style=for-the-badge&labelColor=12241d"></a>
+  <!-- On November 4, the video: <a href="VIDEO_URL"><img alt="Watch the 3-minute video" src="https://img.shields.io/badge/%E2%96%B6%20Watch-the%203--minute%20video-ffcf5c?style=for-the-badge&labelColor=12241d"></a> -->
+  <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
+  <a href="evals/results"><img alt="112 of 112 unattended searches on the robot ended in a point" src="https://img.shields.io/badge/On%20the%20robot-112%20of%20112%20pointed-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
+</p>
+
+<sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
 who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).
 
-## What it does
+## In one minute
+
+| 1. You ask | 2. It finds it | 3. It knows your room |
+|---|---|---|
+| ![While Andy looks: each view live on the TV, every candidate outlined by SAM 3.1](docs/images/tv-finding.png) | ![Found: the picture with the mug outlined, the seconds, the aim its camera checked, and how far](docs/images/tv-found.png) | ![The room in 3D: its shape from MapAnything over five looks, things pinned with their distances](docs/images/tv-room.png) |
+| "Andy, where's my mug?" It turns to your voice and looks; SAM 3.1 outlines every candidate, live, on the computer beside it. | It points, checks with its own camera that the point landed, and MapAnything says how far: "a little to my right, about 4 feet away". | "Andy, show me the room." Five looks become your room in 3D, your things pinned: its shape only, never a picture. |
+
+## Why it's different
+
+- **It moves, and checks itself.** SAM 3.1's mask becomes the head's angle; after pointing, Andy's own camera measures
+  where the point landed and corrects it. Andy even measured its own lens to do that well.
+- **It knows where things are, not just what they are.** MapAnything gives every find a distance and the room a
+  shape; V-JEPA 2, Meta's video world model, notices a watched thing being put down.
+- **Private by design.** The camera and microphone reach only Meta's open models on the computer beside the robot;
+  every word that goes to the cloud is shown on the TV's receipt. Unplug the network and Andy carries on.
+- **Every model it runs is Meta's** (eleven): SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2, Omnilingual ASR,
+  SeamlessM4T v2, Llama Guard 3 and Prompt Guard 2 on our hardware; Muse Spark and Muse Image through the Meta Model API.
+
+## Proof
+
+| | Measured | |
+|---|---|---|
+| On the robot, alone in the room | **112 of 112** unattended searches ended in a point; a median **5.2°** off the middle of the view on the final code | [`unattended-*`](evals/results) |
+| Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 80 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
+| Several things at once | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
+| Privacy, a day of 21 requests | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |
+| The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
+
+Failures are kept too: every scorecard, and what changed because of it, is in `evals/results/` and `docs/research.md`.
+
+## The details: what it does
 1. **Ask "where are my glasses?"** The robot looks around the room.
 2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points, then checks
    the point landed with its own camera. **MapAnything** (Meta's 3D model) says how far: "on the armchair, to my left,
