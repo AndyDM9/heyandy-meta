@@ -1149,7 +1149,7 @@ class Andy:
         picture, for two minutes; the frames are dropped once measured. Watched things get their place and distance."""
         if self.depth is None or not hasattr(self.body, "capture"):
             return "I can't measure the room right now."
-        labels = list(dict.fromkeys(self.places.watching() + list(ROOM_THINGS)))[:10]
+        labels = list(dict.fromkeys(self.places.watching() + list(ROOM_THINGS)))[:8]  # the server takes 8 a frame
         self.screen.clear()
         self.screen.timer_start()
         self.screen.looking("room")  # the TV: "Measuring the room in 3D", each look live
@@ -1252,6 +1252,20 @@ class Andy:
         watched = self.places.watching()
         lines += [f"{k}: I know it by sight" for k in self.mine.known() if k not in watched]
         return lines
+
+    def noticed(self, seen: dict) -> None:
+        """V-JEPA 2 saw a watched thing put down or picked up (memory/notice.py): the TV says so, and a new place gets
+        its words. Andy says nothing: a notice, not an interruption."""
+        names = _join(seen["things"])
+        if seen["kind"] == "put":
+            for label, mask in seen.get("masks", {}).items():
+                self._note_place(label, seen["frame"], mask)
+            self.screen.notice(f"Noticed: your {names}, put down" if self.language == "en" else f"Visto: {names}, dejado")
+        else:
+            self.screen.notice(f"Noticed: your {names}, picked up" if self.language == "en" else f"Visto: {names}, recogido")
+        seen.pop("frame", None)
+        self.screen.used("V-JEPA 2 (noticing)", "device")
+        self.refresh_panels()
 
     def _note_place(self, label: str, frame, mask) -> None:
         """A new place for a watched thing: Glimmer says, in a few words, what it's near. Only the words are kept;

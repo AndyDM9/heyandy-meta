@@ -50,6 +50,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **MapAnything** (open weights) | GPU 1 | How far away a found thing is, from one frame; the room in 3D from five looks; the floor plan |
 | **Omnilingual ASR** (open weights) | GPU 1 | Hears the person, in English or Spanish |
 | **SeamlessM4T v2** (open weights, its speech half) | GPU 0 | Andy's voice, English and Spanish |
+| **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up, from a clip of where something moved (not yet tried with a person) |
 | **DINOv2** (open weights) | GPU 1 | Knows the person's own things by sight |
 | **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | A second crisis check before any other model; reads each web page before Muse Spark does |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers with sources; computer use |

@@ -40,6 +40,8 @@ uv run -q --no-project --with huggingface_hub hf download meta-llama/Llama-Promp
   --revision a8ded8e697ce7c355e395a0df51f94adb4a2fd27  # gated: request access on Hugging Face first
 uv run -q --no-project --with huggingface_hub hf download facebook/dinov2-base \
   --revision f9e44c814b77203eaa57a6bdbbd535f21ede1415  # into the Hugging Face cache, where sam_server.py loads it
+uv run -q --no-project --with huggingface_hub hf download facebook/vjepa2-vitl-fpc16-256-ssv2 \
+  --revision 4aa02df83918538fc21cfaf576382fa20e489a80 --exclude "*.ipynb"  # V-JEPA 2 (MIT): noticing, /action
 
 # Voice: Meta's Omnilingual ASR (Apache-2.0; fairseq2 pins torch 2.8 and NumPy 1) and Meta's MMS-TTS (CC-BY-NC 4.0):
 # every model Andy runs is Meta's (docs/rules.md)

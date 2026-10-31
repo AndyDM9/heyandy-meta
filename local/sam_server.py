@@ -18,6 +18,10 @@ POST /embed {"image": ..., "masks": [{"box": [...], "outline": "M ...", "outline
   masked thing looks like, as numbers: {"vectors": [[808 floats], ...]}. Half DINOv2 (Meta's open image model: shape
   and texture), half a colour fingerprint, since DINOv2 learned to ignore colour (a blue and a red mug of one shape
   scored 0.94 alike). Only the thing's own pixels count (the mask). Used to tell "my mug" from another mug.
+POST /action {"frames": [<base64 JPEG> x 8 to 16], "box": [l, t, r, b] or null}: V-JEPA 2 (Meta's open video world
+  model, its Something-Something v2 head) on a clip of where something moved: was a thing put down, or picked up?
+  -> {"put": 0.71, "taken": 0.04, "top": [["Putting [something] on a surface", 0.52], ...], "seconds": 0.12}
+  Loaded on first use (375M, about 0.8 GB in fp16). The clip is held in memory for the request only.
 POST /guard {"texts": ["...", ...]}: Llama Prompt Guard 2 (Meta's open weights): how likely each text is an attempt to
   instruct Andy (a web page saying "ignore your instructions..."): {"scores": [0.0-1.0, ...]}. Text only, no pictures.
 """
@@ -117,6 +121,40 @@ class Guard:
             self.model = self.model.to("cuda").eval()
         enc = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=512).to("cuda")
         return torch.softmax(self.model(**enc).logits.float(), -1)[:, 1].cpu().tolist()
+
+
+ACTION_MODEL = "facebook/vjepa2-vitl-fpc16-256-ssv2"
+ACTION_REVISION = "4aa02df83918538fc21cfaf576382fa20e489a80"  # pinned, as scripts/setup-local-models.sh fetches it
+PUT = {8, 9, 10, 11, 12, 21, *range(102, 121)}  # dropping, laying on the table, putting ... (never "pretending to")
+TAKEN = {47, 146, 147, 148}  # picking up, taking one of many, taking from somewhere, taking out of
+
+
+class Actions:
+    """V-JEPA 2 on a short clip: a thing put down, or picked up? Loaded on first use."""
+
+    def __init__(self, name: str = ACTION_MODEL):
+        self.name, self.model, self.processor = name, None, None
+
+    def judge(self, frames: list[Image.Image], box=None) -> dict:
+        if self.model is None:
+            from transformers import AutoModelForVideoClassification, AutoVideoProcessor
+
+            self.processor = AutoVideoProcessor.from_pretrained(self.name, revision=ACTION_REVISION)
+            self.model = AutoModelForVideoClassification.from_pretrained(self.name, revision=ACTION_REVISION,
+                                                                          dtype=torch.float16).to("cuda").eval()
+        if box:  # where something moved, as a square a little larger, so the hands and the thing fill the clip
+            l, t, r, b = box
+            side = max(r - l, b - t) * 1.4
+            cx, cy = (l + r) / 2, (t + b) / 2
+            square = (round(cx - side / 2), round(cy - side / 2), round(cx + side / 2), round(cy + side / 2))
+            frames = [f.crop(square) for f in frames]
+        clip = torch.from_numpy(np.stack([np.asarray(f.resize((256, 256))) for f in frames])).permute(0, 3, 1, 2)
+        inputs = self.processor(clip, return_tensors="pt").to("cuda")
+        logits = self.model(**{k: v.half() if v.is_floating_point() else v for k, v in inputs.items()}).logits[0]
+        p = torch.softmax(logits.float(), -1).cpu()
+        top = torch.topk(p, 3)
+        return {"put": round(float(p[sorted(PUT)].sum()), 4), "taken": round(float(p[sorted(TAKEN)].sum()), 4),
+                "top": [[self.model.config.id2label[int(i)], round(float(v), 4)] for v, i in zip(top.values, top.indices)]}
 
 
 def mask_pixels(m: dict, size: tuple[int, int]) -> np.ndarray:
@@ -247,16 +285,17 @@ def serve(predictor, host: str, port: int) -> None:
     lock = threading.Lock()  # one GPU, one frame at a time
     looks = Looks()
     guard = Guard()
+    actions = Actions()
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             self._send(200, {"status": "ok"} if self.path == "/health" else {"error": "not found"})
 
         def do_POST(self):
-            if self.path not in ("/segment", "/segment_many", "/track", "/embed", "/guard"):
+            if self.path not in ("/segment", "/segment_many", "/track", "/embed", "/guard", "/action"):
                 return self._send(404, {"error": "not found"})
             n = int(self.headers.get("Content-Length") or 0)
-            if not 0 < n <= (MAX_CLIP_BODY if self.path == "/track" else MAX_BODY):
+            if not 0 < n <= (MAX_CLIP_BODY if self.path in ("/track", "/action") else MAX_BODY):
                 return self._send(413, {"error": "body too large or empty"})
             if self.path == "/track":
                 return self._track(n)
@@ -264,6 +303,8 @@ def serve(predictor, host: str, port: int) -> None:
                 return self._embed(n)
             if self.path == "/guard":
                 return self._guard(n)
+            if self.path == "/action":
+                return self._action(n)
             try:
                 req = json.loads(self.rfile.read(n))
                 image = Image.open(io.BytesIO(base64.b64decode(req["image"]))).convert("RGB")
@@ -323,6 +364,21 @@ def serve(predictor, host: str, port: int) -> None:
                 out = track(predictor, frames, query, min_score)
             del frames
             torch.cuda.empty_cache()  # give the clip's memory back to the voice server sharing this GPU
+            self._send(200, {**out, "seconds": round(time.monotonic() - start, 3)})
+
+        def _action(self, n):
+            try:
+                req = json.loads(self.rfile.read(n))
+                frames = [Image.open(io.BytesIO(base64.b64decode(f))).convert("RGB") for f in req["frames"]]
+                box = [float(v) for v in req["box"]][:4] if req.get("box") else None
+            except (ValueError, KeyError, OSError, TypeError):
+                return self._send(400, {"error": "need 'frames', a list of base64 JPEGs, and 'box' or null"})
+            if not 8 <= len(frames) <= 16 or len({f.size for f in frames}) != 1:
+                return self._send(400, {"error": "need 8 to 16 frames of one size"})
+            start = time.monotonic()
+            with lock, torch.inference_mode():
+                out = actions.judge(frames, box)
+            del frames
             self._send(200, {**out, "seconds": round(time.monotonic() - start, 3)})
 
         def _send(self, code, body):

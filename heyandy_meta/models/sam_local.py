@@ -59,6 +59,12 @@ class LocalSam31:
         return {q: [_mask(q, m) for m in out.get(asked[q], [])] for q in queries}
 
 
+    def action(self, frames: list, box=None) -> dict:
+        """V-JEPA 2 on a clip (8 to 16 frames): {"put": p, "taken": p, "top": [[label, p], ...]}. ``box`` is where
+        something moved (frame pixels), so the hands and the thing fill the clip; the frames stay on this computer."""
+        images = [base64.b64encode(getattr(f, "image", f)).decode() for f in frames]
+        return self._send("/action", {"frames": images, "box": list(box) if box else None})
+
     def embed(self, frame_or_bytes, masks: list[Mask]) -> list[list[float]]:
         """What each masked thing looks like, as numbers (DINOv2 on this computer), from its own pixels only."""
         image = getattr(frame_or_bytes, "image", frame_or_bytes)

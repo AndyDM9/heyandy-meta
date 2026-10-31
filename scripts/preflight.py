@@ -207,6 +207,24 @@ def main() -> None:
             raise RuntimeError(f"scores {ok:.2f} / {bad:.2f}")
         return f"{ok:.3f} for a recipe, {bad:.3f} for an injection"
 
+    @check("V-JEPA 2 (noticing a thing put down)")
+    def _():
+        import io
+
+        from PIL import Image
+
+        from heyandy_meta.models.sam_local import LocalSam31
+
+        def still(i):
+            out = io.BytesIO()
+            Image.new("RGB", (640, 360), (120 + i % 2, 120, 120)).save(out, "JPEG")
+            return out.getvalue()
+
+        out = LocalSam31(timeout=60).action([still(i) for i in range(16)], None)
+        if out["put"] >= 0.5 or out["taken"] >= 0.5:
+            raise RuntimeError(f"a still grey clip read as put {out['put']:.2f}, taken {out['taken']:.2f}")
+        return f"a still clip: put {out['put']:.3f}, taken {out['taken']:.3f}, {out['seconds']} s"
+
     @check("Muse Glimmer answers")
     def _():
         from heyandy_meta.models import glimmer_fast

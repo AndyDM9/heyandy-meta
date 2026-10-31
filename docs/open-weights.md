@@ -12,7 +12,8 @@ NVIDIA RTX 3090s, 24 GB each), with no inference provider.
 | **Llama Prompt Guard 2** (`meta-llama/Llama-Prompt-Guard-2-86M`, pinned revision; Llama 4 Community License) | GPU 1 (`local/sam_server.py` `/guard`) | Reads every web page before Muse Spark's computer use sees it: a page trying to instruct Andy ends the run |
 | **DINOv2** (`facebook/dinov2-base`, pinned revision; Apache-2.0) | GPU 1 (`local/sam_server.py` `/embed`) | Knows the person's own things by sight ("this is my mug"): the thing's own pixels, inside SAM 3.1's mask, as numbers; never a picture |
 | **SeamlessM4T v2** (`facebook/seamless-m4t-v2-large`, its text-to-speech half, fp16, speaker 51; CC-BY-NC 4.0) | GPU 0 (`local/voice_server.py`) | **Andy's voice**, English and Spanish, 0.3 s a sentence, made clearer for the robot's speaker (picked by ear there). Meta's Model API has no voice and every model Andy runs must be Meta's (docs/rules.md); MMS-TTS (`facebook/mms-tts-eng`, `-spa`) is the fallback |
-| **MapAnything** (`facebook/map-anything-apache`; Apache-2.0) | GPU 1 (`local/depth_server.py`) | How far away a found thing is, from one camera frame; the TV's floor plan of watched things |
+| **MapAnything** (`facebook/map-anything-apache`; Apache-2.0) | GPU 1 (`local/depth_server.py`) | How far away a found thing is, from one camera frame; the room in 3D from five looks (`/scan`); the TV's floor plan of watched things |
+| **V-JEPA 2** (`facebook/vjepa2-vitl-fpc16-256-ssv2`; MIT) | GPU 1 (`local/sam_server.py` `/action`, loaded on first use, about 0.8 GB) | Notices a watched thing put down or picked up: a 4-second clip of where something moved, judged by Meta's video world model (its Something-Something v2 head) |
 
 Every model Andy runs is Meta's. Llama Guard 3 and Llama Prompt Guard 2: **Built with Llama**.
 

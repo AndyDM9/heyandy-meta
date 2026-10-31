@@ -181,6 +181,42 @@ def main() -> None:
                     pass
 
         threading.Thread(target=keep_eyes_on_the_person, daemon=True).start()
+
+        from .memory.notice import Noticer
+
+        noticer = Noticer(andy.body, andy.segmenter, andy.places, cam=andy.finder.cam)
+
+        def notice_things():
+            """V-JEPA 2: between turns, while Andy keeps an eye on something and someone is in view, it holds still and
+            watches in 4 s clips for a thing put down or picked up (memory/notice.py). A turn always comes first: a clip
+            a turn interrupted is dropped, and the turn sets the body's mode itself."""
+            while not stop.wait(3.0):
+                try:
+                    busy = (time.monotonic() <= loop.awake_until or ears.active or getattr(andy.body, "speaking", False)
+                            or andy.following or andy.playing or andy.quiet() or andy.body.motion.mode != "idle")
+                    if busy or not andy.places.watching() or not hasattr(andy.segmenter, "action"):
+                        continue
+                    if not andy.lock.acquire(blocking=False):  # a turn is running
+                        continue
+                    andy.lock.release()
+                    frame = andy.body.grab()
+                    if not [m for m in andy.segmenter.find(frame, "person") if (m.score or 0.0) >= 0.5]:
+                        continue  # nobody there to put anything down
+                    del frame
+                    turn = andy._last_turn
+                    andy.body.motion.set_mode("searching")  # still, so what moves in the picture is the room
+                    try:
+                        stop.wait(0.5)
+                        seen = noticer.watch_once()
+                    finally:
+                        if andy._last_turn == turn and andy.body.motion.mode == "searching":
+                            andy.body.motion.set_mode("idle")
+                    if seen and andy._last_turn == turn:
+                        andy.noticed(seen)
+                except Exception:  # noqa: BLE001 - a missed clip is fine; noticing must never stop Andy
+                    pass
+
+        threading.Thread(target=notice_things, daemon=True).start()
         print("Listening: say \"Andy, ...\"")
     if args.voice and not sys.stdin.isatty():
         stop.wait()  # voice only: no keyboard attached
