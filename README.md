@@ -33,12 +33,21 @@ can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
 who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).
 
-## In one minute
+## What Andy does
 
-| 1. You ask | 2. It finds it | 3. It knows your room |
+| Finds it, and points | Guides your hand | Turns to a ringing |
 |---|---|---|
-| ![While Andy looks: each view live on the TV, every candidate outlined by SAM 3.1](docs/images/tv-finding.png) | ![Found: the picture with the mug outlined, the seconds, the aim its camera checked, and how far](docs/images/tv-found.png) | ![The room in 3D: its shape from MapAnything over five looks, things pinned with their distances](docs/images/tv-room.png) |
-| "Hey Andy, where's my mug?" It turns to your voice and looks; SAM 3.1 outlines every candidate, live, on the computer beside it. | It points, checks with its own camera that the point landed, and MapAnything says how far: "a little to my right, about 4 feet away". | "Hey Andy, show me the room." Five looks become your room in 3D, your things pinned: its shape only, never a picture. |
+| ![Found: the drawn mug outlined, "ahead of you, on your left, about 2 steps from you, at your 11 o'clock", a little map from where you stand](docs/images/tv-found.webp) | ![Guiding a hand: the mug and the hand outlined, a big arrow, "15 in from your hand"](docs/images/tv-guide.webp) | ![Listening for a phone: each turn of the head seen from above, and where it rings](docs/images/tv-sound.webp) |
+| **"Hey Andy, where's my mug?"** SAM 3.1 finds it, Andy points and checks its own aim, and says it from where you stand: "ahead of you, on your left, about 2 steps, at your 11 o'clock". *112 of 112 searches on the robot ended in a point.* | **"Help me reach it."** For someone who can't see well: it watches your hand and the thing, and talks your hand in ("Toward you, and right") with notes that rise as you near it. *On the robot: no hand made up, in 34 frames of an empty table.* | **"I'm ringing my phone."** It turns until its microphones hear the ringing straight ahead, looks there, and points, even at a phone under a cushion. *6 of 6 ringings faced, within 20 degrees; a voice never.* |
+| **It doesn't give up** | **Where things live** | **What you tell it** |
+| ![It turned up: "Good news: your mug turned up!", and a wallet it's still looking for](docs/images/tv-turned.webp) | ![Is everything home? Two things home, the keys away, where they are and where they live](docs/images/tv-home.webp) | ![You told me: "I put my passport in the top drawer of the desk"](docs/images/tv-told.webp) |
+| A miss becomes "I'll keep looking", and when the thing turns up, Andy points and says so, unprompted. *On the robot: a "lost" watch found later, 4.1 degrees off, said out loud.* | **"My keys live here." "Is everything home?"** It checks each home, points at what's away, then at where it lives; every evening at 9. *On the robot: the keys found away, pointed at, then their home.* | **"I'm putting my passport in the top drawer."** What no camera sees, it keeps in your words and answers at once: "You told me on Tuesday at 3:12". *On the robot: answered without a single look.* |
+| **Your room in 3D** | **Ask Andy in your browser** | **Andy Finder, for every Reachy Mini** |
+| ![The room in 3D: its shape from MapAnything, your things pinned with their distances](docs/images/tv-room.webp) | ![The public demo: "You asked: Where are my keys?", then the find](docs/images/demo-ask.webp) | ![Andy Finder: "Lost your phone? Ring it", and the turns to the ringing from above](docs/images/finder-ring.webp) |
+| **"Show me the room."** Five looks become your room in 3D (MapAnything), your things pinned: its shape only, never a picture. *Scan to scan within 1 degree and 8 cm.* | Type what you'd say, and the scene recorded from Andy's TV for it plays, a search as the real one runs. [Try it](https://huggingface.co/spaces/heyandy-ai/andy); nothing typed is sent anywhere. | In the Reachy Mini app store: "Ring it" with nothing to set up (no key, no GPU, no internet), and anything else found with SAM 3.1 ([`apps/andy_finder`](apps/andy_finder)). |
+
+<sub>Every picture above is the TV page itself, showing the demo's drawn scenes (`scripts/readme_shots.py` makes them
+again); never a home. The numbers in italics are from the robot, with their files under Proof.</sub>
 
 ## Why it's different
 
@@ -60,6 +69,10 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 | Several things at once | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
 | Privacy, a day of 21 requests | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |
 | The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
+| It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |
+| By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder 4 of 4 | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
+| Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (the third: the search missed, and said so) | [`home-*`](evals/results) |
+| What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
 Failures are kept too: every scorecard, and what changed because of it, is in `evals/results/` and `docs/research.md`.
 

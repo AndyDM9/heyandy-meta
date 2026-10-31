@@ -128,6 +128,7 @@ def sample_room() -> tuple[bytes, list[dict]]:
 
 def show(state: ScreenState, scene: str) -> None:
     state.clear()
+    state.looking_out([])  # a scene's "still looking for" is its own, not the last scene's
     state.new_turn()
     state.reminder_next("Call Sam", time.time() + 25 * 60)
     state.keeping(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",
