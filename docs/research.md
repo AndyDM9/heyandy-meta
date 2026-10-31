@@ -709,3 +709,19 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   keys?" was one look, 2 degrees off the middle.
 - **Privacy:** shape only: the server sends no colour, the points are thinned to one per 3 cm, the TV holds them two
   minutes, and nothing is saved. The demo scene and the public Space use a made-up room.
+
+## 34. Andy notices: V-JEPA 2 (2026-10-31)
+
+- **Why:** a finder's memory is only as fresh as its last look. Meta's V-JEPA 2 is a video world model trained for
+  understanding and predicting actions; its Something-Something v2 head (`facebook/vjepa2-vitl-fpc16-256-ssv2`, MIT,
+  375M) names hand-object actions, among them "Putting [something] on a surface" and "Picking [something] up". Andy
+  sums the putting and dropping classes (never "pretending to") and the picking and taking ones.
+- **Built so a mistake costs little:** only while something is watched and a person is in view; Andy holds still for
+  4 s clips (16 frames, about the pace of the training clips); only where the picture changed (frame differences on
+  160x90 greyscale; 0.2 to 30% of it, more is the head moving) is V-JEPA 2 asked, on a square around it; at 0.5 or
+  more, SAM 3.1 looks for the watched things in the last frame where the movement was. A false alarm is one glance.
+- **Measured on the robot with nobody there:** with the idle sway, about 58% of each clip changed, so nothing was asked
+  (6 of 6); held still, 0 to 0.1% (once 1.4%, then V-JEPA 2 said "put down" 0.006); forced onto empty clips, "put
+  down" 0.002 to 0.13 and "picked up" under 0.05; 0.1 s a clip after a 1.3 s first load, about 0.8 GB on GPU 1.
+- **Not yet measured:** a person putting something down, at a metre or two (Something-Something's clips are close-ups
+  of hands: the crop around the movement is meant to close that gap). The founder's test 11.
