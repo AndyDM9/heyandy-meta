@@ -23,7 +23,9 @@ from reachy_mini.utils import create_head_pose
 VIEWS = ((0.0, 15.0), (28.0, 15.0), (-28.0, 15.0), (55.0, 15.0), (-55.0, 15.0))  # yaw (left +), pitch (down +)
 SURE = 0.75  # a sighting this confident ends the sweep
 HEAD_REACH = 30.0  # past this the base turns too
-FX, CX, CY = 1116.0, 953.0, 542.0  # Pollen's published Reachy Mini Lite calibration at 1920x1080
+# At 1920x1080: Pollen publishes fx 1116 for the Lite; ours measured 1054 and 1049 (HeyAndy's evals/lens.py: the
+# published value put things up to 4.7 degrees out near the edges of the view). The centre as published.
+FX, CX, CY = 1054.0, 953.0, 542.0
 LOCAL = "http://127.0.0.1:8090"
 
 
@@ -115,8 +117,10 @@ class AndyFinder(ReachyMiniApp):
             return state
 
         def look(yaw: float, pitch: float, duration: float = 0.8) -> None:
+            # The daemon takes the head's direction in the room, the base's turn already in it: the head pose is the
+            # whole yaw, and the base turns under it for what the head can't (HeyAndy found the base counted twice).
             head = max(-HEAD_REACH, min(HEAD_REACH, yaw))
-            reachy_mini.goto_target(head=create_head_pose(yaw=head, pitch=pitch, degrees=True),
+            reachy_mini.goto_target(head=create_head_pose(yaw=yaw, pitch=pitch, degrees=True),
                                     body_yaw=math.radians(yaw - head), duration=duration)
 
         def frame() -> bytes | None:
