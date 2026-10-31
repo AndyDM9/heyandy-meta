@@ -261,3 +261,13 @@ def test_the_tvs_face_gets_the_persons_direction_only_and_only_while_fresh():
     assert s.snapshot()["gaze"] == {"yaw": 32.4, "pitch": 8.1, "age": 0.0}  # a direction, never a picture
     t[0] += 31
     assert "gaze" not in s.snapshot()  # an old sighting isn't a person still there
+
+
+def test_the_tv_fits_any_window_and_nothing_covers_the_captions():
+    """A browser window with its toolbars is wider than 16:9 (1920x960): sized by width alone, the cards grew past
+    their row and slid over Andy's captions (the founder's screenshot, 2026-10-31). The height decides there now."""
+    from importlib.resources import files
+
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    assert "html { font-size: min(calc(100vw / 120), calc(100vh / 67.5)); }" in page
+    assert "main > * { min-height: 0; }" in page and "#captions { position: relative; z-index: 1;" in page
