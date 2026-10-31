@@ -13,9 +13,9 @@ personal in view). The TV page is screen-recorded at the same time.
 | 0:55–1:12 | **Follow the mug** | "Andy, follow the mug." The person slides it around the table; Andy's eyes stay on it, the base turning past the head's reach. "Stop." |
 | 1:12–1:32 | **Several things at once** | "Andy, find the cup and remind me in two minutes to call Sam." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
 | 1:32–1:46 | **Unplug the network** | The TV says Offline; "Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
-| 1:46–2:04 | Quick cuts | "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 11 s, so a labelled time cut) · "What do you remember?" (the floor plan, in feet, from MapAnything's distances) |
+| 1:46–2:04 | Quick cuts | **"Andy, show me the room"** (five looks, then the room's shape in 3D turning on the TV with your things pinned: MapAnything; about 35 s, so a labelled time cut to the TV) · "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 31 s on the robot, a labelled time cut) |
 | 2:04–2:16 | The reminder, two minutes later (a labelled time cut) | Andy finds the person, turns to them: "You asked me to remind you: call Sam." |
-| 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
+| 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 (and V-JEPA 2, if "Andy notices" is in) on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
 | 2:44–3:00 | Robot close-up | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. |
 
 **The cup game, if it scores well with real cups:** it replaces "Follow the mug" at 0:55 to 1:12 and becomes the X clip.
@@ -27,6 +27,14 @@ doing what finding frame by frame can't: telling identical cups apart as they cr
 blue one": "Andy, this is my mug" (held up and turned), then with a second mug of another colour on the table, "Andy,
 where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", "91%: yours"). It shows a Meta open model
 (DINOv2) and the privacy story in one line: "I keep what it looks like as numbers, never a picture."
+
+**"Andy notices," if the founder's test 11 goes well** (`uv run python -m evals.notice --person`): after "keep an eye on
+my keys", the person walks in and puts the keys down on the table in view; the TV says "Noticed: your keys, put down";
+later, "Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
+what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
+
+**Things can be anywhere round the robot now:** the sofa at 85 degrees to its left was pointed at 8 of 8. A thing to the
+side or behind, with "I think it's behind you, on the left", makes the agent's moment (Muse Spark plans one look).
 
 **The X clip (30 s, vertical, `make_film.py --shape vertical`):** the first second is the head turning to point; the
 TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
