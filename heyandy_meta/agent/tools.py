@@ -249,7 +249,7 @@ class SearchTools:
             return f"refused: place {place!r} isn't confirmed; use look_closer first"
         self.pointed = self.finder.point(found)
         if self.places:
-            self.places.saw(found.label, found.yaw, found.pitch)
+            self.places.saw(found.label, found.yaw, found.pitch, how="found")
         if not found.reachable:
             return f"I can't turn far enough to point; it's {side(found.yaw)}. Tell the person."
         return f"Pointing at the {found.label}, {side(found.yaw)}."

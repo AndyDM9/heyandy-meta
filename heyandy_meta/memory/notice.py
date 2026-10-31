@@ -84,10 +84,11 @@ class Noticer:
             if kind == "put" and here:
                 best = max(here, key=lambda m: m.score or 0.0)
                 yaw, pitch = pixel_to_angles(*best.center, end.yaw, end.pitch, cam)
-                self.places.saw(label, yaw, pitch, when=self.clock())
+                self.places.saw(label, yaw, pitch, when=self.clock(), how="noticed")
                 things.append(label)
                 where[label] = best
             elif kind == "taken" and not here and self._last_seen_there(label, end, cam, box):
+                getattr(self.places, "picked_up", lambda *a, **k: None)(label, when=self.clock())
                 things.append(label)
         # the last frame and each put-down thing's mask go back once, so its new place can be put in words; then dropped
         return {"kind": kind, "things": things, "frame": end, "masks": where, **verdict} if things else None

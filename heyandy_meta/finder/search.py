@@ -32,6 +32,7 @@ class Found:
     mask: Mask
     looks: int  # frames read to get here
     remembered: bool = False  # found at the place it was last seen
+    usual: bool = False  # found at the place it usually ends up (memory/places.py usual)
     reachable: bool = True  # False: the body can't point all the way, so say where instead
     aim_deg: float | None = None  # after pointing, how far the thing was from the middle of the view; None: not seen
     reaimed: bool = False  # the check after pointing moved the head once more
@@ -58,14 +59,21 @@ class Finder:
     aim_tolerance: float = 3.0  # degrees off the middle before the head's command is corrected
     aim_corrections: int = 2  # at most this many, each from what the last frame showed
 
-    def find(self, label: str, last_seen: tuple[float, float] | None = None) -> Found | None:
-        """The fixed search: the remembered place, then a sweep, then behind. A confident sighting is checked as soon
-        as it's seen; otherwise the likeliest places get a closer look after the sweep, up to ``closer_looks``."""
+    def find(self, label: str, last_seen: tuple[float, float] | None = None,
+             usual: tuple[float, float] | None = None) -> Found | None:
+        """The fixed search: the remembered place, then where it usually ends up, then a sweep, then behind. A confident
+        sighting is checked as soon as it's seen; otherwise the likeliest places get a closer look after the sweep, up
+        to ``closer_looks``."""
         self.looks, self.passed = 0, []
         if last_seen is not None:
             found = self.confirm(label, *last_seen)
             if found:
                 found.remembered = True
+                return self.point(found)
+        if usual is not None and (last_seen is None or math.hypot(usual[0] - last_seen[0], usual[1] - last_seen[1]) > 6.0):
+            found = self.confirm(label, *usual)
+            if found:
+                found.usual = True
                 return self.point(found)
         tried: list[Sighting] = []
 

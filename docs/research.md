@@ -755,3 +755,17 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   example); a list of the everyday things' Spanish words now puts the thing the person said back; then found.
 - **Timings, request to the end of the spoken answer:** a plain find 19 to 25 s, then 13 to 19 s once "Let me look"
   was said while the head moved; the time from the clock 2.5 to 4.4 s; the weather radar on the TV 30.9 s.
+
+## 36. The story of a watched thing, and its habits (2026-10-31)
+
+- **Why:** Andy remembered where a thing was last seen, a dot. People ask "what happened to my keys?" and "where do I
+  usually leave them?", and a finder that knows a habit can look there before sweeping the room.
+- **Built:** each place in a thing's memory (now up to 24, from 8) records how Andy knew it: found in a search,
+  glanced in passing, noticed put down (V-JEPA 2), seen in the room scan; a V-JEPA 2 "picked up" closes a place, and
+  a closed place is no longer where the finder looks first. `Places.usual` is the place it has been seen at most
+  often (within 10 degrees), twice or more. The finder: the last place, then the usual one, then the sweep. Two new
+  skills and agent tools (`story_of`, `usual_place`); the TV's timeline card. Words and directions only.
+- **On the robot, from the day's real memory:** "what happened to my keys today?" told two places (9:27 and 10:10,
+  next to and left of the keyboard, about 2 feet away); "where do I usually leave my cup?": "on the desk, next to the
+  phone stand, about 3 feet away: 3 of the 8 places"; a find then recalled both and found the cup at the last place.
+  Places written before this had no "how", and are told as "I saw".

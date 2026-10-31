@@ -37,7 +37,7 @@ def glance(body: Body, segmenter: Segmenter, places: Places, views=VIEWS, min_sc
         places_ = merge(sightings)
         if places_:
             best = places_[0]
-            places.saw(label, best.yaw, best.pitch)
+            places.saw(label, best.yaw, best.pitch, how="glanced")
             noted[label] = (best.yaw, best.pitch)
             if on_seen and label in best_view:
                 on_seen(label, best_view[label][1], best_view[label][2])

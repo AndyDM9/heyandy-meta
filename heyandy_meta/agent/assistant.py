@@ -13,8 +13,8 @@ import time
 from dataclasses import dataclass, field
 
 from ..budget import Budget, chat_cost
-from ..companion.intents import (DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, TIME, WEB, WORLD, normalise,
-                                 parse_time)
+from ..companion.intents import (DESCRIBE, DRAW_START, REMEMBER, REMIND, REMINDERS, STORY, TIME, USUAL, WEB, WORLD,
+                                 normalise, parse_time)
 from ..companion.reminders import spoken_time
 from ..finder.names import KNOWN
 from ..models.retry import with_retry
@@ -26,7 +26,7 @@ ABILITIES = {
     "watch": re.compile(r"\bkeep (?:an )?eye on\b", re.I),
     "forget": re.compile(r"\b(?:forget|stop watching)\b", re.I),
     "describe": DESCRIBE, "draw": DRAW_START, "remind": REMIND, "reminders": REMINDERS, "remember": REMEMBER,
-    "time": TIME,
+    "time": TIME, "story": STORY, "usual": USUAL,
     "last_seen": re.compile(r"\b(?:when|where) did you (?:last )?see\b|\bwhere did i (?:last )?(?:leave|put)\b", re.I),
     "world": WORLD, "web": re.compile("|".join(f"(?:{rx.pattern})" for rx in WEB), re.I)}
 MORNING = re.compile(r"^\W*(?:(?:hey|hi|hello)\s+)?(?:andy[\s,]*)?good morning\b", re.I)
@@ -64,6 +64,9 @@ TOOLS = [
         when={**S, "description": "as the person said it: 'at 5 pm', 'in 10 minutes', 'at noon'"}),
     _fn("list_reminders", "The person's upcoming reminders."),
     _fn("what_time", "The time and the day now, from the robot's clock."),
+    _fn("story_of", "Where a watched thing has been lately, as the robot knew it (found, seen in passing, put down, "
+                    "picked up), and where it usually ends up; shown on the TV.", object=dict(S)),
+    _fn("usual_place", "Where a watched thing usually ends up, and how often.", object=dict(S)),
     _fn("draw", "Make a picture from words and show it on the TV.", picture=dict(S)),
     _fn("look_up", "Look something up on the web (weather, opening hours, news).", question=dict(S)),
     _fn("show_on_tv", "Open a web page on the TV and bring what was asked into view (a recipe, the weather radar, "
@@ -161,6 +164,8 @@ class Assistant:
             "keep_an_eye_on": watch, "forget": forget, "what_i_remember": remember,
             "set_reminder": remind, "list_reminders": reminders,
             "what_time": lambda: f"{a.what_time()} {a.what_time(day=True)}",
+            "story_of": lambda object: a.story(_noun(object)[0]),
+            "usual_place": lambda object: a.usual_place(_noun(object)[0]),
             "draw": lambda picture: a.draw(picture),
             "look_up": lambda question: a.look_up(question),
             "show_on_tv": lambda request: a.use_the_web(request),

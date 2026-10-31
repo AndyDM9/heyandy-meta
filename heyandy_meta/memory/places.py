@@ -13,7 +13,8 @@ from ..private import write_private
 
 DEFAULT_PATH = Path.home() / ".local/share/heyandy-meta/places.json"
 MOVED_DEG = 10.0  # further than this from the last place: it moved
-HISTORY = 8  # places remembered per thing
+HISTORY = 24  # places remembered per thing: enough for its story over a few days, and its habits
+HOW = ("found", "glanced", "noticed", "scanned", "seen")  # how Andy knew: a search, a glance, put down in view, the room
 
 
 class Places:
@@ -37,18 +38,21 @@ class Places:
         self._data.get("history", {}).pop(label, None)
         self._save()
 
-    def saw(self, label: str, yaw: float, pitch: float, when: float | None = None, metres: float | None = None) -> bool:
+    def saw(self, label: str, yaw: float, pitch: float, when: float | None = None, metres: float | None = None,
+            how: str = "seen") -> bool:
         """Remember a sighting, only of a watched thing. Returns whether it was kept. A sighting away from the last
-        place starts a new entry in its history (it moved); one at the same place only updates the time."""
+        place starts a new entry in its history (it moved); one at the same place only updates the time. ``how`` is how
+        Andy knew (HOW), for the thing's story."""
         if label not in self._data["watching"]:
             return False
         when = when or time.time()
-        spot = {"yaw": round(yaw, 1), "pitch": round(pitch, 1), "at": when, "since": when, "near": ""}
+        spot = {"yaw": round(yaw, 1), "pitch": round(pitch, 1), "at": when, "since": when, "near": "",
+                "how": how if how in HOW else "seen"}
         if metres is not None:  # how far, from MapAnything: with the direction, a place on a real map
             spot["metres"] = round(metres, 2)
         history = self._data.setdefault("history", {}).setdefault(label, [])
         last = history[-1] if history else None
-        if last and math.hypot(last["yaw"] - yaw, last["pitch"] - pitch) <= MOVED_DEG:
+        if last and math.hypot(last["yaw"] - yaw, last["pitch"] - pitch) <= MOVED_DEG and "gone" not in last:
             last["at"] = when  # still there
             if metres is not None:
                 last["metres"] = round(metres, 2)
@@ -68,6 +72,32 @@ class Places:
             history[-1]["near"] = " ".join(words.split())[:100]
             self._save()
 
+    def picked_up(self, label: str, when: float | None = None) -> None:
+        """Seen being picked up from its last place (V-JEPA 2, memory/notice.py): that place is over."""
+        history = self._data.get("history", {}).get(label)
+        if history and "gone" not in history[-1]:
+            history[-1]["gone"] = when or time.time()
+            self._save()
+
+    def usual(self, label: str) -> dict | None:
+        """Where it usually ends up: the place it has been seen at most often (within MOVED_DEG), if twice or more.
+        {"yaw", "pitch", "near", "metres", "count", "of"}: count of the "of" places in its history."""
+        history = self.history(label)
+        groups: list[dict] = []
+        for h in history:
+            g = next((g for g in groups if math.hypot(g["yaw"] - h["yaw"], g["pitch"] - h["pitch"]) <= MOVED_DEG), None)
+            if g is None:
+                groups.append({"yaw": h["yaw"], "pitch": h["pitch"], "near": h.get("near", ""), "metres": h.get("metres"),
+                               "count": 1, "last": h["at"]})
+            else:
+                g["count"], g["last"] = g["count"] + 1, max(g["last"], h["at"])
+                g["near"], g["metres"] = h.get("near") or g["near"], h.get("metres", g["metres"])
+        if not groups:
+            return None
+        best = max(groups, key=lambda g: (g["count"], g["last"]))
+        return {k: best[k] for k in ("yaw", "pitch", "near", "metres", "count")} | {"of": len(history)} \
+            if best["count"] >= 2 else None
+
     def history(self, label: str) -> list[dict]:
         """Where it has been, oldest first: each place with when it was first and last seen there, and its words."""
         return [dict(h) for h in self._data.get("history", {}).get(label, [])]
@@ -81,8 +111,12 @@ class Places:
         return s["at"] if s else None
 
     def last_seen(self, label: str, now: float | None = None) -> tuple[float, float] | None:
+        """Where it was last seen, unless that's old or it was seen picked up from there since."""
         s = self._data["seen"].get(label)
         if s is None or (now or time.time()) - s["at"] > self.max_age_s:
+            return None
+        history = self._data.get("history", {}).get(label) or [{}]
+        if history[-1].get("gone", 0) >= s["at"]:
             return None
         return s["yaw"], s["pitch"]
 

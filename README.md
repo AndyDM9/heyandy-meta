@@ -77,54 +77,60 @@ Failures are kept too: every scorecard, and what changed because of it, is in `e
    the TV says "Noticed: your keys, put down". Nothing moving, or the picture moving because Andy's head did: nothing
    is asked. On the robot with nobody there, 6 of 6 clips asked nothing; forced onto an empty clip, V-JEPA 2 gave
    "put down" 0.004 to 0.04 (it acts at 0.5). Not yet tried with a person putting something down.
-6. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
+6. **"Andy, what happened to my keys today?"** Andy's memory of a watched thing is a story, not a dot: each place
+   records how Andy knew it (found in a search, seen in passing, put down in view, the room scan) and when it was
+   picked up, and the TV draws the day as a timeline. **"Where do I usually leave my keys?"** "Usually on the desk,
+   behind the keyboard: 4 of the 6 places I've seen them." When the last place is empty, Andy looks at the usual one
+   next, before sweeping the room ("Right where you usually leave them"). Words and directions, never a picture; the
+   agent has both as tools. On the robot: "Usually on the desk, next to the phone stand: 3 of the 8 places I've seen it."
+7. **An agent plans the search when you say where or which.** "Behind you, on the left" or "the blue one" goes to an
    agent: Muse Spark through the Meta Model API, or Muse Glimmer on the computer beside the robot, so the robot keeps
    working with no internet. A plain "where are my glasses?" uses a fixed sweep, which needs no model to plan.
-7. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
+8. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
-8. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
+9. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
    second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
-9. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
+10. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
    points at any still here ("Your keys are still here, on the desk"), says which it didn't see (so they're probably
    with you), reminds you of the next reminder, and, looked up by Muse Spark while the robot was checking, whether to
    take an umbrella. 7 to 8.5 s with the robot simulated, 37 to 42.5 s on the robot; the TV shows the checklist.
-10. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
+11. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
    shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
    cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
    draws each cup's path, and Andy watches the reveal and keeps score.
-11. **"Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
+12. **"Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
    anyone else's. What it looks like is kept as numbers on the computer beside the robot (DINOv2, Meta's open image
    model, plus a colour fingerprint, over SAM 3.1's mask of the mug alone), never a picture. "Forget my mug" deletes it.
-12. **"Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
+13. **"Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
    computer beside the robot opens it (no sign-ins, no downloads), and Muse Spark's computer use brings what was asked
    into view; the TV shows each step, with a dot where Andy clicks. "Scroll down", "go back". Code reviews every action
    before it runs: nothing personal is typed, and a sign-in or payment page ends it. Screenshots of web pages go to the
    cloud; the camera never does, and the TV's privacy receipt says which went.
-13. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
+14. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
    saved to your Pictures folder to print or share. "Make it sunset" changes it. **"Draw me a map of my things"** paints
    where the things Andy keeps an eye on were last seen, from words only (what each is near, and which way), labelled
    large: a drawing from memory, not a photo.
-14. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
+15. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
    at the table) and Glimmer says what it sees, on the computer beside the robot.
-15. **"Andy, what's that?"** (while pointing) Glimmer sees what you're pointing at, SAM 3.1 finds it, and Andy points
+16. **"Andy, what's that?"** (while pointing) Glimmer sees what you're pointing at, SAM 3.1 finds it, and Andy points
    at it too: "You mean the lamp?" On public photos Glimmer named the thing in 4 of 6 and imagined none; not yet tried
    with a person in the room.
-16. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
+17. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
    (or Glimmer, offline) gets all of Andy's abilities as tools (find, follow, look and tell, keep an eye on, forget,
    what it remembers, reminders, pictures, look up, show on the TV) and does them in order. **"Good morning, Andy"** (the first of the day) gets a short briefing:
    the weather where you live, today's reminders, and where your things are.
-17. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
+18. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
    moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
    ("every morning at 8").
-18. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
+19. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
    SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (about 0.5 s
    a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
-19. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+20. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
-20. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
+21. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
    computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
    plan steps, questions), plus screenshots of a web page you ask to see on the TV; Muse Image gets words. The TV's
    privacy receipt shows exactly what went, every turn. **"Andy, what did you send to the cloud today?"** adds up the

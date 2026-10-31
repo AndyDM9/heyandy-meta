@@ -5,7 +5,7 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, room, privacy, help.
+Scenes: idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, room, story, privacy, help.
 """
 import argparse
 import functools
@@ -25,7 +25,7 @@ from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
 SCENES = ("idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
-          "privacy", "help")
+          "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
 
@@ -255,6 +255,20 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("Omnilingual ASR (hearing)", "device")
         state.used("SAM 3.1", "device", 5)
         state.used("MapAnything (the room in 3D)", "device")
+    elif scene == "story":
+        state.timeline("keys", [
+            {"when": "yesterday at 6:40", "how": "glanced", "words": "I saw them on the desk, behind the keyboard, in passing"},
+            {"when": "at 8:12", "how": "found", "words": "I found them on the desk, behind the keyboard, about 2 feet away"},
+            {"when": "at 10:42", "how": "noticed", "words": "You put them down on the shelf by the door"},
+            {"when": "at 11:12", "how": "picked up", "words": "You picked them up."},
+            {"when": "at 12:05", "how": "scanned", "words": "I saw them on the desk, behind the keyboard, measuring the room"}],
+            {"words": "on the desk, behind the keyboard, about 2 feet away", "count": 4, "of": 6})
+        state.said("Here's the story of your keys. At 8:12, I found them on the desk, behind the keyboard. At 10:42, you "
+                   "put them down on the shelf by the door. At 11:12, you picked them up. At 12:05, I saw them on the "
+                   "desk again. They usually end up on the desk, behind the keyboard. It's on the screen.", "device",
+                   "from what Andy remembers, in words, on this computer")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
     elif scene == "privacy":
         state.privacy_day("21 of 24 requests stayed in this house",
                           [("✓", "21 requests answered on this computer: nothing sent"),

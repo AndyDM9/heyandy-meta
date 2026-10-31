@@ -81,6 +81,7 @@ class ScreenState:
         self.webs = 0  # a version, so the page fetches each screenshot once
         self.privacy: dict | None = None  # "what did you send today?": {"title", "rows": [{"mark", "text"}]}
         self._gaze: tuple[float, float, float] | None = None  # where the person is (yaw, pitch, when): a direction only
+        self._timeline: dict | None = None  # a watched thing's story: {"thing", "items", "usual"}, words only
         self._room: dict | None = None  # the room in 3D: its shape (millimetres, int16 x, y, z), the things, until
         self.rooms = 0  # a version, so the page fetches each room once
         self._day = Day(dt.date.fromtimestamp(now()), now())
@@ -97,7 +98,7 @@ class ScreenState:
 
     def looking(self, thing: str) -> None:
         with self._lock:
-            self._room = None  # whatever is shown next takes the room's place
+            self._room = self._timeline = None  # whatever is shown next takes the room's place
             self.privacy = None
             self.looking_for, self._glimpse = thing, None
 
@@ -122,7 +123,7 @@ class ScreenState:
 
     def drawn(self, image: bytes, prompt: str, saved: str) -> None:
         with self._lock:
-            self._room = None
+            self._room = self._timeline = None
             self.privacy = None
             self._picture, self.sources, self.steps, self.memory, self._timer, self.looking_for = None, [], [], None, None, ""
             self._drawing, self._web = (image, prompt, saved, self._clock() + DRAWING_SECONDS), None
@@ -131,7 +132,7 @@ class ScreenState:
     def web(self, jpeg: bytes, request: str, words: str = "", point=None, size=(1280, 800), url: str = "") -> None:
         """A screenshot of the web page Andy is using (never the camera), as each step happens."""
         with self._lock:
-            self._room = None
+            self._room = self._timeline = None
             self.privacy = None
             self._picture, self._drawing, self.sources, self.memory, self._game = None, None, [], None, None
             before = self._web or {}
@@ -144,7 +145,7 @@ class ScreenState:
     def going_out(self, items: list[dict], weather: str = "", next_up: str = "") -> None:
         """The going-out check: [{"thing", "here": True/False/None, "words"}], the weather and the next reminder."""
         with self._lock:
-            self._room = None
+            self._room = self._timeline = None
             self.privacy = None
             self._picture, self._drawing, self._web, self._game, self.memory, self.sources = None, None, None, None, None, []
             self.checklist = {"items": list(items), "weather": weather, "next": next_up}
@@ -155,9 +156,17 @@ class ScreenState:
         with self._lock:
             self.privacy, self.checklist, self.memory, self.sources = None, None, None, []
             self._picture, self._drawing, self._web, self._game = None, None, None, None
+            self._timeline = None
             self._room = {"points": points_mm, "things": list(things), "seconds": seconds,
                           "until": self._clock() + ROOM_SECONDS}
             self.rooms += 1
+
+    def timeline(self, thing: str, items: list[dict], usual: dict | None = None) -> None:
+        """"What happened to my keys?": where it has been, as Andy knew it (words, never a picture), for two minutes."""
+        with self._lock:
+            self.privacy, self.checklist, self.memory, self.sources = None, None, None, []
+            self._picture, self._drawing, self._web, self._game, self._room = None, None, None, None, None
+            self._timeline = {"thing": thing, "items": list(items), "usual": usual, "until": self._clock() + ROOM_SECONDS}
 
     def room_bytes(self) -> bytes | None:
         with self._lock:
@@ -182,7 +191,7 @@ class ScreenState:
 
     def show_help(self) -> None:
         with self._lock:
-            self._room = None  # whatever is shown next takes the room's place
+            self._room = self._timeline = None  # whatever is shown next takes the room's place
             self._help_until = self._clock() + HELP_SECONDS
 
     def new_turn(self) -> None:
@@ -250,12 +259,12 @@ class ScreenState:
         with self._lock:
             self.privacy = None
             self._picture, self._web = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS, trails), None
-            self._room = None
+            self._room = self._timeline = None
 
     def game(self, title: str, detail: str = "") -> None:
         """The cup game, stage by stage: "Watching the cups", "Replaying the shuffle"."""
         with self._lock:
-            self._room = None
+            self._room = self._timeline = None
             self.privacy = None
             self._picture, self._drawing, self.sources, self.steps, self.memory = None, None, [], [], None
             self._game, self._web = (title, detail, self._clock() + PICTURE_SECONDS), None
@@ -266,20 +275,20 @@ class ScreenState:
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
             self.checklist, self.privacy = None, None
             self._glimpse = None  # the last frame of a search that found nothing goes too
-            self._room = None
+            self._room = self._timeline = None
 
     def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
         """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera
         pictures). Whatever is shown next takes its place."""
         with self._lock:
-            self._room = None
+            self._room = self._timeline = None
             self._picture, self._drawing, self._web, self._game, self.memory, self.sources = None, None, None, None, None, []
             self.checklist = None
             self.privacy = {"title": title, "rows": [{"mark": m, "text": t} for m, t in rows]}
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:
-            self._room = None  # whatever is shown next takes the room's place
+            self._room = self._timeline = None  # whatever is shown next takes the room's place
             self.privacy = None
             self.caption, self.source, self.reason, self.sources = text, source, reason, list(sources)[:3]
             self._web = None
@@ -290,7 +299,7 @@ class ScreenState:
 
     def remember_list(self, lines: list[str]) -> None:
         with self._lock:
-            self._room = None  # whatever is shown next takes the room's place
+            self._room = self._timeline = None  # whatever is shown next takes the room's place
             self.privacy = None
             self.memory = list(lines)
 
@@ -329,6 +338,9 @@ class ScreenState:
                 self._room = None
             out["room"] = {"v": self.rooms, "things": self._room["things"], "n": len(self._room["points"]) // 6,
                            "seconds": self._room["seconds"]} if self._room else None
+            if self._timeline and self._clock() >= self._timeline["until"]:
+                self._timeline = None
+            out["timeline"] = {k: v for k, v in self._timeline.items() if k != "until"} if self._timeline else None
             if self._drawing and self._clock() >= self._drawing[3]:
                 self._drawing = None
             if self._drawing:

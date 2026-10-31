@@ -51,6 +51,14 @@ LAST_SEEN = re.compile(r"\b(?:(?:when|where) did you (?:last )?see|where did i (
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
+# A watched thing's story (memory/places.py history) and its habits (usual)
+STORY = re.compile(r"\bwhat(?:'s| has)? happened to (?:my |the |our )?(?P<t>[a-z][a-z ]{1,30}?)"
+                   r"(?: today| this morning| this afternoon| lately| so far)?[?.!]*$|"
+                   r"\bwhere ha(?:ve|s) (?:my |the |our )?(?P<t2>[a-z][a-z ]{1,30}?) been(?: today| lately)?[?.!]*$|"
+                   r"\b(?:tell me )?the story of (?:my |the |our )?(?P<t3>[a-z][a-z ]{1,30}?)[?.!]*$", re.I)
+USUAL = re.compile(r"\bwhere do(?:es)? (?:i|we) (?:usually|normally|always|tend to) (?:leave|put|keep|have) "
+                   r"(?:my |the |our )?(?P<t>[a-z][a-z ]{1,30}?)[?.!]*$|"
+                   r"\bwhere (?:are|is) (?:my |the |our )?(?P<t2>[a-z][a-z ]{1,30}?) usually[?.!]*$", re.I)
 # The room in 3D (MapAnything over several looks): "show me the room", "scan the room", "my things in 3D"
 ROOM = re.compile(r"\b(?:show|map|scan|measure)(?: me)? (?:the|my|this|your) (?:room|living room|space)\b|"
                   r"\b(?:room|things|space) in 3 ?d\b|\b3 ?d (?:map|view|scan|picture) of\b|"
@@ -102,7 +110,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -204,6 +212,9 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("world", text=t)
     if TIME.search(t):
         return Intent("time", thing="day" if re.search(r"\b(?:date|day|today)\b", t, re.I) else "time")
+    for kind, rx in (("story", STORY), ("usual", USUAL)):  # only a thing people lose, not "the world today"
+        if (m := rx.search(t)) and (thing := snap(next(g for g in m.groups() if g).strip())).split()[-1] in KNOWN:
+            return Intent(kind, thing=thing, text=t)
     if ROOM.search(t) and not FIND.search(t) and not re.search(r"\bfind\b|\bwhere\b", t, re.I):
         return Intent("room", text=t)  # "scan the room for my keys" is a search, below
     if REMEMBER.search(t):

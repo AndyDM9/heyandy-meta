@@ -173,6 +173,28 @@
   #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
                  padding: 0.2rem 0.8rem; cursor: pointer; }
   #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* The story of a watched thing: where it has been, as Andy knew it; the place it usually ends up */
+  #body:has(.story) { align-content: stretch; }
+  .story { display: grid; grid-template-columns: 19rem 1fr; gap: 2.4rem; min-height: 0; align-items: start; }
+  .story:not(:has(.usual)) { grid-template-columns: 1fr; }
+  .usual { border-left: 0.45rem solid var(--outline); padding: 0.4rem 0 0.6rem 1.6rem; }
+  .usual small { display: block; font-size: 1.35rem; color: var(--muted); }
+  .usual b { display: block; font-size: 2rem; font-weight: 800; line-height: 1.15; margin: 0.3rem 0 0.7rem; }
+  .usual span { font: 700 1.4rem/1.2 "Atkinson Mono", monospace; color: var(--accent); }
+  ol.tl { list-style: none; margin: 0; padding: 0 0 0 2.2rem; position: relative; display: grid; gap: 0.15rem; min-height: 0; overflow: hidden; }
+  ol.tl::before { content: ""; position: absolute; left: 0.55rem; top: 0.9rem; bottom: 0.9rem; width: 0.2rem; background: var(--muted); opacity: 0.35; }
+  ol.tl li { position: relative; display: grid; grid-template-columns: 9.5rem 1fr auto; gap: 1.1rem; align-items: baseline;
+             padding: 0.3rem 0; font-size: 1.4rem; line-height: 1.25; }
+  ol.tl li span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  ol.tl li::before { content: ""; position: absolute; left: -2.05rem; top: 0.65rem; width: 0.95rem; height: 0.95rem;
+                     border-radius: 50%; background: var(--panel); border: 0.22rem solid var(--muted); }
+  ol.tl li.now::before { background: var(--outline); border-color: var(--outline); box-shadow: 0 0 0 0.4rem rgba(255, 207, 92, 0.3); }
+  ol.tl li.now { font-weight: 750; font-size: 1.55rem; }
+  ol.tl time { font: 700 1.25rem/1.3 "Atkinson Mono", monospace; color: var(--accent); }
+  ol.tl em { font-style: normal; font-size: 1.05rem; font-weight: 700; padding: 0.2rem 0.75rem; border-radius: 99rem;
+             border: 0.12rem solid currentColor; color: var(--muted); white-space: nowrap; }
+  ol.tl li.picked em, ol.tl li.noticed em { color: var(--accent); }
+
   /* Ambient Andy: after a quiet minute the TV becomes Andy's face, which blinks, glances and looks at the person (a
      direction from the camera, never a picture), over a large clock. Anything at all and the TV wakes. */
   #ambient { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 3; display: grid; place-items: center;
@@ -359,6 +381,8 @@
     "Nothing yet. “Andy, keep an eye on my keys.”": "Nada todavía. “Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
     "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
+    "In passing": "De pasada", "Put down": "Lo dejó", "Room scan": "Escaneo de la sala",
+    "Seen": "Visto", "Picked up": "Lo recogió",
     "The room in 3D": "La sala en 3D", "Measuring the room in 3D": "Midiendo la sala en 3D", "Your things, as I measured them just now": "Sus cosas, tal como las medí ahora mismo",
     "Its shape, measured by MapAnything on this computer from five looks. Never a colour or a picture; gone in two minutes.":
       "Su forma, medida por MapAnything en esta computadora con cinco miradas. Nunca un color ni una imagen; se borra en dos minutos.",
@@ -401,7 +425,7 @@
                   "“Andy, ¿qué recuerdas?”", "“Andy, ¿qué enviaste a la nube hoy?”", "“Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
   const NAMES = { idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
-                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", privacy: "Today's privacy", help: "What can I ask?" };
+                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   // Story mode: what a visitor sees first on the public demo (never on Andy's own TV, and not when a link names a scene).
@@ -802,6 +826,30 @@
         box.append(img, el("small", s.drawing.saved + " · " + T("Made by Muse Image from your words only")));
         body.replaceChildren(box);
       }
+    } else if (s.timeline) {
+      const tl = s.timeline, them = /s$/.test(tl.thing) && !/ss$/.test(tl.thing);
+      kicker = LANG === "es" ? `La historia de: ${tl.thing}` : `The story of your ${tl.thing}`;
+      title = LANG === "es" ? "Dónde ha estado" : `Where ${them ? "they've" : "it's"} been`;
+      const key = "timeline:" + JSON.stringify(tl) + LANG;
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const box = el("div", null, "story");
+        if (tl.usual) {
+          const u = el("div", null, "usual");
+          u.append(el("small", LANG === "es" ? "Suele estar" : "Usually"), el("b", tl.usual.words),
+                   el("span", LANG === "es" ? `${tl.usual.count} de ${tl.usual.of} lugares` : `${tl.usual.count} of ${tl.usual.of} places`));
+          box.append(u);
+        }
+        const HOW = { found: "Found", glanced: "In passing", noticed: "Put down", scanned: "Room scan", seen: "Seen", "picked up": "Picked up" };
+        const list = el("ol", null, "tl");
+        tl.items.forEach((it, i) => {
+          const li = el("li", null, (i === tl.items.length - 1 ? "now " : "") + it.how.replace(" ", ""));
+          const w = it.when.replace(/^at /, "").replace(/^yesterday at /, "Yesterday ").replace(/^on (\w+) at /, "$1 ");
+          const when = el("time", w); li.append(when, el("span", it.words), el("em", T(HOW[it.how] || "Seen")));
+          list.append(li);
+        });
+        box.append(list); body.replaceChildren(box);
+      }
     } else if (s.room) {
       kicker = T("The room in 3D"); title = T("Your things, as I measured them just now");
       const key = "room:" + s.room.v + ":" + LANG;
@@ -894,7 +942,7 @@
     }
     $("kicker").textContent = kicker; $("title").textContent = title; $("title").hidden = !title;
     $("card").classList.toggle("found", !!(s.picture && !s.game));
-    $("card").classList.toggle("room", !!s.room && !s.web && !s.drawing);  // the found shot: the picture large, the title short
+    $("card").classList.toggle("room", (!!s.room || !!s.timeline) && !s.web && !s.drawing);  // the found shot: the picture large, the title short
     $("timer").textContent = s.running && s.seconds !== null ? s.seconds.toFixed(1) + " s" : "";
   }
   // The privacy receipt: on every turn, exactly which words went to which cloud model, or that nothing did.
@@ -930,7 +978,7 @@
   const AMBIENT_AFTER_MS = 60000, forceAmbient = new URLSearchParams(location.search).get("ambient") === "now";
   let quietSince = Date.now(), gazeAt = null, nextGlance = 0;
   function ambient(s) {
-    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.checklist && !s.privacy
+    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.timeline && !s.checklist && !s.privacy
                   && !s.memory && !s.running && !s.help && !s.game && !(s.caption && Date.now() - captionAt < 12000);
     if (!quiet || story || document.getElementById("end") || (scenes && !forceAmbient)) quietSince = Date.now();
     const on = forceAmbient ? quiet || !!scenes : Date.now() - quietSince > AMBIENT_AFTER_MS;

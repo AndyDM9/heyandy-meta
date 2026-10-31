@@ -244,7 +244,7 @@ class Andy:
                                                 r"keep an eye on (?:it|them)(?: please)?)\W*$", text, re.I)
             if yes:
                 self.places.watch(thing)
-                self.places.saw(thing, yaw, pitch, when=self.clock())  # where it was just found: the first place
+                self.places.saw(thing, yaw, pitch, when=self.clock(), how="found")  # just found: its first place
                 self.refresh_panels()
                 return f"I'll keep an eye on your {thing}. I only remember where I last saw {_it(thing)}, never a picture."
             no = re.match(r"^\W*(?:no thanks?(?: you)?|not now|nope|that'?s ok(?:ay)?|no)\b[\s,.!]*", text, re.I)
@@ -307,6 +307,10 @@ class Andy:
             return self.what_time(day=i.thing == "day")
         if i.kind == "room":
             return self.scan_room()
+        if i.kind == "story":
+            return self.story(i.thing)
+        if i.kind == "usual":
+            return self.usual_place(i.thing)
         if i.kind == "reminders":
             up = self.reminders.upcoming()[:5]
             if not up:
@@ -514,9 +518,11 @@ class Andy:
         if found is None:
             self._source, self._reason = "device", "fixed search on this computer"
             last = self.places.last_seen(thing, now=self.clock())
-            self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting"))
+            usual = self.places.usual(thing)
+            self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting")
+                             + (f"; usually {usual['near'] or side(usual['yaw'])}" if usual else ""))
             self.gesture("searching")
-            found = self.finder.find(thing, last)
+            found = self.finder.find(thing, last, (usual["yaw"], usual["pitch"]) if usual else None)
             looks = "once" if self.finder.looks == 1 else f"{self.finder.looks} times"
             self.screen.step(f"looked {looks}" + (f"; {self.finder.why}" if self.finder.why else ""))
         self.screen.timer_stop()
@@ -525,7 +531,7 @@ class Andy:
         if found is None:
             return self._not_found(thing)
         self._measure(found)
-        self.places.saw(found.label, found.yaw, found.pitch, when=self.clock(), metres=found.metres)
+        self.places.saw(found.label, found.yaw, found.pitch, when=self.clock(), metres=found.metres, how="found")
         self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
         self.screen.doing("Pointing", f"At your {found.label}")
@@ -1023,7 +1029,7 @@ class Andy:
                 found = self.finder.confirm(label, *last) if last else None
                 if found:
                     self.finder.point(found)
-                    self.places.saw(label, found.yaw, found.pitch, when=self.clock())
+                    self.places.saw(label, found.yaw, found.pitch, when=self.clock(), how="found")
                     near = (self.places.history(label) or [{}])[-1].get("near") or side(found.yaw)
                     self.say(f"Your {label} {'are' if _it(label) == 'them' else 'is'} still here, {near}.")
                     here.append(label)
@@ -1205,13 +1211,76 @@ class Andy:
         watched = set(self.places.watching())
         for t in things:
             if t["label"] in watched:
-                self.places.saw(t["label"], t["yaw"], t["pitch"], when=self.clock(), metres=t["metres"])
+                self.places.saw(t["label"], t["yaw"], t["pitch"], when=self.clock(), metres=t["metres"], how="scanned")
         self.refresh_panels()
         named = sorted(things, key=lambda t: (t["label"] not in watched, t["metres"]))[:3]
         metric = self.language != "en"
         said = "; ".join(f"your {t['label']} {side(t['yaw'])}, {how_far(t['metres'], metric=metric)}" for t in named)
         return ("Here's the room as I measured it, on the screen" + (f": {said}." if said else ".")
                 + " Its shape only, never a picture.")
+
+    # --- the story of a watched thing, and its habits (memory/places.py): words and directions, never a picture ---
+
+    HOW_SAID = {"found": "I found {it} {where}", "glanced": "I saw {it} {where}, in passing",
+                "noticed": "you put {it} down {where}", "scanned": "I saw {it} {where}, measuring the room",
+                "seen": "I saw {it} {where}"}
+
+    def _when(self, t: float) -> str:
+        now, then = _now(self.clock), dt.datetime.fromtimestamp(t)
+        if then.date() == now.date():
+            return f"at {spoken_time(t)}"
+        if (now.date() - then.date()).days == 1:
+            return f"yesterday at {spoken_time(t)}"
+        return f"on {then:%A} at {spoken_time(t)}"
+
+    def _where(self, h: dict) -> str:
+        far = f", {how_far(h['metres'], metric=self.language != 'en')}" if h.get("metres") is not None else ""
+        return (h.get("near") or side(h["yaw"])) + far
+
+    def _not_watched(self, thing: str) -> str | None:
+        if thing not in self.places.watching():
+            return (f"I'm not keeping an eye on your {thing}. Say 'keep an eye on my {thing}', and I'll remember where "
+                    f"{_it(thing)} goes, in words, never a picture.")
+        if not self.places.history(thing):
+            return f"I haven't seen your {thing} since you asked me to keep an eye on {_it(thing)}."
+        return None
+
+    def story(self, thing: str) -> str:
+        """"What happened to my keys today?": where they've been, as Andy knew it, newest last; the TV draws it."""
+        if (no := self._not_watched(thing)) is not None:
+            return no
+        it, items = _it(thing), []
+        for h in self.places.history(thing):
+            line = self.HOW_SAID.get(h.get("how", "seen"), self.HOW_SAID["seen"]).format(it=it, where=self._where(h))
+            items.append({"when": self._when(h["since"]), "how": h.get("how", "seen"), "words": line[0].upper() + line[1:],
+                          "since": h["since"], "last": h["at"], "gone": h.get("gone")})
+            if h.get("gone"):
+                items.append({"when": self._when(h["gone"]), "how": "picked up", "words": f"You picked {it} up.",
+                              "since": h["gone"], "last": h["gone"]})
+        usual = self.places.usual(thing)
+        self.screen.timeline(thing, items[-8:], {"words": self._where(usual), "count": usual["count"], "of": usual["of"]}
+                             if usual else None)
+        low = lambda w: w if w.startswith("I ") else w[0].lower() + w[1:]  # noqa: E731 - "I" stays a capital
+        told = [f"{x['when'][0].upper() + x['when'][1:]}, {low(x['words'])}" for x in items[-4:]]
+        last = self.places.seen_at(thing)
+        tail = (f" I last saw {it} {_ago(self.clock() - last)}." if last and items and items[-1]["how"] != "picked up" else "")
+        habit = (f" {'They usually end' if it == 'them' else 'It usually ends'} up {self._where(usual)}."
+                 if usual and usual["count"] >= 2 else "")
+        return f"Here's the story of your {thing}. " + ". ".join(t.rstrip(".") for t in told) + "." + tail + habit + \
+            " It's on the screen."
+
+    def usual_place(self, thing: str) -> str:
+        """"Where do I usually leave my keys?": the place it has ended up most often."""
+        if (no := self._not_watched(thing)) is not None:
+            return no
+        usual = self.places.usual(thing)
+        if not usual:
+            return (f"I haven't seen your {thing} in the same place twice yet. Ask me again in a few days, and I'll "
+                    f"know {_it(thing)} better.")
+        self.story(thing)  # the TV shows the story, the usual place at its top
+        they = "they aren't" if _it(thing) == "them" else "it isn't"
+        return (f"Usually {self._where(usual)}: {usual['count']} of the {usual['of']} places I've seen "
+                f"{_it(thing)}. If {they} where I last saw {_it(thing)}, that's where I look next.")
 
     def what_time(self, day: bool = False) -> str:
         """From the clock on this computer, never a model's guess."""
@@ -1238,7 +1307,8 @@ class Andy:
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""
-        said = f"I see your {f.label}{yours}, {where}." + (f" Right where I last saw {_it(f.label)}." if f.remembered else "")
+        said = f"I see your {f.label}{yours}, {where}." + (f" Right where I last saw {_it(f.label)}." if f.remembered else
+                                                           " Right where you usually leave " + _it(f.label) + "." if f.usual else "")
         opener = FOUND_OPENERS[_it(f.label)][self._finds % len(FOUND_OPENERS["it"])]  # said like a person, in turn
         self._finds += 1
         said = f"{opener} {said}"
