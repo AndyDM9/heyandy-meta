@@ -50,6 +50,9 @@ class VoiceLoop:
         rest = text[called.end():] if called else text
         if crisis(text):
             rest = text  # "I want to die. Andy, what time is it": the whole of it, so nothing is missed
+        chime = getattr(self.andy, "chime", None)
+        if called and chime and not crisis(text):
+            chime("heard")  # at once, before any words: Andy heard its name (never for crisis words)
         with getattr(self.andy, "lock", _NoLock()):
             if voice_yaw is not None:  # the voice gives the direction; keep the last seen face's height
                 before = getattr(self.andy, "person", None)

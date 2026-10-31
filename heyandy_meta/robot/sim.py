@@ -61,6 +61,9 @@ class SimBody:
     def say(self, text: str) -> None:
         self.log.append(("say", text))
 
+    def chime(self, name: str) -> None:
+        self.log.append(("chime", name))
+
     def emote(self, name: str, sound: bool = True) -> bool:
         self.log.append(("emote", name))
         return True

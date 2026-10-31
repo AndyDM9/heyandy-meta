@@ -184,6 +184,12 @@ class ReachyBody:
         if self._say:
             self._say(text)
 
+    def chime(self, name: str) -> None:
+        """One of Andy's earcons (voice/earcons.py) on the robot's speaker: "heard", "found", "reminder", "noticed"."""
+        from ..voice.earcons import RATE, sound
+
+        self.play(sound(name), RATE)
+
     def say_soon(self, text: str) -> None:
         """Start saying it and carry on (the head can start turning); anything said next waits its turn."""
         soon = getattr(self._say, "soon", None)

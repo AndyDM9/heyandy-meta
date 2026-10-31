@@ -117,6 +117,7 @@ class Andy:
         self.voice = None  # the voice server client (speed, loudness), when Andy speaks out loud
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
+        self.sounds = True  # Andy's earcons (voice/earcons.py); HEYANDY_SOUNDS=0 turns them off
         self.liveliness = 1.0  # "move less": how much body language
         self.describe_in_background = hasattr(self.body, "motion")  # on the robot, never make a turn wait for it
         self._stop_following = threading.Event()
@@ -446,6 +447,17 @@ class Andy:
         if g:
             g(name)
 
+    def chime(self, name: str, even_when_quiet: bool = False) -> None:
+        """One of Andy's sounds (voice/earcons.py), before its words: "heard", "found", "reminder", "noticed". Not while
+        Andy is asked to be quiet, except a reminder, which was asked for; never if sounds are turned off."""
+        c = getattr(self.body, "chime", None)
+        if c is None or not self.sounds or (self.quiet() and not even_when_quiet):
+            return
+        try:
+            c(name)
+        except Exception:  # noqa: BLE001 - a sound is never worth a failed turn
+            pass
+
     def emote(self, name: str) -> None:
         """One of Pollen's recorded emotions (robot/reachy_mini.py emote), at a calm moment only: not while quiet, not
         when asked to move less, never while searching or pointing (the callers are the calm moments)."""
@@ -522,7 +534,8 @@ class Andy:
                              + (" after aiming again" if found.reaimed else ""))
         self.gesture("found")
         words = words or self._found_words(found)
-        self.screen.found(found, words)
+        self.screen.found(found, words)  # the TV's Reveal starts...
+        self.chime("found")  # ...as Andy's "there it is!" sound plays, before the words
         return words + self._offer_to_watch(found.label, (found.yaw, found.pitch))
 
     def _offer_to_watch(self, thing: str, where=(0.0, 0.0), times: int = 3, within_s: float = 7 * 24 * 3600) -> str:
@@ -1188,6 +1201,7 @@ class Andy:
         self.screen.used("MapAnything (the room in 3D)", "device")
         self.screen.step(f"MapAnything: {out['n']:,} points of shape in {out.get('seconds', 0):.1f} s")
         self.screen.room(millimetres(out["points"]), things, out.get("seconds", 0.0))
+        self.chime("found")
         watched = set(self.places.watching())
         for t in things:
             if t["label"] in watched:
@@ -1306,6 +1320,7 @@ class Andy:
         else:
             self.screen.notice(f"Noticed: your {names}, picked up" if self.language == "en" else f"Visto: {names}, recogido")
         seen.pop("frame", None)
+        self.chime("noticed")
         self.screen.used("V-JEPA 2 (noticing)", "device")
         self.refresh_panels()
 
@@ -1371,7 +1386,8 @@ class Andy:
             self.interrupt_noticing()
             # Andy speaks first here, so it says it's an AI when that's due, as at the start of any conversation
             self.reminders.deliver(r, (lambda: True) if self.quiet() else self._find_person,
-                                   lambda words: self.say(self.disclosure.prefix() + words), now)
+                                   lambda words: (self.chime("reminder", even_when_quiet=True),
+                                                  self.say(self.disclosure.prefix() + words)), now)
         if not self.quiet() and self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
             self.interrupt_noticing()

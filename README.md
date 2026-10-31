@@ -269,6 +269,15 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (large, high-contrast type) served
 by Andy itself: the TV asks nothing of anyone outside the house.
 
+**Andy's sounds:** Andy answers before it speaks. A quick rising chime the instant it hears its name
+([listen](docs/sounds/andy-heard.wav)); a bright run to the octave as a find lands, with the TV's Reveal, before "There
+it is!" ([listen](docs/sounds/andy-found.wav)); a gentle falling bell before a reminder, to reach you across the room
+([listen](docs/sounds/andy-reminder.wav)); one soft note when it notices a watched thing put down
+([listen](docs/sounds/andy-noticed.wav)). All in C major, one struck, marimba-like timbre, a little below its voice; made
+from plain maths on the computer beside the robot (`heyandy_meta/voice/earcons.py`, no model). Never before the crisis
+reply; none of its own while it's asked to be quiet, except a reminder, which was asked for. `HEYANDY_SOUNDS=0` turns
+them off.
+
 **Ambient Andy:** after a quiet minute the TV becomes Andy's face (HeyAndy's own mark) over a large clock. It blinks, glances
 about, and **looks at you**: when Andy's camera finds a person, in a conversation or while it watches over your things,
 the face's eyes turn towards them (a direction, never a picture). The next reminder and what Andy keeps an eye on sit

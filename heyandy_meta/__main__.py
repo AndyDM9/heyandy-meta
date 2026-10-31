@@ -66,6 +66,7 @@ def build(args) -> Andy:
                 glimmer=None if args.no_local_agent else device.client, budget=budget, online=not args.offline,
                 home=args.home)
     andy.voice = getattr(body, "voice", None)
+    andy.sounds = os.environ.get("HEYANDY_SOUNDS", "1") != "0"
     if args.voice:  # Spanish: Glimmer, on this computer, translates between the person and Andy's English rules
         from .companion.language import Translator
 
