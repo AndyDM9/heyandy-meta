@@ -12,6 +12,9 @@ home, starting with older adults. Entered in Meta's Global AI Developer Hackatho
 **HeyAndy, Inc.**, a Delaware corporation ([heyandy.ai](https://heyandy.ai)). HEYANDY™ is the subject of a pending US
 trademark application.
 
+![The moment Andy finds it: the TV goes dark, a spotlight opens on SAM 3.1's outline of the mug, and the time to find it, how far off target the point landed (checked by Andy's camera) and how far away (MapAnything) count up](docs/images/tv-reveal.png)
+<sub>The Reveal: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
+
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
 who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).
@@ -226,6 +229,11 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 "Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every
 text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (large, high-contrast type) served
 by Andy itself: the TV asks nothing of anyone outside the house.
+
+**The Reveal:** the moment a find lands, the TV takes over for five seconds, like a film: the room goes dark, a spotlight
+opens on SAM 3.1's own outline of the thing, the shot pushes in while the outline draws itself, and the thing's name
+rises with three counters (the seconds it took, the degrees off target its camera measured, how far away). Then it
+settles into the card below. Only for a find made just now; still, without the push, for anyone who prefers less motion.
 
 ![Found: the picture with the mug outlined; the time, how far off target the point landed and how far away; the models used](docs/images/tv-found.png)
 

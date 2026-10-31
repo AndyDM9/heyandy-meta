@@ -208,3 +208,24 @@ def test_every_demo_scene_has_a_name_in_the_scene_bar():
     page = files("heyandy_meta.screen").joinpath("page.html").read_text()
     names = re.search(r"const NAMES = \{(.*?)\};", page, re.S).group(1)
     assert set(SCENES) <= set(re.findall(r"(\w+):", names))
+
+
+def test_the_reveal_plays_only_for_a_find_made_just_now():
+    """The TV's Reveal (page.html) runs when a find's picture has at least 112 of its 120 s left: a reload of an older
+    card, or the cup game, never replays it."""
+    from importlib.resources import files
+
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    assert "function reveal(" in page
+    assert "if (!s.game && !s.picture.trails && s.picture.seconds_left >= 112) reveal(s.picture, s.seconds);" in page
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import show
+
+    from heyandy_meta.screen.state import ScreenState
+
+    s = ScreenState()
+    show(s, "found")
+    assert s.snapshot()["picture"]["seconds_left"] >= 112
