@@ -72,6 +72,7 @@ again); never a home. The numbers in italics are from the robot, with their file
 | It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |
 | By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder 4 of 4 | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
 | Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (the third: the search missed, and said so) | [`home-*`](evals/results) |
+| Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
 Failures are kept too: every scorecard, and what changed because of it, is in `evals/results/` and `docs/research.md`.
@@ -128,6 +129,12 @@ found, "You're all set", in three sentences.
    them at once, without moving: "You told me on Tuesday at 3:12: your passport is in the top drawer of the desk."
    Asked again, it looks around the room; seen since by the camera, the camera wins; a search that misses says what
    you'd told it. "Forget my passport" removes it (`memory/told.py`).
+   **"Hey Andy, are you OK?"** For someone who lives alone with a robot, the worst moment is Andy going quiet with no
+   way to tell why. Andy checks each part it needs, as it uses them every turn (its camera; SAM 3.1, MapAnything,
+   Muse Glimmer, the voice and Llama Guard 3 on the computer beside it; its microphones; its motors; its memory),
+   times each, and says what works and what that means: "Mostly fine, but 1 thing isn't working. Telling how far
+   (MapAnything): I can still find things and point, but not say how far." The TV lists every part; the cloud is
+   never called for it (`companion/selfcheck.py`).
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and

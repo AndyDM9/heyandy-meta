@@ -30,6 +30,7 @@ from .companion.follow import follow
 from .companion.guide import guide, height_above
 from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
+from .companion.selfcheck import check as self_check, summary as self_summary
 from .companion.sound import apart, fan, reading, turn_to, wait_for
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
@@ -316,6 +317,8 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind == "self_check":
+            return self.check_myself()
         if i.kind == "tell":
             return self.remember_told(i.thing, i.text)
         if i.kind == "home_set":
@@ -808,6 +811,22 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def check_myself(self) -> str:
+        """"Are you OK?": each part Andy needs, checked and timed (companion/selfcheck.py); the TV lists them, and Andy
+        says what works, what doesn't, and what it can still do."""
+        self.screen.clear()
+        self.screen.doing("Working", "Checking myself")
+        self.gesture("thinking")
+        try:
+            report = self_check(self)
+        finally:
+            self.gesture("idle")
+        self.screen.self_check([{"name": p.name, "model": p.model, "status": p.status, "detail": p.detail}
+                                for p in report.parts], report.seconds)
+        self._source = "device"
+        self._reason = f"checked {len(report.parts)} parts of myself, on this computer, in {report.seconds:.1f} s"
+        return self_summary(report)
 
     def remember_told(self, thing: str, where: str) -> str:
         """"I'm putting my passport in the top drawer of the desk": the words kept (memory/told.py), said back."""

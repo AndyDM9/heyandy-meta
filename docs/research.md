@@ -970,3 +970,20 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   (`evals/sound.py`): the ringtone from three starts at -20, -10, 0; the struck-bar tune at -30, -10, -20 (both within
   20 degrees, the tune's spread was 30 before); a voice never taken for a ringing.
 
+## 48. "Are you OK?": Andy checks itself (2026-10-31)
+
+- **Why:** for someone who lives alone with a robot, the worst moment isn't a lost key; it's Andy going quiet, and
+  nobody able to tell whether it's broken or what to tell whoever comes to help. Five local services, eleven models,
+  a camera, microphones and motors: any can fail, and the person can't see which.
+- **Built:** "are you OK?", "check yourself", "is everything working?" (Spanish too; "I'm not OK" is not this) runs a
+  check through the very objects Andy uses every turn, nothing extra (`companion/selfcheck.py`): one camera frame (its
+  brightness: "it's dark in here"), SAM 3.1 on it, the health of MapAnything, Muse Glimmer, the voice and Llama Guard
+  3, whether the microphones have heard anything in the last 5 s, an 8-degree turn of the head measured and undone,
+  a file written and the disk's room, and whether the cloud is set up (never called). Each part is timed. Andy says
+  what it can do ("I can see, recognise things, tell how far, think, hear and speak, and move") or, for each part
+  down, what that means and what it can still do; the TV lists every part, what needs help first.
+- **Measured on the robot** (`evals/selfcheck.py`, the whole app with its voice and listening): everything, "I'm fine"
+  with the check taking 2 s; MapAnything stopped on purpose: "Mostly fine, but 1 thing isn't working. Telling how far
+  (MapAnything): I can still find things and point, but not say how far.", then MapAnything started again and
+  answering. The first run also said "is my microphone covered?" because the eval wasn't feeding the ear; it does now.
+

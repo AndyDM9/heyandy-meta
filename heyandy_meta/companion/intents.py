@@ -63,6 +63,10 @@ TELL = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:remember(?: that)?\W+)?(?:i
                   r"(?:is|are|'s|'re) (?:now |kept |always )?" + _WHERE.replace("where", "where2") + r"\W*$", re.I)
 NOT_THINGS = {"kids", "children", "child", "baby", "dog", "cat", "husband", "wife", "mom", "dad", "mum", "kettle", "tv",
               "heating", "oven", "washing", "dishwasher", "car", "light", "lights", "music", "radio", "it", "them", "that"}
+# "are you OK?": Andy checks itself (companion/selfcheck.py)
+SELF_CHECK = re.compile(r"\bare you (?:ok|okay|alright|all right|working(?: properly)?|broken)\b|\b(?:check|test) yourself\b|"
+                        r"\b(?:run |do )?(?:a )?self[- ]?(?:check|test)\b|\bis everything working\b|\bsystem check\b|"
+                        r"\bdiagnos(?:e yourself|tics)\b|\b(?:est[aá]s|est[aá]) bien\b|\br[eé]visate\b", re.I)
 IT = {"it", "them", "that", "this", "those", "there", "one", "the thing", "mis cosas"}
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
@@ -163,7 +167,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | tell | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | tell | self_check | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -292,6 +296,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         said = {"cell": "phone", "cell phone": "phone", "cellphone": "phone", "mobile": "phone", "mobile phone": "phone",
                 "teléfono": "phone", "telefono": "phone", "celular": "phone", "móvil": "phone", "movil": "phone"}.get(said.lower(), said)
         return Intent("sound", thing="phone" if said in IT else snap(said), text=t)
+    if SELF_CHECK.search(t):
+        return Intent("self_check", text=t)
     if FOUND_IT.search(t):
         return Intent("lost_done", thing="found", text=t)
     if STOP_LOOKING.search(t):

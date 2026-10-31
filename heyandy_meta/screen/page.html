@@ -80,6 +80,16 @@
   #body:has(.drawing), #body:has(.web) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   /* guiding a hand: the view, and the way to move, big enough to read from across a room or with low vision */
+  /* "are you OK?": each part, what needs help first */
+  ul.checked { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem 1.4rem; align-content: start; }
+  ul.checked li { display: grid; grid-template-columns: 2.6rem 1fr auto; gap: 0.9rem; align-items: center; padding: 0.55rem 0.9rem;
+                  border-radius: 1rem; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  ul.checked i { font-style: normal; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%;
+                 font-size: 1.5rem; font-weight: 800; background: var(--accent); color: var(--panel); }
+  ul.checked li.warn i { background: var(--outline); color: #070a09; } ul.checked li.down { background: color-mix(in srgb, #c0392b 14%, transparent); }
+  ul.checked li.down i { background: #c0392b; color: #fff; } ul.checked li.none { opacity: 0.55; } ul.checked li.none i { background: var(--muted); }
+  ul.checked b { display: block; font-size: 1.55rem; } ul.checked span { font-size: 1.15rem; color: var(--muted); }
+  ul.checked small { font-family: "Atkinson Mono", monospace; font-size: 1.15rem; color: var(--muted); text-align: right; }
   /* what the person told Andy: their words, as a quote */
   .told blockquote { margin: 0.5rem 0 1.4rem; padding: 1.6rem 2rem; border-radius: 1.4rem; font-size: 2.6rem; line-height: 1.25;
                      background: color-mix(in srgb, var(--outline) 16%, transparent); border-left: 0.5rem solid var(--outline); }
@@ -507,7 +517,7 @@
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
-    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p><p>“Hey Andy, my keys live here.” · “Is everything home?”</p><p>“Hey Andy, I'm putting my passport in the top drawer.”</p></div>
+    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p><p>“Hey Andy, my keys live here.” · “Is everything home?”</p><p>“Hey Andy, I'm putting my passport in the top drawer.”</p><p>“Hey Andy, are you OK?” (it checks itself)</p></div>
     <div><h3>Remember things</h3><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p></div>
     <div><h3>Talk, look, make</h3><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
@@ -516,7 +526,7 @@
   <h1>¿Qué puedo pedirle a Andy?</h1>
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
-    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p><p>“Oye Andy, mis llaves viven aquí.” · “¿Está todo en su sitio?”</p><p>“Oye Andy, guardo mi pasaporte en el cajón de arriba.”</p></div>
+    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p><p>“Oye Andy, mis llaves viven aquí.” · “¿Está todo en su sitio?”</p><p>“Oye Andy, guardo mi pasaporte en el cajón de arriba.”</p><p>“Oye Andy, ¿estás bien?” (se revisa)</p></div>
     <div><h3>Recordar cosas</h3><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p></div>
     <div><h3>Hablar, mirar, crear</h3><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p></div>
   </div>
@@ -586,7 +596,7 @@
                   "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", home: "Everything home?", told: "You told me", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", home: "Everything home?", told: "You told me", checked: "Are you OK?", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -704,6 +714,7 @@
   const ASK = [
     ["guide", /\b(?:help me (?:reach|grab|get to|pick up)|guide (?:my hand|me)|lead my hand)\b|gu[ií](?:e|a)(?:me| mi mano)/i],
     ["sound", /\b(?:ring|ringing|call|calling) (?:my |the |it|them)|\blisten (?:for|out)\b|\bby (?:its|the) (?:sound|ring)|\bfollow the (?:sound|ringing)|\bbeep/i],
+    ["checked", /\bare you (?:ok|okay|alright|all right|working|broken)\b|\b(?:check|test) yourself\b|\bself[- ]?(?:check|test)\b|\bis everything working\b/i],
     ["told", /\bpassport\b|\bspare key\b|\bwarranty\b|\bwhere did i (?:say|tell|put|leave)\b|\b(?:i'?m|i am|i) (?:putting|put|leaving|left|hid|hiding|keeping) (?:my|the)\b|\bremember (?:that )?(?:my|the)\b/i],
     ["home", /\b(?:live|lives|belong|belongs) (?:here|there)\b|\bis everything (?:home|in (?:its|it's) place|where it belongs)\b|\bwhere (?:do|does) (?:my|the) \w+ (?:live|belong)\b|\b(?:bedtime|home|tidy) check\b|\bstop losing\b/i],
     ["turned", /\bi(?:'ve| have)? found\b|\b(?:stop|keep|still) looking\b|\bwhat are you looking for\b|\bgive up\b|\bturned up\b/i],
@@ -1210,6 +1221,25 @@
       kicker = T("The room in 3D"); title = T("Your things, as I measured them just now");
       const key = "room:" + s.room.v + ":" + LANG;
       if (key !== pictureKey) { pictureKey = key; body.replaceChildren(room(s.room)); }
+    } else if (s.checked) {
+      const rows = s.checked.rows, down = rows.filter(r => r.status === "down").length, es = LANG === "es";
+      kicker = es ? `Me revisé en ${s.checked.seconds} s` : `I checked myself in ${s.checked.seconds} s`;
+      title = down ? (es ? `${down} cosa${down > 1 ? "s" : ""} necesita${down > 1 ? "n" : ""} ayuda` : `${down} thing${down > 1 ? "s need" : " needs"} help`)
+                   : (es ? "Todo bien" : "I'm fine");
+      const key = "checked:" + JSON.stringify(s.checked) + LANG;
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const list = el("ul", null, "checked");
+        const order = { down: 0, warn: 1, ok: 2, none: 3 };
+        for (const r of [...rows].sort((a, b) => order[a.status] - order[b.status])) {  // what needs help, first
+          const li = el("li", null, r.status), mark = { ok: "✓", warn: "!", down: "✕", none: "–" }[r.status];
+          const words = el("div"); words.append(el("b", r.name[0].toUpperCase() + r.name.slice(1)));
+          if (r.model) words.append(el("span", r.model));
+          li.append(el("i", mark), words, el("small", r.detail)); list.append(li);
+        }
+        body.replaceChildren(list, el("small", es ? "Cada parte, revisada aquí mismo; la nube no se llamó." :
+                                                      "Each part checked here, as Andy uses it every turn; the cloud wasn't called.", "note"));
+      }
     } else if (s.told) {
       const t = s.told, es = LANG === "es", now = t.when === "just now";
       kicker = now ? (es ? "Lo recordaré" : "I'll remember") : (es ? `Usted me lo dijo ${t.when}` : `You told me ${t.when}`);

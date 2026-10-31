@@ -1,0 +1,145 @@
+{
+ "when": "2026-10-31 19:54",
+ "runs": [
+  {
+   "stopped": null,
+   "said": "I'm Andy, an AI robot. I'm fine, thanks for asking! I can see, recognise things, tell how far, think, hear and speak, and move, all on this computer; that took 2 seconds to check.",
+   "seconds": 15.0,
+   "parts": {
+    "rows": [
+     {
+      "name": "my camera",
+      "model": "",
+      "status": "ok",
+      "detail": "103 ms"
+     },
+     {
+      "name": "recognising things",
+      "model": "SAM 3.1",
+      "status": "ok",
+      "detail": "382 ms"
+     },
+     {
+      "name": "telling how far",
+      "model": "MapAnything",
+      "status": "ok",
+      "detail": "1 ms"
+     },
+     {
+      "name": "thinking",
+      "model": "Muse Glimmer",
+      "status": "ok",
+      "detail": "0 ms"
+     },
+     {
+      "name": "hearing and speaking",
+      "model": "Omnilingual ASR, SeamlessM4T v2",
+      "status": "ok",
+      "detail": "1 ms"
+     },
+     {
+      "name": "my safety check",
+      "model": "Llama Guard 3",
+      "status": "ok",
+      "detail": "0 ms"
+     },
+     {
+      "name": "my microphones",
+      "model": "",
+      "status": "ok",
+      "detail": "hearing the room"
+     },
+     {
+      "name": "turning my head",
+      "model": "",
+      "status": "ok",
+      "detail": "turned 8\u00b0, measured 8.5\u00b0"
+     },
+     {
+      "name": "remembering where things are",
+      "model": "",
+      "status": "ok",
+      "detail": "900 GB free"
+     },
+     {
+      "name": "the cloud",
+      "model": "Muse Spark",
+      "status": "none",
+      "detail": "off: I work without it"
+     }
+    ],
+    "seconds": 2.3
+   }
+  },
+  {
+   "stopped": "heyandy-depth",
+   "said": "Mostly fine, but 1 thing isn't working. Telling how far (MapAnything): I can still find things and point, but not say how far.",
+   "seconds": 9.9,
+   "parts": {
+    "rows": [
+     {
+      "name": "my camera",
+      "model": "",
+      "status": "ok",
+      "detail": "95 ms"
+     },
+     {
+      "name": "recognising things",
+      "model": "SAM 3.1",
+      "status": "ok",
+      "detail": "325 ms"
+     },
+     {
+      "name": "telling how far",
+      "model": "MapAnything",
+      "status": "down",
+      "detail": "not answering"
+     },
+     {
+      "name": "thinking",
+      "model": "Muse Glimmer",
+      "status": "ok",
+      "detail": "0 ms"
+     },
+     {
+      "name": "hearing and speaking",
+      "model": "Omnilingual ASR, SeamlessM4T v2",
+      "status": "ok",
+      "detail": "1 ms"
+     },
+     {
+      "name": "my safety check",
+      "model": "Llama Guard 3",
+      "status": "ok",
+      "detail": "0 ms"
+     },
+     {
+      "name": "my microphones",
+      "model": "",
+      "status": "ok",
+      "detail": "hearing the room"
+     },
+     {
+      "name": "turning my head",
+      "model": "",
+      "status": "ok",
+      "detail": "turned 8\u00b0, measured 8.1\u00b0"
+     },
+     {
+      "name": "remembering where things are",
+      "model": "",
+      "status": "ok",
+      "detail": "900 GB free"
+     },
+     {
+      "name": "the cloud",
+      "model": "Muse Spark",
+      "status": "none",
+      "detail": "off: I work without it"
+     }
+    ],
+    "seconds": 2.2
+   }
+  }
+ ]
+}

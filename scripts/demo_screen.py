@@ -28,7 +28,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "told", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "told", "checked", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -322,6 +322,22 @@ def show(state: ScreenState, scene: str) -> None:
         state._told["until"] += 3600  # a still for the demo: it stays
         state.said(f"You told me {when}: your passport is in the top drawer of the desk. If it isn't there, ask me again "
                    "and I'll look around the room.", "device", "what you told me, kept on this computer")
+        state.doing("Speaking", "Looking at you")
+    elif scene == "checked":  # "are you OK?": every part fine but the one measuring distance, as on the robot with it stopped
+        state.self_check([
+            {"name": "my camera", "model": "", "status": "ok", "detail": "92 ms"},
+            {"name": "recognising things", "model": "SAM 3.1", "status": "ok", "detail": "181 ms"},
+            {"name": "telling how far", "model": "MapAnything", "status": "down", "detail": "not answering"},
+            {"name": "thinking", "model": "Muse Glimmer", "status": "ok", "detail": "6 ms"},
+            {"name": "hearing and speaking", "model": "Omnilingual ASR, SeamlessM4T v2", "status": "ok", "detail": "3 ms"},
+            {"name": "my safety check", "model": "Llama Guard 3", "status": "ok", "detail": "2 ms"},
+            {"name": "my microphones", "model": "", "status": "ok", "detail": "hearing the room"},
+            {"name": "turning my head", "model": "", "status": "ok", "detail": "turned 8°, measured 7.9°"},
+            {"name": "remembering where things are", "model": "", "status": "ok", "detail": "412 GB free"},
+            {"name": "the cloud", "model": "Muse Spark", "status": "ok", "detail": "words only; not called now"}], 2.4)
+        state._checked["until"] += 3600  # a still for the demo: it stays
+        state.said("Mostly fine, but 1 thing isn't working. Telling how far (MapAnything): I can still find things and point, "
+                   "but not say how far.", "device", "checked 10 parts of myself, on this computer, in 2.4 s")
         state.doing("Speaking", "Looking at you")
     elif scene == "room":
         points, things = sample_room()

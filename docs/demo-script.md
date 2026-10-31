@@ -33,6 +33,10 @@ my keys", the person walks in and puts the keys down on the table in view; the T
 later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
+**"Are you OK?" (works on the robot), in the unplugged-network cut:** with the network out, "Hey Andy, are you OK?":
+"I'm fine, thanks for asking! I can see, recognise things, tell how far, think, hear and speak, and move, all on this
+computer", the TV listing every part with its time. It says, in Andy's own voice, that nothing it needs is in the cloud.
+
 **"Is everything home?" (works on the robot):** earlier, "Hey Andy, my watch lives here", "my cup lives here", "my keys
 live here" (each where it sits). Move the keys across the table. "Hey Andy, is everything home?" Andy looks at each
 home: "Your watch and your cup are home. Your keys aren't home: they're a little to my left", pointing at them, then

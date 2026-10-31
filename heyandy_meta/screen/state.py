@@ -91,6 +91,7 @@ class ScreenState:
         self.rooms = 0  # a version, so the page fetches each room once
         self._guide: dict | None = None  # guiding a hand: the latest frame, the thing's and the hand's outlines, the words
         self.guides = 0  # a version per frame
+        self._checked: dict | None = None  # "are you OK?": each part, its status and detail, and how long it took
         self._told: dict | None = None  # an answer from what the person told Andy: the thing, their words, when
         self._homes: dict | None = None  # "is everything home?": each thing home, away (where it is) or not seen
         self._sound: dict | None = None  # turning to a ringing: the thing, each turn and what was heard, where it faces
@@ -301,6 +302,13 @@ class ScreenState:
                            "cm": None if metres is None else round(metres * 100), "done": False,
                            "until": self._clock() + GUIDE_SECONDS}
 
+    def self_check(self, rows: list[dict], seconds: float) -> None:
+        """Andy's check of itself (companion/selfcheck.py): {"name", "model", "status", "detail"} per part."""
+        with self._lock:
+            self._picture = self._room = self._timeline = self._web = self.privacy = self._guide = self._sound = None
+            self._homes = self._told = None
+            self._checked = {"rows": list(rows), "seconds": seconds, "until": self._clock() + 90}
+
     def told(self, thing: str, words: str, when: str) -> None:
         """Where the person said they put a thing (memory/told.py): their words and when, for a minute."""
         with self._lock:
@@ -351,7 +359,7 @@ class ScreenState:
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
             self.checklist, self.privacy = None, None
             self._glimpse = None  # the last frame of a search that found nothing goes too
-            self._room = self._timeline = self._guide = self._sound = self._homes = self._told = None
+            self._room = self._timeline = self._guide = self._sound = self._homes = self._told = self._checked = None
 
     def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
         """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera
@@ -432,6 +440,9 @@ class ScreenState:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
                 out["running"] = stop is None
+            if self._checked and self._clock() >= self._checked["until"]:
+                self._checked = None
+            out["checked"] = {k: v for k, v in self._checked.items() if k != "until"} if self._checked else None
             if self._told and self._clock() >= self._told["until"]:
                 self._told = None
             out["told"] = {k: v for k, v in self._told.items() if k != "until"} if self._told else None
@@ -495,6 +506,9 @@ def _in(out: dict, tr) -> dict:
         out["next"] = {**out["next"], "text": tr(out["next"]["text"])}
     if out["picture"]:
         out["picture"] = {**out["picture"], "words": tr(out["picture"]["words"]), "label": tr(out["picture"]["label"])}
+    if out.get("checked"):
+        out["checked"] = {**out["checked"], "rows": [{**r, "name": tr(r["name"]), "detail": tr(r["detail"])}
+                                                     for r in out["checked"]["rows"]]}
     if out.get("told"):
         out["told"] = {k: tr(v) for k, v in out["told"].items()}
     if out.get("homes"):
