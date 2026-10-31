@@ -230,6 +230,14 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (large, high-contrast type) served
 by Andy itself: the TV asks nothing of anyone outside the house.
 
+**Ambient Andy:** after a quiet minute the TV becomes Andy's face (HeyAndy's own mark) over a large clock. It blinks, glances
+about, and **looks at you**: when Andy's camera finds a person, in a conversation or while it watches over your things,
+the face's eyes turn towards them (a direction, never a picture). The next reminder and what Andy keeps an eye on sit
+below; the colours follow the time of day, porcelain on night blue after dark. A word, a search or a reminder and the
+TV wakes. (`?ambient=now` shows it at once, for filming.)
+
+![Ambient Andy: the TV's face over a large clock, the next reminder and what Andy keeps an eye on (sample data)](docs/images/tv-ambient.png)
+
 **The Reveal:** the moment a find lands, the TV takes over for five seconds, like a film: the room goes dark, a spotlight
 opens on SAM 3.1's own outline of the thing, the shot pushes in while the outline draws itself, and the thing's name
 rises with three counters (the seconds it took, the degrees off target its camera measured, how far away). Then it

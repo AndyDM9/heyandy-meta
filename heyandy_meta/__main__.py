@@ -172,6 +172,7 @@ def main() -> None:
             found = follow_face(andy.body, andy.segmenter)
             if found:
                 andy.person = found
+                andy.screen.gaze_at(*found)  # the TV's face looks at them too
 
         def keep_eyes_on_the_person():  # about once a second
             while not stop.wait(1.0):
@@ -182,6 +183,7 @@ def main() -> None:
 
         threading.Thread(target=keep_eyes_on_the_person, daemon=True).start()
 
+        from .finder.geometry import pixel_to_angles
         from .memory.notice import Noticer
 
         noticer = Noticer(andy.body, andy.segmenter, andy.places, cam=andy.finder.cam)
@@ -198,8 +200,12 @@ def main() -> None:
                     if busy or not andy.places.watching() or not hasattr(andy.segmenter, "action"):
                         continue
                     frame = andy.body.grab()
-                    if not [m for m in andy.segmenter.find(frame, "person") if (m.score or 0.0) >= 0.5]:
+                    people = [m for m in andy.segmenter.find(frame, "person") if (m.score or 0.0) >= 0.5]
+                    if not people:
                         continue  # nobody there to put anything down
+                    best = max(people, key=lambda m: m.score or 0.0)  # the TV's face looks at them: a direction only
+                    andy.screen.gaze_at(*pixel_to_angles(*best.center, frame.yaw, frame.pitch,
+                                                         andy.finder._cam(frame)))
                     del frame
                     cancel = andy.begin_noticing()
                     if cancel is None:  # a turn is running, or the body is busy

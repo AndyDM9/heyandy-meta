@@ -249,3 +249,15 @@ def test_the_story_opens_only_the_public_demo():
     from demo_screen import SCENES
 
     assert set(re.findall(r'\["(\w+)", \d+,', story)) <= set(SCENES)  # every chapter is a real scene
+
+
+def test_the_tvs_face_gets_the_persons_direction_only_and_only_while_fresh():
+    from heyandy_meta.screen.state import ScreenState
+
+    t = [100.0]
+    s = ScreenState(clock=lambda: t[0])
+    assert "gaze" not in s.snapshot()
+    s.gaze_at(32.4, 8.1)
+    assert s.snapshot()["gaze"] == {"yaw": 32.4, "pitch": 8.1, "age": 0.0}  # a direction, never a picture
+    t[0] += 31
+    assert "gaze" not in s.snapshot()  # an old sighting isn't a person still there

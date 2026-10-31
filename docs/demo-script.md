@@ -36,6 +36,10 @@ what a still picture can't: seeing an action. Leave it out if it misses more tha
 **Things can be anywhere round the robot now:** the sofa at 85 degrees to its left was pointed at 8 of 8. A thing to the
 side or behind, with "I think it's behind you, on the left", makes the agent's moment (Muse Spark plans one look).
 
+**Ambient Andy on the TV:** between takes the TV becomes Andy's face after a quiet minute; open the TV at
+`http://127.0.0.1:8765/?ambient=now` to have it at once for the opening shot (the person walks in; the face's eyes turn
+to them once Andy has seen them), and it wakes the moment the person says "Andy".
+
 **The X clip (30 s, vertical, `make_film.py --shape vertical`):** the first second is the head turning to point; the
 TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
 model is Meta's."

@@ -173,6 +173,27 @@
   #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
                  padding: 0.2rem 0.8rem; cursor: pointer; }
   #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* Ambient Andy: after a quiet minute the TV becomes Andy's face, which blinks, glances and looks at the person (a
+     direction from the camera, never a picture), over a large clock. Anything at all and the TV wakes. */
+  #ambient { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 3; display: grid; place-items: center;
+             opacity: 0; pointer-events: none; transition: opacity 0.9s ease; }
+  body.ambient #ambient { opacity: 1; }
+  body.ambient .stage { opacity: 0; transform: scale(0.98); }
+  .stage { transition: opacity 0.6s ease, transform 0.6s ease; }
+  #ambient .in { display: grid; justify-items: center; text-align: center; }
+  #ambient .face { width: 30rem; height: auto; color: var(--ink); animation: breathe 6s ease-in-out infinite; overflow: visible; }
+  #ambient .eyes { transition: transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1); }
+  #ambient .eye { fill: var(--solid); transform-box: fill-box; transform-origin: center; transition: transform 0.09s ease; }
+  #ambient.blink .eye { transform: scaleY(0.08); }
+  #ambient .time { margin-top: 3.4rem; font: 800 11rem/0.9 "Atkinson Next", sans-serif; letter-spacing: -0.04em; }
+  #ambient .day { margin-top: 1.2rem; font-size: 2.6rem; color: var(--muted); }
+  #ambient .say { margin-top: 2.6rem; font-size: 1.9rem; font-weight: 650; color: var(--accent); }
+  #ambient .notes { margin-top: 3.2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  #ambient .notes span { padding: 0.7rem 1.5rem; border-radius: 99rem; background: var(--panel); font-size: 1.5rem; }
+  #ambient .notes b { font-weight: 750; }
+  @keyframes breathe { 50% { transform: scale(1.025) translateY(-0.4rem); } }
+  @media (prefers-reduced-motion: reduce) { #ambient .face { animation: none; } #ambient .eyes { transition: none; } }
+
   /* Story mode (the public demo only): a one-minute guided film of Andy's TV, chapter by chapter, then a call to act */
   #story { position: fixed; top: 0; left: 0; right: 0; z-index: 7; padding: 1.3rem 5rem 1.4rem; color: #F5F3EF;
            background: linear-gradient(to bottom, rgba(7, 10, 9, 0.94), rgba(7, 10, 9, 0.86)); backdrop-filter: blur(0.8rem); }
@@ -298,6 +319,12 @@
   <div id="captions" aria-live="polite"></div>
 </div>
 <nav id="demo" hidden aria-label="Sample scenes"></nav>
+<div id="ambient" aria-hidden="true"><div class="in">
+  <svg class="face" viewBox="0 0 380 210"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
+    <g class="eyes"><ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></g></svg>
+  <div class="time" id="a-time"></div><div class="day" id="a-day"></div><div class="say" id="a-say"></div>
+  <div class="notes" id="a-notes"></div>
+</div></div>
 <div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?"><div id="help-en">
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
@@ -898,6 +925,49 @@
       for (const x of these) m.append(el("span", x.name + (x.times > 1 ? " ×" + x.times : ""), where));
     }
   }
+  // Ambient Andy (see the styles). Quiet means: waiting, nothing on the card, no words on screen, for a minute. Never in
+  // the public demo's story or when a link names a scene; ?ambient=now shows it at once (for filming).
+  const AMBIENT_AFTER_MS = 60000, forceAmbient = new URLSearchParams(location.search).get("ambient") === "now";
+  let quietSince = Date.now(), gazeAt = null, nextGlance = 0;
+  function ambient(s) {
+    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.checklist && !s.privacy
+                  && !s.memory && !s.running && !s.help && !s.game && !(s.caption && Date.now() - captionAt < 12000);
+    if (!quiet || story || document.getElementById("end") || (scenes && !forceAmbient)) quietSince = Date.now();
+    const on = forceAmbient ? quiet || !!scenes : Date.now() - quietSince > AMBIENT_AFTER_MS;
+    document.body.classList.toggle("ambient", on);
+    if (!on) return;
+    const d = new Date(), h = d.getHours() % 12 || 12, m = String(d.getMinutes()).padStart(2, "0");
+    $("a-time").textContent = `${h}:${m}`;
+    $("a-day").textContent = d.toLocaleDateString(LANG === "es" ? "es" : "en-US", { weekday: "long", month: "long", day: "numeric" });
+    $("a-say").textContent = LANG === "es" ? "Diga «Andy» cuando quiera." : "Say “Andy” anytime.";
+    const notes = $("a-notes"); notes.replaceChildren();
+    if (s.next) { const x = el("span"); x.append(el("b", T("Next") + ": "), s.next.text); notes.append(x); }
+    if (s.watching && s.watching.length) {
+      const x = el("span"); x.append(el("b", T("Keeping an eye on") + ": "), s.watching.map(w => w.split(":")[0].split("·")[0].trim()).join(", "));
+      notes.append(x);
+    }
+    gazeAt = s.gaze && s.gaze.age < 8 ? s.gaze : null;
+  }
+  function eyes() {  // the eyes: towards the person when Andy just saw them, else a glance now and then; and blinks
+    if (document.body.classList.contains("ambient")) {
+      let x, y;
+      if (gazeAt) {  // Andy's left is the viewer's right: yaw left positive moves the eyes right on the screen
+        x = Math.max(-1, Math.min(1, gazeAt.yaw / 50)) * 30; y = Math.max(-1, Math.min(1, gazeAt.pitch / 30)) * 16;
+      } else if (Date.now() >= nextGlance) {
+        nextGlance = Date.now() + 1800 + Math.random() * 3200;
+        x = (Math.random() * 2 - 1) * 22; y = (Math.random() * 2 - 1) * 10;
+        if (Math.random() < 0.35) { x = 0; y = 0; }  // and often back to looking out at the room
+      }
+      if (x !== undefined) document.querySelector("#ambient .eyes").setAttribute("style", `transform: translate(${x}px, ${y}px)`);
+    }
+    setTimeout(eyes, 250);
+  }
+  (function blink() {
+    const a = $("ambient");
+    if (document.body.classList.contains("ambient")) { a.classList.add("blink"); setTimeout(() => a.classList.remove("blink"), 140); }
+    setTimeout(blink, 2600 + Math.random() * 3800);
+  })();
+  eyes();
   function render(s) {
     if ((s.lang || "en") !== LANG) { LANG = s.lang || "en"; document.documentElement.lang = LANG; pictureKey = ""; clock(); }
     $("k-next").textContent = T("Next"); $("k-watching").textContent = T("Keeping an eye on");
@@ -919,6 +989,7 @@
     $("captions").classList.toggle("long", s.caption.length > 150);  // a long answer: smaller, and never over the cards  // Andy's words only, never the person's
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
     $("help").hidden = !s.help;
+    ambient(s);
     if (s.demo && !scenes) {  // the public demo: the story first, unless a link asked for one scene
       scenes = s.demo;
       if (!chosen && !new URLSearchParams(location.search).has("explore") && scenes.includes("room")) startStory(); else demoBar();

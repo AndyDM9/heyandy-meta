@@ -80,10 +80,16 @@ class ScreenState:
         self._web: dict | None = None  # the web page Andy is using: the screenshot, what's happening, where it clicks
         self.webs = 0  # a version, so the page fetches each screenshot once
         self.privacy: dict | None = None  # "what did you send today?": {"title", "rows": [{"mark", "text"}]}
+        self._gaze: tuple[float, float, float] | None = None  # where the person is (yaw, pitch, when): a direction only
         self._room: dict | None = None  # the room in 3D: its shape (millimetres, int16 x, y, z), the things, until
         self.rooms = 0  # a version, so the page fetches each room once
         self._day = Day(dt.date.fromtimestamp(now()), now())
         self._in_turn = False
+
+    def gaze_at(self, yaw: float, pitch: float) -> None:
+        """Where Andy last saw the person, as a direction only: the TV's face looks that way (page.html, ambient)."""
+        with self._lock:
+            self._gaze = (yaw, pitch, self._clock())
 
     def doing(self, state: str, head: str = "") -> None:
         with self._lock:
@@ -332,6 +338,9 @@ class ScreenState:
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
                 out["running"] = stop is None
             out["lang"] = self.lang
+            if self._gaze and self._clock() - self._gaze[2] < 30:
+                out["gaze"] = {"yaw": round(self._gaze[0], 1), "pitch": round(self._gaze[1], 1),
+                               "age": round(self._clock() - self._gaze[2], 1)}
             g = self._glimpse
             if g and out.get("running"):  # only while a search runs; never after
                 out["glimpse"] = {"src": "data:image/jpeg;base64," + base64.b64encode(g["jpeg"]).decode(),
