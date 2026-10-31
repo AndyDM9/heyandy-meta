@@ -72,7 +72,7 @@ def main() -> None:
             s = json.load(r)
         if s.get("state") != "running":  # e.g. started before the robot's power was on: it stays in error until restarted
             raise RuntimeError(f"{s.get('state')}: {s.get('error') or 'not ready'} -> turn the robot's power on, then "
-                               "systemctl --user restart jarvis-daemon heyandy-app")
+                               "systemctl --user restart heyandy-robot heyandy-app")
         return f"running, motors found (daemon {s.get('version', '?')})"
 
     @check("Andy's log, last 10 minutes")
@@ -137,9 +137,9 @@ def main() -> None:
 
     @check("the robot's camera and sound card, as its daemon found them")
     def _():
-        since = subprocess.run(["systemctl", "--user", "show", "jarvis-daemon", "-p", "ActiveEnterTimestamp",
+        since = subprocess.run(["systemctl", "--user", "show", "heyandy-robot", "-p", "ActiveEnterTimestamp",
                                 "--value"], capture_output=True, text=True).stdout.strip()
-        log = subprocess.run(["journalctl", "--user", "-u", "jarvis-daemon", "--since", since or "-1h", "--no-pager",
+        log = subprocess.run(["journalctl", "--user", "-u", "heyandy-robot", "--since", since or "-1h", "--no-pager",
                               "-o", "cat"], capture_output=True, text=True).stdout
         # The daemon looks for them once, as it starts: started before the login that allows opening them, it
         # runs with no camera, and Andy is blind (Oct 30). Only the daemon's own words are read, never a picture.
@@ -147,7 +147,7 @@ def main() -> None:
                    if said in log]
         if missing:
             raise RuntimeError(f"the daemon started without the robot's {' and '.join(missing)}: "
-                               "systemctl --user restart jarvis-daemon heyandy-app, then this again")
+                               "systemctl --user restart heyandy-robot heyandy-app, then this again")
         return "both found"
 
     @check("GPU power capped (a full-power card fell off the bus once)")

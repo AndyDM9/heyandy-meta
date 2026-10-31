@@ -1,0 +1,18 @@
+[Unit]
+Description=HeyAndy: Pollen's Reachy Mini daemon for the Lite on USB (motors, camera, microphones, speaker)
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/GitHub/heyandy-meta
+ExecStartPre=%h/Documents/GitHub/heyandy-meta/scripts/wait-for-robot.sh 900
+TimeoutStartSec=1000
+# The motor port needs the dialout group; sg adds it even when this user manager started before the group was granted.
+ExecStart=/usr/bin/sg dialout -c "exec %h/Documents/GitHub/heyandy-meta/scripts/run-robot-daemon.sh --log-level INFO"
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+# A requested stop (SIGTERM) exits 143: a normal stop, not a failure.
+SuccessExitStatus=143
+
+[Install]
+WantedBy=default.target
