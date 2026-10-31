@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/heyandy-signature-reversed.svg">
+    <img src="docs/images/heyandy-signature.svg" alt="HeyAndy" width="360">
+  </picture>
+</p>
+
 # HeyAndy x Meta
 
 **A tabletop robot that finds what you've lost, and points at it.** It's built on Meta's models for people who live at

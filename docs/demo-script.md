@@ -32,6 +32,10 @@ where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", 
 TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
 model is Meta's."
 
+**Cards (ready in `film/`, not committed):** `card-open.png` (HeyAndy's signature and the required line on what was
+pre-existing; replace the line with the founder's own words if they differ) and `card-end.png` (the signature, "Andy finds
+what you've lost, and points at it.", every model Meta's, no health advice, the links). The TV wears the same signature.
+
 ## Filming day, step by step
 
 1. **Preflight** (a minute): `uv run python scripts/preflight.py --cloud` must end with "READY". Anything listed as
