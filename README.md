@@ -101,6 +101,12 @@ found, "You're all set", in three sentences.
    tracker on a key ring that beeps works the same way ("listen for my keys"); a voice is never taken for a ringing
    (most of a ringing is pure tone; a voice only now and then). Only each tenth of a second's loudness, tone and
    direction are kept, for 20 seconds; nothing is recorded (`companion/sound.py`). The TV draws each turn from above.
+   **Homes: so things stop getting lost.** "Hey Andy, my keys live here" gives a thing a home where Andy sees it, in
+   words ("on the desk, next to the lamp"). A search looks there first ("Right at home, where they live"). "Is
+   everything home?" (and every evening at 9, by itself) looks at each home; a thing that isn't there is found,
+   pointed at, and then its home is pointed at: "Your keys aren't home: they're a little to my right. They live there,
+   in the bowl by the door." Not seen anywhere: Andy keeps looking. The TV lists each one, home or not
+   (`memory/places.py`, `app.py home_check`).
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and

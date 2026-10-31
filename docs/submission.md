@@ -24,6 +24,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
+- **Homes, so things stop getting lost.** "My keys live here", then "is everything home?" (and every evening at 9):
+  Andy points at what's away, then at where it lives.
 - **It doesn't give up.** A search that misses becomes a promise: Andy keeps looking every few minutes for two hours
   and, when the thing turns up, points and says "Good news: your watch turned up!" (on the robot, unprompted).
 - **"I'm ringing my phone."** Andy turns to the ringing until its microphones hear it straight ahead, looks there

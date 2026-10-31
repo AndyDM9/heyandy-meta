@@ -1,0 +1,69 @@
+{
+ "when": "2026-10-31 18:04",
+ "set": {
+  "watch": "I'm Andy, an AI robot. Got it: your watch lives on the desk, in front of monitor. Ask me 'is everything home?' any time, and I'll check every evening at 9.",
+  "cup": "Got it: your cup lives on the desk, next to sunglasses. Ask me 'is everything home?' any time, and I'll check every evening at 9."
+ },
+ "homes": {
+  "watch": {
+   "yaw": -34.1,
+   "pitch": 15.8,
+   "near": "on the desk, in front of monitor",
+   "set": 1793484197.0136733,
+   "metres": 0.9
+  },
+  "cup": {
+   "yaw": -17.4,
+   "pitch": 11.3,
+   "near": "on the desk, next to sunglasses",
+   "set": 1793484219.5332584,
+   "metres": 0.95
+  },
+  "keys": {
+   "yaw": 60.0,
+   "pitch": 20.0,
+   "near": "in the bowl by the door",
+   "set": 1793484227.8381271
+  }
+ },
+ "check_said": [
+  "Your watch and your cup are home.",
+  "Your keys aren't home: they are a little to my right, about 2 feet away.",
+  "They live there, in the bowl by the door."
+ ],
+ "last": "They live there, in the bowl by the door.",
+ "points_in_check": [
+  [
+   -21.0,
+   23.1
+  ],
+  [
+   -19.7,
+   22.5
+  ],
+  [
+   60.0,
+   20.0
+  ]
+ ],
+ "rows": [
+  {
+   "thing": "watch",
+   "status": "home",
+   "home": "on the desk, in front of monitor"
+  },
+  {
+   "thing": "cup",
+   "status": "home",
+   "home": "on the desk, next to sunglasses"
+  },
+  {
+   "thing": "keys",
+   "status": "away",
+   "now": "a little to my right, about 2 feet away",
+   "home": "in the bowl by the door"
+  }
+ ],
+ "check_seconds": 46.5,
+ "total_seconds": 97.7
+}

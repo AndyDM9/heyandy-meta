@@ -103,6 +103,8 @@ class Andy:
         self.lost = Lost(self.places.path.parent / "lost.json", clock=self.clock)  # what a search missed: Andy keeps looking
         self._last_lost_look = self.clock()
         self._background = False  # a search Andy started itself (lost and found): no "Let me look", no "oops"
+        self._no_promise = False  # a search for setting a home: if it misses, no "I'll keep looking"
+        self._home_checked = None  # the day of the last evening home check
         self.ear = None  # what the microphones heard lately, as numbers (companion/sound.py Ear); on the robot only
         self._by_sound: float | bool = False  # a search by sound: the yaw it rang at (look only near it, no memory)
         self.screen.online = self.online
@@ -311,6 +313,19 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind == "home_set":
+            return self.set_home(i.thing)
+        if i.kind == "home_check":
+            return self.home_check()
+        if i.kind == "home_where":
+            words = self.places.home_words(i.thing)
+            if not self.places.home(i.thing):
+                return f"Your {i.thing} {'have' if _it(i.thing) == 'them' else 'has'} no home yet. Put {_it(i.thing)} where {_lives(i.thing)} and say: my {i.thing} live{'' if _it(i.thing) == 'them' else 's'} here."
+            return f"Your {i.thing} live{'' if _it(i.thing) == 'them' else 's'} {words or side(self.places.home(i.thing)['yaw'])}."
+        if i.kind == "home_forget":
+            gone = self.places.clear_home(i.thing)
+            self.refresh_panels()
+            return f"Okay, your {i.thing} {'have' if _it(i.thing) == 'them' else 'has'} no home now." if gone else f"Your {i.thing} didn't have a home."
         if i.kind == "sound":
             return self.find_by_sound(i.thing)
         if i.kind == "lost_done":
@@ -568,6 +583,9 @@ class Andy:
             self._source, self._reason = "device", "fixed search on this computer"
             last = None if self._by_sound is not False else self.places.last_seen(thing, now=self.clock())
             usual = None if self._by_sound is not False else self.places.usual(thing)
+            home = None if self._by_sound is not False else self.places.home(thing)
+            if home:  # where it lives, as the person said, before where it has happened to be
+                usual = {**home, "near": self.places.home_words(thing) or "at home", "count": 0, "of": 0}
             self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting")
                              + (f"; usually {usual['near'] or side(usual['yaw'])}" if usual else ""))
             self.gesture("searching")
@@ -781,6 +799,95 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def set_home(self, thing: str) -> str:
+        """"My keys live here": where Andy sees them now becomes their home (memory/places.py), and Andy keeps an eye on
+        them. A search then looks there first, "Is everything home?" checks, and so does Andy each evening."""
+        self.places.watch(thing)  # a thing with a home is kept an eye on
+        self.finder.last_found, self._no_promise = None, True
+        try:
+            self.find(thing, f"where are my {thing}")
+        finally:
+            self._no_promise = False
+        f = self.finder.last_found
+        if f is None:
+            return f"I can't see your {thing} from here. Put {_it(thing)} where {_lives(thing)}, where I can see, and tell me again."
+        near = ""
+        where_near = getattr(self.judge, "where_near", None)
+        if where_near:
+            try:
+                near = where_near(f.frame, f.mask) or ""
+            except Exception:  # noqa: BLE001 - the home is kept by its direction anyway
+                near = ""
+        self.places.set_home(thing, f.yaw, f.pitch, f.metres, near, when=self.clock())
+        self.refresh_panels()
+        return (f"Got it: your {thing} {'live' if _it(thing) == 'them' else 'lives'} {near or side(f.yaw)}. Ask me "
+                f"'is everything home?' any time, and I'll check every evening at {HOME_CHECK_HOUR - 12}.")
+
+    def home_check(self, evening: bool = False) -> str:
+        """"Is everything home?": one look at each thing's home; a thing that isn't there is searched for, pointed at,
+        and then its home is pointed at ("It lives there"); a thing not seen anywhere is looked for again later
+        (memory/lost.py). The TV shows each one: home, away (where it is and where it lives), or not seen."""
+        homes = self.places.homes()
+        if not homes:
+            return "None of your things has a home yet. Put your keys where they live, and say: my keys live here."
+        self.screen.clear()
+        if not evening:
+            self.say("Let me check.", soon=True)
+        home, away, missing, rows = [], [], [], []
+        self.gesture("searching")
+        try:
+            for thing, h in homes.items():
+                there = self.finder.confirm(thing, h["yaw"], h["pitch"])  # one look at where it lives
+                lives = self.places.home_words(thing) or side(h["yaw"])
+                if there:
+                    home.append(thing)
+                    self.places.saw(thing, there.yaw, there.pitch, when=self.clock(), how="found")
+                    rows.append({"thing": thing, "status": "home", "home": lives})
+                    continue
+                self.finder.last_found, self._background = None, True
+                try:
+                    self.find(thing, f"where are my {thing}")
+                finally:
+                    self._background = False
+                f = self.finder.last_found
+                if f:
+                    now = (f"{f.for_you['words']}" if f.for_you else
+                           side(f.yaw) + (f", {how_far(f.metres, metric=self.language != 'en')}" if f.metres is not None else ""))
+                    away.append((thing, h, f, now, lives))
+                    rows.append({"thing": thing, "status": "away", "now": now, "home": lives})
+                else:
+                    missing.append((thing, lives))
+                    self.lost.add(thing)
+                    rows.append({"thing": thing, "status": "missing", "home": lives})
+        finally:
+            self.gesture("idle")
+        self.screen.home_check(rows, evening)
+        self.screen.used("SAM 3.1", self.vision_where, len(homes))
+        self._source, self._reason = "device", f"looked at the home of each of {len(homes)} things, on this computer"
+        self.refresh_panels()
+        if not away and not missing:
+            self.body.look(0.0, 0.0)
+            return ("Everything's home" + (" for the night" if evening else "") + ": " + _join(home) + ".")
+        lines = []
+        if home:
+            lines.append(_join(home)[0].upper() + _join(home)[1:] + (" are" if len(home) > 1 or _it(home[0]) == "them" else " is") + " home.")
+        steps = []
+        for thing, h, f, now, lives in away:
+            them = _it(thing) == "them"
+            steps.append(((f.yaw, f.pitch), f"Your {thing} {'aren' if them else 'isn'}'t home: {'they are' if them else 'it is'} {now}."))
+            steps.append(((h["yaw"], h["pitch"]), f"{'They live' if them else 'It lives'} there, {lives}."))
+        for thing, lives in missing:
+            them = _it(thing) == "them"
+            steps.append((None, f"I can't see your {thing} anywhere; {'they live' if them else 'it lives'} {lives}. I'll keep looking."))
+        if lines:
+            self.say(lines[0])
+        for i, (at, words) in enumerate(steps):
+            if at:
+                self.body.point(*at)
+            if i < len(steps) - 1:
+                self.say(words)
+        return steps[-1][1]
 
     def find_by_sound(self, thing: str = "") -> str:
         """"I'm ringing my phone": turn to the ringing (companion/sound.py turn_to), then look that way with SAM 3.1,
@@ -1604,7 +1711,9 @@ class Andy:
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""
-        said = f"I see your {f.label}{yours}, {where}." + (f" Right where I last saw {_it(f.label)}." if f.remembered else
+        home = self.places.at_home(f.label, f.yaw, f.pitch)
+        said = f"I see your {f.label}{yours}, {where}." + (" Right at home, where " + _lives(f.label) + "." if home else
+                                                           f" Right where I last saw {_it(f.label)}." if f.remembered else
                                                            " Right where you usually leave " + _it(f.label) + "." if f.usual else "")
         opener = FOUND_OPENERS[_it(f.label)][self._finds % len(FOUND_OPENERS["it"])]  # said like a person, in turn
         self._finds += 1
@@ -1620,6 +1729,8 @@ class Andy:
         if self._background:
             return ""  # Andy's own second look: nothing to say, and it keeps looking
         self.emote("oops1")
+        if self._no_promise:
+            return f"I can't see your {thing} from here."
         again, since = not self.lost.add(thing), self.lost.since(thing)
         looks = self.lost.looks(thing)
         if self.ear is not None and thing in RINGS | BEEPS:
@@ -1778,6 +1889,13 @@ class Andy:
             finally:
                 self.gesture("idle")
                 self.screen.doing("Waiting")
+        today = _now(self.clock)
+        if (self.places.homes() and not self.quiet() and today.hour == HOME_CHECK_HOUR
+                and self._home_checked != today.date()):
+            self._home_checked = today.date()
+            self.interrupt_noticing()
+            self.say(self.disclosure.prefix() + f"It's {HOME_CHECK_HOUR - 12} o'clock: let me check your things are home.")
+            self.say(self.home_check(evening=True))
         if not self.quiet() and now - self._last_lost_look >= LOOK_EVERY_S and self.lost.looking():
             self._last_lost_look = now
             self._look_again()
@@ -1843,6 +1961,11 @@ def _n(n: int, word: str) -> str:
     return f"{n} {word}{'s' * (n != 1)}"
 
 
+def _lives(thing: str) -> str:
+    """"it lives" or "they live"."""
+    return "they live" if _it(thing) == "them" else "it lives"
+
+
 def _join(items: list[str]) -> str:
     items = [f"your {x}" for x in items]
     return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
@@ -1894,6 +2017,7 @@ def millimetres(points_f16: bytes) -> bytes:
     return struct.pack(f"<{n}h", *(max(-32000, min(32000, round(v * 1000))) for v in struct.unpack(f"<{n}e", points_f16)))
 
 
+HOME_CHECK_HOUR = 21  # each evening, Andy checks every thing with a home is there (9 pm)
 RINGS = {"phone", "cell phone", "cellphone", "mobile", "mobile phone", "smartphone", "iphone", "tablet", "ipad"}
 BEEPS = {"keys", "key", "wallet", "remote", "bag", "purse"}  # often on a tracker that plays a sound
 HEARD_WITHIN_DEG = 35.0  # by its sound: a thing further than this from where it rang isn't the one ringing

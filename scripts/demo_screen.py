@@ -28,7 +28,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -307,6 +307,14 @@ def show(state: ScreenState, scene: str) -> None:
         state.said("I can hear it, but I can't see it. It's ringing a little to my left, where I'm pointing: it may be "
                    "under something.", "device", "the robot's microphones heard the ringing a little to my left (4 turns); SAM 3.1 looked there")
         state.doing("Pointing", "At the ringing")
+    elif scene == "home":  # "is everything home?": two home, the keys on the sofa, pointed at, then their home
+        state.home_check([{"thing": "glasses", "status": "home", "home": "on the desk, next to the lamp"},
+                          {"thing": "watch", "status": "home", "home": "on the desk, by the keyboard"},
+                          {"thing": "keys", "status": "away", "now": "to my left, about 6 feet away", "home": "in the bowl by the door"}])
+        state._homes["until"] += 3600  # a still for the demo: it stays
+        state.said("They live there, in the bowl by the door.", "device", "looked at the home of each of 3 things, on this computer")
+        state.used("SAM 3.1", "device", 4)
+        state.doing("Pointing", "At your keys' home")
     elif scene == "room":
         points, things = sample_room()
         state.room(points, things, 1.0)

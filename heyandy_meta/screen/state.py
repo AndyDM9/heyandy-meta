@@ -91,6 +91,7 @@ class ScreenState:
         self.rooms = 0  # a version, so the page fetches each room once
         self._guide: dict | None = None  # guiding a hand: the latest frame, the thing's and the hand's outlines, the words
         self.guides = 0  # a version per frame
+        self._homes: dict | None = None  # "is everything home?": each thing home, away (where it is) or not seen
         self._sound: dict | None = None  # turning to a ringing: the thing, each turn and what was heard, where it faces
         self._day = Day(dt.date.fromtimestamp(now()), now())
         self._in_turn = False
@@ -298,6 +299,12 @@ class ScreenState:
                            "cm": None if metres is None else round(metres * 100), "done": False,
                            "until": self._clock() + GUIDE_SECONDS}
 
+    def home_check(self, rows: list[dict], evening: bool = False) -> None:
+        """The home check (app.py home_check): {"thing", "status": home|away|missing, "now", "home"} per thing, in words."""
+        with self._lock:
+            self._picture = self._room = self._timeline = self._web = self.privacy = self._guide = self._sound = None
+            self._homes = {"rows": list(rows), "evening": evening, "until": self._clock() + 90}
+
     def listening(self, thing: str, steps: list, facing: float | None, done: bool = False) -> None:
         """Turning to a ringing (companion/sound.py): each turn's yaw and which side the sound was heard on, and where
         Andy ends up facing it. Numbers only; gone a little after it's over."""
@@ -334,7 +341,7 @@ class ScreenState:
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
             self.checklist, self.privacy = None, None
             self._glimpse = None  # the last frame of a search that found nothing goes too
-            self._room = self._timeline = self._guide = self._sound = None
+            self._room = self._timeline = self._guide = self._sound = self._homes = None
 
     def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
         """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera
@@ -415,6 +422,9 @@ class ScreenState:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
                 out["running"] = stop is None
+            if self._homes and self._clock() >= self._homes["until"]:
+                self._homes = None
+            out["homes"] = {k: v for k, v in self._homes.items() if k != "until"} if self._homes else None
             if self._sound and self._clock() >= self._sound["until"]:
                 self._sound = None
             out["sound"] = {k: v for k, v in self._sound.items() if k != "until"} if self._sound else None
@@ -472,6 +482,9 @@ def _in(out: dict, tr) -> dict:
         out["next"] = {**out["next"], "text": tr(out["next"]["text"])}
     if out["picture"]:
         out["picture"] = {**out["picture"], "words": tr(out["picture"]["words"]), "label": tr(out["picture"]["label"])}
+    if out.get("homes"):
+        out["homes"] = {**out["homes"], "rows": [{k: tr(v) if k in ("thing", "now", "home") else v for k, v in r.items()}
+                                                 for r in out["homes"]["rows"]]}
     if out.get("guide"):
         out["guide"] = {**out["guide"], "words": tr(out["guide"]["words"]), "thing": tr(out["guide"]["thing"])}
     if out["game"]:

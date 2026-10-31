@@ -80,6 +80,17 @@
   #body:has(.drawing), #body:has(.web) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   /* guiding a hand: the view, and the way to move, big enough to read from across a room or with low vision */
+  /* is everything home? one row a thing: home ✓, away → (where it is, where it lives), not seen ? */
+  ul.homes { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; align-content: start; }
+  ul.homes li { display: grid; grid-template-columns: 4.2rem 1fr; gap: 1.2rem; align-items: center; padding: 1rem 1.2rem;
+                border-radius: 1.2rem; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  ul.homes li.away, ul.homes li.missing { background: color-mix(in srgb, var(--outline) 18%, transparent); }
+  ul.homes i { font-style: normal; display: grid; place-items: center; width: 4.2rem; height: 4.2rem; border-radius: 50%;
+               font-size: 2.4rem; font-weight: 800; background: var(--accent); color: var(--panel); }
+  ul.homes li.away i, ul.homes li.missing i { background: var(--outline); color: #070a09; }
+  ul.homes b { font-size: 2.2rem; margin-right: 0.8rem; } ul.homes span { font-size: 1.7rem; color: var(--muted); }
+  ul.homes small { display: block; font-size: 1.5rem; margin-top: 0.3rem; color: var(--ink); }
+  #body small.note { display: block; margin-top: 1.2rem; font-size: 1.25rem; color: var(--muted); }
   /* turning to a ringing: the room from above, front up */
   .sonar { display: grid; justify-items: center; gap: 0.8rem; height: 100%; min-height: 0; grid-template-rows: minmax(0, 1fr) auto; }
   .sonar svg { height: 100%; max-height: 30rem; width: auto; max-width: 100%; aspect-ratio: 1; }
@@ -491,7 +502,7 @@
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
-    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p></div>
+    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p><p>“Hey Andy, my keys live here.” · “Is everything home?”</p></div>
     <div><h3>Remember things</h3><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p></div>
     <div><h3>Talk, look, make</h3><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
@@ -500,7 +511,7 @@
   <h1>¿Qué puedo pedirle a Andy?</h1>
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
-    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p></div>
+    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p><p>“Oye Andy, mis llaves viven aquí.” · “¿Está todo en su sitio?”</p></div>
     <div><h3>Recordar cosas</h3><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p></div>
     <div><h3>Hablar, mirar, crear</h3><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p></div>
   </div>
@@ -570,7 +581,7 @@
                   "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", home: "Everything home?", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -688,6 +699,7 @@
   const ASK = [
     ["guide", /\b(?:help me (?:reach|grab|get to|pick up)|guide (?:my hand|me)|lead my hand)\b|gu[ií](?:e|a)(?:me| mi mano)/i],
     ["sound", /\b(?:ring|ringing|call|calling) (?:my |the |it|them)|\blisten (?:for|out)\b|\bby (?:its|the) (?:sound|ring)|\bfollow the (?:sound|ringing)|\bbeep/i],
+    ["home", /\b(?:live|lives|belong|belongs) (?:here|there)\b|\bis everything (?:home|in (?:its|it's) place|where it belongs)\b|\bwhere (?:do|does) (?:my|the) \w+ (?:live|belong)\b|\b(?:bedtime|home|tidy) check\b|\bstop losing\b/i],
     ["turned", /\bi(?:'ve| have)? found\b|\b(?:stop|keep|still) looking\b|\bwhat are you looking for\b|\bgive up\b|\bturned up\b/i],
     ["room", /\b(?:the room|room in 3d|in 3d|3d|whole room|map of the room)\b/i],
     ["cups", /\b(?:cup game|shell game|shuffle|which cup|under (?:the|a|which) cup|the ball)\b/i],
@@ -704,7 +716,7 @@
     ["find", /\b(?:where|find|lost|misplaced|seen|look for|can'?t find|missing|can you see|do you see)\b/i],
     ["answer", /^\W*(?:what|who|when|how|why|which|is|are|do|does|can|tell me)\b/i],
   ];
-  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "Show me the room", "I'm going out", "Let's play the cup game"];
+  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "Is everything home?", "Show me the room", "Let's play the cup game"];
   let asked = null, asking = 0;
   function route(text) {
     const t = text.replace(/^\W*(?:hey |oye )?andy\W*/i, "");
@@ -1192,6 +1204,27 @@
       kicker = T("The room in 3D"); title = T("Your things, as I measured them just now");
       const key = "room:" + s.room.v + ":" + LANG;
       if (key !== pictureKey) { pictureKey = key; body.replaceChildren(room(s.room)); }
+    } else if (s.homes) {
+      const rows = s.homes.rows, home = rows.filter(r => r.status === "home").length, es = LANG === "es";
+      kicker = s.homes.evening ? (es ? "Antes de dormir · ¿está todo en su sitio?" : "Before bed · is everything home?") : (es ? "¿Está todo en su sitio?" : "Is everything home?");
+      title = home === rows.length ? (es ? "Todo está en su sitio" : "Everything's home")
+            : es ? `${home} de ${rows.length} en su sitio` : `${home} of ${rows.length} ${rows.length === 1 ? "thing is" : "things are"} home`;
+      const key = "homes:" + JSON.stringify(s.homes) + LANG;
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const list = el("ul", null, "homes");
+        for (const r of [...rows].sort((a, b) => (a.status === "home") - (b.status === "home"))) {  // what needs doing, first
+          const li = el("li", null, r.status), mark = { home: "✓", away: "→", missing: "?" }[r.status];
+          const name = r.thing[0].toUpperCase() + r.thing.slice(1);
+          const words = el("div");
+          words.append(el("b", name), el("span", r.status === "home" ? (es ? `en su sitio: ${r.home}` : `home: ${r.home}`)
+              : r.status === "away" ? (es ? `ahora ${r.now}` : `now ${r.now}`) : (es ? "no lo veo" : "not seen: I'll keep looking")));
+          if (r.status !== "home") words.append(el("small", (es ? "Su sitio: " : "Lives ") + r.home));
+          li.append(el("i", mark), words); list.append(li);
+        }
+        body.replaceChildren(list, el("small", es ? "Diga “Oye Andy, mis llaves viven aquí” para darle un sitio a algo." :
+                                                      "Say “Hey Andy, my keys live here” to give a thing a home. Andy checks every evening at 9.", "note"));
+      }
     } else if (s.sound) {
       const g = s.sound, es = LANG === "es";
       kicker = es ? `Escuchando: ${g.thing}` : `Listening for your ${g.thing}`;

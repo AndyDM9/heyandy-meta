@@ -41,6 +41,19 @@ SOUND = re.compile(r"\bi(?:'?m| am) (?:ringing|calling|phoning) (?:my |the )?(?P
                    r"\b(?:find|follow) (?:it|them|(?:my |the )(?P<c>[a-z][a-z '\-]{1,30}?)) by (?:its |their |the )?(?:sound|ring(?:ing)?|beep(?:ing)?)\b|"
                    r"\bfollow the (?:sound|ringing|beeping)\b|\bi(?:'?m| am) playing (?:the|its|a) sound(?: on (?:my |the )?(?P<e>[a-z][a-z '\-]{1,30}?))?(?:\?|$|[,.!]| now| please)|"
                    r"\bestoy llamando a mi (?P<d>tel[eé]fono|celular|m[oó]vil)\b|\bescucha(?:r)? (?:mi |el )?(?:tel[eé]fono|celular)\b", re.I)
+# homes (memory/places.py): "my keys live here", "is everything home?", "where do my keys live?", "forget my keys' home"
+_T = r"[a-z][a-z '\-]{1,30}?"
+HOME_SET = re.compile(r"\b(?:my|the|our) (?P<a>" + _T + r")\s+(?:live|lives|belong|belongs|go|goes|stay|stays)\s+(?:right )?(?:here|there)\b|"
+                      r"\bthis is where (?:my |the |our )?(?P<b>" + _T + r")\s+(?:live|lives|belong|belongs|go|goes)\b|"
+                      r"\b(?:make|set) (?:this|here|that) (?:as )?(?:the )?home (?:for|of) (?:my |the |our )?(?P<c>" + _T + r")(?:\W|$)|"
+                      r"\b(?:my|the|our) (?P<d>" + _T + r")(?:'s|')? home is (?:here|there)\b|"
+                      r"\bmis (?P<e>[a-záéíóúñ ]{2,20}?) (?:viven|van|se quedan) aqu[ií]\b", re.I)
+HOME_CHECK = re.compile(r"\bis everything (?:home|where it belongs|in (?:its|it's) place|put away)\b|"
+                        r"\bare (?:all )?(?:my|the) things (?:home|where they belong|in their places?|put away)\b|"
+                        r"\b(?:home|tidy|bedtime|night(?:ly)?) check\b|\bcheck (?:that )?(?:my|all my|on my) things\b|"
+                        r"\beverything in (?:its|it's) place\b|\best[aá] todo en su (?:sitio|lugar)\b", re.I)
+HOME_WHERE = re.compile(r"\bwhere (?:do|does) (?:my|the|our) (?P<a>" + _T + r") (?:live|belong|go)\b", re.I)
+HOME_FORGET = re.compile(r"\b(?:forget|clear|remove) (?:where )?(?:my|the|our) (?P<a>" + _T + r")(?:(?:'s|') home| (?:live|lives|belong|belongs|go|goes))\b", re.I)
 IT = {"it", "them", "that", "this", "those", "there", "one", "the thing", "mis cosas"}
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
@@ -141,7 +154,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -253,6 +266,14 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("calling", thing="any", text=t)
     if SETUP.search(t):
         return Intent("setup", text=t)
+    for kind, rx in (("home_check", HOME_CHECK), ("home_forget", HOME_FORGET), ("home_where", HOME_WHERE), ("home_set", HOME_SET)):
+        if m := rx.search(t):
+            if kind == "home_check":
+                return Intent(kind, text=t)
+            thing = snap(next(g for g in m.groups() if g).strip().lower())
+            thing = {"llaves": "keys", "gafas": "glasses", "taza": "mug", "reloj": "watch", "lentes": "glasses"}.get(thing, thing)
+            if thing.split()[-1] in KNOWN:  # a thing, not "my kids live here"
+                return Intent(kind, thing=thing, text=t)
     if m := SOUND.search(t):
         said = next((g for g in m.groups() if g), "") or "phone"
         said = {"cell": "phone", "cell phone": "phone", "cellphone": "phone", "mobile": "phone", "mobile phone": "phone",

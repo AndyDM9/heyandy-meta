@@ -36,7 +36,45 @@ class Places:
             self._data["watching"].remove(label)
         self._data["seen"].pop(label, None)
         self._data.get("history", {}).pop(label, None)
+        self._data.get("homes", {}).pop(label, None)
         self._save()
+
+    # --- homes: where a thing lives, as the person said ("my keys live here"); Andy checks they're there ---
+
+    def set_home(self, label: str, yaw: float, pitch: float, metres: float | None = None, near: str = "",
+                 when: float | None = None) -> None:
+        self._data.setdefault("homes", {})[label] = {
+            "yaw": round(yaw, 1), "pitch": round(pitch, 1), "near": " ".join(near.split())[:100], "set": when or time.time(),
+            **({"metres": round(metres, 2)} if metres is not None else {})}
+        self._save()
+
+    def home(self, label: str) -> dict | None:
+        h = self._data.get("homes", {}).get(label)
+        return dict(h) if h else None
+
+    def homes(self) -> dict[str, dict]:
+        return {k: dict(v) for k, v in self._data.get("homes", {}).items()}
+
+    def clear_home(self, label: str) -> bool:
+        gone = self._data.get("homes", {}).pop(label, None) is not None
+        if gone:
+            self._save()
+        return gone
+
+    def at_home(self, label: str, yaw: float, pitch: float) -> bool:
+        """Whether a place is the thing's home (within MOVED_DEG)."""
+        h = self.home(label)
+        return bool(h) and math.hypot(h["yaw"] - yaw, h["pitch"] - pitch) <= MOVED_DEG
+
+    def home_words(self, label: str) -> str:
+        """The home in words: as said when it was set, or the words of a sighting there (written in the background)."""
+        h = self.home(label)
+        if not h:
+            return ""
+        if h["near"]:
+            return h["near"]
+        at = [x for x in self.history(label) if x.get("near") and math.hypot(x["yaw"] - h["yaw"], x["pitch"] - h["pitch"]) <= MOVED_DEG]
+        return at[-1]["near"] if at else ""
 
     def saw(self, label: str, yaw: float, pitch: float, when: float | None = None, metres: float | None = None,
             how: str = "seen") -> bool:

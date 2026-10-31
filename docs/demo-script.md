@@ -33,6 +33,12 @@ my keys", the person walks in and puts the keys down on the table in view; the T
 later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
+**"Is everything home?" (works on the robot):** earlier, "Hey Andy, my watch lives here", "my cup lives here", "my keys
+live here" (each where it sits). Move the keys across the table. "Hey Andy, is everything home?" Andy looks at each
+home: "Your watch and your cup are home. Your keys aren't home: they're a little to my left", pointing at them, then
+turns and points at their home: "They live there, on the desk next to the lamp." The TV lists each. It's the story's
+turn from finding things to not losing them.
+
 **"I'm ringing my phone," if the founder's test 14 goes well:** the phone (ringer on) under a cushion or a newspaper
 at the side of the table, Andy facing away. "Hey Andy, I'm ringing my phone", then ring it from another phone or a
 watch: Andy turns, a step at a time, to the ringing (the TV draws each turn from above), looks there and says "I can

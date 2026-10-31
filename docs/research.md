@@ -908,3 +908,25 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   the demo and fails on any script error (`tests/test_page_runs.py`): a name declared twice while building this
   stopped the whole page, which would have blanked Andy's own TV too, and no other test could see it.
 
+## 45. Homes: from finding things to not losing them (2026-10-31)
+
+- **Why:** everything Andy did was after the loss. The advice people get for things they lose every day is to give
+  each one a home and put it back there; a robot that knows the homes can check, and show the way back.
+- **Built:** "my keys live here" (also "this is where my glasses go", "my keys' home is here", Spanish) finds the
+  thing and keeps where it is as its home, with Glimmer's words for the place, in the home's private place memory
+  (`memory/places.py`: set_home, home_words, at_home; "forget my keys" forgets the home too; "forget my keys' home"
+  only the home). A search for a thing with a home looks there first and says "Right at home, where they live". "Is
+  everything home?" (and at 9 pm each day, once, unless Andy's been asked to be quiet) takes one look at each home; a
+  thing that isn't there gets the full search, is pointed at ("Your keys aren't home: they are a little to my right"),
+  then its home is pointed at ("They live there, in the bowl by the door"); a thing not seen anywhere goes on the
+  lost-and-found list. The TV card lists each, what needs doing first; the phone sees the last check.
+- **Measured on the robot** (`evals/home.py`: the whole app with its voice, a scratch memory; the watch and the cup
+  given homes where they sat, the keys given one 60 degrees to the left, "the bowl by the door", as if left out),
+  three runs. Run 1 (17:59, its record lost when the eval was fixed for saying the last line twice): homes "on the
+  desk, in front of monitor" and "on the desk, next to sunglasses"; the check found both home, found the keys "a
+  little to my right, about 2 feet away", pointed at them and then at their home; 49 s. Run 2 (18:02): the search
+  itself missed the watch (no home set: "I can't see your watch from here") and found the keys nowhere, so: "Your cup
+  is home. I can't see your keys anywhere; they live in the bowl by the door. I'll keep looking." Run 3 (18:04): as
+  run 1, each line said once, 46.5 s. The misses are the search's, not the check's: SAM 3.1 saw the watch at 0.93 in
+  a probe a minute after run 2, and the light was ordinary (mean brightness about 105 of 255).
+
