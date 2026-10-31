@@ -382,34 +382,34 @@
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
-    <div><h3>Find things</h3><p>“Andy, where are my glasses?”</p><p>“Andy, the blue mug, next to the laptop.”</p><p>“Andy, follow the mug.” (then move it; say “stop”)</p></div>
-    <div><h3>Remember things</h3><p>“Andy, keep an eye on my keys.”</p><p>“Andy, what do you remember?”</p><p>“Andy, remind me at 3 pm to call Sam.”</p><p>“Andy, what did you send to the cloud today?”</p></div>
-    <div><h3>Talk, look, make</h3><p>“Andy, what am I holding?” · “What's on the table?”</p><p>“Andy, what's the weather tomorrow?”</p><p>“Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
+    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p></div>
+    <div><h3>Remember things</h3><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p></div>
+    <div><h3>Talk, look, make</h3><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
 </div>
   <div id="help-es" hidden>
   <h1>¿Qué puedo pedirle a Andy?</h1>
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
-    <div><h3>Encontrar cosas</h3><p>“Andy, ¿dónde están mis gafas?”</p><p>“Andy, la taza azul, junto a la computadora.”</p><p>“Andy, sigue la taza.” (muévala; diga “basta”)</p></div>
-    <div><h3>Recordar cosas</h3><p>“Andy, vigila mis llaves.”</p><p>“Andy, ¿qué recuerdas?”</p><p>“Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Andy, ¿qué enviaste a la nube hoy?”</p></div>
-    <div><h3>Hablar, mirar, crear</h3><p>“Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Andy, ¿qué tiempo hará mañana?”</p><p>“Andy, dibújame un faro al amanecer.”</p></div>
+    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p></div>
+    <div><h3>Recordar cosas</h3><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p></div>
+    <div><h3>Hablar, mirar, crear</h3><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p></div>
   </div>
   </div></div></div>
 <script>
   const $ = (id) => document.getElementById(id);
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   const svgNS = "http://www.w3.org/2000/svg";
-  const TRY = ["“Andy, where are my glasses?”", "“Andy, keep an eye on my keys.”", "“Andy, remind me at 3 pm to call Sam.”",
-               "“Andy, draw me a picture of a cat in a sunny garden.”", "“Andy, what am I holding?”", "“Andy, let's play the cup game.”", "“Andy, this is my mug.”", "“Andy, show me the weather radar on the TV.”",
-               "“Andy, the blue mug, next to the laptop.”", "“Andy, what do you remember?”", "“Andy, what did you send to the cloud today?”", "“Andy, what can I ask?”"];
+  const TRY = ["“Hey Andy, where are my glasses?”", "“Hey Andy, keep an eye on my keys.”", "“Hey Andy, remind me at 3 pm to call Sam.”",
+               "“Hey Andy, draw me a picture of a cat in a sunny garden.”", "“Hey Andy, what am I holding?”", "“Hey Andy, let's play the cup game.”", "“Hey Andy, this is my mug.”", "“Hey Andy, show me the weather radar on the TV.”",
+               "“Hey Andy, the blue mug, next to the laptop.”", "“Hey Andy, what do you remember?”", "“Hey Andy, what did you send to the cloud today?”", "“Hey Andy, what can I ask?”"];
   let lastCaption = "", captionAt = 0, pictureKey = "";
   // The TV in Spanish, while Andy speaks it: every fixed label by hand (Andy's own words come translated, from Glimmer).
   let LANG = "en";
   const ES = {
     "Next": "Lo próximo", "Keeping an eye on": "Vigilando", "No reminders": "Sin recordatorios",
-    "“Andy, remind me at 3 pm to call Sam.”": "“Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
-    "Nothing yet. “Andy, keep an eye on my keys.”": "Nada todavía. “Andy, vigila mis llaves.”",
+    "“Hey Andy, remind me at 3 pm to call Sam.”": "“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
+    "Nothing yet. “Hey Andy, keep an eye on my keys.”": "Nada todavía. “Oye Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
     "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
     "Connect your phone": "Conecte su teléfono",
@@ -452,10 +452,10 @@
   };
   const T = (s) => (LANG === "es" && ES[s]) || s;
   const LOCALE = () => (LANG === "es" ? "es-US" : "en-US");
-  const TRY_ES = ["“Andy, ¿dónde están mis gafas?”", "“Andy, vigila mis llaves.”", "“Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
-                  "“Andy, dibújame un gato en un jardín soleado.”", "“Andy, ¿qué tengo en la mano?”", "“Andy, juguemos al juego de los vasos.”",
-                  "“Andy, esta es mi taza.”", "“Andy, muéstrame el radar del tiempo en la tele.”", "“Andy, me voy, ¿llevo todo?”",
-                  "“Andy, ¿qué recuerdas?”", "“Andy, ¿qué enviaste a la nube hoy?”", "“Andy, habla inglés.”"];
+  const TRY_ES = ["“Oye Andy, ¿dónde están mis gafas?”", "“Oye Andy, vigila mis llaves.”", "“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
+                  "“Oye Andy, dibújame un gato en un jardín soleado.”", "“Oye Andy, ¿qué tengo en la mano?”", "“Oye Andy, juguemos al juego de los vasos.”",
+                  "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
+                  "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
   const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
@@ -464,7 +464,7 @@
   // Story mode: what a visitor sees first on the public demo (never on Andy's own TV, and not when a link names a scene).
   const STORY = [
     ["idle", 7, "Meet Andy", "A tabletop robot that finds what you've lost and points at it. This is the TV beside it."],
-    ["finding", 7, "You ask", "“Andy, where's my mug?” It looks around the room; SAM 3.1 outlines every candidate, live."],
+    ["finding", 7, "You ask", "“Hey Andy, where's my mug?” It looks around the room; SAM 3.1 outlines every candidate, live."],
     ["found", 9, "It finds it", "It points, checks the point with its own camera, and MapAnything measures how far away."],
     ["room", 9, "It knows your room", "Five looks become your room in 3D, things pinned. Its shape only, never a picture."],
     ["cups", 7, "Identical cups, told apart", "SAM 3.1 Object Multiplex follows every cup at once through the shuffle."],
@@ -571,7 +571,7 @@
       const at = new Date(t * 1000).toLocaleTimeString(LOCALE(), { hour: "numeric", minute: "2-digit" }).toLowerCase();
       const when = el("div", null, "when"); when.append(at + " · ", el("b", until(t)));
       $("next").replaceChildren(el("h2", s.next.text), when);
-    } else $("next").replaceChildren(el("h2", T("No reminders")), el("div", T("“Andy, remind me at 3 pm to call Sam.”"), "when"));
+    } else $("next").replaceChildren(el("h2", T("No reminders")), el("div", T("“Hey Andy, remind me at 3 pm to call Sam.”"), "when"));
     const seen = (s.map || []).some(p => p.yaw !== undefined);
     const list = el("ul", null, seen ? "compact" : "");
     for (const line of s.watching || []) {  // beside the map, only when; the map shows where
@@ -580,7 +580,7 @@
       li.append(el("span", seen ? " · " + where.split(",")[0] : where)); list.append(li);
     }
     $("watching").replaceChildren(...(list.children.length ? (seen ? [dial(s.map), list] : [list])
-                                     : [el("div", T("Nothing yet. “Andy, keep an eye on my keys.”"), "when")]));
+                                     : [el("div", T("Nothing yet. “Hey Andy, keep an eye on my keys.”"), "when")]));
   }
   // What Andy remembers, as a map around it: front is up, left is left; older sightings fade. With MapAnything's
   // distances it's a floor plan: each thing at its measured distance along the floor, rings in feet. Without them
@@ -1011,12 +1011,12 @@
           say.prepend(el("small", es ? "Dígalo así:" : "Say it like this:")); box.append(bar, chips, say);
         } else if (st.step === "try") {
           const them = /s$/.test(st.thing || "") && !/ss$/.test(st.thing || "");
-          const say = el("div", es ? `«Andy, ¿dónde ${them ? "están mis" : "está mi"} ${st.thing}?»` : `“Andy, where ${them ? "are" : "is"} my ${st.thing}?”`, "say");
+          const say = el("div", es ? `«Oye Andy, ¿dónde ${them ? "están mis" : "está mi"} ${st.thing}?»` : `“Hey Andy, where ${them ? "are" : "is"} my ${st.thing}?”`, "say");
           say.prepend(el("small", es ? "Diga:" : "Say:")); box.append(bar, say);
           if (s.watching && s.watching.length) box.append(steps(s.watching, "ul"));
         } else {
           const does = el("div", null, "does");
-          for (const [b, d] of [["“Andy, where are my keys?”", "It looks, points, and says how far."],
+          for (const [b, d] of [["“Hey Andy, where are my keys?”", "It looks, points, and says how far."],
                                 ["“What happened to my keys today?”", "Where they've been, as it knew it."],
                                 ["“What did you send to the cloud today?”", "Every word that left, counted. Never a picture."]]) {
             const x = el("div", d); x.prepend(el("b", b)); does.append(x);
@@ -1028,7 +1028,7 @@
         kicker = T("Try asking");
         const tries = LANG === "es" ? TRY_ES : TRY;
         const fresh = !(s.watching && s.watching.length);  // nothing set up yet: the setup first
-        const t = el("div", fresh ? (LANG === "es" ? "«Andy, empecemos.»" : "“Andy, let's get started.”")
+        const t = el("div", fresh ? (LANG === "es" ? "«Oye Andy, empecemos.»" : "“Hey Andy, let's get started.”")
                                   : tries[Math.floor(Date.now() / 20000) % tries.length], "try");
         if (fresh) t.prepend(el("small", LANG === "es" ? "¿Es nuevo aquí?" : "New here?"));
         t.append(el("small", T("Andy sees and hears on this computer. Pictures and voice never leave your home.")));
@@ -1096,8 +1096,8 @@
     $("a-time").textContent = `${h}:${m}`;
     $("a-day").textContent = d.toLocaleDateString(LANG === "es" ? "es" : "en-US", { weekday: "long", month: "long", day: "numeric" });
     const fresh = !(s.watching && s.watching.length);
-    $("a-say").textContent = fresh ? (LANG === "es" ? "¿Es nuevo aquí? Diga «Andy, empecemos»." : "New here? Say “Andy, let's get started.”")
-                                   : (LANG === "es" ? "Diga «Andy» cuando quiera." : "Say “Andy” anytime.");
+    $("a-say").textContent = fresh ? (LANG === "es" ? "¿Es nuevo aquí? Diga «Oye Andy, empecemos»." : "New here? Say “Hey Andy, let's get started.”")
+                                   : (LANG === "es" ? "Diga «Oye Andy» cuando quiera." : "Say “Hey Andy” anytime.");
     const notes = $("a-notes"); notes.replaceChildren();
     if (s.next) { const x = el("span"); x.append(el("b", T("Next") + ": "), s.next.text); notes.append(x); }
     if (s.watching && s.watching.length) {

@@ -33,7 +33,7 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 | 1. You ask | 2. It finds it | 3. It knows your room |
 |---|---|---|
 | ![While Andy looks: each view live on the TV, every candidate outlined by SAM 3.1](docs/images/tv-finding.png) | ![Found: the picture with the mug outlined, the seconds, the aim its camera checked, and how far](docs/images/tv-found.png) | ![The room in 3D: its shape from MapAnything over five looks, things pinned with their distances](docs/images/tv-room.png) |
-| "Andy, where's my mug?" It turns to your voice and looks; SAM 3.1 outlines every candidate, live, on the computer beside it. | It points, checks with its own camera that the point landed, and MapAnything says how far: "a little to my right, about 4 feet away". | "Andy, show me the room." Five looks become your room in 3D, your things pinned: its shape only, never a picture. |
+| "Hey Andy, where's my mug?" It turns to your voice and looks; SAM 3.1 outlines every candidate, live, on the computer beside it. | It points, checks with its own camera that the point landed, and MapAnything says how far: "a little to my right, about 4 feet away". | "Hey Andy, show me the room." Five looks become your room in 3D, your things pinned: its shape only, never a picture. |
 
 ## Why it's different
 
@@ -60,10 +60,10 @@ Failures are kept too: every scorecard, and what changed because of it, is in `e
 
 ## The details: what it does
 
-**New here? "Andy, let's get started."** Three steps, spoken, the TV showing each: Andy says what it does and that
+**New here? "Hey Andy, let's get started."** Three steps, spoken, the TV showing each: Andy says what it does and that
 what it sees and hears stays in the house, and measures the room in 3D; asks what you lose most ("my keys and my
 glasses"), keeps an eye on them, looks for them all at once and points at each one it sees; then "Now try me: say,
-'Andy, where are my keys?'", and ends with the privacy promise. "Skip" ends it; crisis words still come first; when
+'Hey Andy, where are my keys?'", and ends with the privacy promise. "Skip" ends it; crisis words still come first; when
 nothing is set up, the TV suggests it. On the robot: the room, the keys and glasses watched and pointed at, the keys
 found, "You're all set", in three sentences.
 
@@ -78,7 +78,7 @@ found, "You're all set", in three sentences.
    If Andy can't see you, it says it from its own side, as before (`finder/perspective.py`).
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
-4. **"Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and
+4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and
    **MapAnything** (Meta's 3D model) turns the looks into the room's shape, joined by the head's own measured angles,
    on the computer beside the robot (about 1 s for all five). The TV draws it in 3D, turning slowly: dots for the shape,
    never a colour or a picture, your things as pins with how far each is. It's gone from the TV after two minutes and
@@ -90,7 +90,7 @@ found, "You're all set", in three sentences.
    the TV says "Noticed: your keys, put down". Nothing moving, or the picture moving because Andy's head did: nothing
    is asked. On the robot with nobody there, 6 of 6 clips asked nothing; forced onto an empty clip, V-JEPA 2 gave
    "put down" 0.004 to 0.04 (it acts at 0.5). Not yet tried with a person putting something down.
-6. **"Andy, what happened to my keys today?"** Andy's memory of a watched thing is a story, not a dot: each place
+6. **"Hey Andy, what happened to my keys today?"** Andy's memory of a watched thing is a story, not a dot: each place
    records how Andy knew it (found in a search, seen in passing, put down in view, the room scan) and when it was
    picked up, and the TV draws the day as a timeline. **"Where do I usually leave my keys?"** "Usually on the desk,
    behind the keyboard: 4 of the 6 places I've seen them." When the last place is empty, Andy looks at the usual one
@@ -101,31 +101,31 @@ found, "You're all set", in three sentences.
    working with no internet. A plain "where are my glasses?" uses a fixed sweep, which needs no model to plan.
 8. **"The blue mug next to the laptop."** When there are look-alikes, Glimmer compares them and picks the one you
    described. A picture of your glasses on the TV isn't mistaken for your glasses.
-9. **"Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
+9. **"Hey Andy, follow the mug."** Andy keeps its eyes on a thing as you move it around: SAM 3.1 finds it about twice a
    second on the computer beside the robot, and past the head's reach the base turns. Say "stop" when you're done.
-10. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
+10. **"Hey Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
    points at any still here ("Your keys are still here, on the desk"), says which it didn't see (so they're probably
    with you), reminds you of the next reminder, and, looked up by Muse Spark while the robot was checking, whether to
    take an umbrella. 7 to 8.5 s with the robot simulated, 37 to 42.5 s on the robot; the TV shows the checklist.
-11. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
+11. **"Hey Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
    shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
    cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
    draws each cup's path, and Andy watches the reveal and keeps score.
-12. **"Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
+12. **"Hey Andy, this is my mug."** Hold it up and turn it; Andy learns it by sight. Later, "where's my mug?" skips
    anyone else's. What it looks like is kept as numbers on the computer beside the robot (DINOv2, Meta's open image
    model, plus a colour fingerprint, over SAM 3.1's mask of the mug alone), never a picture. "Forget my mug" deletes it.
-13. **"Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
+13. **"Hey Andy, show me the weather radar on the TV."** Muse Spark's web search picks the page, a clean browser on the
    computer beside the robot opens it (no sign-ins, no downloads), and Muse Spark's computer use brings what was asked
    into view; the TV shows each step, with a dot where Andy clicks. "Scroll down", "go back". Code reviews every action
    before it runs: nothing personal is typed, and a sign-in or payment page ends it. Screenshots of web pages go to the
    cloud; the camera never does, and the TV's privacy receipt says which went.
-14. **"Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
+14. **"Hey Andy, draw me a lighthouse at dawn."** Muse Image makes the picture from your words; it shows on the TV and is
    saved to your Pictures folder to print or share. "Make it sunset" changes it. **"Draw me a map of my things"** paints
    where the things Andy keeps an eye on were last seen, from words only (what each is near, and which way), labelled
    large: a drawing from memory, not a photo.
-15. **"Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
+15. **"Hey Andy, what am I holding?" / "What's on the table?"** Andy looks (at your hands, found with SAM 3.1, or down
    at the table) and Glimmer says what it sees, on the computer beside the robot.
-16. **"Andy, what's that?"** (while pointing) Glimmer sees what you're pointing at, SAM 3.1 finds it, and Andy points
+16. **"Hey Andy, what's that?"** (while pointing) Glimmer sees what you're pointing at, SAM 3.1 finds it, and Andy points
    at it too: "You mean the lamp?" On public photos Glimmer named the thing in 4 of 6 and imagined none; not yet tried
    with a person in the room.
 17. **"Find my glasses, and remind me at 5 to clean them."** More than one thing at once goes to an agent: Muse Spark
@@ -135,15 +135,21 @@ found, "You're all set", in three sentences.
 18. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
    moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
    ("every morning at 8").
-19. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
+19. **"Oye Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
    SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (about 0.5 s
    a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
-20. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
+20. **Talk to it.** "Hey Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
-21. **Ask from any room, on your phone** (opt-in: `--remote`). "Andy, connect my phone" puts a web address and six
+   **How to call it: "Hey Andy".** Andy is the robot's name; HeyAndy is the company and how you call him, as "Hey
+   Meta" and "Hey Google" are. "Hey Andy" is three syllables to the name's two (wake phrases of about three syllables are
+   recommended, and short single words wake by accident more often); speech-to-text often hears a lone "Andy" as "and";
+   and "Andy" is a person's name in many homes (Amazon's "Alexa" became a hard name for children to carry). Plain
+   "Andy" still works, and follow-ups need no name; in a home with someone called Andy, "Hey Andy, only answer to 'Hey
+   Andy'" makes it so ("answer to Andy too" undoes it; it's remembered). In Spanish, "Oye Andy".
+21. **Ask from any room, on your phone** (opt-in: `--remote`). "Hey Andy, connect my phone" puts a web address and six
    numbers on the TV for three minutes; the phone that types them is paired. From the front door or the kitchen, tap
    "Where are my keys?": Andy finds and points in its room and says it there, and the phone follows it live (looking,
    pointing) and shows the find: the picture with SAM 3.1's outline, how long, how far, and the privacy receipt. Only
@@ -153,7 +159,7 @@ found, "You're all set", in three sentences.
 22. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
    computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
    plan steps, questions), plus screenshots of a web page you ask to see on the TV; Muse Image gets words. The TV's
-   privacy receipt shows exactly what went, every turn. **"Andy, what did you send to the cloud today?"** adds up the
+   privacy receipt shows exactly what went, every turn. **"Hey Andy, what did you send to the cloud today?"** adds up the
    day's receipts on the computer beside the robot (so asking sends nothing): "Today, 21 of your 24 requests stayed in
    this house. For the other 3, I sent 68 words to Muse Spark..." Only the counts are kept, in memory, never the words.
    One switch is the exception, for filming only: `--staged-scene`, in a staged room with nobody in it, sends the camera's
@@ -200,7 +206,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **Agents that plan the search with the robot's tools:** Muse Spark online, Muse Glimmer on this computer, with the
   same checked tools (named views and numbered places, never motor values), ten looks at most, no repeat looks, and
   Andy's words written from the tools' results, never the model's.
-- **Following:** "Andy, follow the mug": the eyes follow it as it's moved, about 2.4 frames a second.
+- **Following:** "Hey Andy, follow the mug": the eyes follow it as it's moved, about 2.4 frames a second.
 - **Memory with a history, in words:** an opt-in idle glance notes where chosen things are; Glimmer describes each new
   place by what's near it ("on the desk in front of the monitor, behind the keyboard"), and Andy notes when a thing
   moved. "When did you last see my keys?" is answered from memory without moving. Never a picture.
@@ -291,7 +297,7 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 - **the day's privacy,** when asked: how many requests stayed in the house, and what went to which model;
 - **captions of Andy's words** (never the person's).
 
-"Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every
+"Hey Andy, what can I ask?" opens a guide. Frosted panels over colour that follows the time of day, a calm night mode, every
 text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (large, high-contrast type) served
 by Andy itself: the TV asks nothing of anyone outside the house.
 

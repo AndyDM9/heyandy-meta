@@ -46,8 +46,8 @@ from .robot.body import Body
 from .screen.state import ScreenState
 
 GLANCE_EVERY_S = 5 * 60
-HONEST = ("I can't do that from a chat. Say it to me directly, like: Andy, remind me in ten minutes to stretch, or: "
-          "Andy, where are my keys?")
+HONEST = ("I can't do that from a chat. Say it to me directly, like: Hey Andy, remind me in ten minutes to stretch, or: "
+          "Hey Andy, where are my keys?")
 ANSWER_WITHIN_S = 60
 WEB_MORE_WITHIN_S = 3 * 60  # "scroll down", "go back": the web page on the TV, for three minutes
 REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten minutes  # how long Andy's question ("remind you about what, and when?") waits for the answer
@@ -119,6 +119,7 @@ class Andy:
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
         self._listener: tuple | None = None  # where the person is, during a find (yaw, pitch, metres)
+        self.hey_only = False  # answer only to "Hey Andy" (voice/loop.py); asked for, and remembered
         self._setup: dict | None = None  # the guided first minutes: {"step": "things" or "try", "at", ...}
         self.pairing = None  # phones that may ask Andy from another room (screen/remote.py); None: not started with --remote
         self.remote_url = ""
@@ -317,6 +318,11 @@ class Andy:
             return self.what_time(day=i.thing == "day")
         if i.kind == "room":
             return self.scan_room()
+        if i.kind == "calling":
+            self.hey_only = i.thing == "hey only"
+            self.save_voice()
+            return ("Okay. From now on I'll only answer to 'Hey Andy', so someone called Andy won't wake me by accident."
+                    if self.hey_only else "Okay, I'll answer to plain 'Andy' too.")
         if i.kind == "setup":
             return self.start_setup()
         if i.kind == "pair_phone":
@@ -667,7 +673,7 @@ class Andy:
 
     def save_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
-        saved = {"liveliness": self.liveliness, "language": self.language}
+        saved = {"liveliness": self.liveliness, "language": self.language, "hey_only": self.hey_only}
         if self.voice is not None:
             saved.update(speed=self.voice.speed, loudness=self.voice.loudness)
         write_private(path, json.dumps(saved))
@@ -688,6 +694,7 @@ class Andy:
             if self.voice is not None:
                 self.voice.speed, self.voice.loudness = saved.get("speed", 1.0), saved.get("loudness", -21.0)
             self.liveliness = saved.get("liveliness", 1.0)
+            self.hey_only = bool(saved.get("hey_only", False))
             self._set_liveliness(self.liveliness)
             if saved.get("language", "en") in LANGUAGES and (saved.get("language") == "en" or self.translator):
                 self.language = saved.get("language", "en")
@@ -1263,7 +1270,7 @@ class Andy:
         if SKIP.match(text):
             self._setup = None
             self.screen.setup(None)
-            return "Okay, we'll leave it there. Say 'Andy, let's get started' any time."
+            return "Okay, we'll leave it there. Say 'Hey Andy, let's get started' any time."
         step = self._setup["step"]
         if step == "things":
             things = things_in(text)
@@ -1274,7 +1281,7 @@ class Andy:
                 return "Which things? For example, say: my keys and my glasses."
             self._setup = {"step": "try", "at": self.clock(), "thing": "keys"}
             self.screen.setup("try", {"thing": "keys"})
-            return "No problem: tell me later with 'keep an eye on my keys'. Now try me: say, 'Andy, where are my keys?'"
+            return "No problem: tell me later with 'keep an eye on my keys'. Now try me: say, 'Hey Andy, where are my keys?'"
         self._setup = None  # step "try": whatever they say is answered as usual, and the setup ends with it
         said = self._answer(text)
         write_private(self.places.path.parent / "setup.json", json.dumps({"done_at": self.clock()}))
@@ -1304,7 +1311,7 @@ class Andy:
         self.screen.setup("try", {"thing": first})
         return (f"I'll keep an eye on {_join(things)}."
                 + (f" I couldn't see {_join(missing)} just now; I'll notice when I do." if missing else "")
-                + f" Now try me: say, 'Andy, where {'are' if _it(first) == 'them' else 'is'} my {first}?'")
+                + f" Now try me: say, 'Hey Andy, where {'are' if _it(first) == 'them' else 'is'} my {first}?'")
 
     # --- a phone as a remote (screen/remote.py) ---
 

@@ -9,28 +9,28 @@ personal in view). The TV page is screen-recorded at the same time.
 | 0:00–0:06 | Title card | **Required first line (FAQ):** what existed before (a Reachy Mini; our own earlier object-finding prototype) and that everything shown was built this week on Meta's models. *(the founder's exact words)* |
 | 0:06–0:16, a caption over the problem shot | One plain line, as the organizers asked (Oct 30 ruling): | "Andy gives no health advice. It finds things, remembers where they are, and reminds you of what you asked." |
 | 0:06–0:16 | A person patting their pockets | The problem in one line: the same few things go missing every day, and a camera that streams your home to the cloud is a camera most people won't have. |
-| 0:16–0:55 | **The uncut find**, robot and TV side by side, badge "autonomous · uncut · 1× speed" | "Andy, where are my glasses?" Andy turns to the voice, "Let me look", sweeps, **skips the glasses on the TV**, looks closer and points: "There they are! I see your glasses, to my right, about 5 feet away. Not the picture of one on the screen." The TV, filmed beside the robot: **while it looks, each view live with SAM 3.1's outlines on every candidate**; then the found picture with three large figures (seconds to find it, degrees off target checked by its camera, feet away from MapAnything) and the models used. |
-| 0:55–1:12 | **Follow the mug** | "Andy, follow the mug." The person slides it around the table; Andy's eyes stay on it, the base turning past the head's reach. "Stop." |
-| 1:12–1:32 | **Several things at once** | "Andy, find the cup and remind me in two minutes to call Sam." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
-| 1:32–1:46 | **Unplug the network** | The TV says Offline; "Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
-| 1:46–2:04 | Quick cuts | **"Andy, show me the room"** (five looks, then the room's shape in 3D turning on the TV with your things pinned: MapAnything; about 35 s, so a labelled time cut to the TV) · "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 31 s on the robot, a labelled time cut) |
+| 0:16–0:55 | **The uncut find**, robot and TV side by side, badge "autonomous · uncut · 1× speed" | "Hey Andy, where are my glasses?" Andy turns to the voice, "Let me look", sweeps, **skips the glasses on the TV**, looks closer and points: "There they are! I see your glasses, to my right, about 5 feet away. Not the picture of one on the screen." The TV, filmed beside the robot: **while it looks, each view live with SAM 3.1's outlines on every candidate**; then the found picture with three large figures (seconds to find it, degrees off target checked by its camera, feet away from MapAnything) and the models used. |
+| 0:55–1:12 | **Follow the mug** | "Hey Andy, follow the mug." The person slides it around the table; Andy's eyes stay on it, the base turning past the head's reach. "Stop." |
+| 1:12–1:32 | **Several things at once** | "Hey Andy, find the cup and remind me in two minutes to call Sam." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
+| 1:32–1:46 | **Unplug the network** | The TV says Offline; "Hey Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
+| 1:46–2:04 | Quick cuts | **"Hey Andy, show me the room"** (five looks, then the room's shape in 3D turning on the TV with your things pinned: MapAnything; about 35 s, so a labelled time cut to the TV) · "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 31 s on the robot, a labelled time cut) |
 | 2:04–2:16 | The reminder, two minutes later (a labelled time cut) | Andy finds the person, turns to them: "You asked me to remind you: call Sam." |
 | 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 (and V-JEPA 2, if "Andy notices" is in) on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
 | 2:44–3:00 | Robot close-up | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. |
 
 **The cup game, if it scores well with real cups:** it replaces "Follow the mug" at 0:55 to 1:12 and becomes the X clip.
-"Andy, let's play the cup game": the ball goes under a cup, a slow shuffle, "Let me replay that" (a labelled time cut over
+"Hey Andy, let's play the cup game": the ball goes under a cup, a slow shuffle, "Let me replay that" (a labelled time cut over
 the replay), Andy points, the cup is lifted, and the TV shows every cup's path. It shows SAM 3.1's Object Multiplex
 doing what finding frame by frame can't: telling identical cups apart as they cross.
 
 **"This is my mug," if the founder's two-mug test goes well:** it fits the uncut find (0:16 to 0:55) instead of "the
-blue one": "Andy, this is my mug" (held up and turned), then with a second mug of another colour on the table, "Andy,
+blue one": "Hey Andy, this is my mug" (held up and turned), then with a second mug of another colour on the table, "Andy,
 where's my mug?" The TV lists each mug's likeness ("58% like yours: not yours", "91%: yours"). It shows a Meta open model
 (DINOv2) and the privacy story in one line: "I keep what it looks like as numbers, never a picture."
 
 **"Andy notices," if the founder's test 11 goes well** (`uv run python -m evals.notice --person`): after "keep an eye on
 my keys", the person walks in and puts the keys down on the table in view; the TV says "Noticed: your keys, put down";
-later, "Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
+later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
 **Things can be anywhere round the robot now:** the sofa at 85 degrees to its left was pointed at 8 of 8. A thing to the
@@ -44,9 +44,9 @@ to them once Andy has seen them), and it wakes the moment the person says "Andy"
 door: "Where are my keys?" tapped on the phone; cut to the robot turning and pointing in the living room; back to the
 phone showing the find with its outline and "Nothing left the house". A companion that isn't stuck in one room.
 
-**An opening that shows everything at once:** "Andy, let's get started." The room appears in 3D; "What do you lose
+**An opening that shows everything at once:** "Hey Andy, let's get started." The room appears in 3D; "What do you lose
 most often?" "My keys and my glasses."; Andy looks once and points at each ("There are your keys... and your
-glasses"); "Now try me": "Andy, where are my keys?", the Reveal, "You're all set". About 90 s on the robot: cut it to
+glasses"); "Now try me": "Hey Andy, where are my keys?", the Reveal, "You're all set". About 90 s on the robot: cut it to
 the room, the two points and the Reveal.
 
 **The X clip (30 s, vertical, `make_film.py --shape vertical`):** the first second is the head turning to point; the
@@ -56,6 +56,9 @@ model is Meta's."
 **Cards (ready in `film/`, not committed):** `card-open.png` (HeyAndy's signature and the required line on what was
 pre-existing; replace the line with the founder's own words if they differ) and `card-end.png` (the signature, "Andy finds
 what you've lost, and points at it.", every model Meta's, no health advice, the links). The TV wears the same signature.
+
+**Say "Hey Andy" on camera, every time.** HeyAndy is the company, and "Hey Andy" is how people call him: every
+request in the video says the brand out loud (and it wakes Andy more reliably than the name alone).
 
 ## Filming day, step by step
 
@@ -68,13 +71,13 @@ what you've lost, and points at it.", every model Meta's, no health advice, the 
    turn had been counted twice), the camera-checked aim is a median 4 to 5 degrees, under 9 at worst, across the table, out
    to about 50 degrees each side (`unattended-20261031-0924` and `-1106`). Keys: a bunch of keys, not a single key, and not touching
    a keyboard.
-3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Andy, speak English".
+3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Hey Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
    each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/take1.webm --room-is-staged`
    (once beforehand: `uv run --with playwright playwright install ffmpeg`). Line it up with the camera footage in the
    edit: Andy's first word is an easy sync point.
 5. **Takes,** in the storyboard's order. Speak at a normal distance, start with "Andy", and wait for Andy to finish.
-   Something goes wrong: "Andy, stop", then the next take; if Andy stops answering, restart it (step 1's command, 20 s)
+   Something goes wrong: "Hey Andy, stop", then the next take; if Andy stops answering, restart it (step 1's command, 20 s)
    and run the preflight again.
 6. **Between takes:** nothing to delete on this computer (Andy keeps no pictures or audio); `film/` is never committed.
    Keep every take that's used, uncut, for the "autonomous · uncut · 1× speed" badge.

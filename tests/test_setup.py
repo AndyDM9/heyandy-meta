@@ -19,7 +19,7 @@ def test_lets_get_started_watches_what_you_lose_points_at_it_and_ends_with_a_try
     points = [e for e in body.log if e[0] == "point"]
     assert len(points) == 2 and {round(p[1]) for p in points} == {-20, 15}  # it pointed at each one it saw
     assert "There are your keys." in [e[1] for e in body.log if e[0] == "say"]
-    assert "Now try me: say, 'Andy, where are my keys?'" in said
+    assert "Now try me: say, 'Hey Andy, where are my keys?'" in said
     assert "I'll keep an eye on your keys and your glasses." in said and "your your" not in said
     assert a.screen.snapshot()["setup"] == {"step": "try", "thing": "keys"}
     said = a.hear("Andy, where are my keys?")

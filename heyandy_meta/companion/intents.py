@@ -54,6 +54,11 @@ REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders
 # A phone as a remote (screen/remote.py): pair one, or forget them all ("forget my phone" is a watched thing)
 PAIR_PHONE = re.compile(r"\b(?:connect|pair|add|link|set up)(?: up)? (?:my|a|the|this|our) (?:phone|mobile|cell ?phone)\b", re.I)
 FORGET_PHONES = re.compile(r"\b(?:forget|disconnect|unpair|remove) (?:my|all|all my|the|our) (?:paired )?phones\b", re.I)
+# How Andy is called: "only answer to 'Hey Andy'" (someone at home is called Andy), or "answer to Andy too"
+HEY_ONLY = re.compile(r"\b(?:only (?:answer|respond|listen|wake(?: up)?) (?:to|for|on)|(?:answer|respond|listen) only to)\s+"
+                      r"(?:the words? )?[\"'“‘]?(?:hey|oye) andy\b", re.I)
+ANY_NAME = re.compile(r"\b(?:answer|respond|listen) to (?:plain |just )?[\"'“‘]?andy[\"'”’]? (?:too|again|as well|alone)\b|"
+                      r"\b(?:plain|just) [\"'“‘]?andy[\"'”’]? is (?:fine|ok(?:ay)?)\b", re.I)
 # The guided first five minutes (app.py start_setup): "Andy, let's get started"
 SETUP = re.compile(r"\b(?:let'?s get started|get (?:me |us )?started|set (?:you|yourself|andy) up|start (?:the )?(?:setup|tour)|"
                    r"show me how (?:you|it) works?|teach me how to use you)\b", re.I)
@@ -116,7 +121,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -222,6 +227,10 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("pair_phone", text=t)
     if FORGET_PHONES.search(t):
         return Intent("forget_phones", text=t)
+    if HEY_ONLY.search(t):
+        return Intent("calling", thing="hey only", text=t)
+    if ANY_NAME.search(t):
+        return Intent("calling", thing="any", text=t)
     if SETUP.search(t):
         return Intent("setup", text=t)
     for kind, rx in (("story", STORY), ("usual", USUAL)):  # only a thing people lose, not "the world today"

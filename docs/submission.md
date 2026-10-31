@@ -20,17 +20,17 @@ table, looks around the room for you, points at the thing, and keeps what it see
 
 ## What it does
 
-- **"Andy, where are my glasses?"** Andy turns to your voice and looks around; the TV shows each view live, every
+- **"Hey Andy, where are my glasses?"** Andy turns to your voice and looks around; the TV shows each view live, every
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
-- **"Andy, show me the room."** Five looks, SAM 3.1 marking your things in each, joined by MapAnything into the room's
+- **"Hey Andy, show me the room."** Five looks, SAM 3.1 marking your things in each, joined by MapAnything into the room's
   shape in 3D on the TV: dots, never a picture, your things as pins with their distances. Gone in two minutes.
 - **"Keep an eye on my keys."** Andy remembers where your chosen things were last seen, in words ("on the desk, behind
   the keyboard") and how far. While it watches and you're in view, **V-JEPA 2** notices a watched thing put down and
   updates its place.
 - **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it.
-- **"Andy, I'm going out."** Andy points at what's still here ("Don't forget your keys") while Muse Spark checks
+- **"Hey Andy, I'm going out."** Andy points at what's still here ("Don't forget your keys") while Muse Spark checks
   whether you'll need an umbrella.
 - **"This is my mug"** (learned by sight, as numbers), **"what's that?"** (Andy looks where you point and points too),
   **the cup game** (SAM 3.1 Object Multiplex tracks every cup at once). Built and measured on photos and synthetic
@@ -55,7 +55,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
-this house"; "Andy, what did you send to the cloud today?" adds up the day's. Unplug the network and Andy carries on.
+this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's. Unplug the network and Andy carries on.
 (The one exception is a switch for filming in a staged room: SAM 3.1 through the API, and the TV says so.)
 
 ## Technical depth (what was hard)

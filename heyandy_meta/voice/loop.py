@@ -1,6 +1,6 @@
 """The spoken conversation: Andy answers when called by name, then keeps listening for a short while.
 
-Only speech that starts with "Andy" (or "hey Andy") is answered; after an answer, follow-ups need no name for
+Only speech that starts with "Hey Andy" (or plain "Andy", unless Andy was asked to answer only to "Hey Andy") is answered; after an answer, follow-ups need no name for
 ``follow_up_s``. When called, Andy turns towards the voice first, using the microphone array's direction. While it
 speaks, the microphone is ignored so it doesn't answer itself.
 """
@@ -19,6 +19,10 @@ NAME = r"(?:andy|andi|andí|andie|andee|endy|earndy|handy|annie)"
 WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
 # The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.
 LATER = re.compile(r"\b(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
+# "Answer only to 'Hey Andy'" (a home with someone called Andy): the greeting is needed, plain "Andy" is a person
+HEY = r"(?:hey|hi|hello|ok|okay|oye|hola)\s+"
+HEY_WAKE = re.compile(r"^\W*" + HEY + r"(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
+HEY_LATER = re.compile(r"\b" + HEY + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
 
 
 class VoiceLoop:
@@ -44,7 +48,10 @@ class VoiceLoop:
             return "Stopped."
         if _looping(text):
             return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
-        called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
+        if getattr(self.andy, "hey_only", False):  # only "Hey Andy" (or "Oye Andy"): plain "Andy" may be a person
+            called = HEY_WAKE.match(text) or next(reversed(list(HEY_LATER.finditer(text))), None)
+        else:
+            called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
         if not text or (not called and self._clock() > self.awake_until):
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text

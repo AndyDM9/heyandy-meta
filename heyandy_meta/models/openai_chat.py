@@ -13,7 +13,7 @@ SYSTEM = ("Reasoning effort: low. You are Andy, a small tabletop robot in someon
           "have. You never give medical advice and never ask for money or passwords. "
           "In this conversation you can only talk: you cannot see, move, look for things, watch things, or set "
           "reminders, and you must never say you did or will. If asked to, tell the person to say it to you directly, "
-          "for example: 'Andy, remind me at 3 pm to call Sam' or 'Andy, where are my keys?'")
+          "for example: 'Hey Andy, remind me at 3 pm to call Sam' or 'Hey Andy, where are my keys?'")
 
 
 def chat(client, model: str, prompt: str, source: str, max_tokens: int = 600, sleep=time.sleep,
