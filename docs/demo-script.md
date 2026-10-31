@@ -40,6 +40,10 @@ side or behind, with "I think it's behind you, on the left", makes the agent's m
 `http://127.0.0.1:8765/?ambient=now` to have it at once for the opening shot (the person walks in; the face's eyes turn
 to them once Andy has seen them), and it wakes the moment the person says "Andy".
 
+**From the front door, if the remote is on** (`--remote`; pair the phone beforehand): the person, coat on, at the
+door: "Where are my keys?" tapped on the phone; cut to the robot turning and pointing in the living room; back to the
+phone showing the find with its outline and "Nothing left the house". A companion that isn't stuck in one room.
+
 **The X clip (30 s, vertical, `make_film.py --shape vertical`):** the first second is the head turning to point; the
 TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
 model is Meta's."

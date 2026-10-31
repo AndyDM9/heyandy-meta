@@ -769,3 +769,17 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   next to and left of the keyboard, about 2 feet away); "where do I usually leave my cup?": "on the desk, next to the
   phone stand, about 3 feet away: 3 of the 8 places"; a find then recalled both and found the cup at the last place.
   Places written before this had no "how", and are told as "I saw".
+
+## 37. Andy in your pocket: a paired phone (2026-10-31)
+
+- **Why:** you notice a thing is missing away from the robot: at the door, in the kitchen. Asking from a phone, and
+  seeing the find there, makes Andy useful in those moments.
+- **Built (opt-in, `--remote`):** a second small server on the home-network address (screen/remote.py) with three
+  calls: /pair (six numbers shown on the TV for three minutes, five wrong tries end them, one phone per code; the phone
+  gets a key in an HttpOnly, SameSite=Strict cookie, and only its SHA-256 is written down), /state (the TV's state cut
+  to what a phone needs: what Andy is doing and saying, the find, the receipt; nothing before pairing) and /ask (a turn
+  on its own thread; "busy" while another runs). It refuses addresses outside the home network, requests by another
+  host name (DNS rebinding) and posts from another site's page. "Forget my phones" removes every key.
+- **Tried on the robot (2026-10-31), the remote on 127.0.0.1 only:** paired from a phone-sized browser, tapped "Where
+  are my keys?", followed Working, Pointing and Speaking on the phone, and got the find: 10.6 s, 2 ft, 2 degrees off,
+  "Nothing left the house". Not turned on in the robot's service: that is for the founder to choose.

@@ -81,6 +81,7 @@ class ScreenState:
         self.webs = 0  # a version, so the page fetches each screenshot once
         self.privacy: dict | None = None  # "what did you send today?": {"title", "rows": [{"mark", "text"}]}
         self._gaze: tuple[float, float, float] | None = None  # where the person is (yaw, pitch, when): a direction only
+        self._pairing: dict | None = None  # "connect my phone": {"url", "code", "until"} for three minutes
         self._timeline: dict | None = None  # a watched thing's story: {"thing", "items", "usual"}, words only
         self._room: dict | None = None  # the room in 3D: its shape (millimetres, int16 x, y, z), the things, until
         self.rooms = 0  # a version, so the page fetches each room once
@@ -160,6 +161,11 @@ class ScreenState:
             self._room = {"points": points_mm, "things": list(things), "seconds": seconds,
                           "until": self._clock() + ROOM_SECONDS}
             self.rooms += 1
+
+    def pairing(self, url: str, code: str, seconds: float) -> None:
+        """The phone pairing card: where to go and the six numbers, until they run out (seconds 0: gone)."""
+        with self._lock:
+            self._pairing = {"url": url, "code": code, "until": self._clock() + seconds} if code and seconds > 0 else None
 
     def timeline(self, thing: str, items: list[dict], usual: dict | None = None) -> None:
         """"What happened to my keys?": where it has been, as Andy knew it (words, never a picture), for two minutes."""
@@ -338,6 +344,10 @@ class ScreenState:
                 self._room = None
             out["room"] = {"v": self.rooms, "things": self._room["things"], "n": len(self._room["points"]) // 6,
                            "seconds": self._room["seconds"]} if self._room else None
+            if self._pairing and self._clock() >= self._pairing["until"]:
+                self._pairing = None
+            out["pairing"] = {"url": self._pairing["url"], "code": self._pairing["code"],
+                              "left": round(self._pairing["until"] - self._clock())} if self._pairing else None
             if self._timeline and self._clock() >= self._timeline["until"]:
                 self._timeline = None
             out["timeline"] = {k: v for k, v in self._timeline.items() if k != "until"} if self._timeline else None

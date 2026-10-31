@@ -173,6 +173,15 @@
   #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
                  padding: 0.2rem 0.8rem; cursor: pointer; }
   #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* Connect your phone: the address and six numbers, read from across the room */
+  .pairing { display: grid; gap: 1.6rem; align-content: start; }
+  .pairing .url { font: 700 3rem/1.1 "Atkinson Mono", monospace; color: var(--accent); word-break: break-all; }
+  .pairing .code { display: flex; gap: 1rem; }
+  .pairing .code span { width: 7rem; height: 9rem; display: grid; place-items: center; border-radius: 1.2rem; background: var(--ink);
+                        color: var(--solid); font: 800 6rem/1 "Atkinson Mono", monospace; }
+  .pairing .code span:nth-child(3) { margin-right: 1.6rem; }
+  .pairing small { font-size: 1.6rem; color: var(--muted); }
+
   /* The story of a watched thing: where it has been, as Andy knew it; the place it usually ends up */
   #body:has(.story) { align-content: stretch; }
   .story { display: grid; grid-template-columns: 19rem 1fr; gap: 2.4rem; min-height: 0; align-items: start; }
@@ -381,6 +390,8 @@
     "Nothing yet. “Andy, keep an eye on my keys.”": "Nada todavía. “Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
     "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
+    "Connect your phone": "Conecte su teléfono",
+    "On your phone, open this address and type the six numbers": "En su teléfono, abra esta dirección y escriba los seis números",
     "In passing": "De pasada", "Put down": "Lo dejó", "Room scan": "Escaneo de la sala",
     "Seen": "Visto", "Picked up": "Lo recogió",
     "The room in 3D": "La sala en 3D", "Measuring the room in 3D": "Midiendo la sala en 3D", "Your things, as I measured them just now": "Sus cosas, tal como las medí ahora mismo",
@@ -796,7 +807,20 @@
   function card(s) {
     const body = $("body");
     let kicker, title = "";
-    if (s.web) {
+    if (s.pairing) {
+      kicker = T("Connect your phone"); title = T("On your phone, open this address and type the six numbers");
+      const key = "pairing:" + s.pairing.code + LANG;
+      if (key !== pictureKey) {
+        pictureKey = key;
+        const box = el("div", null, "pairing"), code = el("div", null, "code");
+        for (const d of s.pairing.code) code.append(el("span", d));
+        box.append(el("div", s.pairing.url, "url"), code, el("small", "", "left"));
+        body.replaceChildren(box);
+      }
+      const left = body.querySelector(".pairing .left");
+      if (left) left.textContent = LANG === "es" ? `Valen ${Math.max(0, s.pairing.left)} segundos más. Solo los teléfonos de su red de casa.`
+                                                 : `Good for ${Math.max(0, s.pairing.left)} more seconds. Only phones on your home network.`;
+    } else if (s.web) {
       kicker = s.web.request[0].toUpperCase() + s.web.request.slice(1) + (LANG === "es" ? " · en la web" + (s.web.host ? " en " + s.web.host : "")
                                                                                      : " · on the web" + (s.web.host ? " at " + s.web.host : ""));
       const key = "web:" + s.web.v;
@@ -978,7 +1002,7 @@
   const AMBIENT_AFTER_MS = 60000, forceAmbient = new URLSearchParams(location.search).get("ambient") === "now";
   let quietSince = Date.now(), gazeAt = null, nextGlance = 0;
   function ambient(s) {
-    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.timeline && !s.checklist && !s.privacy
+    const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.timeline && !s.pairing && !s.checklist && !s.privacy
                   && !s.memory && !s.running && !s.help && !s.game && !(s.caption && Date.now() - captionAt < 12000);
     if (!quiet || story || document.getElementById("end") || (scenes && !forceAmbient)) quietSince = Date.now();
     const on = forceAmbient ? quiet || !!scenes : Date.now() - quietSince > AMBIENT_AFTER_MS;

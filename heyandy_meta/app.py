@@ -117,6 +117,9 @@ class Andy:
         self.voice = None  # the voice server client (speed, loudness), when Andy speaks out loud
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
+        self.pairing = None  # phones that may ask Andy from another room (screen/remote.py); None: not started with --remote
+        self.remote_url = ""
+        self._phone_turn = False
         self.sounds = True  # Andy's earcons (voice/earcons.py); HEYANDY_SOUNDS=0 turns them off
         self.liveliness = 1.0  # "move less": how much body language
         self.describe_in_background = hasattr(self.body, "motion")  # on the robot, never make a turn wait for it
@@ -307,6 +310,10 @@ class Andy:
             return self.what_time(day=i.thing == "day")
         if i.kind == "room":
             return self.scan_room()
+        if i.kind == "pair_phone":
+            return self.pair_phone()
+        if i.kind == "forget_phones":
+            return self.forget_phones()
         if i.kind == "story":
             return self.story(i.thing)
         if i.kind == "usual":
@@ -1218,6 +1225,43 @@ class Andy:
         said = "; ".join(f"your {t['label']} {side(t['yaw'])}, {how_far(t['metres'], metric=metric)}" for t in named)
         return ("Here's the room as I measured it, on the screen" + (f": {said}." if said else ".")
                 + " Its shape only, never a picture.")
+
+    # --- a phone as a remote (screen/remote.py) ---
+
+    def pair_phone(self) -> str:
+        """"Andy, connect my phone": six numbers on the TV for three minutes, and where to type them."""
+        if self.pairing is None:
+            return ("I can't take requests from a phone yet: I have to be started with the remote turned on, on your "
+                    "home network.")
+        code = self.pairing.new_code()
+        self.screen.pairing(self.remote_url, code, self.pairing.code_left())
+        return "On your phone, open the address on the TV and type the six numbers. They work for three minutes."
+
+    def forget_phones(self) -> str:
+        if self.pairing is None:
+            return "No phone can ask me anything: the remote isn't turned on."
+        n = self.pairing.forget_all()
+        self.screen.pairing("", "", 0)
+        return f"Done. I've forgotten {n} phone{'s' if n != 1 else ''}; none can ask me anything now." if n else \
+            "No phone was connected, and none can ask me anything."
+
+    def ask_from_phone(self, text: str) -> str:
+        """A paired phone's request: a turn like any other, on its own thread, so the phone hears back at once
+        ("ok"); "busy" while another turn runs. Andy answers in its room; the phone reads the TV's state."""
+        if self._phone_turn or not self.lock.acquire(blocking=False):
+            return "busy"
+        self.lock.release()
+        self._phone_turn = True
+
+        def turn():
+            try:
+                self.screen.notice("Asked from your phone")
+                self.hear(text)
+            finally:
+                self._phone_turn = False
+
+        threading.Thread(target=turn, daemon=True, name="phone-turn").start()
+        return "ok"
 
     # --- the story of a watched thing, and its habits (memory/places.py): words and directions, never a picture ---
 

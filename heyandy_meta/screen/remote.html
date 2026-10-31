@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10241d">
+<title>Andy</title>
+<style>
+  /* Andy in your pocket: ask from any room, see the find. HeyAndy's look; Atkinson Hyperlegible, served by Andy. */
+  @font-face { font-family: "Atkinson Next"; src: url("fonts/AtkinsonHyperlegibleNext.ttf") format("truetype"); font-weight: 200 800; }
+  @font-face { font-family: "Atkinson Mono"; src: url("fonts/AtkinsonHyperlegibleMono.ttf") format("truetype"); font-weight: 200 800; }
+  :root { --ink: #10241d; --muted: #3b5148; --accent: #0d5a45; --outline: {{outline}}; --bg: #f3ecd8; --panel: #fbfaf5;
+          --line: rgba(16, 36, 29, 0.14); --dark: #070a09; --porcelain: #f5f3ef; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #f2efe6; --muted: #c3c8c2; --accent: #ffd27a; --bg: #0e1613; --panel: #16201c; --line: rgba(242, 239, 230, 0.14); } }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; min-height: 100vh; color: var(--ink); font: 500 17px/1.45 "Atkinson Next", system-ui, sans-serif;
+         background: radial-gradient(ellipse at 20% -10%, #f6e4b4 0, transparent 60%), var(--bg); }
+  @media (prefers-color-scheme: dark) { body { background: radial-gradient(ellipse at 20% -10%, #1d3a2f 0, transparent 60%), var(--bg); } }
+  main { max-width: 32rem; margin: 0 auto; padding: max(1.2rem, env(safe-area-inset-top)) 1.1rem 2.5rem; }
+  header { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.2rem; }
+  .face { width: 4.4rem; color: var(--ink); flex: none; overflow: visible; }
+  .eye { fill: var(--panel); transform-box: fill-box; transform-origin: center; transition: transform 0.09s; }
+  .eyes { transition: transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1); }
+  body.blink .eye { transform: scaleY(0.08); }
+  h1 { margin: 0; font-size: 1.6rem; font-weight: 800; line-height: 1; }
+  .pill { margin-top: 0.3rem; font-size: 0.9rem; color: var(--muted); }
+  .pill b { color: var(--accent); }
+  .card { background: var(--panel); border-radius: 1.3rem; padding: 1.1rem; box-shadow: 0 0.6rem 2rem rgba(16, 36, 29, 0.08); }
+  form { display: flex; gap: 0.5rem; }
+  input { flex: 1; min-width: 0; font: inherit; font-size: 1.1rem; padding: 0.85rem 1rem; border: 2px solid var(--line);
+          border-radius: 0.9rem; background: transparent; color: inherit; }
+  input:focus { outline: none; border-color: var(--accent); }
+  button { font: inherit; font-weight: 800; border: 0; border-radius: 0.9rem; cursor: pointer; }
+  form button { padding: 0 1.2rem; background: var(--ink); color: var(--panel); font-size: 1.05rem; }
+  button:disabled { opacity: 0.45; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.9rem; }
+  .chips button { font-weight: 650; font-size: 0.95rem; padding: 0.55rem 0.95rem; border-radius: 99rem; background: transparent;
+                  color: var(--ink); border: 1.5px solid var(--line); }
+  .answer { margin-top: 1rem; overflow: hidden; padding: 0; }
+  .answer .words { padding: 1rem 1.1rem 1.1rem; font-size: 1.25rem; font-weight: 700; line-height: 1.3; }
+  .answer .words small { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 0.3rem; }
+  .shot { position: relative; aspect-ratio: 16 / 10; background: var(--dark); }
+  .shot svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .dim { fill: #050807; opacity: 0.7; }
+  .edge { fill: none; stroke: var(--outline); stroke-width: 4; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 5px var(--outline));
+          stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(0.6, 0, 0.2, 1) 0.2s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .nums { display: flex; gap: 1.6rem; padding: 0 1.1rem 1rem; }
+  .nums b { display: block; font: 700 1.5rem/1 "Atkinson Mono", monospace; color: var(--accent); }
+  .nums span { font-size: 0.8rem; color: var(--muted); }
+  .receipt { padding: 0.75rem 1.1rem; border-top: 1.5px solid var(--line); font-size: 0.85rem; color: var(--muted); }
+  .receipt b { color: var(--accent); }
+  .looking { display: flex; align-items: center; gap: 0.7rem; padding: 1rem 1.1rem; font-weight: 700; }
+  .looking i { width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--outline); animation: pulse 0.8s ease-in-out infinite alternate; }
+  @keyframes pulse { to { opacity: 0.3; transform: scale(0.7); } }
+  .pair h2 { margin: 0 0 0.4rem; font-size: 1.5rem; }
+  .pair p { margin: 0 0 1rem; color: var(--muted); }
+  .pair input { font: 700 1.9rem/1 "Atkinson Mono", monospace; letter-spacing: 0.35em; text-align: center; }
+  .fine { margin-top: 1.4rem; font-size: 0.8rem; color: var(--muted); }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { .edge { animation: none; stroke-dashoffset: 0; } .looking i { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <svg class="face" viewBox="0 0 380 210" aria-hidden="true"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
+      <g class="eyes"><ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></g></svg>
+    <div><h1>Andy</h1><div class="pill" id="pill">At home</div></div>
+  </header>
+
+  <section class="card pair" id="pair" hidden>
+    <h2>Connect to Andy</h2>
+    <p>Say <b>"Andy, connect my phone"</b> near the robot, then type the six numbers on the TV.</p>
+    <form id="pair-form"><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required>
+      <button>Connect</button></form>
+    <p id="pair-msg" class="fine"></p>
+  </section>
+
+  <section id="ask-view" hidden>
+    <div class="card">
+      <form id="ask-form"><input id="text" placeholder="Ask Andy…" maxlength="200" autocomplete="off" enterkeyhint="send"><button id="send">Ask</button></form>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="card answer" id="answer" hidden>
+      <div class="looking" id="looking" hidden><i></i><span id="looking-text"></span></div>
+      <div class="shot" id="shot" hidden><svg id="pic" preserveAspectRatio="xMidYMid slice"></svg></div>
+      <div class="words" id="words"></div>
+      <div class="nums" id="nums"></div>
+      <div class="receipt" id="receipt"></div>
+    </div>
+    <p class="fine">Andy finds and points in its room, and says the answer there too. Only phones you paired can ask; the
+      picture of a find is shown here for two minutes, never saved. "Andy, forget my phones" removes them all.</p>
+  </section>
+</main>
+<script>
+  const $ = id => document.getElementById(id), NS = "http://www.w3.org/2000/svg";
+  const CHIPS = ["Where are my keys?", "Where are my glasses?", "Where's my phone?", "What happened to my keys today?",
+                 "What are my reminders?", "What time is it?"];
+  let asked = "", lastKey = "";
+  for (const c of CHIPS) { const b = document.createElement("button"); b.type = "button"; b.textContent = c; b.onclick = () => ask(c); $("chips").append(b); }
+  async function post(path, body) {
+    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), credentials: "same-origin" });
+    return [r.status, await r.json().catch(() => ({}))];
+  }
+  $("pair-form").onsubmit = async e => {
+    e.preventDefault();
+    const [code, body] = await post("pair", { code: $("code").value });
+    if (body.paired) { $("pair-msg").textContent = ""; poll(); } else $("pair-msg").textContent = "Those numbers didn't work. Ask Andy for new ones.";
+  };
+  async function ask(text) {
+    if (!text) return;
+    asked = text; $("text").value = ""; $("send").disabled = true;
+    const [code, body] = await post("ask", { text });
+    $("send").disabled = false;
+    if (body.answer === "busy") show({ caption: "Andy's busy with something else. Try again in a moment.", state: "Waiting" });
+  }
+  $("ask-form").onsubmit = e => { e.preventDefault(); ask($("text").value.trim()); };
+  function el(tag, attrs) { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e; }
+
+  function show(s) {
+    $("pill").replaceChildren(); const b = document.createElement("b"); b.textContent = s.state || "Waiting";
+    $("pill").append(b, s.head ? " · " + s.head : "");
+    const working = s.running || ["Working", "Pointing", "Thinking", "Listening"].includes(s.state);
+    const p = s.picture, has = asked || s.caption || working;
+    $("answer").hidden = !has;
+    $("looking").hidden = !working || !!p;
+    $("looking-text").textContent = s.looking_for ? `Looking for your ${s.looking_for}…` : "Andy's on it…";
+    $("words").replaceChildren();
+    if (asked) { const sm = document.createElement("small"); sm.textContent = "You asked: " + asked; $("words").append(sm); }
+    $("words").append(s.caption || "");
+    $("shot").hidden = !p;
+    const key = p ? p.src.length + ":" + p.box.join(",") : "";
+    if (p && key !== lastKey) {  // the find: the picture, darkened, a spotlight and an outline drawing itself
+      lastKey = key;
+      const svg = $("pic"); svg.replaceChildren(); svg.setAttribute("viewBox", `0 0 ${p.width} ${p.height}`);
+      const [l, t, r, bt] = p.box, pad = Math.max(12, (r - l) * 0.15);
+      const m = el("mask", { id: "spot" }); m.append(el("rect", { width: p.width, height: p.height, fill: "white" }),
+        el("rect", { x: l - pad, y: t - pad, width: r - l + 2 * pad, height: bt - t + 2 * pad, rx: pad, fill: "black" }));
+      const defs = el("defs", {}); defs.append(m);
+      const img = el("image", { href: p.src, width: p.width, height: p.height });
+      const at = `translate(${l} ${t}) scale(${(p.scale || [1, 1])[0]} ${(p.scale || [1, 1])[1]})`;
+      const edge = p.outline ? el("path", { d: p.outline, transform: at, class: "edge", pathLength: 1 })
+                             : el("rect", { x: l, y: t, width: r - l, height: bt - t, class: "edge", pathLength: 1 });
+      svg.append(defs, img, el("rect", { width: p.width, height: p.height, class: "dim", mask: "url(#spot)" }), edge);
+      const nums = $("nums"); nums.replaceChildren();
+      const num = (big, small) => { const d = document.createElement("div"), b2 = document.createElement("b"), sp = document.createElement("span"); b2.textContent = big; sp.textContent = small; d.append(b2, sp); nums.append(d); };
+      if (s.seconds != null) num(s.seconds.toFixed(1) + " s", "to find it");
+      if (p.metres != null) num(Math.max(1, Math.round(p.metres * 3.281)) + " ft", "from Andy");
+      if (p.aim_deg != null) num(Math.round(p.aim_deg) + "°", "off target, checked");
+    }
+    if (!p) $("nums").replaceChildren();
+    $("receipt").replaceChildren();
+    if (s.sent && s.sent.length) { $("receipt").append("Sent to the cloud this turn: "); const b2 = document.createElement("b"); b2.textContent = s.sent.map(x => `${x.to} ← "${x.words}"`).join(" · "); $("receipt").append(b2); }
+    else if (s.models && s.models.length) { const b2 = document.createElement("b"); b2.textContent = "✓ Nothing left the house."; $("receipt").append(b2, " Pictures and voice stay on the computer beside Andy."); }
+    // the face looks where Andy's head is turning, roughly: right while it searches, at you when it speaks
+    const x = working ? (Date.now() / 900 % 2 < 1 ? -22 : 22) : 0;
+    document.querySelector(".eyes").setAttribute("style", `transform: translate(${x}px, 4px)`);
+  }
+  async function poll() {
+    try {
+      const r = await fetch("state", { cache: "no-store", credentials: "same-origin" }), s = await r.json();
+      $("pair").hidden = s.paired; $("ask-view").hidden = !s.paired;
+      if (s.paired) show(s);
+    } catch (e) { $("pill").textContent = "Andy isn't answering"; }
+  }
+  (function blink() { document.body.classList.add("blink"); setTimeout(() => document.body.classList.remove("blink"), 130); setTimeout(blink, 2500 + Math.random() * 3500); })();
+  poll(); setInterval(poll, 700);
+</script>
+</body>
+</html>

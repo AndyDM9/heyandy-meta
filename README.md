@@ -130,7 +130,14 @@ Failures are kept too: every scorecard, and what changed because of it, is in `e
 20. **Talk to it.** "Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
-21. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
+21. **Ask from any room, on your phone** (opt-in: `--remote`). "Andy, connect my phone" puts a web address and six
+   numbers on the TV for three minutes; the phone that types them is paired. From the front door or the kitchen, tap
+   "Where are my keys?": Andy finds and points in its room and says it there, and the phone follows it live (looking,
+   pointing) and shows the find: the picture with SAM 3.1's outline, how long, how far, and the privacy receipt. Only
+   devices on the home network, nothing at all until paired (codes end after three minutes or five wrong tries), only
+   each phone key's SHA-256 kept, never asked by another name or from another site's page; "forget my phones" removes
+   them. Tried on the robot from a phone-sized browser: paired, asked, and the keys found in 10.6 s on the phone.
+22. **Pictures from your home never leave it.** SAM 3.1 (open weights), DINOv2 and Glimmer see the camera on the
    computer beside the robot, and so do your voice and Andy's. Muse Spark in the cloud gets words (labels, directions,
    plan steps, questions), plus screenshots of a web page you ask to see on the TV; Muse Image gets words. The TV's
    privacy receipt shows exactly what went, every turn. **"Andy, what did you send to the cloud today?"** adds up the

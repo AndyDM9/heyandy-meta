@@ -109,6 +109,10 @@ def main() -> None:
                          "(paid, and the TV says so); never in a lived-in home")
     ap.add_argument("--data", default="~/.local/share/heyandy-meta")
     ap.add_argument("--tv-port", type=int, default=8765)
+    ap.add_argument("--remote", action="store_true",
+                    help="let paired phones on the home network ask Andy from any room (screen/remote.py); off by default")
+    ap.add_argument("--remote-port", type=int, default=8766)
+    ap.add_argument("--remote-host", default="", help="the address phones use (default: this computer's home-network address)")
     ap.add_argument("--tv-host", default="127.0.0.1",
                     help="where the TV page listens: this computer only (default), or a home-network address for a "
                          "smart TV; never a public one")
@@ -124,6 +128,17 @@ def main() -> None:
     if not is_local(f"http://{args.tv_host}"):
         raise SystemExit(f"--tv-host must be this computer or a home-network address, not {args.tv_host}")
     serve(andy.screen, host=args.tv_host, port=args.tv_port)
+    if args.remote:
+        from .screen.remote import Pairing, home_address, serve_remote
+
+        ip = args.remote_host or home_address()
+        if ip is None:
+            print("--remote: no home-network address found; phones can't reach Andy", file=sys.stderr)
+        else:
+            andy.pairing = Pairing(os.path.join(os.path.expanduser(args.data), "remote.json"))
+            andy.remote_url = f"http://{ip}:{args.remote_port}"
+            serve_remote(andy.screen, andy.pairing, andy.ask_from_phone, ip, args.remote_port)
+            print(f"Phones on the home network: {andy.remote_url} (say \"Andy, connect my phone\")")
     print(f"TV page: http://{args.tv_host}:{args.tv_port}  ·  Muse Spark: {'on' if andy.spark else 'off'}  ·  "
           f"{'robot' if args.robot else 'pretend living room'}  ·  Ctrl-D to quit")
     stop = threading.Event()

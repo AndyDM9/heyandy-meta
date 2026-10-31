@@ -51,6 +51,9 @@ LAST_SEEN = re.compile(r"\b(?:(?:when|where) did you (?:last )?see|where did i (
 HELP = re.compile(r"\bwhat can (?:i|you) (?:ask|say|do)\b|\bwhat do you do\b|^\W*help\W*$|\bhow do i use you\b", re.I)
 REMEMBER = re.compile(r"\bwhat do you remember\b|\bwhat are you (?:keeping an eye on|watching)\b", re.I)
 REMINDERS = re.compile(r"\bwhat (?:are )?(?:my|the) reminders\b|\bwhat reminders\b", re.I)
+# A phone as a remote (screen/remote.py): pair one, or forget them all ("forget my phone" is a watched thing)
+PAIR_PHONE = re.compile(r"\b(?:connect|pair|add|link|set up)(?: up)? (?:my|a|the|this|our) (?:phone|mobile|cell ?phone)\b", re.I)
+FORGET_PHONES = re.compile(r"\b(?:forget|disconnect|unpair|remove) (?:my|all|all my|the|our) (?:paired )?phones\b", re.I)
 # A watched thing's story (memory/places.py history) and its habits (usual)
 STORY = re.compile(r"\bwhat(?:'s| has)? happened to (?:my |the |our )?(?P<t>[a-z][a-z ]{1,30}?)"
                    r"(?: today| this morning| this afternoon| lately| so far)?[?.!]*$|"
@@ -110,7 +113,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -212,6 +215,10 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("world", text=t)
     if TIME.search(t):
         return Intent("time", thing="day" if re.search(r"\b(?:date|day|today)\b", t, re.I) else "time")
+    if PAIR_PHONE.search(t):
+        return Intent("pair_phone", text=t)
+    if FORGET_PHONES.search(t):
+        return Intent("forget_phones", text=t)
     for kind, rx in (("story", STORY), ("usual", USUAL)):  # only a thing people lose, not "the world today"
         if (m := rx.search(t)) and (thing := snap(next(g for g in m.groups() if g).strip())).split()[-1] in KNOWN:
             return Intent(kind, thing=thing, text=t)
