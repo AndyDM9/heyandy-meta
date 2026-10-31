@@ -271,3 +271,20 @@ def test_the_tv_fits_any_window_and_nothing_covers_the_captions():
     page = files("heyandy_meta.screen").joinpath("page.html").read_text()
     assert "html { font-size: min(calc(100vw / 120), calc(100vh / 67.5)); }" in page
     assert "main > * { min-height: 0; }" in page and "#captions { position: relative; z-index: 1;" in page
+
+
+def test_a_tall_or_narrow_screen_gets_one_readable_column():
+    """Everybody's screen is different (the founder, 2026-10-31): a phone, an upright tablet or a narrow window gets
+    one column with the card first, type sized for that screen, a page that scrolls and captions that stay in view;
+    and the Reveal's push-in never slides the photo far enough to show its edge."""
+    from importlib.resources import files
+
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    tall = page.split("@media (max-aspect-ratio: 6/5), (max-width: 900px) {", 1)[1].split("\n  }\n", 1)[0]
+    assert "html { font-size: min(calc(100vw / 34), 18px); }" in tall
+    assert "main { grid-template-columns: 1fr;" in tall and "main > #card { order: -1;" in tall
+    assert "body { height: auto; min-height: 100vh; overflow-y: auto; }" in tall
+    assert "#captions { position: sticky; bottom: 0.8rem;" in tall
+    assert "body.storying .stage { transform: none; height" not in page  # the story's TV is the tall layout, not a 16:9 miniature
+    assert "overflow: visible; transform-origin: var(--ox) var(--oy);" in page
+    assert "const tx = keep(W * 0.68 - ox," in page and "const ty = keep(H * 0.36 - oy," in page

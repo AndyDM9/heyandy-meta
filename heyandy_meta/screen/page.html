@@ -281,7 +281,7 @@
   #end small { display: block; margin-top: 2.4rem; font-size: 1.3rem; color: rgba(245, 243, 239, 0.55); }
   /* the TV, whole and unchanged, a little smaller below the story's band */
   body.storying .stage { transform: scale(0.85); transform-origin: 50% 100%; }
-  @media (max-aspect-ratio: 1/1) {  /* a phone, held upright: the band on top, the TV below it as a 16:9 TV */
+  @media (max-aspect-ratio: 1/1) {  /* a phone, held upright: the band on top, the TV below it, laid out for the phone */
     body.storying { height: auto; min-height: 100vh; overflow-y: auto; background: #070a09; }
     body.storying #story { position: relative; padding: 4vw 4.5vw 4.5vw; }
     #story .bars { margin-bottom: 3.5vw; } #story .bars i { height: 0.9vw; }
@@ -289,7 +289,7 @@
     #story .ch { font-size: 3.2vw; } #story h2 { font-size: 6.4vw; } #story p { font-size: 4vw; margin-top: 1vw; }
     #story nav { width: 100%; gap: 2vw; }
     #story button, #end a, #end button { font-size: 3.6vw; padding: 2.2vw 3.6vw; }
-    body.storying .stage { transform: none; height: 56.25vw; }
+    body.storying .stage { transform: none; }
     #end { overflow-y: auto; place-items: start center; padding: 10vw 0; }
     #end .in { width: 88vw; } #end .sig { height: 6vw; } #end h1 { font-size: 10vw; margin-top: 5vw; }
     #end .proof { grid-template-columns: 1fr; gap: 4vw; margin: 6vw 0; }
@@ -302,11 +302,39 @@
   }
   @keyframes st-in { from { opacity: 0; transform: translateY(0.8rem); } to { opacity: 1; transform: none; } }
 
+  /* A tall or narrow screen (a phone, an upright tablet, a narrow window, a portrait monitor): one column, the card
+     first, type sized to be read there rather than shrunk to a TV's shape; the page scrolls, the captions stay in view */
+  @media (max-aspect-ratio: 6/5), (max-width: 900px) {
+    html { font-size: min(calc(100vw / 34), 18px); }
+    body { height: auto; min-height: 100vh; overflow-y: auto; }
+    .stage { height: auto; min-height: 100vh; padding: 1.4rem 1.2rem 1.2rem; gap: 1.2rem; grid-template-rows: auto auto auto; }
+    header { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem 1rem; align-items: start; }
+    header .brand { grid-column: 1 / -1; order: -1; height: 1.7rem; margin: 0; justify-self: start; }
+    #day { font-size: 3.4rem; } #date { font-size: 1.6rem; margin-top: 0.3rem; }
+    #pill { padding: 0.6rem 1.1rem 0.6rem 0.8rem; gap: 0.7rem; } #pill svg.mark { width: 3rem; height: 1.8rem; }
+    #state { font-size: 1.6rem; } #head { font-size: 1.15rem; }
+    .badges { flex-wrap: wrap; justify-content: flex-end; } .badge { font-size: 1.1rem; }
+    main { grid-template-columns: 1fr; grid-template-rows: auto; gap: 1.2rem; }
+    main > #card { order: -1; overflow: visible; }
+    .panel { padding: 1.3rem 1.4rem; border-radius: 1.4rem; }
+    #card h1, #card.found h1 { font-size: 2.3rem; -webkit-line-clamp: 5; }
+    .split, .memory, .story, .does, #help .cols { grid-template-columns: 1fr; }
+    .facts.withplan { grid-template-columns: minmax(0, 1fr) auto; }
+    .try { font-size: 2.4rem; } .answer { font-size: 1.9rem; }
+    .room canvas { height: 72vw; } #body:has(.room) { align-content: start; }
+    .setup .say { font-size: 2.8rem; } .setup .chips span { font-size: 1.5rem; }
+    .pairing .code span { width: 3.4rem; height: 4.6rem; font-size: 3rem; } .pairing .url { font-size: 1.9rem; }
+    .web img { height: auto; }
+    #captions { position: sticky; bottom: 0.8rem; font-size: 1.8rem; min-height: 0; }
+    #captions.long { font-size: 1.6rem; -webkit-line-clamp: 5; }
+    #ambient .face { width: 60vw; } #ambient .time { font-size: 22vw; }
+  }
+
   /* The Reveal: a find, as a film moment. The room goes dark, a spotlight opens on SAM 3.1's mask, the shot pushes in,
      the outline draws itself, and the thing's name and the three measured figures rise. Five seconds, then the card. */
   #reveal { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 6; overflow: hidden; background: #070a09;
             opacity: 0; animation: rv-in 0.35s ease-out forwards, rv-out 0.7s ease-in 4.7s forwards; pointer-events: none; }
-  #reveal .shot { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-origin: var(--ox) var(--oy);
+  #reveal .shot { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; transform-origin: var(--ox) var(--oy);
                   animation: rv-push 3.2s cubic-bezier(0.2, 0.7, 0.1, 1) 0.15s both; }
   #reveal .dim { fill: #050807; opacity: 0; animation: rv-dim 1.3s ease-out 0.35s forwards; }
   #reveal .edge { fill: none; stroke: var(--outline); stroke-width: 6; stroke-linejoin: round; stroke-dasharray: 1;
@@ -638,7 +666,11 @@
     const k = Math.max(1, Math.min(2.6, (H * 0.34) / Math.max(1, (b - t) * fit), (W * 0.3) / Math.max(1, (r - l) * fit)));
     const box = el("div"); box.id = "reveal"; box.setAttribute("aria-hidden", "true");
     box.style.setProperty("--ox", ox + "px"); box.style.setProperty("--oy", oy + "px"); box.style.setProperty("--k", k);
-    box.style.setProperty("--tx", (W * 0.68 - ox) + "px"); box.style.setProperty("--ty", (H * 0.36 - oy) + "px");
+    // ...but never so far that the frame's edge shows (a tall phone has no room to spare above and below): it covers the screen
+    const X0 = (W - p.width * fit) / 2, Y0 = (H - p.height * fit) / 2, keep = (want, lo, hi) => Math.min(Math.max(want, lo), hi);
+    const tx = keep(W * 0.68 - ox, W - ox - k * (X0 + p.width * fit - ox), -ox - k * (X0 - ox));
+    const ty = keep(H * 0.36 - oy, H - oy - k * (Y0 + p.height * fit - oy), -oy - k * (Y0 - oy));
+    box.style.setProperty("--tx", tx + "px"); box.style.setProperty("--ty", ty + "px");
     const svg = document.createElementNS(svgNS, "svg"), make = tag => document.createElementNS(svgNS, tag);
     svg.setAttribute("class", "shot"); svg.setAttribute("viewBox", `0 0 ${p.width} ${p.height}`);
     svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
