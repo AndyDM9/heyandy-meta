@@ -388,6 +388,7 @@ class ScreenState:
                     "seconds_left": round(p.until - self._clock()),
                     # measured: how far off the middle of the view the point landed, and how far away (MapAnything)
                     "aim_deg": getattr(f, "aim_deg", None), "metres": getattr(f, "metres", None),
+                    "for_you": getattr(f, "for_you", None),  # where it is from the person's side, and the plan
                 }
                 if p.trails:
                     out["picture"]["trails"] = [{"d": "M " + " L ".join(f"{x:.0f} {y:.0f}" for x, y in pts),

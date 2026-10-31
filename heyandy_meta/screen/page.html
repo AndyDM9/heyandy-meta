@@ -173,6 +173,18 @@
   #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
                  padding: 0.2rem 0.8rem; cursor: pointer; }
   #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* From where you are: the find on a little map, the person at the bottom facing up (no mirroring) */
+  .plan { display: grid; gap: 0.4rem; }
+  .plan small { font-size: 1.25rem; color: var(--muted); }
+  .plan svg { width: 100%; height: 12.5rem; overflow: visible; }
+  .facts.withplan { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 1.4rem; }
+  .facts.withplan .stats { grid-template-columns: 1fr; gap: 1.1rem; }
+  .plan .walk { stroke: var(--accent); stroke-width: 2.4; stroke-dasharray: 2 7; stroke-linecap: round; fill: none; }
+  .plan .you { fill: var(--ink); } .plan .facing { fill: var(--ink); }
+  .plan .thing { fill: {{outline}}; stroke: var(--ink); stroke-width: 1.5; }
+  .plan text { font: 700 13px "Atkinson Next", sans-serif; fill: var(--ink); }
+  .plan text.far { fill: var(--accent); font-family: "Atkinson Mono", monospace; }
+
   /* Getting started: the guided first minutes, a step at a time */
   .setup { display: grid; gap: 1.8rem; align-content: start; }
   .setup .say { font-size: 4.2rem; font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; }
@@ -813,6 +825,28 @@
     fig.append(el("small", LANG === "es" ? "Lo que veo ahora · SAM 3.1, en esta computadora" : "What I see now · SAM 3.1, on this computer"));
     return fig;
   }
+  function plan(fy, label) {  // the person at the bottom, facing up: their left is the screen's left
+    const box = el("div", null, "plan"), svg = document.createElementNS(svgNS, "svg"), k = 38;  // px per metre
+    const b = fy.bearing * Math.PI / 180, tx = Math.sin(b) * fy.metres * k, ty = -Math.cos(b) * fy.metres * k, ay = -fy.andy_m * k;
+    const xs = [0, tx, 0], ys = [0, ty, ay], pad = 34;
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+    svg.setAttribute("viewBox", `${x0} ${y0} ${x1 - x0} ${y1 - y0}`); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", `From where you are: your ${label}, ${fy.words}`);
+    const add = (tag, attrs, text) => { const e = document.createElementNS(svgNS, tag); for (const [a, v] of Object.entries(attrs)) e.setAttribute(a, v); if (text) e.textContent = text; svg.append(e); return e; };
+    add("path", { d: `M 0 0 L ${tx} ${ty}`, class: "walk" });
+    add("rect", { x: -16, y: ay - 9, width: 32, height: 18, rx: 9, class: "you" });  // Andy, as its face
+    add("ellipse", { cx: -7, cy: ay, rx: 2.2, ry: 4.4, fill: "var(--solid)" }); add("ellipse", { cx: 7, cy: ay, rx: 2.2, ry: 4.4, fill: "var(--solid)" });
+    add("text", { x: 22, y: ay + 4 }, "Andy");
+    add("circle", { cx: 0, cy: 0, r: 9, class: "you" }); add("path", { d: "M -7 -11 L 0 -22 L 7 -11 Z", class: "facing" });
+    add("text", { x: tx >= 0 ? -15 : 15, y: 5, "text-anchor": tx >= 0 ? "end" : "start" }, LANG === "es" ? "usted" : "you");
+    add("circle", { cx: tx, cy: ty, r: 9, class: "thing" });
+    add("text", { x: tx + (tx >= 0 ? 15 : -15), y: ty + 4, "text-anchor": tx >= 0 ? "start" : "end" }, label);
+    const steps_ = Math.max(1, Math.round(fy.metres / 0.7));
+    add("text", { x: tx / 2 + (tx >= 0 ? -10 : 10), y: ty / 2, "text-anchor": tx >= 0 ? "end" : "start", class: "far" },
+        LANG === "es" ? `${steps_} pasos` : `${steps_} step${steps_ === 1 ? "" : "s"}`);
+    box.append(el("small", LANG === "es" ? "Desde donde está usted" : `From where you are · your ${fy.clock} o'clock`), svg);
+    return box;
+  }
   function steps(list, tag = "ol") { const o = el(tag, null, "steps"); for (const s of list) o.append(el("li", s)); return o; }
   function card(s) {
     const body = $("body");
@@ -896,11 +930,21 @@
         const facts = el("div", null, "facts"), stats = el("div", null, "stats");
         const stat = (big, small) => { const f = el("div", small); f.prepend(el("b", big)); stats.append(f); };
         if (s.seconds !== null) stat(s.seconds.toFixed(1) + " s", T("to find it"));
-        if (s.picture.aim_deg != null) stat(Math.round(s.picture.aim_deg) + "°", LANG === "es" ? "del centro, comprobado con la cámara" : "off target, checked by its camera");
-        if (s.picture.metres != null) stat(LANG === "es" ? s.picture.metres.toFixed(1) + " m" : Math.round(s.picture.metres * 3.281) + " ft",
-                                           LANG === "es" ? "de distancia (MapAnything)" : "away (MapAnything)");
-        if (stats.children.length) facts.append(stats);
-        if (s.steps.length) facts.append(steps(s.steps.slice(-2)));  // the latest steps; the figures above say the rest
+        const fy = s.picture.for_you;
+        if (fy) {  // from where they stand: how far for them; the map below says which way
+          const n = Math.max(1, Math.round(fy.metres / 0.7));
+          stat(LANG === "es" ? `${n} pasos` : `${n} step${n === 1 ? "" : "s"}`, LANG === "es" ? "desde usted" : "from you");
+        } else {
+          if (s.picture.aim_deg != null) stat(Math.round(s.picture.aim_deg) + "°", LANG === "es" ? "del centro, comprobado con la cámara" : "off target, checked by its camera");
+          if (s.picture.metres != null) stat(LANG === "es" ? s.picture.metres.toFixed(1) + " m" : Math.round(s.picture.metres * 3.281) + " ft",
+                                             LANG === "es" ? "de distancia (MapAnything)" : "away (MapAnything)");
+        }
+        if (s.picture.for_you) {  // from where they stand: the map, and the two figures beside it
+          facts.classList.add("withplan"); facts.append(plan(s.picture.for_you, s.picture.label), stats);
+        } else {
+          if (stats.children.length) facts.append(stats);
+          if (s.steps.length) facts.append(steps(s.steps.slice(-2)));  // the latest steps; the figures above say the rest
+        }
         if (s.game) {
           const f = el("div", T("SAM 3.1 Object Multiplex followed every cup at once, on this computer"));
           f.prepend(el("b", s.picture.trails ? s.picture.trails.length + " cups" : "")); facts.append(f);

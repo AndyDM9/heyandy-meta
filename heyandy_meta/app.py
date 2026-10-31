@@ -31,6 +31,7 @@ from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
+from .finder.perspective import from_them
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
 from .memory.mine import Mine
@@ -117,6 +118,7 @@ class Andy:
         self.voice = None  # the voice server client (speed, loudness), when Andy speaks out loud
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
+        self._listener: tuple | None = None  # where the person is, during a find (yaw, pitch, metres)
         self._setup: dict | None = None  # the guided first minutes: {"step": "things" or "try", "at", ...}
         self.pairing = None  # phones that may ask Andy from another room (screen/remote.py); None: not started with --remote
         self.remote_url = ""
@@ -495,12 +497,17 @@ class Andy:
         self.finder.looks, self.finder.passed, self._alike, self._not_yours = 0, [], None, False
         self.screen.looking(thing)
         self.say("Let me look.", soon=True)  # answer at once, and start looking while it's said
+        try:  # where the person is, while Andy still faces them: so the answer can be given from their side
+            self._listener = self._measure_listener()
+        except (LocalUnavailable, RuntimeError, IndexError):
+            self._listener = None
         self.screen.doing("Working", "Looking around the room")
         self.gesture("thinking")
         try:
             return self._find(thing, request, hint, checks)
         finally:
             self.gesture("idle")
+            self._listener = None
 
     def _find(self, thing: str, request: str, hint: bool, checks: int) -> str:
         found, words = None, ""
@@ -1419,8 +1426,29 @@ class Andy:
         if found.metres is not None:
             self.screen.step(f"MapAnything: {found.metres:.1f} m away")
 
+    def _measure_listener(self) -> tuple[float, float, float] | None:
+        """Where the person is (yaw, pitch, metres from Andy's camera): SAM 3.1 finds them where Andy faces now (it
+        turned to their voice), MapAnything says how far. None when they aren't in view or can't be measured."""
+        if self.depth is None or self.person is None or not hasattr(self.body, "capture"):
+            return None
+        if abs(getattr(self.body, "yaw", self.person[0]) - self.person[0]) > 40:
+            return None  # not facing them now
+        frame = self.body.capture()
+        people = [m for m in self.segmenter.find(frame, "person") if (m.score if m.score is not None else 0.5) >= 0.5]
+        if not people:
+            return None
+        best, cam = max(people, key=lambda m: m.area), self.finder._cam(frame)
+        metres = self.depth.distances(frame, [best], cam)[0]
+        if metres is None or not 0.4 <= metres <= 8.0:
+            return None
+        return (*pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam), metres)
+
     def _found_words(self, f: Found) -> str:
         where = side(f.yaw) + (f", {how_far(f.metres, metric=self.language != 'en')}" if f.metres is not None else "")
+        if self._listener and f.metres is not None and f.reachable:  # from their side: no mirroring, no guessing
+            f.for_you = from_them(self._listener, (f.yaw, f.pitch, f.metres))
+            if f.for_you:
+                where = f"{f.for_you['words']}, at your {f.for_you['clock']} o'clock"
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""

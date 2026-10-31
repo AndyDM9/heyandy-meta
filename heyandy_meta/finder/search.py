@@ -33,6 +33,7 @@ class Found:
     looks: int  # frames read to get here
     remembered: bool = False  # found at the place it was last seen
     usual: bool = False  # found at the place it usually ends up (memory/places.py usual)
+    for_you: dict | None = None  # where it is from the person's side (finder/perspective.py), when they were measured
     reachable: bool = True  # False: the body can't point all the way, so say where instead
     aim_deg: float | None = None  # after pointing, how far the thing was from the middle of the view; None: not seen
     reaimed: bool = False  # the check after pointing moved the head once more

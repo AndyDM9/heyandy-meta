@@ -797,3 +797,16 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **On the robot (2026-10-31):** three sentences: the room measured (36 s, the 3D scan), the keys and glasses watched,
   seen and pointed at (24.5 s), the keys found with "You're all set" (27.4 s). It said "your your keys" once: the same
   doubling was in the noticing notice; both fixed, with tests.
+
+## 39. Told from where the person stands (2026-10-31)
+
+- **Why:** "a little to my right" is Andy's right: someone facing Andy has to mirror it, and the distance is from
+  Andy, not from them. Older adults, Andy's people, are the least served by puzzles.
+- **Built:** at the start of a find, Andy faces the person (it turned to their voice): one frame, SAM 3.1 finds the
+  person, MapAnything says how far (`app.py _measure_listener`, about half a second, while "Let me look" is said). Both
+  places go on a floor plan around Andy; the person faces Andy; the thing's bearing and distance from the person follow
+  (`finder/perspective.py`): "ahead of you, on your left, about 2 steps from you, at your 11 o'clock". The TV's found
+  card draws the person at the bottom facing up, Andy ahead, the thing and the steps to it.
+- **Tested:** the geometry (the mirror case; behind Andy is in front of them; beside them; too close to tell), and the
+  whole find in simulation; on the robot with nobody in the room, Andy fell back to its own side as designed.
+  **Not yet tried with a person:** the founder's test 12.

@@ -18,6 +18,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from heyandy_meta.finder.perspective import from_them  # noqa: E402
 from heyandy_meta.finder.search import Found  # noqa: E402
 from heyandy_meta.models.common import Mask  # noqa: E402
 from heyandy_meta.robot.body import Frame  # noqa: E402
@@ -132,8 +133,10 @@ def show(state: ScreenState, scene: str) -> None:
         state._timer = (time.monotonic() - 9.4, time.monotonic())  # a typical find on the robot, for the picture
         jpeg, mask = sample_frame()
         found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
-        state.found(found, "There it is! I see your blue mug, a little to my right, about 4 feet away.")
-        state.said("There it is! I see your blue mug, a little to my right, about 4 feet away.", "device",
+        found.for_you = from_them((25.0, 5.0, 2.2), (found.yaw, found.pitch, found.metres))  # someone 2.2 m away, left of Andy
+        words = f"There it is! I see your blue mug: {found.for_you['words']}, at your {found.for_you['clock']} o'clock."
+        state.found(found, words)
+        state.said(words, "device",
                    "search planned by Muse Glimmer on this computer")
         state.doing("Pointing", "At your mug")
         for name, times in (("Omnilingual ASR (hearing)", 1), ("Muse Glimmer (plans)", 2), ("SAM 3.1", 4),

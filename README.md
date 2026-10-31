@@ -71,6 +71,11 @@ found, "You're all set", in three sentences.
 2. **SAM 3.1 finds them.** Its mask becomes the head's angle. The robot looks closer, checks, and points, then checks
    the point landed with its own camera. **MapAnything** (Meta's 3D model) says how far: "on the armchair, to my left,
    about 5 feet away", and the TV's map of your things becomes a floor plan, in feet.
+   **Told from where you stand.** Andy's right is your left when you face it, so Andy doesn't say "to my right":
+   as it turns to your voice it measures where you are (SAM 3.1 finds you, MapAnything says how far), and says where the
+   thing is from your side, with a clock position as people with low vision are often given directions: "behind you,
+   on your left, about 4 steps from you, at your 8 o'clock". The TV draws it as a little map from your point of view.
+   If Andy can't see you, it says it from its own side, as before (`finder/perspective.py`).
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and
