@@ -7,15 +7,15 @@ personal in view). The TV page is screen-recorded at the same time.
 | Time | On screen | Said, and what happens |
 |---|---|---|
 | 0:00–0:06 | Title card | **Required first line (FAQ):** what existed before (a Reachy Mini; our own earlier object-finding prototype) and that everything shown was built this week on Meta's models. *(the founder's exact words)* |
-| (in the close, or a caption over 0:06–0:16) | One plain line, as the organizers asked (Oct 30 ruling): | "Andy gives no health advice. It finds things, remembers where they are, and reminds you of what you asked." |
+| 0:06–0:16, a caption over the problem shot | One plain line, as the organizers asked (Oct 30 ruling): | "Andy gives no health advice. It finds things, remembers where they are, and reminds you of what you asked." |
 | 0:06–0:16 | A person patting their pockets | The problem in one line: the same few things go missing every day, and a camera that streams your home to the cloud is a camera most people won't have. |
 | 0:16–0:55 | **The uncut find**, robot and TV side by side, badge "autonomous · uncut · 1× speed" | "Andy, where are my glasses?" Andy turns to the voice, "Let me look", sweeps, **skips the glasses on the TV**, looks closer and points: "There they are! I see your glasses, to my right, about 5 feet away. Not the picture of one on the screen." The TV, filmed beside the robot: **while it looks, each view live with SAM 3.1's outlines on every candidate**; then the found picture with three large figures (seconds to find it, degrees off target checked by its camera, feet away from MapAnything) and the models used. |
 | 0:55–1:12 | **Follow the mug** | "Andy, follow the mug." The person slides it around the table; Andy's eyes stay on it, the base turning past the head's reach. "Stop." |
-| 1:12–1:32 | **Several things at once** | "Andy, find the cup and remind me in two minutes to drink some water." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
+| 1:12–1:32 | **Several things at once** | "Andy, find the cup and remind me in two minutes to call Sam." The agent's steps appear on the TV; the robot points; "Your reminder is set." |
 | 1:32–1:46 | **Unplug the network** | The TV says Offline; "Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
 | 1:46–2:04 | Quick cuts | "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 11 s, so a labelled time cut) · "What do you remember?" (the floor plan, in feet, from MapAnything's distances) |
-| 2:04–2:16 | The reminder, two minutes later (a labelled time cut) | Andy finds the person, turns to them: "You asked me to remind you: drink some water." |
-| 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), first word about a second after Andy understands, and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
+| 2:04–2:16 | The reminder, two minutes later (a labelled time cut) | Andy finds the person, turns to them: "You asked me to remind you: call Sam." |
+| 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
 | 2:44–3:00 | Robot close-up | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. |
 
 **The cup game, if it scores well with real cups:** it replaces "Follow the mug" at 0:55 to 1:12 and becomes the X clip.
@@ -44,8 +44,8 @@ what you've lost, and points at it.", every model Meta's, no health advice, the 
    private on it). The things for the takes in place: glasses (and a picture of glasses on the TV), the blue mug and a
    look-alike, keys, the remote; three opaque cups and a small bright ball if the cup game is in.
    **Where to put things:** within about 25 degrees of straight ahead of the robot (a third of the way to each side
-   of the table), where the head turns alone: there Andy's camera-checked aim is 2 to 3 degrees (the chair, 5 of 5).
-   Further round, the base turns too and the aim loosens to 6 to 15 degrees (evals/unattended.py). The "behind you"
+   of the table), where the head turns alone: there Andy's camera-checked aim is about 2 to 3.5 degrees (the chair, 2.1 to 3.4 in 5 of 5).
+   Further round, the base turns too and the aim loosens to 5 to 21 degrees (evals/unattended.py). The "behind you"
    moment is the exception, and it's about finding, not aim.
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before

@@ -1,0 +1,5813 @@
+{
+ "policy": "spark",
+ "when": "2026-10-28T10:37:01-0400",
+ "within_deg": 6.0,
+ "noise": {
+  "point_sd_deg": 1.5,
+  "center_sd_px": 4.0,
+  "miss_small": 0.15,
+  "miss": 0.03,
+  "small_px": 55
+ },
+ "time_model": {
+  "look_s": 1.4,
+  "sam_s": 0.3,
+  "picture_check_s": 2.0
+ },
+ "summary": {
+  "front": {
+   "trials": 20,
+   "correct": 19,
+   "false_finds": 0,
+   "error_median_deg": 1.66,
+   "looks_mean": 2.5,
+   "robot_s_mean": 6.2,
+   "model_s_mean": 3.9,
+   "seconds_mean": 10.0
+  },
+  "behind": {
+   "trials": 20,
+   "correct": 18,
+   "false_finds": 0,
+   "error_median_deg": 1.42,
+   "looks_mean": 3.3,
+   "robot_s_mean": 7.4,
+   "model_s_mean": 3.6,
+   "seconds_mean": 11.0
+  },
+  "screen": {
+   "trials": 20,
+   "correct": 19,
+   "false_finds": 0,
+   "error_median_deg": 1.86,
+   "looks_mean": 6.8,
+   "robot_s_mean": 17.6,
+   "model_s_mean": 5.0,
+   "seconds_mean": 22.5
+  },
+  "absent": {
+   "trials": 20,
+   "correct": 20,
+   "false_finds": 0,
+   "error_median_deg": null,
+   "looks_mean": 10,
+   "robot_s_mean": 18.5,
+   "model_s_mean": 7.7,
+   "seconds_mean": 26.2
+  },
+  "described": {
+   "trials": 20,
+   "correct": 18,
+   "false_finds": 1,
+   "error_median_deg": 1.81,
+   "looks_mean": 5.6,
+   "robot_s_mean": 15.1,
+   "model_s_mean": 4.2,
+   "seconds_mean": 19.4
+  }
+ },
+ "trials": [
+  {
+   "scenario": "front",
+   "seed": 0,
+   "label": "mug",
+   "truth": [
+    -38.42498206549892,
+    21.473674071791994
+   ],
+   "request": "I think my mug is to your right",
+   "found": [
+    -40.08,
+    21.62
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.66,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 6.71,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 1,
+   "label": "glasses",
+   "truth": [
+    49.095452962581035,
+    13.875734375150664
+   ],
+   "request": "I think my glasses is to your left",
+   "found": null,
+   "correct": false,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 11.39,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "far left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "reading glasses",
+      "views": [
+       "far left",
+       "left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "eyeglasses",
+      "views": [
+       "far left",
+       "left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "spectacles",
+      "views": [
+       "far left",
+       "left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far left",
+       "left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 2,
+   "label": "mug",
+   "truth": [
+    34.62241833235856,
+    30.83770106587741
+   ],
+   "request": "I think my mug is a little to your left",
+   "found": [
+    35.69,
+    29.53
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.69,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 4.29,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 3,
+   "label": "remote",
+   "truth": [
+    16.890038629341035,
+    11.279513615535171
+   ],
+   "request": "I think my remote is a little to your left",
+   "found": [
+    16.91,
+    15.29
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 4.01,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 3.53,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 4,
+   "label": "mug",
+   "truth": [
+    -42.41294029645782,
+    23.84479016939622
+   ],
+   "request": "I think my mug is to your right",
+   "found": [
+    -43.56,
+    24.04
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.16,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.1,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 5,
+   "label": "mug",
+   "truth": [
+    30.86624937900345,
+    22.105697162070605
+   ],
+   "request": "I think my mug is a little to your left",
+   "found": [
+    30.81,
+    21.02
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.08,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.6,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 6,
+   "label": "phone",
+   "truth": [
+    52.7504099321436,
+    26.75693427685632
+   ],
+   "request": "I think my phone is to your left",
+   "found": [
+    50.64,
+    28.52
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.75,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.73,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 7,
+   "label": "wallet",
+   "truth": [
+    11.004755803780242,
+    31.531465249138613
+   ],
+   "request": "I think my wallet is a little to your left",
+   "found": [
+    10.73,
+    33.65
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.14,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.17,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 8,
+   "label": "glasses",
+   "truth": [
+    41.86871351584999,
+    8.16564792653549
+   ],
+   "request": "I think my glasses is to your left",
+   "found": [
+    42.81,
+    7.38
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.22,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.69,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 9,
+   "label": "remote",
+   "truth": [
+    5.722242511179978,
+    31.31366088781484
+   ],
+   "request": "I think my remote is straight ahead",
+   "found": [
+    6.74,
+    30.28
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.45,
+   "looks": 3,
+   "model_calls": 3,
+   "model_s": 5.32,
+   "robot_s": 7.1,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 10,
+   "label": "mug",
+   "truth": [
+    19.05618458563805,
+    20.139936240786632
+   ],
+   "request": "I think my mug is a little to your left",
+   "found": [
+    18.85,
+    17.68
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.47,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.98,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 11,
+   "label": "mug",
+   "truth": [
+    -49.54853148123373,
+    10.682876133193115
+   ],
+   "request": "I think my mug is to your right",
+   "found": [
+    -48.15,
+    11.68
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.72,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.74,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 12,
+   "label": "glasses",
+   "truth": [
+    51.2234093768476,
+    14.35728952197645
+   ],
+   "request": "I think my glasses is to your left",
+   "found": [
+    51.25,
+    14.27
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.09,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.02,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 13,
+   "label": "mug",
+   "truth": [
+    39.73790774262564,
+    15.165756281384413
+   ],
+   "request": "I think my mug is to your left",
+   "found": [
+    39.5,
+    14.2
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.0,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.03,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 14,
+   "label": "phone",
+   "truth": [
+    -46.93534034143664,
+    13.609852237271296
+   ],
+   "request": "I think my phone is to your right",
+   "found": [
+    -50.93,
+    15.61
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 4.47,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.59,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 15,
+   "label": "remote",
+   "truth": [
+    1.4986277622833484,
+    23.071973048178567
+   ],
+   "request": "I think my remote is straight ahead",
+   "found": [
+    0.9,
+    20.05
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 3.08,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 5.91,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 16,
+   "label": "remote",
+   "truth": [
+    47.53769066784935,
+    15.56953885585234
+   ],
+   "request": "I think my remote is to your left",
+   "found": [
+    48.78,
+    16.73
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.7,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.38,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 17,
+   "label": "wallet",
+   "truth": [
+    -26.968378102732995,
+    9.157907756735655
+   ],
+   "request": "I think my wallet is a little to your right",
+   "found": [
+    -28.21,
+    8.85
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.28,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.34,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 18,
+   "label": "mug",
+   "truth": [
+    -52.90788497703156,
+    27.648436554852665
+   ],
+   "request": "I think my mug is to your right",
+   "found": [
+    -53.83,
+    27.86
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.94,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 1.74,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "front",
+   "seed": 19,
+   "label": "remote",
+   "truth": [
+    44.05957329731014,
+    21.794831135536906
+   ],
+   "request": "I think my remote is to your left",
+   "found": [
+    43.79,
+    22.64
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.89,
+   "looks": 3,
+   "model_calls": 2,
+   "model_s": 2.35,
+   "robot_s": 7.1,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "far left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 0,
+   "label": "mug",
+   "truth": [
+    74.87936830317221,
+    7.726081505656762
+   ],
+   "request": "I had my mug behind you, on your left",
+   "found": [
+    74.22,
+    6.86
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.09,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 1.99,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 1,
+   "label": "keys",
+   "truth": [
+    -99.58351705631623,
+    25.511097990471434
+   ],
+   "request": "I had my keys behind you, on your right",
+   "found": [
+    -96.23,
+    25.93
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 3.38,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.6,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 2,
+   "label": "glasses",
+   "truth": [
+    117.64686035483768,
+    22.020203073893324
+   ],
+   "request": "I had my glasses behind you, on your left",
+   "found": [
+    117.7,
+    21.57
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.45,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.08,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 3,
+   "label": "remote",
+   "truth": [
+    -92.79096658633438,
+    29.02199671186214
+   ],
+   "request": "I had my remote behind you, on your right",
+   "found": [
+    -93.52,
+    28.81
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.76,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 1.86,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 4,
+   "label": "phone",
+   "truth": [
+    91.11125947068541,
+    13.903684177383926
+   ],
+   "request": "I had my phone behind you, on your left",
+   "found": [
+    91.48,
+    14.57
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.76,
+   "looks": 8,
+   "model_calls": 5,
+   "model_s": 6.46,
+   "robot_s": 15.6,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mobile phone",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "smartphone",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cell phone",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "behind right",
+       "left",
+       "far left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 5,
+   "label": "phone",
+   "truth": [
+    -123.73002921121184,
+    28.745941487887183
+   ],
+   "request": "I had my phone behind you, on your right",
+   "found": [
+    -122.42,
+    28.88
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.32,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.03,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 6,
+   "label": "wallet",
+   "truth": [
+    -116.20067972363623,
+    30.75851852784252
+   ],
+   "request": "I had my wallet behind you, on your right",
+   "found": [
+    -115.74,
+    33.27
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.55,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.32,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 7,
+   "label": "keys",
+   "truth": [
+    106.53599574055562,
+    6.091809317287457
+   ],
+   "request": "I had my keys behind you, on your left",
+   "found": [
+    108.43,
+    6.97
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.09,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.19,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 8,
+   "label": "remote",
+   "truth": [
+    -66.09237138553873,
+    15.56981773416943
+   ],
+   "request": "I had my remote behind you, on your right",
+   "found": null,
+   "correct": false,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 6.41,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "TV remote",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "behind right",
+       "behind left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind left",
+       "right",
+       "far right",
+       "left",
+       "far left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 9,
+   "label": "mug",
+   "truth": [
+    139.05749499585042,
+    5.985403619292306
+   ],
+   "request": "I had my mug behind you, on your left",
+   "found": [
+    140.85,
+    4.21
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.53,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.22,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 10,
+   "label": "glasses",
+   "truth": [
+    -120.54414473400458,
+    23.932030473127394
+   ],
+   "request": "I had my glasses behind you, on your right",
+   "found": [
+    -120.11,
+    26.36
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.47,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 2.88,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 11,
+   "label": "glasses",
+   "truth": [
+    -115.55482579441616,
+    18.72499615980231
+   ],
+   "request": "I had my glasses behind you, on your right",
+   "found": [
+    -117.48,
+    17.23
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.43,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.12,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 12,
+   "label": "remote",
+   "truth": [
+    127.74904582226708,
+    14.71522976480086
+   ],
+   "request": "I had my remote behind you, on your left",
+   "found": [
+    126.26,
+    12.74
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.48,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 1.59,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 13,
+   "label": "keys",
+   "truth": [
+    -78.1994800627965,
+    31.750500429210042
+   ],
+   "request": "I had my keys behind you, on your right",
+   "found": [
+    -79.11,
+    32.17
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.0,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 4.53,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 14,
+   "label": "remote",
+   "truth": [
+    85.25409427848423,
+    6.925443679031419
+   ],
+   "request": "I had my remote behind you, on your left",
+   "found": null,
+   "correct": false,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 8.99,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "TV remote",
+      "views": [
+       "behind left",
+       "left",
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 15,
+   "label": "wallet",
+   "truth": [
+    90.65948060931873,
+    9.489026993616624
+   ],
+   "request": "I had my wallet behind you, on your left",
+   "found": [
+    91.71,
+    9.03
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.15,
+   "looks": 2,
+   "model_calls": 2,
+   "model_s": 2.53,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 16,
+   "label": "glasses",
+   "truth": [
+    -70.41588273433808,
+    6.808674829366463
+   ],
+   "request": "I had my glasses behind you, on your right",
+   "found": [
+    -72.69,
+    8.32
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.73,
+   "looks": 6,
+   "model_calls": 4,
+   "model_s": 5.73,
+   "robot_s": 12.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 17,
+   "label": "wallet",
+   "truth": [
+    -132.18912258383216,
+    6.0941785815435185
+   ],
+   "request": "I had my wallet behind you, on your right",
+   "found": [
+    -132.95,
+    5.19
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.18,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.8,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 18,
+   "label": "glasses",
+   "truth": [
+    140.14659285638504,
+    22.859329001662726
+   ],
+   "request": "I had my glasses behind you, on your left",
+   "found": [
+    139.34,
+    24.13
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.51,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.28,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "behind",
+   "seed": 19,
+   "label": "keys",
+   "truth": [
+    79.41983767061794,
+    12.995594622977881
+   ],
+   "request": "I had my keys behind you, on your left",
+   "found": [
+    79.0,
+    12.57
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.59,
+   "looks": 2,
+   "model_calls": 3,
+   "model_s": 3.15,
+   "robot_s": 5.4,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind left"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 0,
+   "label": "keys",
+   "truth": [
+    5.111635814048931,
+    9.539994286180288
+   ],
+   "request": "where's my keys? not the one on the TV",
+   "found": [
+    2.55,
+    8.67
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.7,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 4.85,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "keys",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 1,
+   "label": "remote",
+   "truth": [
+    5.524044492490212,
+    26.47432432917793
+   ],
+   "request": "where's my remote? not the one on the TV",
+   "found": [
+    4.15,
+    27.43
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.67,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.47,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "remote",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 2,
+   "label": "remote",
+   "truth": [
+    0.7429842424881912,
+    7.41912876291901
+   ],
+   "request": "where's my remote? not the one on the TV",
+   "found": [
+    3.03,
+    7.69
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.3,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 5.68,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "remote",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 3,
+   "label": "phone",
+   "truth": [
+    37.8579091089035,
+    13.760147732036973
+   ],
+   "request": "where's my phone? not the one on the TV",
+   "found": [
+    35.92,
+    12.32
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.41,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 5.18,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "phone",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 4,
+   "label": "wallet",
+   "truth": [
+    48.00989058091547,
+    19.905652691419185
+   ],
+   "request": "where's my wallet? not the one on the TV",
+   "found": [
+    47.92,
+    20.02
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.15,
+   "looks": 10,
+   "model_calls": 3,
+   "model_s": 7.38,
+   "robot_s": 25.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "wallet",
+      "places": [
+       "1",
+       "2",
+       "3"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 5,
+   "label": "keys",
+   "truth": [
+    -24.370726533587355,
+    17.257324072895237
+   ],
+   "request": "where's my keys? not the one on the TV",
+   "found": [
+    -24.63,
+    14.52
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.75,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.15,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "keys",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 6,
+   "label": "remote",
+   "truth": [
+    -8.128095158287906,
+    25.81298585205984
+   ],
+   "request": "where's my remote? not the one on the TV",
+   "found": [
+    -10.33,
+    27.25
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.63,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 4.17,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "remote",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 7,
+   "label": "glasses",
+   "truth": [
+    -13.576443751780168,
+    31.25870988170865
+   ],
+   "request": "where's my glasses? not the one on the TV",
+   "found": [
+    -14.35,
+    33.33
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.21,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 5.56,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "glasses",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 8,
+   "label": "wallet",
+   "truth": [
+    50.26795717643947,
+    23.372090125018488
+   ],
+   "request": "where's my wallet? not the one on the TV",
+   "found": [
+    48.78,
+    23.2
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.5,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.28,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "wallet",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 9,
+   "label": "mug",
+   "truth": [
+    -8.18002709308616,
+    15.46357074024244
+   ],
+   "request": "where's my mug? not the one on the TV",
+   "found": [
+    -9.42,
+    14.9
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.36,
+   "looks": 11,
+   "model_calls": 3,
+   "model_s": 4.45,
+   "robot_s": 26.7,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "mug",
+      "places": [
+       "1",
+       "2",
+       "3",
+       "4"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 10,
+   "label": "remote",
+   "truth": [
+    -37.47525355283821,
+    14.12885648548567
+   ],
+   "request": "where's my remote? not the one on the TV",
+   "found": [
+    -38.06,
+    14.14
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.59,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 4.2,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "remote",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 11,
+   "label": "glasses",
+   "truth": [
+    -12.281482927225788,
+    18.28737941309355
+   ],
+   "request": "where's my glasses? not the one on the TV",
+   "found": [
+    -10.65,
+    17.39
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.86,
+   "looks": 7,
+   "model_calls": 3,
+   "model_s": 3.95,
+   "robot_s": 19.9,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "glasses",
+      "places": [
+       "1",
+       "2",
+       "3"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 12,
+   "label": "mug",
+   "truth": [
+    -52.761280584813555,
+    10.330781827158253
+   ],
+   "request": "where's my mug? not the one on the TV",
+   "found": [
+    -53.54,
+    10.89
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.96,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 3.92,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "mug",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 13,
+   "label": "keys",
+   "truth": [
+    3.6715532039722376,
+    24.26070460997679
+   ],
+   "request": "where's my keys? not the one on the TV",
+   "found": [
+    5.76,
+    22.98
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.45,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 7.56,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "keys",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 14,
+   "label": "remote",
+   "truth": [
+    54.33775014850539,
+    7.260967393461543
+   ],
+   "request": "where's my remote? not the one on the TV",
+   "found": [
+    53.79,
+    8.12
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.02,
+   "looks": 4,
+   "model_calls": 3,
+   "model_s": 6.09,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "remote",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 15,
+   "label": "glasses",
+   "truth": [
+    41.24876281136574,
+    16.0189324113902
+   ],
+   "request": "where's my glasses? not the one on the TV",
+   "found": [
+    40.42,
+    15.27
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.12,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 6.7,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "glasses",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 16,
+   "label": "remote",
+   "truth": [
+    52.015442661583805,
+    31.06387288347228
+   ],
+   "request": "where's my remote? not the one on the TV",
+   "found": [
+    53.74,
+    30.6
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.79,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 2.67,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "remote",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 17,
+   "label": "keys",
+   "truth": [
+    -39.82633320151243,
+    5.922193120289192
+   ],
+   "request": "where's my keys? not the one on the TV",
+   "found": null,
+   "correct": false,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 9.56,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "keys",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keychain",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "car keys",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "house keys",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 18,
+   "label": "keys",
+   "truth": [
+    7.474120359914053,
+    16.835251854303873
+   ],
+   "request": "where's my keys? not the one on the TV",
+   "found": [
+    8.23,
+    18.72
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.03,
+   "looks": 9,
+   "model_calls": 2,
+   "model_s": 3.65,
+   "robot_s": 21.3,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "keys",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "screen",
+   "seed": 19,
+   "label": "keys",
+   "truth": [
+    -28.670257702572226,
+    9.036692529553989
+   ],
+   "request": "where's my keys? not the one on the TV",
+   "found": [
+    -26.7,
+    7.8
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.33,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.71,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "not the one on the TV",
+      "object": "keys",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 0,
+   "label": "glasses",
+   "truth": null,
+   "request": "have you seen my glasses? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 8,
+   "model_s": 8.98,
+   "robot_s": 21.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 2"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "eyeglasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 1,
+   "label": "glasses",
+   "truth": null,
+   "request": "have you seen my glasses? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 7.3,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 2,
+   "label": "glasses",
+   "truth": null,
+   "request": "have you seen my glasses? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 7.71,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "reading glasses",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 3,
+   "label": "wallet",
+   "truth": null,
+   "request": "have you seen my wallet? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 8,
+   "model_s": 12.14,
+   "robot_s": 21.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "2"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "purse",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "billfold",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "card holder",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "purse",
+      "views": [
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 4,
+   "label": "remote",
+   "truth": null,
+   "request": "have you seen my remote? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 8.28,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "TV remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 5,
+   "label": "mug",
+   "truth": null,
+   "request": "have you seen my mug? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 8,
+   "model_s": 8.93,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cup",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cup",
+      "views": [
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "coffee mug",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 6,
+   "label": "keys",
+   "truth": null,
+   "request": "have you seen my keys? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 5,
+   "model_s": 5.35,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keychain",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "car keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "key ring",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 7,
+   "label": "glasses",
+   "truth": null,
+   "request": "have you seen my glasses? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 5.64,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 8,
+   "label": "keys",
+   "truth": null,
+   "request": "have you seen my keys? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 8.95,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keychain",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keychain",
+      "views": [
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 9,
+   "label": "remote",
+   "truth": null,
+   "request": "have you seen my remote? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 8,
+   "model_s": 7.82,
+   "robot_s": 21.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "2"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "TV remote",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 10,
+   "label": "keys",
+   "truth": null,
+   "request": "have you seen my keys? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 8.36,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "keychain",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "car keys",
+      "views": [
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 11,
+   "label": "remote",
+   "truth": null,
+   "request": "have you seen my remote? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 6.43,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "TV remote",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 12,
+   "label": "remote",
+   "truth": null,
+   "request": "have you seen my remote? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 8.29,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "TV remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 13,
+   "label": "glasses",
+   "truth": null,
+   "request": "have you seen my glasses? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 8.81,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses case",
+      "views": [
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 14,
+   "label": "wallet",
+   "truth": null,
+   "request": "have you seen my wallet? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 7.23,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "purse",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "purse",
+      "views": [
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 15,
+   "label": "phone",
+   "truth": null,
+   "request": "have you seen my phone? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 4,
+   "model_s": 4.45,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mobile phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cellphone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "smartphone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 16,
+   "label": "mug",
+   "truth": null,
+   "request": "have you seen my mug? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 6.46,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "behind left",
+       "behind right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "place 1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cup",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "coffee cup",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 17,
+   "label": "phone",
+   "truth": null,
+   "request": "have you seen my phone? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 8.71,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mobile phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "smartphone",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cell phone",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 18,
+   "label": "phone",
+   "truth": null,
+   "request": "have you seen my phone? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 7.25,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mobile phone",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "cell phone",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "absent",
+   "seed": 19,
+   "label": "wallet",
+   "truth": null,
+   "request": "have you seen my wallet? I can't remember where I put it",
+   "found": null,
+   "correct": true,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 6,
+   "model_s": 7.62,
+   "robot_s": 19.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "1"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "purse",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "billfold",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "card holder",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 0,
+   "label": "glasses",
+   "truth": [
+    -6.441692035983323,
+    13.379464156074231
+   ],
+   "request": "where's the glasses? the blue one, next to the laptop",
+   "found": [
+    -5.78,
+    12.61
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.01,
+   "looks": 4,
+   "model_calls": 3,
+   "model_s": 4.04,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the blue one, next to the laptop",
+      "object": "glasses",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 1,
+   "label": "phone",
+   "truth": [
+    33.86721697090837,
+    25.411655949105523
+   ],
+   "request": "where's the phone? the red one",
+   "found": [
+    35.25,
+    26.91
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.03,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 4.55,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "red phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "red phone",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the red one",
+      "object": "red phone",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 2,
+   "label": "phone",
+   "truth": [
+    -49.29032875178942,
+    13.371817897035704
+   ],
+   "request": "where's the phone? the blue one, next to the laptop",
+   "found": [
+    -50.89,
+    10.71
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 3.11,
+   "looks": 4,
+   "model_calls": 3,
+   "model_s": 3.21,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "blue phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "blue phone",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the blue one, next to the laptop",
+      "object": "phone",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 3,
+   "label": "wallet",
+   "truth": [
+    -38.43939999638873,
+    13.78844584832449
+   ],
+   "request": "where's the wallet? the blue one, next to the laptop",
+   "found": [
+    -34.57,
+    12.9
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 3.97,
+   "looks": 4,
+   "model_calls": 2,
+   "model_s": 3.23,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "blue wallet",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "blue one, next to the laptop",
+      "object": "wallet",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 4,
+   "label": "wallet",
+   "truth": [
+    -24.23093296243287,
+    24.721186916238384
+   ],
+   "request": "where's the wallet? the the big one one",
+   "found": [
+    5.95,
+    25.79
+   ],
+   "correct": false,
+   "false_find": true,
+   "error_deg": 30.2,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.07,
+   "robot_s": 14.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the big one",
+      "object": "wallet",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 5,
+   "label": "wallet",
+   "truth": [
+    -12.251102563456705,
+    19.9845413722691
+   ],
+   "request": "where's the wallet? the blue one, next to the laptop",
+   "found": [
+    -11.04,
+    22.0
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.35,
+   "looks": 4,
+   "model_calls": 2,
+   "model_s": 2.23,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "blue wallet",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the blue one, next to the laptop",
+      "object": "blue wallet",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 6,
+   "label": "remote",
+   "truth": [
+    41.97925397601554,
+    24.012052561415913
+   ],
+   "request": "where's the remote? the the big one one",
+   "found": null,
+   "correct": false,
+   "false_find": false,
+   "error_deg": null,
+   "looks": 10,
+   "model_calls": 7,
+   "model_s": 9.91,
+   "robot_s": 17.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "big remote",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "big remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote control",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "remote",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the big one",
+      "object": "remote",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "remote",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 7,
+   "label": "phone",
+   "truth": [
+    -51.880561901752955,
+    28.819321677624274
+   ],
+   "request": "where's the phone? the the big one one",
+   "found": [
+    -50.99,
+    29.41
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.07,
+   "looks": 4,
+   "model_calls": 3,
+   "model_s": 4.22,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the big one",
+      "object": "phone",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 8,
+   "label": "mug",
+   "truth": [
+    20.488135159145628,
+    26.06136498750834
+   ],
+   "request": "where's the mug? the red one",
+   "found": [
+    21.94,
+    26.13
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.45,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.8,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "red mug",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "red one",
+      "object": "red mug",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 9,
+   "label": "wallet",
+   "truth": [
+    -19.264953315496136,
+    23.59695144364854
+   ],
+   "request": "where's the wallet? the red one",
+   "found": [
+    -20.43,
+    22.1
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.9,
+   "looks": 11,
+   "model_calls": 5,
+   "model_s": 7.12,
+   "robot_s": 28.7,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "wallet",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the red one",
+      "object": "wallet",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "red wallet",
+      "views": [
+       "far left",
+       "far right",
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the red one",
+      "object": "wallet",
+      "places": [
+       "3",
+       "4"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 10,
+   "label": "keys",
+   "truth": [
+    -43.33427499940337,
+    16.160845434886955
+   ],
+   "request": "where's the keys? the blue one, next to the laptop",
+   "found": [
+    -41.44,
+    17.71
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.44,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 3.03,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "blue one, next to the laptop",
+      "object": "keys",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 11,
+   "label": "phone",
+   "truth": [
+    10.053917131184946,
+    31.8553760916819
+   ],
+   "request": "where's the phone? the blue one, next to the laptop",
+   "found": [
+    9.79,
+    33.56
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.73,
+   "looks": 4,
+   "model_calls": 3,
+   "model_s": 3.22,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "phone",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the blue one, next to the laptop",
+      "object": "phone",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 12,
+   "label": "mug",
+   "truth": [
+    41.37591782783447,
+    31.30695787714042
+   ],
+   "request": "where's the mug? the red one",
+   "found": [
+    44.45,
+    32.3
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 3.23,
+   "looks": 4,
+   "model_calls": 2,
+   "model_s": 3.19,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "red mug",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the red one",
+      "object": "mug",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 13,
+   "label": "mug",
+   "truth": [
+    2.9760874784611033,
+    24.086572136844488
+   ],
+   "request": "where's the mug? the blue one, next to the laptop",
+   "found": [
+    3.53,
+    22.91
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.3,
+   "looks": 4,
+   "model_calls": 3,
+   "model_s": 4.2,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "mug",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "mug",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the blue one, next to the laptop",
+      "object": "mug",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 14,
+   "label": "keys",
+   "truth": [
+    -46.56768879441808,
+    27.40113597976812
+   ],
+   "request": "where's the keys? the the big one one",
+   "found": [
+    -47.27,
+    27.41
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.7,
+   "looks": 3,
+   "model_calls": 2,
+   "model_s": 6.11,
+   "robot_s": 7.1,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "keys",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look_closer",
+     {
+      "object": "keys",
+      "place": "1"
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 15,
+   "label": "glasses",
+   "truth": [
+    -24.14191314484822,
+    27.45700737389965
+   ],
+   "request": "where's the glasses? the red one",
+   "found": [
+    -21.21,
+    28.3
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 3.05,
+   "looks": 6,
+   "model_calls": 3,
+   "model_s": 4.99,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "glasses",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "glasses",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "the red one",
+      "object": "glasses",
+      "places": [
+       "1",
+       "2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 16,
+   "label": "wallet",
+   "truth": [
+    -29.357170233562634,
+    28.19237520516272
+   ],
+   "request": "where's the wallet? the red one",
+   "found": [
+    -27.75,
+    28.01
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.62,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 2.6,
+   "robot_s": 14.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "red wallet",
+      "views": [
+       "left",
+       "right",
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "red one",
+      "object": "wallet",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 17,
+   "label": "wallet",
+   "truth": [
+    20.384589132356865,
+    23.757526744009752
+   ],
+   "request": "where's the wallet? the the big one one",
+   "found": [
+    20.88,
+    25.82
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 2.12,
+   "looks": 6,
+   "model_calls": 2,
+   "model_s": 4.46,
+   "robot_s": 16.2,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "wallet",
+      "views": [
+       "far left",
+       "left",
+       "right",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "big one",
+      "object": "wallet",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 18,
+   "label": "remote",
+   "truth": [
+    23.0464051065848,
+    7.237439596300098
+   ],
+   "request": "where's the remote? the blue one, next to the laptop",
+   "found": [
+    23.05,
+    7.92
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 0.68,
+   "looks": 4,
+   "model_calls": 2,
+   "model_s": 2.74,
+   "robot_s": 12.8,
+   "steps": [
+    [
+     "look",
+     {
+      "object": "blue remote",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "blue one, next to the laptop",
+      "object": "blue remote",
+      "places": [
+       "place 1",
+       "place 2"
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "scenario": "described",
+   "seed": 19,
+   "label": "phone",
+   "truth": [
+    -47.206466646010995,
+    14.737075106778128
+   ],
+   "request": "where's the phone? the red one",
+   "found": [
+    -47.44,
+    13.1
+   ],
+   "correct": true,
+   "false_find": false,
+   "error_deg": 1.66,
+   "looks": 10,
+   "model_calls": 3,
+   "model_s": 4.79,
+   "robot_s": 25.0,
+   "steps": [
+    [
+     "look_closer",
+     {
+      "object": "red phone",
+      "place": "remembered"
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "red phone",
+      "views": [
+       "left",
+       "right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "red phone",
+      "views": [
+       "far left",
+       "far right"
+      ]
+     }
+    ],
+    [
+     "look",
+     {
+      "object": "red phone",
+      "views": [
+       "behind left",
+       "behind right",
+       "floor in front"
+      ]
+     }
+    ],
+    [
+     "compare",
+     {
+      "description": "red one",
+      "object": "red phone",
+      "places": [
+       "1",
+       "2",
+       "3"
+      ]
+     }
+    ]
+   ]
+  }
+ ]
+}

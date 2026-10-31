@@ -1,0 +1,7 @@
+{
+ "what": "How well Omnilingual ASR (Andy's own ears) hears Meta's two open voices saying Andy's own lines, on this computer, 2026-10-30. A stand-in for clarity, not a listening test; the founder then picked the voice by ear on the robot's speaker.",
+ "lines": ["Where are my glasses?", "There they are! I see your glasses, to my right.", "Your keys are on the desk, behind the keyboard.", "Found it! I see your mug, a little to my left, about five feet away.", "I'm Andy, an AI robot.", "Let me look.", "Hmm, I couldn't find your remote from here. Where did you last have it?", "Your reminder is set for three fifteen.", "Keep an eye on my keys.", "The other mug isn't yours."],
+ "mms_tts": {"model": "facebook/mms-tts-eng", "runs": "10 lines x 2 seeds", "word_error": {"noise_scale_0.667": 0.278, "noise_scale_0.5": 0.266, "noise_scale_0.33": 0.228}},
+ "seamless_m4t_v2": {"model": "facebook/seamless-m4t-v2-large (text-to-speech half, speaker 0, fp32 on the processor)", "runs": "10 lines x 1", "word_error": 0.089, "seconds_per_line_on_gpu_fp16": [0.2, 0.3]},
+ "chosen": "SeamlessM4T v2, speaker 51, slowed 8%, highpass 120 Hz, +6 dB at 3 kHz, peak-normalised: option 2 of 5 played on the robot's speaker, picked by the founder"
+}

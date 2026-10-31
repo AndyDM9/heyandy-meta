@@ -235,6 +235,7 @@ class ScreenState:
             self._picture, self.sources, self.steps, self.memory, self._timer = None, [], [], None, None
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
             self.checklist, self.privacy = None, None
+            self._glimpse = None  # the last frame of a search that found nothing goes too
 
     def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
         """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera

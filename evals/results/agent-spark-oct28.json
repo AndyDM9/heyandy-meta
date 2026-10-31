@@ -1,0 +1,190 @@
+{
+ "summary": {
+  "brain": "spark",
+  "requests": 12,
+  "right": 12,
+  "seconds_median": 5.1,
+  "went_to_the_agent": 12,
+  "when": "2026-10-28 10:38"
+ },
+ "rows": [
+  {
+   "request": "Find my glasses and remind me at 5 pm to clean them",
+   "agent": true,
+   "ok": true,
+   "seconds": 7.8,
+   "steps": [
+    "looking a little to my left",
+    "looking a little to my right",
+    "looking a little to my right",
+    "looked 3 times",
+    "find: I see your glasses, a little to my right.",
+    "set_reminder: Reminder set for 5 o'clock: clean them [glasses]."
+   ],
+   "reply": "I'm Andy, an AI robot. I see your glasses a little to my right, and you're all set for 5 o'clock to clean them.",
+   "error": ""
+  },
+  {
+   "request": "Where are my keys? And keep an eye on them from now on",
+   "agent": true,
+   "ok": true,
+   "seconds": 5.6,
+   "steps": [
+    "recall: no recent sighting",
+    "looking a little to my left",
+    "looking to my left",
+    "looked 2 times",
+    "find: I see your keys, to my left.",
+    "keep_an_eye_on: Keeping an eye on the keys."
+   ],
+   "reply": "I'm Andy, an AI robot. I see your keys to my left and I'm keeping an eye on them.",
+   "error": ""
+  },
+  {
+   "request": "Keep an eye on my wallet and my glasses",
+   "agent": true,
+   "ok": true,
+   "seconds": 4.7,
+   "steps": [
+    "keep_an_eye_on: Keeping an eye on the wallet.",
+    "keep_an_eye_on: Keeping an eye on the glasses."
+   ],
+   "reply": "I'm Andy, an AI robot. I'm keeping an eye on your wallet and your glasses.",
+   "error": ""
+  },
+  {
+   "request": "Remind me in 10 minutes to stretch, and at 6 pm to call Sam",
+   "agent": true,
+   "ok": true,
+   "seconds": 2.1,
+   "steps": [
+    "set_reminder: Reminder set for 9:40: stretch.",
+    "set_reminder: Reminder set for 6 o'clock: call Sam."
+   ],
+   "reply": "I'm Andy, an AI robot. Got it, I'll remind you to stretch at 9:40 and to call Sam at 6 o'clock.",
+   "error": ""
+  },
+  {
+   "request": "Forget my wallet and then find my phone",
+   "agent": true,
+   "ok": true,
+   "seconds": 5.5,
+   "steps": [
+    "recall: no recent sighting",
+    "looking a little to my left",
+    "looking a little to my left",
+    "looked 2 times",
+    "forget: Forgot the wallet.",
+    "find: I see your phone, a little to my left."
+   ],
+   "reply": "I'm Andy, an AI robot. I forgot the wallet, and I see your phone a little to my left.",
+   "error": ""
+  },
+  {
+   "request": "Look for my keys and my glasses",
+   "agent": true,
+   "ok": true,
+   "seconds": 6.1,
+   "steps": [
+    "looking a little to my left",
+    "looking a little to my right",
+    "looking a little to my right",
+    "looked 3 times",
+    "find: I see your keys, to my left.",
+    "find: I see your glasses, a little to my right."
+   ],
+   "reply": "I'm Andy, an AI robot. I see your keys to my left and your glasses a little to my right!",
+   "error": ""
+  },
+  {
+   "request": "Find the blue mug, not the red one, and remind me at 3 pm to wash it",
+   "agent": true,
+   "ok": true,
+   "seconds": 8.1,
+   "steps": [
+    "look_closer: refused: no place 'remembered'; places so far: none",
+    "look: Possible mug: place 1: a little to my left, confidence 0.90, seen in 2 view(s); place 2: a little to my right, confidence 0.90, seen in 2 view(s)",
+    "compare: Place 1 fits 'blue one, not the red one'. Pointing at the mug, straight ahead.",
+    "find: I see your mug, straight ahead.",
+    "set_reminder: Reminder set for 3 o'clock: wash it."
+   ],
+   "reply": "I'm Andy, an AI robot. I see your mug straight ahead and your reminder is set for 3 o'clock to wash it!",
+   "error": ""
+  },
+  {
+   "request": "Find my charger, I think it's behind you, and then keep an eye on it",
+   "agent": true,
+   "ok": true,
+   "seconds": 6.1,
+   "steps": [
+    "look_closer: refused: no place 'remembered'; places so far: none",
+    "look: Possible charger: place 1: behind me on my left, confidence 0.90, seen in 1 view(s)",
+    "look_closer: Confirmed. Pointing at the charger, behind me on my left.",
+    "find: I see your charger, behind me on my left.",
+    "keep_an_eye_on: Keeping an eye on the charger."
+   ],
+   "reply": "I'm Andy, an AI robot. I found your charger behind me on my left and I'm keeping an eye on it.",
+   "error": ""
+  },
+  {
+   "request": "What reminders do I have, and where did you last see my keys?",
+   "agent": true,
+   "ok": true,
+   "seconds": 3.2,
+   "steps": [
+    "list_reminders: at 7 o'clock: take the bins out",
+    "what_i_remember: keys: seen 20 minutes ago, to my left"
+   ],
+   "reply": "I'm Andy, an AI robot. You've got to take the bins out at 7 o'clock. I saw your keys to my left 20 minutes ago.",
+   "error": ""
+  },
+  {
+   "request": "Where's the remote? Also remind me at noon to water the plants",
+   "agent": true,
+   "ok": true,
+   "seconds": 3.1,
+   "steps": [
+    "looking to my left",
+    "looking to my right",
+    "looking to my right",
+    "looked 5 times",
+    "find: I see your remote, to my right.",
+    "set_reminder: Reminder set for 12 o'clock: water the plants."
+   ],
+   "reply": "I'm Andy, an AI robot. I see your remote to my right. Your reminder for 12 o'clock to water the plants is set.",
+   "error": ""
+  },
+  {
+   "request": "Look at what's on the table and then find my phone",
+   "agent": true,
+   "ok": true,
+   "seconds": 3.6,
+   "steps": [
+    "recall: no recent sighting",
+    "looking a little to my left",
+    "looking a little to my left",
+    "looked 2 times",
+    "look_and_tell: I see a glasses and a phone and a mug and a mug.",
+    "find: I see your phone, a little to my left."
+   ],
+   "reply": "I'm Andy, an AI robot. I see glasses and a phone and mugs on the table and your phone is a little to my left.",
+   "error": ""
+  },
+  {
+   "request": "Find my glasses, then my keys, then remind me in an hour to leave",
+   "agent": true,
+   "ok": true,
+   "seconds": 3.9,
+   "steps": [
+    "looking a little to my left",
+    "looking to my left",
+    "looked 2 times",
+    "find: I see your glasses, a little to my right.",
+    "find: I see your keys, to my left.",
+    "set_reminder: Reminder set for 10:30: leave."
+   ],
+   "reply": "I'm Andy, an AI robot. I see your glasses a little to my right and your keys to my left, and you're all set for 10:30 to leave.",
+   "error": ""
+  }
+ ]
+}

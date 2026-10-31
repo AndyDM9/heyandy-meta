@@ -153,7 +153,7 @@ Docs: [overview](https://dev.meta.ai/docs/overview), [quickstart](https://dev.me
     - **Suggested sampling:** `--temp 1.0 --top-p 0.95 --top-k 64`.
 - **Muse Spark Open** (October 15, 2026): 816B total, 42B active parameters. It's too big for our desktop; only on partner
   credits. Its licence requires "Built with Muse Spark Open".
-- **For a Jetson Orin Nano 8 GB** (not this entry): Glimmer won't fit; Llama 3.2 1B or 3B would. The Llama licence
+- **For a Jetson Orin Nano 8 GB** (a smaller computer for later): Glimmer won't fit; Llama 3.2 1B or 3B would. The Llama licence
   requires "Built with Llama" and a model name starting with "Llama".
 
 ## 5. What existed before
@@ -251,6 +251,9 @@ logged.
   sweep starts in the middle: **7.5 s** for a cup, 8.2 s for a keyboard, with the TV-picture check included.
 
 ## 10. Voice, on this computer (2026-10-27, evening)
+
+*Replaced on October 30 (section 32): Andy's voice is no longer Kokoro-82M, because every model a project runs must
+be Meta's; it's Meta's SeamlessM4T v2. The rest of this section stands as the record of what was done then.*
 
 Audio from a home is as private as its pictures, so hearing and speaking run here too (`local/voice_server.py`, GPU 1).
 
@@ -479,6 +482,9 @@ simulated and the web live: 7.2 to 8.4 s for three things. The TV shows a checkl
 
 ## 23. Andy in Spanish (2026-10-27, night)
 
+*Replaced on October 30 (section 32): Andy's voice is no longer Kokoro-82M, because every model a project runs must
+be Meta's; it's Meta's SeamlessM4T v2. The rest of this section stands as the record of what was done then.*
+
 Many older adults in South Florida speak Spanish first, and Omnilingual ASR is built for many languages. Measured:
 
 - **Hearing:** told `spa_Latn`, Omnilingual ASR heard Kokoro's Spanish voice word for word ("veo sus gafas un poco a mi
@@ -646,3 +652,26 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
 - **A GPU fell off the bus.** About 15 minutes into a full-load scorecard, GPU 0 dropped off the PCIe bus (NVIDIA Xid
   79), and the driver needed a restart for both cards. Preflight now checks both GPUs answer, and that the robot's
   daemon found its motors (after a restart with the robot switched on later, it stays in error until restarted).
+
+## 32. The last days before filming (2026-10-29 and 30)
+
+- **Every model Meta's (the organizers' answer, Oct 30, docs/rules.md).** Kokoro was the only other model. Measured
+  with Andy's own ears on ten of its lines (`evals/results/voice-clarity-20261030.json`): MMS-TTS lost 23 to 28% of the
+  words, SeamlessM4T v2 9%. Seamless's tokenizer, loaded offline from the hub cache, turned every word into "unknown"
+  (Andy spoke noise); it loads from a saved copy now. On the robot's own speaker the founder picked, by ear, from five
+  versions: Seamless speaker 51, slowed 8%, under 120 Hz cut, +6 dB at 3 kHz, never clipped (a soft clipper had been
+  lifting quiet speech up to 8 times). To fit it on GPU 0, Glimmer runs without its DFlash drafter.
+- **Did the point land?** After pointing, one more frame measures how far the thing is from the middle of the view.
+  On the robot the head sagged a few degrees after its pointing nod, so the command is now corrected by what the frame
+  shows (past 3 degrees, at most twice). `evals/unattended.py` (the robot alone, nobody judging the finding): 34 of 34
+  searches pointed, a median 5.2 degrees off; the chair in front 2.1 to 3.4; worst where the base turns too.
+- **How far: MapAnything** (`local/depth_server.py`): checked first on public NYU Depth v2 frames (12 to 21% short,
+  0.2 s, about 3 GB in bf16 on GPU 1). The same keyboard read 0.92 to 1.00 m from five starting poses.
+- **The TV for the camera:** the live view while searching, the found shot's three measured figures, the floor plan,
+  the waiting screen's roster, HeyAndy's signature.
+- **Feelings at calm moments:** Pollen's recorded emotions library (Apache-2.0, moves, not a model): 3.6 to 3.9 s each
+  on the robot, never during a search or a point.
+- **The robot needs nothing outside this repository:** Pollen's daemon runs from here (`deploy/heyandy-robot.service`),
+  waiting for camera and sound access at boot (once, after a restart, it started before the login and ran blind).
+- **Every scorecard rerun on the final code** (Oct 30): see the README; the Oct 28 runs are kept as `*-oct28.json`.
+

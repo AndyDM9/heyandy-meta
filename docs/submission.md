@@ -18,7 +18,7 @@ People who live at home lose the same few things every day: glasses, keys, the p
 for them, and a camera that streams the living room to the cloud is a camera most people won't have. Andy sits on the
 table, looks around the room for you, points at the thing, and keeps what it sees and hears in the house.
 
-## What it does, in the room
+## What it does
 
 - **"Andy, where are my glasses?"** Andy turns to your voice and looks around; the TV shows each view live, every
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
@@ -32,7 +32,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
   whether you'll need an umbrella.
 - **"This is my mug"** (Andy learns it by sight, as numbers, and skips anyone else's); **"what's that?"** (Andy looks
   where you point and points at it too); **the cup game** (SAM 3.1 Object Multiplex tracks every cup at once through
-  the shuffle).
+  the shuffle). These three and "going out" are built and measured in simulation or on photos, not yet on the robot
+  with real things (see Measured).
 - **"Show me the weather radar on the TV"** (Muse Spark's computer use), **"draw me a map of my things"** (Muse Image,
   from words only), answers with sources, conversation, **Spanish**, and several things at once through an agent with
   Andy's abilities as tools (Muse Spark, or Glimmer offline). At calm moments Andy shows a feeling with one of Pollen's
@@ -59,10 +60,11 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 
 ## Technical depth (what was hard)
 
-- **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its camera said 7. The head
-  sags about 4 degrees after its pointing nod, so sending the same angles again lands the same way: Andy now corrects
-  the command by what the frame shows. Over 34 unattended searches on the robot: 34 pointed, none failed, a median 5.2
-  degrees from the middle of the view (2 to 3 where the head turns alone; worst where the base turns too).
+- **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its own camera showed
+  the head sagging a few degrees after its pointing nod, so sending the same angles again landed the same way: Andy now
+  corrects the command by what the frame shows (at most twice). Over 34 unattended searches on the robot: 34 pointed, none failed, a median 5.2
+  degrees from the middle of the view (the chair in front, where the head turns alone: 2.1 to 3.4; worst where the base
+  turns too).
 - **How far, from one frame.** MapAnything gives metric depth for the frame a thing was confirmed in, in 0.2 s beside
   SAM 3.1 on one GPU: the same keyboard read 0.92 to 1.00 m from five starting poses.
 - **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2 (9% of words

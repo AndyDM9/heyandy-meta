@@ -7,7 +7,8 @@ speaks with Meta's open text-to-speech. SeamlessM4T v2's speech part (facebook/s
 only, so for it heyandy_meta/voice/spoken.py cuts the text into phrases and puts the pauses back; for both, numbers,
 times and units become words first. Seamless runs on the second GPU this process sees (--tts-device), beside Glimmer.
 
-Runs in its own environment (scripts/setup-local-models.sh) on GPU 1 beside SAM 3.1, and listens on 127.0.0.1 only.
+Runs in its own environment (scripts/setup-local-models.sh): hearing on GPU 1 beside SAM 3.1, the voice on GPU 0 beside Glimmer; it listens on
+127.0.0.1 only.
 Audio is held in memory for one request; nothing is written or logged.
 
     CUDA_VISIBLE_DEVICES=1 ~/opt/voice/.venv/bin/python local/voice_server.py

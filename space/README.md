@@ -14,7 +14,8 @@ short_description: The TV beside Andy, a tabletop robot built on Meta's models
 **Andy** is a tabletop robot (a Reachy Mini Lite, for now) that finds what you've lost and points at it, knows your
 own mug from anyone else's, keeps an eye on the things you choose, checks you have them when you go out, reminds you in
 person, plays the cup game, shows the web on the TV, and speaks Spanish. It checks with its own camera that its point
-landed, and says how far away the thing is. It was built by **HeyAndy, Inc.** for Meta's Global AI Developer Hackathon (startup track, *Push the
+landed, and says how far away the thing is. (The cup game, "this is my mug", "what's that?" and going out are built
+and measured in simulation or on photos, not yet on the robot with real things.) It was built by **HeyAndy, Inc.** for Meta's Global AI Developer Hackathon (startup track, *Push the
 Frontier*), on Meta's models, and **every model it runs is Meta's**: Muse Glimmer, SAM 3.1 (with Object Multiplex), MapAnything (how
 far), DINOv2, Omnilingual ASR, SeamlessM4T v2 (its voice), Llama Guard 3 and Llama Prompt Guard 2 from their open weights
 on the computer beside the robot, and Muse Spark and Muse Image through the Meta Model API. **Andy gives no health

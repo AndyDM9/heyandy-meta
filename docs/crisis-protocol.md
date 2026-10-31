@@ -11,7 +11,8 @@ questions. It is not a health, medical or mental-health product, and it never co
 
 ## If someone talks about harming themselves
 - The check runs in code on what the person said, before any model sees it
-  (`heyandy_meta/companion/safety.py`).
+  (`heyandy_meta/companion/safety.py`), then a second check by Llama Guard 3 on this computer
+  (`heyandy_meta/companion/safety_model.py`), still before any other model; either gives the reply below.
 - Andy gives one fixed reply and does not try to counsel:
   > "I'm a robot, so I can't help with this the way a person can. You can call or text 988, the Suicide and Crisis
   > Lifeline, any time, day or night. If you're in danger right now, please call 911."

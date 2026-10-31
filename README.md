@@ -63,7 +63,7 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
    moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
    ("every morning at 8").
 16. **"Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
-   SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (0.4 to 0.6 s
+   SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (about 0.5 s
    a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
    help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
    back; it's remembered.
@@ -93,11 +93,13 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **Our own earlier object-finding prototype,** built before this event: **none of its code is in this repository,
   and nothing here imports it.** The search, memory, voice, agents and screen here were all written during the event,
   on Meta's models.
-- **Third-party open source**, used under its licences: Pollen Robotics' Reachy Mini SDK, simulation scene and published
-  camera calibration; llama.cpp; Meta's `meta-sam-parser`.
+- **Third-party open source**, used under its licences: Pollen Robotics' Reachy Mini SDK and daemon, simulation scene,
+  published camera calibration and recorded-emotions library (Apache-2.0); llama.cpp; Meta's `meta-sam-parser`, `sam3`,
+  `map-anything` and `omnilingual-asr` code; Playwright and Chromium (the web on the TV); the Atkinson Hyperlegible
+  Next and Mono typefaces (SIL Open Font License, `heyandy_meta/screen/fonts/OFL.txt`).
 
 **What's new here,** all built during the event (the day-by-day record: [docs/research.md](docs/research.md)):
-- **On the Reachy Mini Lite:** a closed-loop adapter (the only module that imports Pollen's SDK). The head falls short and
+- **On the Reachy Mini Lite:** a closed-loop adapter (with apps/andy_finder, the only code that imports Pollen's SDK). The head falls short and
   sags, so it reads the pose back, corrects once, and every frame carries the measured direction; the base turns past
   the head's reach. Body language in a 50 Hz loop: breathing, listening, thinking, moving with its own words, a
   found-wiggle; it keeps its eyes on the person. At calm moments a feeling of its own from Pollen's recorded emotions library
@@ -112,7 +114,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
   sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;
   close names in one request ("cup" also finds the mug). **After pointing, Andy checks the point landed:** one more
-  frame measures how far the thing is from the middle of the view (re-aiming once past 4 degrees), the TV shows it,
+  frame measures how far the thing is from the middle of the view (correcting the aim past 3 degrees, at most twice), the TV shows it,
   and Andy says what it passed over on the way ("The other mug isn't yours").
 - **Agents that plan the search with the robot's tools:** Muse Spark online, Muse Glimmer on this computer, with the
   same checked tools (named views and numbered places, never motor values), ten looks at most, no repeat looks, and
@@ -125,8 +127,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
   man's voice), chosen by ear from five versions played on the robot's own speaker: slowed 8%, without rumble, the
   consonants brought forward (6 dB around 3 kHz) and never clipped; numbers, times and units become words first
   (Meta's MMS-TTS is wired in too); the robot's microphone array (and the voice's direction),
-  "Andy" as the wake word with its common mishearings, answers spoken sentence by sentence: the first word about a
-  second after Andy understands.
+  "Andy" as the wake word with its common mishearings, answers spoken sentence by sentence.
 - **Reminders delivered in person,** with Andy's questions taking the next answer.
 - **New abilities:** the cup game (SAM 3.1 Object Multiplex), "this is my mug" (DINOv2 and a colour fingerprint, kept as
   numbers), "I'm going out" (pointing at what's still here, the weather looked up at the same time), "what's that?"
@@ -154,7 +155,8 @@ uv sync --extra dev --extra robot --extra browse && uv run playwright install --
 ```
 Before a demo, `uv run python scripts/preflight.py` checks everything answers (about a minute, no camera).
 The models on this computer (Glimmer on GPU 0, SAM 3.1 on GPU 1, two 24 GB cards) are set up by
-`scripts/setup-local-models.sh` and run as the user services in `deploy/`. Muse Spark is used when `MODEL_API_KEY` is set
+`scripts/setup-local-models.sh` and `scripts/setup-depth.sh` (MapAnything) and run as the user services in `deploy/`
+(the robot's own daemon too: `heyandy-robot`). Muse Spark is used when `MODEL_API_KEY` is set
 and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
 
 ## Layout
@@ -166,7 +168,7 @@ heyandy_meta/finder/       the search, from a SAM 3.1 mask to where the head loo
 heyandy_meta/agent/        the search tools and the planning loop (Muse Spark online, Muse Glimmer on this computer)
 heyandy_meta/memory/       where watched things were last seen, the idle glance, and the person's own things by sight
 heyandy_meta/voice/        listening for "Andy", cutting speech into turns, Andy's voice
-heyandy_meta/robot/        the body interface, the Reachy Mini adapter (the only Pollen SDK import), body language,
+heyandy_meta/robot/        the body interface, the Reachy Mini adapter (Pollen's SDK), body language,
                            and a simulated room for tests
 heyandy_meta/screen/       the TV page
 heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimmer (and its straight-to-the-answer call),
@@ -175,8 +177,8 @@ heyandy_meta/router.py     who answers a turn: the device or the cloud
 apps/andy_finder/          a slim Reachy Mini app for everyone: find and point, from the dashboard
 heyandy_meta/network.py    whether the cloud is reachable right now
 heyandy_meta/budget.py     the hard cap on Model API spend
-local/                     SAM 3.1 (finding, /track for the cup game) and DINOv2 (/embed), and hearing and speaking,
-                           served on 127.0.0.1 only
+local/                     SAM 3.1 (finding, /track for the cup game), DINOv2 (/embed) and Prompt Guard 2 (/guard);
+                           MapAnything (how far, depth_server.py); hearing and speaking; all served on 127.0.0.1 only
 evals/                     the scorecards (search simulated, agent, Spanish, the privacy audit; physical, to run) and
                            their results
 scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
@@ -229,11 +231,11 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 | A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | 19, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
 | Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 1 wrong |
-| Planning time (model only) | none | 9 to 13 s | **6 to 8 s** |
+| Planning time (model only; not counting "not there") | none | 9 to 13 s | **6 to 8 s** |
 
 Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Every
 column was rerun on October 30 on the final code (a look now counts the check after pointing; Glimmer runs without its
-drafter, so it plans more slowly). Two rounds of fixes came from this scorecard, and every earlier run is
+drafter, so it plans more slowly; the October 28 runs are kept as `*-oct28.json`). Two rounds of fixes came from this scorecard, and the earlier runs are
 kept:
 - **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
   Glimmer's look-alikes went from 20 to 17 (`*-before-tool-fixes.json`).
@@ -241,7 +243,7 @@ kept:
   compare has picked):** look-alikes went to 19 (Glimmer) and 18 (Spark) (`*-before-colour-fix.json`). Spark's three
   new misses (behind 2, TV 1) were all its ten looks spent trying other names where the thing wasn't.
 
-The one wrong look-alike left for each agent is the simulation's own stand-in for Glimmer's picture check, which
+The wrong look-alikes left (Glimmer 2, Spark 1) come from the simulation's own stand-in for Glimmer's picture check, which
 matches words and mixes up "the big one" and "the small one". With 20 rooms a scenario, a point or two either way is
 noise. Results: `evals/results/`.
 
@@ -252,11 +254,15 @@ pointing within about 3 degrees after the head's correction, as its motors repor
 **Measured by Andy's own camera** (`evals/unattended.py`, 2026-10-30; the robot alone in the room, nobody checking
 what it pointed at, so this measures the aim and the reliability, not the finding): the check after pointing showed
 the head sags about 4 degrees after its pointing nod, so Andy now corrects its aim from what the frame shows (at most
-twice). Over 34 searches for a monitor, a keyboard and a chair from random starting poses: **34 ended in a point, none
+twice). Over 34 searches for a monitor, a keyboard and a chair from random starting poses (the four runs after that
+correction, `unattended-20261030-1723`, `-1731`, `-1935` and `-1938`; `-1712` had no camera and `-1714` used the earlier
+re-aim): **34 ended in a point, none
 failed**; after the correction the thing sat a median **5.2 degrees** from the middle of the view (12 of 30 within 3,
 18 within 6, the worst 21, a keyboard far to the left where the base turns too: there the head and base don't yet
-move together precisely); a median 10.8 s each, the check included. **Distances repeat:** the same keyboard read 0.92
-to 1.00 m and the chair 1.28 to 1.35 m from five starting poses (MapAnything).
+move together precisely); a median 10.8 s each, the check included. **Distances repeat within a run:** the same
+keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m from five starting poses (MapAnything; things were moved
+between runs, and distances aren't yet calibrated against a tape measure, which MapAnything reads about 13% short on
+public test photos, so Andy says "about").
 
 **The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of
@@ -265,8 +271,8 @@ to 1.00 m and the chair 1.28 to 1.35 m from five starting poses (MapAnything).
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 41 of 41 reach the
 right ability; said by Andy's voice (Meta's SeamlessM4T v2) and heard by Omnilingual ASR, 34 of 41 (hearing slips on the
 synthetic voice; 40 of 41 with the earlier non-Meta voice, before every model had to be Meta's). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
-a question stays a question when speech-to-text drops the question marks): 40 and 37 before. Glimmer translates each in
-a median 0.45 s, on the computer beside the robot.
+a question stays a question when speech-to-text drops the question marks): 38 and 37 before. Glimmer translates each in
+a median 0.49 s (at most 0.71), on the computer beside the robot.
 
 **The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
 reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every
@@ -292,12 +298,16 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
-  and held conversations (first word 0.7 to 1 s after it understands); the scored runs come next
+  and held conversations; the scored runs come next
   (`docs/research.md` sections 8 to 11).
 - **English and Spanish** for now: Omnilingual ASR can hear far more languages; SeamlessM4T v2 speaks 35, and adding one
   is a few hand-written phrases. While Andy speaks Spanish the TV is in Spanish too (labels by hand, Andy's
   own words translated by Glimmer). Spanish is scored on written and synthesised speech; not yet with a person.
 
 ## Licence
-Apache-2.0. The HeyAndy name and logo (the face and the HeyAndy lettering on the TV page) are HeyAndy, Inc.'s
+Apache-2.0, for this repository's own code. **The models keep their own licences:** Muse Glimmer, SAM 3.1, MapAnything,
+DINOv2 and Omnilingual ASR as published by Meta; Llama Guard 3 and Llama Prompt Guard 2 under the Llama 3.1 and Llama 4
+Community Licenses (**Built with Llama**); SeamlessM4T v2 and MMS-TTS, Andy's voice, under CC-BY-NC 4.0, so this is a
+non-commercial demonstration and a product would need a voice licensed for commercial use. The web page in
+`docs/images/sample-web.jpg` is Wikipedia's "Banana bread" (CC BY-SA 4.0). The HeyAndy name and logo (the face and the HeyAndy lettering on the TV page) are HeyAndy, Inc.'s
 marks (HEYANDY™, a pending US trademark application) and aren't licensed under Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.

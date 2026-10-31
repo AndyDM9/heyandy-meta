@@ -43,7 +43,8 @@ before submitting.
 - As a startup we may build on earlier work. We must say exactly what is new, which the README's "Built during the
   event, and what came before" section does.
 - The video may show only what was built during the event.
-- The building period is October 27 to November 4.
+- The building period is from the kickoff (October 26, 12 PM ET) to November 4; this repository's first commit is
+  October 27.
 
 ## Submission (section 7)
 
