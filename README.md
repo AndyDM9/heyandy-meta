@@ -175,6 +175,7 @@ heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimm
                            SAM 3.1 (both on this computer)
 heyandy_meta/router.py     who answers a turn: the device or the cloud
 apps/andy_finder/          a slim Reachy Mini app for everyone: find and point, from the dashboard
+                           (SAM 3.1 on the computer if it's there, else through the Model API: then camera pictures go)
 heyandy_meta/network.py    whether the cloud is reachable right now
 heyandy_meta/budget.py     the hard cap on Model API spend
 local/                     SAM 3.1 (finding, /track for the cup game), DINOv2 (/embed) and Prompt Guard 2 (/guard);
