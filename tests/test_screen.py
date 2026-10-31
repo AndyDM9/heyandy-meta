@@ -233,12 +233,13 @@ def test_the_reveal_plays_only_for_a_find_made_just_now():
 
 def test_the_story_opens_only_the_public_demo():
     """Story mode starts when the page sees demo scenes (the Space, scripts/demo_screen.py), never on Andy's own TV,
-    and not when a link names a scene (?scene=...) or asks to explore (?explore)."""
+    and not when a link names a scene (?scene=...), asks to explore (?explore) or asks Andy something (?ask=...)."""
     from importlib.resources import files
 
     page = files("heyandy_meta.screen").joinpath("page.html").read_text()
     assert 'if (s.demo && !scenes) {' in page
-    assert 'if (!chosen && !new URLSearchParams(location.search).has("explore") && scenes.includes("room")) startStory();' in page
+    assert 'else if (!chosen && !q.has("explore") && scenes.includes("room")) startStory(); else demoBar();' in page
+    assert 'if (q.get("ask")) ask(q.get("ask"));' in page  # a link that asks plays that scene instead
     import re
 
     story = re.search(r"const STORY = \[(.*?)\n  \];", page, re.S).group(1)

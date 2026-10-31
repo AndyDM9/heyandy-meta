@@ -30,7 +30,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        (`uv run python scripts/build_static_space.py --video <the video's URL>`, then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
-       one-minute story should play, end on the card, and "Watch the 3-minute video" should open the video.
+       one-minute story should play, end on the card, and "Watch the 3-minute video" should open the video;
+       type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find.
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 1,300 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
 7. [ ] Publish Andy Finder to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):

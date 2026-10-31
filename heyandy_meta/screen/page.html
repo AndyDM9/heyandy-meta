@@ -219,13 +219,36 @@
   #help h3 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
   #help p { margin: 0 0 0.9rem; font-size: 1.75rem; }
 
-  #demo { position: fixed; top: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem;
-          align-items: center; padding: 0.45rem 0.8rem; border-radius: 99rem; background: var(--solid); font-size: 1.15rem;
-          box-shadow: 0 0.3rem 1.2rem rgba(0, 0, 0, 0.18); z-index: 5; }
-  #demo b { color: var(--muted); font-weight: 600; margin: 0 0.4rem; white-space: nowrap; }
-  #demo button { font: inherit; white-space: nowrap; color: var(--ink); background: none; border: 0.12rem solid var(--muted); border-radius: 99rem;
-                 padding: 0.2rem 0.8rem; cursor: pointer; }
-  #demo button[aria-pressed="true"] { background: var(--ink); color: var(--solid); border-color: var(--ink); }
+  /* the public demo's band (ask Andy, the scenes): across the top like the story's, the TV scaled to sit below it */
+  #demo { position: fixed; top: 0; left: 0; right: 0; z-index: 7; display: grid; gap: 0.55rem; padding: 0.9rem 5rem 1rem;
+          background: #0b110f; color: #F5F3EF; font-size: 1.15rem; box-shadow: 0 0.4rem 1.6rem rgba(0, 0, 0, 0.25); }
+  body.exploring .stage { transform: scale(var(--band-scale, 0.84)); transform-origin: 50% 100%; }
+  #demo .row { display: flex; gap: 0.5rem; align-items: center; }
+  #demo .row.scenes { overflow-x: auto; scrollbar-width: thin; padding-bottom: 0.2rem; font-size: 1rem; }
+  #demo .asked { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; align-items: baseline; font-size: 1.15rem; }
+  #demo .asked em { font-style: normal; font-weight: 700; color: var(--outline); }
+  #demo .asked small { flex-basis: 100%; color: rgba(245, 243, 239, 0.7); }
+  /* Ask Andy (the public demo): a box to type in, and things to try */
+  form.ask { display: flex; gap: 0.5rem; flex: 1; min-width: 0; }
+  form.ask input { flex: 1; min-width: 8rem; font: inherit; font-size: 1.25rem; padding: 0.55rem 1rem; border-radius: 99rem;
+                   border: 0.15rem solid var(--muted); background: var(--panel); color: var(--ink); }
+  form.ask input:focus { outline: none; border-color: var(--outline); box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--outline) 35%, transparent); }
+  form.ask button { font: inherit; font-weight: 800; padding: 0.5rem 1.2rem; border-radius: 99rem; cursor: pointer;
+                    border: 0; background: var(--outline); color: #070a09; }
+  form.ask.dark input { background: rgba(245, 243, 239, 0.08); color: #F5F3EF; border-color: rgba(245, 243, 239, 0.35); }
+  #story form.ask { flex: 0 1 22rem; } #story form.ask button { padding: 0.5rem 1rem; }
+  .tries { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tries button { font: inherit; font-size: 1.1rem; padding: 0.25rem 0.8rem; border-radius: 99rem; cursor: pointer;
+                  background: none; color: var(--ink); border: 0.12rem dashed var(--muted); }
+  .tries.dark button { color: #F5F3EF; border-color: rgba(245, 243, 239, 0.4); font-size: 1.35rem; padding: 0.5rem 1.1rem; }
+  #end h2 { margin: 0 0 1rem; font-size: 2.2rem; } #end form.ask { font-size: 1.6rem; margin-bottom: 1rem; max-width: 60rem; }
+  #end form.ask input { font-size: 1.6rem; padding: 0.8rem 1.3rem; } #end .tries { margin-bottom: 2.4rem; }
+  #demo b { color: rgba(245, 243, 239, 0.7); font-weight: 600; margin: 0 0.4rem; white-space: nowrap; }
+  #demo button { font: inherit; white-space: nowrap; color: #F5F3EF; background: none; border: 0.12rem solid rgba(245, 243, 239, 0.35);
+                 border-radius: 99rem; padding: 0.2rem 0.8rem; cursor: pointer; }
+  #demo button[aria-pressed="true"] { background: var(--outline); color: #070a09; border-color: var(--outline); }
+  #demo form.ask button { background: var(--outline); color: #070a09; border: 0; font-weight: 800; padding: 0.4rem 1.2rem; }
+  #demo .tries.dark button { font-size: 1.1rem; padding: 0.25rem 0.8rem; }
   /* From where you are: the find on a little map, the person at the bottom facing up (no mirroring) */
   .plan { display: grid; gap: 0.4rem; }
   .plan small { font-size: 1.25rem; color: var(--muted); }
@@ -340,6 +363,8 @@
     #story nav { width: 100%; gap: 2vw; }
     #story button, #end a, #end button { font-size: 3.6vw; padding: 2.2vw 3.6vw; }
     body.storying .stage { transform: none; }
+    body.exploring { height: auto; min-height: 100vh; overflow-y: auto; } body.exploring .stage { transform: none; }
+    body.exploring #demo { position: relative; padding: 3vw 4vw; }
     #end { overflow-y: auto; place-items: start center; padding: 10vw 0; }
     #end .in { width: 88vw; } #end .sig { height: 6vw; } #end h1 { font-size: 10vw; margin-top: 5vw; }
     #end .proof { grid-template-columns: 1fr; gap: 4vw; margin: 6vw 0; }
@@ -564,7 +589,8 @@
   ];
   let story = null;  // {at, since, paused}
   function startStory() {
-    $("demo").hidden = true; document.getElementById("end")?.remove(); document.body.classList.add("storying");
+    $("demo").hidden = true; document.body.classList.remove("exploring");
+    document.getElementById("end")?.remove(); document.body.classList.add("storying");
     story = { at: 0, since: Date.now(), paused: false, left: 0 };
     chosen = STORY[0][0]; pictureKey = "";
     const band = el("div"); band.id = "story"; band.setAttribute("role", "region"); band.setAttribute("aria-label", "A one-minute story of Andy");
@@ -574,7 +600,7 @@
     button("‹", () => go(story.at - 1), "Back"); const pause = button("Pause", () => {
       story.paused = !story.paused; pause.textContent = story.paused ? "Play" : "Pause";
       if (story.paused) story.left = Date.now() - story.since; else story.since = Date.now() - story.left; });
-    button("›", () => go(story.at + 1), "Next"); button("Explore every screen", exploreAll);
+    button("›", () => go(story.at + 1), "Next"); button("Explore every screen", exploreAll); nav.prepend(askForm(true));
     row.append(el("div", null, "ch"), text, nav); band.append(bars, row); document.body.prepend(band);  // first: on a phone it leads
     go(0); requestAnimationFrame(storyTick);
   }
@@ -614,6 +640,7 @@
       const x = el("div", d); x.prepend(el("b", b)); proof.append(x);
     }
     inner.append(proof);
+    inner.append(el("h2", "Now ask Andy yourself"), askForm(true), tries(true));
     const go_ = el("div", null, "go"), link = (label, href, main) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; if (main) a.className = "main"; go_.append(a); };
     if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO, true);
     link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", !window.HEYANDY_VIDEO);
@@ -624,17 +651,90 @@
     end.append(inner); document.body.append(end);
   }
   addEventListener("keydown", e => {
-    if (!story) return;
+    if (!story || e.target.closest?.("form.ask")) return;
     if (e.key === "ArrowRight") go(story.at + 1); else if (e.key === "ArrowLeft") go(story.at - 1);
   });
   function demoBar() {
-    const nav = $("demo"); nav.hidden = false; nav.replaceChildren(el("b", "Sample data · scenes:"));
+    const nav = $("demo"); nav.hidden = false; nav.replaceChildren();
+    document.body.classList.add("exploring");
+    if (document.body.firstElementChild !== nav) document.body.prepend(nav);  // first: on a phone it leads
+    const top = el("div", null, "row"); top.append(el("b", "Ask Andy"), askForm(true)); nav.append(top);
+    if (asked) {  // what was asked, what it matched, and what a recorded scene can't show
+      const a = el("div", null, "asked"); a.append(el("span", `You asked “${asked.text}”`), el("em", "→ " + (NAMES[asked.scene] || asked.scene)));
+      if (asked.note) a.append(el("small", asked.note));
+      nav.append(a);
+    } else nav.append(tries(true));
+    const row = el("div", null, "row scenes"); row.append(el("b", "Sample data · scenes:"));
     for (const name of [...scenes, "auto"]) {
       const b = el("button", NAMES[name] || "In turn");
       b.setAttribute("aria-pressed", String(name === (chosen || "auto")));
-      b.onclick = () => { chosen = name === "auto" ? null : name; pictureKey = ""; demoBar(); };
-      nav.append(b);
+      b.onclick = () => { chosen = name === "auto" ? null : name; asked = null; asking++; pictureKey = ""; demoBar(); };
+      row.append(b);
     }
+    nav.append(row);
+    requestAnimationFrame(bandScale);
+  }
+  function bandScale() {  // the TV, as large as fits under the band
+    const nav = $("demo");
+    if (nav.hidden) return;
+    const h = nav.getBoundingClientRect().height;
+    document.documentElement.style.setProperty("--band-scale", Math.max(0.6, Math.min(1, (innerHeight - h - 12) / innerHeight)).toFixed(3));
+  }
+  addEventListener("resize", bandScale);
+
+  // Ask Andy, on the public demo only (never on Andy's own TV): type what you'd say to Andy, and the scene recorded
+  // from its TV for that plays; a search starts as the real one does, "Let me look" and the views as it looks, then
+  // the find. The words are matched here, in the page, much as companion/intents.py does; nothing typed is sent.
+  const ASK = [
+    ["guide", /\b(?:help me (?:reach|grab|get to|pick up)|guide (?:my hand|me)|lead my hand)\b|gu[ií](?:e|a)(?:me| mi mano)/i],
+    ["sound", /\b(?:ring|ringing|call|calling) (?:my |the |it|them)|\blisten (?:for|out)\b|\bby (?:its|the) (?:sound|ring)|\bfollow the (?:sound|ringing)|\bbeep/i],
+    ["turned", /\bi(?:'ve| have)? found\b|\b(?:stop|keep|still) looking\b|\bwhat are you looking for\b|\bgive up\b|\bturned up\b/i],
+    ["room", /\b(?:the room|room in 3d|in 3d|3d|whole room|map of the room)\b/i],
+    ["cups", /\b(?:cup game|shell game|shuffle|which cup|under (?:the|a|which) cup|the ball)\b/i],
+    ["out", /\b(?:going out|leaving|heading out|go out|umbrella|need a coat)\b/i],
+    ["mine", /\bthis is my\b|\bis (?:this|that) mine\b|\bmy own\b/i],
+    ["spanish", /[¿¡ñ]|\b(?:d[oó]nde|llaves|taza|gafas|hola|espa[ñn]ol|spanish|oye)\b/i],
+    ["privacy", /\b(?:send|sent|cloud|privacy|private|receipt|record(?:ed|ing)?|spy|camera)\b/i],
+    ["story", /\bwhat happened\b|\bstory of\b|\busually (?:leave|put|are|is)\b|\bwhere do i usually\b|\btoday\b/i],
+    ["memory", /\b(?:remember|memory|keep(?:ing)? an eye)\b/i],
+    ["drawing", /\b(?:draw|paint|sketch|picture of)\b/i],
+    ["web", /\b(?:weather|radar|forecast|rain|website|web page|online)\b/i],
+    ["start", /\b(?:get(?:ting)? started|set (?:you |yourself )?up|first time|tour|how do i start)\b/i],
+    ["help", /\bwhat can (?:you|i)\b|\bwhat do you do\b|^\W*help\W*$|\bhow does (?:it|this|andy) work\b/i],
+    ["find", /\b(?:where|find|lost|misplaced|seen|look for|can'?t find|missing|can you see|do you see)\b/i],
+    ["answer", /^\W*(?:what|who|when|how|why|which|is|are|do|does|can|tell me)\b/i],
+  ];
+  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "Show me the room", "I'm going out", "Let's play the cup game"];
+  let asked = null, asking = 0;
+  function route(text) {
+    const t = text.replace(/^\W*(?:hey |oye )?andy\W*/i, "");
+    return (ASK.find(([, rx]) => rx.test(t)) || ["help"])[0];
+  }
+  function ask(text) {
+    text = String(text || "").replace(/\s+/g, " ").trim().slice(0, 120);
+    if (!text || !scenes) return;
+    story = null; $("story")?.remove(); document.getElementById("end")?.remove(); document.body.classList.remove("storying");
+    document.getElementById("reveal")?.remove();
+    const scene = route(text), run = ++asking;
+    const thing = (text.match(/\b(?:my|the|our)\s+([a-z][a-z ]{1,24}?)(?=\s*(?:[?.!,]|$|\bplease\b|\bis\b|\bare\b|\bgo\b))/i) || [])[1] || "";
+    const other = thing && !/\b(?:mug|cup)s?\b/i.test(thing) && ["find", "guide", "turned"].includes(scene);
+    asked = { text, scene: scene === "find" ? "found" : scene,
+              note: other ? `This scene was recorded finding a mug; on the robot, Andy looks for your ${thing.toLowerCase()} the same way.`
+                  : scene === "help" ? "Nothing matched that, so here's what Andy can do. On the robot, Andy also just talks." : "" };
+    chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar();
+    if (scene === "find") setTimeout(() => { if (run === asking) { chosen = "found"; pictureKey = ""; demoBar(); } }, 2600);
+  }
+  function askForm(dark) {
+    const f = el("form", null, "ask" + (dark ? " dark" : "")), input = el("input"), go_ = el("button", "Ask");
+    input.type = "text"; input.maxLength = 120; input.placeholder = "Ask Andy anything…"; input.enterKeyHint = "send";
+    input.setAttribute("aria-label", "Ask Andy"); input.autocomplete = "off"; go_.type = "submit";
+    f.append(input, go_); f.onsubmit = e => { e.preventDefault(); ask(input.value); };
+    return f;
+  }
+  function tries(dark) {
+    const d = el("div", null, "tries" + (dark ? " dark" : ""));
+    for (const t of ASK_TRY) { const b = el("button", t); b.type = "button"; b.onclick = () => ask(t); d.append(b); }
+    return d;
   }
 
   function partOfDay(h) { return h < 5 || h >= 21 ? "night" : h < 12 ? "morning" : h < 17 ? "afternoon" : "evening"; }
@@ -1336,7 +1436,9 @@
     ambient(s);
     if (s.demo && !scenes) {  // the public demo: the story first, unless a link asked for one scene
       scenes = s.demo;
-      if (!chosen && !new URLSearchParams(location.search).has("explore") && scenes.includes("room")) startStory(); else demoBar();
+      const q = new URLSearchParams(location.search);
+      if (q.get("ask")) ask(q.get("ask"));  // a shared link that asks: ?ask=I'm ringing my phone
+      else if (!chosen && !q.has("explore") && scenes.includes("room")) startStory(); else demoBar();
     }
   }
   // Text that fits the screen it's on: when a card has more to show than its room (a short browser window, a long

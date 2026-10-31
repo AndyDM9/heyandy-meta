@@ -24,6 +24,11 @@ Built on Meta's models for people who live at home, starting with older adults, 
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
+**Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
+("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
+TV for that plays, a search starting as the real one does. The words are matched in the page and sent nowhere; a link
+can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
+
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
 who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).

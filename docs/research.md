@@ -889,3 +889,22 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   (before the 35-degree rule it had taken a monitor at -49). Where the monitors' speakers really are isn't known, so
   **the aim with a real phone is the founder's test 14.**
 
+## 44. Ask Andy yourself, in the public demo (2026-10-31)
+
+- **Why:** the judges meet Andy through the Space, and everything there was watched, nothing tried: a one-minute
+  story and a bar of 19 scene buttons. The robot can't be online; what it does can be asked for anyway.
+- **Built:** a box to type in, in the story's band from the first second, across the top of the demo, and as the
+  end card's first step ("Now ask Andy yourself"), with six things to try. What's typed is matched in the page, much
+  as `companion/intents.py` matches it (guide my hand, by its sound, lost and found, the room, the cup game, going
+  out, my mug, Spanish, privacy, the story of a thing, memory, a drawing, the web, getting started, help, a search, an
+  answer), and the scene recorded from Andy's TV for it plays; a search plays as the real one runs, "Let me look" and
+  the views as it looks for 2.6 s, then the find and its Reveal. The band says what was asked, what it matched, and
+  what a recorded scene can't show ("This scene was recorded finding a mug; on the robot, Andy looks for your keys the
+  same way"); nothing matched shows what Andy can do. Nothing typed is sent anywhere. A link can ask: `?ask=...`, for
+  posts ("ask Andy: I'm ringing my phone"). Never on Andy's own TV. The demo's band now runs across the top with the
+  TV scaled to fit under it, so nothing covers the TV's header.
+- **Tested:** 26 phrasings in a browser, all to the right scene (one, "can you see my glasses?", fixed on the way);
+  desktop, laptop and phone: no overlap, captions in view, nothing sideways. A browser test now loads the TV page and
+  the demo and fails on any script error (`tests/test_page_runs.py`): a name declared twice while building this
+  stopped the whole page, which would have blanked Andy's own TV too, and no other test could see it.
+
