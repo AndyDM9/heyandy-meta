@@ -89,7 +89,10 @@ class VoiceLoop:
         hearing = False
         turns: queue.Queue = queue.Queue(maxsize=1)
         threading.Thread(target=self._turns, args=(turns, endpointer, stop), daemon=True).start()
+        ear = getattr(self.andy, "ear", None)
         for samples, flag, yaw in mic(stop):
+            if ear is not None:
+                ear(samples, flag, yaw)  # loudness, tone and direction only, for "I'm ringing my phone" (companion/sound.py)
             utterance = endpointer.feed(samples, flag)
             if gesture and not self.busy and endpointer.active != hearing and self._clock() <= self.awake_until:
                 hearing = endpointer.active

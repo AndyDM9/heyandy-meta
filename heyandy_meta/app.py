@@ -30,6 +30,7 @@ from .companion.follow import follow
 from .companion.guide import guide, height_above
 from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
+from .companion.sound import apart, fan, reading, turn_to
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
@@ -102,6 +103,8 @@ class Andy:
         self.lost = Lost(self.places.path.parent / "lost.json", clock=self.clock)  # what a search missed: Andy keeps looking
         self._last_lost_look = self.clock()
         self._background = False  # a search Andy started itself (lost and found): no "Let me look", no "oops"
+        self.ear = None  # what the microphones heard lately, as numbers (companion/sound.py Ear); on the robot only
+        self._by_sound: float | bool = False  # a search by sound: the yaw it rang at (look only near it, no memory)
         self.screen.online = self.online
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
@@ -308,6 +311,8 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind == "sound":
+            return self.find_by_sound(i.thing)
         if i.kind == "lost_done":
             return self.stop_looking(text, found=i.thing == "found")
         if i.kind == "lost_list":
@@ -561,8 +566,8 @@ class Andy:
             break
         if found is None:
             self._source, self._reason = "device", "fixed search on this computer"
-            last = self.places.last_seen(thing, now=self.clock())
-            usual = self.places.usual(thing)
+            last = None if self._by_sound is not False else self.places.last_seen(thing, now=self.clock())
+            usual = None if self._by_sound is not False else self.places.usual(thing)
             self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting")
                              + (f"; usually {usual['near'] or side(usual['yaw'])}" if usual else ""))
             self.gesture("searching")
@@ -777,6 +782,56 @@ class Andy:
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
 
+    def find_by_sound(self, thing: str = "") -> str:
+        """"I'm ringing my phone": turn to the ringing (companion/sound.py turn_to), then look that way with SAM 3.1,
+        and if it can't be seen there (under a cushion), point where the sound is."""
+        thing = thing or "phone"
+        if self.ear is None:
+            return f"I can only follow a sound with the robot's microphones. Ask me where your {thing} is, and I'll look."
+        floor = self.ear.floor()  # the room's own noise, from the last few seconds, before it rings
+        self._stop_following.clear()
+        self.following = True  # the face tracker leaves the head alone while it turns to the sound
+        self.say(f"Ring it now, and I'll turn to the sound." if thing in RINGS else
+                 f"Make your {thing} beep now, and I'll turn to the sound.")
+        self.screen.listening(thing, [], None)
+        self.gesture("searching")  # still: the motors mustn't be what it hears
+
+        def turn(yaw):
+            self.body.look(yaw, 0.0)
+            self.wait(0.5)
+
+        def listen():
+            if self._stop_following.is_set():
+                return None
+            t = self.ear.clock()
+            self.wait(1.6)
+            return reading(self.ear.since(t), floor)
+
+        try:
+            yaw, steps = turn_to(listen, turn, getattr(self.body, "yaw", 0.0),
+                                 on_step=lambda y, s, st: self.screen.listening(thing, st, None))
+        finally:
+            self.following = False
+            self.gesture("idle")
+        self.screen.listening(thing, steps, yaw, done=True)
+        if yaw is None:
+            return f"I didn't hear it ring. Is the sound on? Ring it again, and say: I'm ringing my {thing}."
+        views, behind = self.finder.views, getattr(self.finder, "behind", ())
+        self.finder.views, self.finder.behind = fan(yaw), ()
+        self.finder.last_found, self._background, self._by_sound = None, True, yaw
+        try:
+            words = self.find(thing, f"where is my {thing}")
+        finally:
+            self.finder.views, self.finder.behind = views, behind
+            self._background = self._by_sound = False
+        self._source = "device"
+        self._reason = f"the robot's microphones heard the ringing {side(yaw)} ({len(steps)} turns); SAM 3.1 looked there"
+        if self.finder.last_found is not None:
+            return "I followed the ringing. " + words
+        self.body.point(yaw, 15.0)
+        return (f"I can hear it, but I can't see it. It's ringing {side(yaw)}, where I'm pointing: "
+                f"it may be under something.")
+
     def stop_looking(self, text: str, found: bool) -> str:
         """"I found my keys" / "stop looking for the wallet": let go of what Andy was still looking for (a thing named,
         or all of it). Said of something Andy wasn't looking for, it's just good news."""
@@ -977,6 +1032,11 @@ class Andy:
     def _check(self, frame, mask) -> bool:
         """The finder's second opinion on what it found: a real thing (not a picture of one, Glimmer), and when the
         person has shown Andy theirs, theirs (as alike as the views Andy kept)."""
+        if self._by_sound is not False:  # by its sound: only a thing near where it rang
+            yaw = pixel_to_angles(*mask.center, frame.yaw, frame.pitch, self.finder._cam(frame))[0]
+            if apart(yaw, self._by_sound) > HEARD_WITHIN_DEG:
+                self.finder.rejected = "one that wasn't where the ringing is"
+                return False
         if self.judge and not self.judge.real(frame, mask):
             return False
         embed = getattr(self.segmenter, "embed", None)
@@ -1562,7 +1622,12 @@ class Andy:
         self.emote("oops1")
         again, since = not self.lost.add(thing), self.lost.since(thing)
         looks = self.lost.looks(thing)
-        promise = (f" Still no sign of {_it(thing)}: I've looked {looks} time{'s' if looks != 1 else ''} since "
+        if self.ear is not None and thing in RINGS | BEEPS:
+            hint = (f" If you can ring it, say: I'm ringing my {thing}." if thing in RINGS else
+                    f" If it has a tracker that beeps, say: listen for my {thing}.")
+        else:
+            hint = ""
+        promise = hint + (f" Still no sign of {_it(thing)}: I've looked {looks} time{'s' if looks != 1 else ''} since "
                    f"{spoken_time(since)}. I'll keep at it." if again and since else
                    f" I'll keep looking, and tell you when I see {_it(thing)}.")
         self.refresh_panels()
@@ -1829,6 +1894,9 @@ def millimetres(points_f16: bytes) -> bytes:
     return struct.pack(f"<{n}h", *(max(-32000, min(32000, round(v * 1000))) for v in struct.unpack(f"<{n}e", points_f16)))
 
 
+RINGS = {"phone", "cell phone", "cellphone", "mobile", "mobile phone", "smartphone", "iphone", "tablet", "ipad"}
+BEEPS = {"keys", "key", "wallet", "remote", "bag", "purse"}  # often on a tracker that plays a sound
+HEARD_WITHIN_DEG = 35.0  # by its sound: a thing further than this from where it rang isn't the one ringing
 GUIDE_AFTER_S = 5 * 60  # "help me reach it" means the thing found this long ago at most
 SETUP_WAIT_S = 5 * 60  # the setup waits this long for an answer, then steps aside
 SKIP = re.compile(r"^\W*(?:andy\W+)?(?:skip(?: it| that)?|not now|later|stop(?: the setup)?|cancel|never ?mind|no thanks?)\W*$", re.I)

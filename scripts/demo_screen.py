@@ -28,7 +28,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "guide", "turned", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -301,6 +301,12 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("SAM 3.1", "device", 6)
         state.used("MapAnything (how far)", "device")
         state.doing("Speaking", "At your mug")
+    elif scene == "sound":  # "I'm ringing my phone": the turns, the side each heard it on, and facing it
+        state.listening("phone", [(-50.0, 41.0), (-10.0, 6.0), (30.0, -4.0), (10.0, -1.5)], 18.0, done=True)
+        state._sound["until"] += 3600  # a still for the demo: it stays
+        state.said("I can hear it, but I can't see it. It's ringing a little to my left, where I'm pointing: it may be "
+                   "under something.", "device", "the robot's microphones heard the ringing a little to my left (4 turns); SAM 3.1 looked there")
+        state.doing("Pointing", "At the ringing")
     elif scene == "room":
         points, things = sample_room()
         state.room(points, things, 1.0)

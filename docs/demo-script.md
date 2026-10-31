@@ -33,6 +33,12 @@ my keys", the person walks in and puts the keys down on the table in view; the T
 later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
+**"I'm ringing my phone," if the founder's test 14 goes well:** the phone (ringer on) under a cushion or a newspaper
+at the side of the table, Andy facing away. "Hey Andy, I'm ringing my phone", then ring it from another phone or a
+watch: Andy turns, a step at a time, to the ringing (the TV draws each turn from above), looks there and says "I can
+hear it, but I can't see it. It's ringing to my left, where I'm pointing: it may be under something." Lift the
+cushion. Or with the phone in view: "I followed the ringing. There it is!" It shows Andy using two senses.
+
 **"It doesn't give up" (works on the robot):** "Hey Andy, where's my watch?" with the watch out of the room: "I couldn't
 find your watch from here. I'll keep looking, and tell you when I see it." The side card says "Watch · still looking".
 Put the watch on the table and wait (a labelled time cut: up to three minutes); Andy looks around, points and says,

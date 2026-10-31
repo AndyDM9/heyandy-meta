@@ -80,6 +80,20 @@
   #body:has(.drawing), #body:has(.web) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   /* guiding a hand: the view, and the way to move, big enough to read from across a room or with low vision */
+  /* turning to a ringing: the room from above, front up */
+  .sonar { display: grid; justify-items: center; gap: 0.8rem; height: 100%; min-height: 0; grid-template-rows: minmax(0, 1fr) auto; }
+  .sonar svg { height: 100%; max-height: 30rem; width: auto; max-width: 100%; aspect-ratio: 1; }
+  .sonar .ring { fill: none; stroke: color-mix(in srgb, var(--muted) 30%, transparent); stroke-width: 1; }
+  .sonar .turn { stroke: color-mix(in srgb, var(--accent) 35%, transparent); stroke-width: 2; stroke-dasharray: 3 4; }
+  .sonar .turn.now { stroke: var(--accent); stroke-width: 3; stroke-dasharray: none; }
+  .sonar .heard { fill: color-mix(in srgb, var(--accent) 45%, transparent); } .sonar .heard.now { fill: var(--accent); }
+  .sonar .source { fill: var(--outline); } .sonar .andy { fill: var(--ink); } .sonar .eye { fill: var(--panel); }
+  .sonar .ripple { fill: none; stroke: var(--outline); stroke-width: 2.5; transform-box: fill-box; transform-origin: center;
+                   animation: s-ripple 1.8s ease-out infinite; }
+  .sonar text { font-size: 9px; fill: var(--muted); } .sonar .label { font-size: 12px; font-weight: 700; fill: var(--ink); }
+  .sonar small { font-size: 1.25rem; color: var(--muted); text-align: center; }
+  @keyframes s-ripple { from { transform: scale(0.6); opacity: 0.9; } to { transform: scale(3.2); opacity: 0; } }
+  #body:has(.sonar) { align-content: stretch; }
   /* still looking for: an amber dot that breathes, so "Andy hasn't given up" reads from across the room */
   ul.lost { list-style: none; margin: 0 0 1rem; padding: 0.7rem 0.9rem; display: grid; gap: 0.45rem; border-radius: 1rem;
             background: color-mix(in srgb, var(--outline) 16%, transparent); font-size: 1.35rem; }
@@ -452,7 +466,7 @@
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
-    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p></div>
+    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p></div>
     <div><h3>Remember things</h3><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p></div>
     <div><h3>Talk, look, make</h3><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
@@ -461,7 +475,7 @@
   <h1>¿Qué puedo pedirle a Andy?</h1>
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
-    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p></div>
+    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p></div>
     <div><h3>Recordar cosas</h3><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p></div>
     <div><h3>Hablar, mirar, crear</h3><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p></div>
   </div>
@@ -531,7 +545,7 @@
                   "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -935,6 +949,35 @@
     box.append(el("small", LANG === "es" ? "Desde donde está usted" : `From where you are · your ${fy.clock} o'clock`), svg);
     return box;
   }
+  // Turning to a ringing (companion/sound.py), seen from above, front up: each turn of the head as a line, a mark on
+  // the side the sound was heard, and once it faces the sound, rings going out from where it is.
+  function sonar(g) {
+    const box = el("div", null, "sonar"), svg = document.createElementNS(svgNS, "svg"), R = 100;
+    svg.setAttribute("viewBox", "-130 -130 260 260"); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", g.facing == null ? "Andy listening for the ringing" : `The ringing, ${Math.abs(Math.round(g.facing))} degrees to Andy's ${g.facing >= 0 ? "left" : "right"}`);
+    const add = (tag, attrs) => { const e = document.createElementNS(svgNS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); svg.append(e); return e; };
+    const at = (yaw, r) => [-Math.sin(yaw * Math.PI / 180) * r, -Math.cos(yaw * Math.PI / 180) * r];  // yaw left is screen left
+    for (const r of [R, R * 0.66, R * 0.33]) add("circle", { cx: 0, cy: 0, r, class: "ring" });
+    g.steps.forEach(([yaw, side], i) => {
+      const [x, y] = at(yaw, R), last = i === g.steps.length - 1;
+      add("line", { x1: 0, y1: 0, x2: x, y2: y, class: last ? "turn now" : "turn" });
+      const [mx, my] = at(yaw + (side > 0 ? 12 : side < 0 ? -12 : 0), R * 0.82);  // which side it was heard on
+      add("circle", { cx: mx, cy: my, r: last ? 6 : 4, class: "heard" + (last ? " now" : "") });
+    });
+    if (g.facing != null) {
+      const [x, y] = at(g.facing, R * 0.86);
+      for (let i = 0; i < 3; i++) add("circle", { cx: x, cy: y, r: 10, class: "ripple", style: `animation-delay: ${i * 0.6}s` });
+      add("circle", { cx: x, cy: y, r: 9, class: "source" });
+      const [lx, ly] = at(g.facing, R * 0.86 - 24);  // inside the circle: "front" is at the top
+      const t = add("text", { x: lx, y: ly + 4, "text-anchor": "middle", class: "label" }); t.textContent = LANG === "es" ? "aquí" : "here";
+    }
+    add("rect", { x: -16, y: -9, width: 32, height: 18, rx: 9, class: "andy" });
+    add("ellipse", { cx: -7, cy: 0, rx: 2.2, ry: 4.4, class: "eye" }); add("ellipse", { cx: 7, cy: 0, rx: 2.2, ry: 4.4, class: "eye" });
+    const t = add("text", { x: 0, y: -R - 8, "text-anchor": "middle", class: "front" }); t.textContent = LANG === "es" ? "frente" : "front";
+    box.append(svg, el("small", LANG === "es" ? "Andy gira hasta oírlo de frente · los micrófonos del robot, en esta computadora; nada se graba"
+                                              : "Andy turns until its microphones hear it straight ahead · the robot's microphones, on this computer; nothing is recorded"));
+    return box;
+  }
   // Guiding a hand (companion/guide.py): what Andy sees, the thing and the hand outlined and joined, beside the way to
   // move from the person's side, how far is left, and a meter that fills as the notes rise.
   function guided(g) {
@@ -1049,6 +1092,13 @@
       kicker = T("The room in 3D"); title = T("Your things, as I measured them just now");
       const key = "room:" + s.room.v + ":" + LANG;
       if (key !== pictureKey) { pictureKey = key; body.replaceChildren(room(s.room)); }
+    } else if (s.sound) {
+      const g = s.sound, es = LANG === "es";
+      kicker = es ? `Escuchando: ${g.thing}` : `Listening for your ${g.thing}`;
+      title = g.done ? (g.facing == null ? (es ? "No lo oí sonar" : "I didn't hear it ring") : (es ? "Suena por allí" : "It's ringing over there"))
+            : g.steps.length ? (es ? "Girando hacia el sonido" : "Turning to the sound") : (es ? "Hágalo sonar ahora" : "Ring it now");
+      const key = "sound:" + JSON.stringify(g) + LANG;
+      if (key !== pictureKey) { pictureKey = key; body.replaceChildren(sonar(g)); }
     } else if (s.guide) {
       const g = s.guide;
       kicker = LANG === "es" ? `Guiando su mano: ${g.thing}` : `Guiding your hand to your ${g.thing}`;

@@ -861,3 +861,31 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   to its left at 1.15 m, checked and pointed 3.0 degrees off; a tight crop of that spot looks like a phone lying flat (for
   the founder to confirm), so most likely a real phone at the far left of the room rather than a false alarm. The wallet and the remote stayed on the list, in silence.
 
+## 43. Find it by sound (2026-10-31)
+
+- **Why:** the most lost thing is a phone, and a phone under a cushion is invisible to any camera; but it rings, and
+  a tracker on a key ring chirps. Two senses beat one.
+- **What the robot's microphones can do, measured** (a two-tone ringtone through this computer's monitor speakers):
+  the array's direction locked onto the ringing (91 to 93 degrees, steady; the room's own noise 14 times quieter) and
+  its "voice" flag even fired on the tones. But the angle followed the source by only 0.2 to 0.45 degrees for each
+  degree the head turned (raw 72, 88, 91, 95, 110 with the head at -40, -20, 0, 20, 40): one reading tells which side,
+  reliably, but not how far, and within about 20 degrees of the sound it reads near zero. So a single reading turned
+  to the right side but a varying distance (from three starts, ends 70 degrees apart). The same compression is in the
+  turn towards a voice: its direction is right, its size short; the camera's face finding corrects it.
+- **Built:** like a person turning to a sound: listen 1.6 s, turn 40 degrees towards the side heard until the sound is
+  between two turns, then halve the gap until it's 10 degrees (`companion/sound.py turn_to`). A ringing is chunks four
+  times louder than the room's floor of which most (60%) are pure tone (spectral flatness at most 0.015: the loud
+  chunks of two ringtones measured 0.000 to 0.008; of a spoken sentence 0.004 to 0.18, median 0.03 to 0.06), with a
+  direction. Then the finder looks only around that way (a fan of five views; the camera sees 84 degrees across) and
+  turns down anything more than 35 degrees from where it rang; no memory of where it was last. Found: "I followed the
+  ringing. There it is!" Not seen: it points where the sound is and says so. The voice loop feeds the ear (loudness,
+  flatness and direction per 0.1 s, for 20 s; never the sound); a phone not found on the robot gets "If you can ring
+  it, say: I'm ringing my phone." The TV draws each turn from above, the side heard, and ripples where it rings.
+- **Measured on the robot** (`evals/sound.py`): turning to the ringing from three starts (-50, 0, 50 degrees), the
+  two-tone ringtone ended at -10 degrees all three times; a struck-bar tune at -10, 0 and -30; a spoken sentence was
+  never taken for a ringing. Through the whole app, from 50 degrees away: "phone" (none by the speakers) turned to the
+  ringing in 3 turns, found nothing there and said "I can hear it, but I can't see it. It's ringing a little to my
+  right" in 23 s; "computer monitor" turned in 4 turns and found the monitor at -15.7 degrees, 1.6 off the middle
+  (before the 35-degree rule it had taken a monitor at -49). Where the monitors' speakers really are isn't known, so
+  **the aim with a real phone is the founder's test 14.**
+

@@ -1,0 +1,23 @@
+{
+ "when": "2026-10-31 17:20",
+ "runs": [
+  {
+   "thing": "phone",
+   "said": "I can hear it, but I can't see it. It's ringing a little to my right, where I'm pointing: it may be under something.",
+   "seconds": 23.2,
+   "why": "the robot's microphones heard the ringing a little to my right (3 turns); SAM 3.1 looked there",
+   "found": null
+  },
+  {
+   "thing": "computer monitor",
+   "said": "I followed the ringing. There it is! I see your computer monitor, a little to my right, about 3 feet away.",
+   "seconds": 28.3,
+   "why": "the robot's microphones heard the ringing a little to my right (4 turns); SAM 3.1 looked there",
+   "found": {
+    "label": "computer monitor",
+    "yaw": -15.7,
+    "aim_deg": 1.6
+   }
+  }
+ ]
+}

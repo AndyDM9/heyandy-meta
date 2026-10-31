@@ -1,0 +1,95 @@
+{
+ "when": "2026-10-31 17:11",
+ "room_floor": 0.004,
+ "ringings_faced": 5,
+ "of": 6,
+ "spread_deg": {
+  "ringtone": 25.0,
+  "marimba": 70.0
+ },
+ "voice_taken_for_a_ringing": false,
+ "runs": [
+  {
+   "sound": "ringtone",
+   "start": -50.0,
+   "facing": null,
+   "steps": [],
+   "seconds": 4.2
+  },
+  {
+   "sound": "ringtone",
+   "start": 0.0,
+   "facing": 0.0,
+   "steps": [
+    [
+     0.0,
+     -1.0
+    ]
+   ],
+   "seconds": 3.5
+  },
+  {
+   "sound": "ringtone",
+   "start": 50.0,
+   "facing": -25.0,
+   "steps": [
+    [
+     50.0,
+     -25.0
+    ],
+    [
+     -25.0,
+     1.5
+    ]
+   ],
+   "seconds": 7.0
+  },
+  {
+   "sound": "marimba",
+   "start": -50.0,
+   "facing": -20.0,
+   "steps": [
+    [
+     -50.0,
+     3.0
+    ],
+    [
+     -20.0,
+     -0.0
+    ]
+   ],
+   "seconds": 6.8
+  },
+  {
+   "sound": "marimba",
+   "start": 0.0,
+   "facing": 0.0,
+   "steps": [
+    [
+     0.0,
+     -1.0
+    ]
+   ],
+   "seconds": 2.3
+  },
+  {
+   "sound": "marimba",
+   "start": 50.0,
+   "facing": 50.0,
+   "steps": [
+    [
+     50.0,
+     -2.0
+    ]
+   ],
+   "seconds": 3.0
+  },
+  {
+   "sound": "voice",
+   "start": 0.0,
+   "facing": null,
+   "steps": [],
+   "seconds": 3.5
+  }
+ ]
+}

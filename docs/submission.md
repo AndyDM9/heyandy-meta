@@ -26,6 +26,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
 - **It doesn't give up.** A search that misses becomes a promise: Andy keeps looking every few minutes for two hours
   and, when the thing turns up, points and says "Good news: your watch turned up!" (on the robot, unprompted).
+- **"I'm ringing my phone."** Andy turns to the ringing until its microphones hear it straight ahead, looks there
+  with SAM 3.1 and points; if it's under a cushion, it points where the sound is.
 - **"Help me reach it."** For someone who can't see well, Andy then watches their hand and talks it onto the thing
   from their side ("Toward you, and right"), with notes that rise as the hand nears, like a parking sensor: SAM 3.1
   finds the hand and the thing in each frame, on the computer beside the robot.

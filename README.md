@@ -89,6 +89,13 @@ found, "You're all set", in three sentences.
    turned up! It's a little to my right, about 3 feet away." The TV's side card and a paired phone show what Andy is
    still looking for; "I found it" or "stop looking" lets go (`memory/lost.py`). On the robot it found a watch it was
    told was lost, pointed 4.1 degrees off the middle and said so out loud, and kept quiet about a wallet that wasn't there.
+   **"I'm ringing my phone."** A phone under a cushion is invisible to a camera, but it rings. Andy turns its head
+   towards the ringing until its microphones hear it straight ahead, as a person turns to a sound, then looks only
+   around that way with SAM 3.1, and points: "I followed the ringing. There it is!" Can't see it? It points where the
+   sound is: "I can hear it, but I can't see it. It's ringing a little to my right: it may be under something." A
+   tracker on a key ring that beeps works the same way ("listen for my keys"); a voice is never taken for a ringing
+   (most of a ringing is pure tone; a voice only now and then). Only each tenth of a second's loudness, tone and
+   direction are kept, for 20 seconds; nothing is recorded (`companion/sound.py`). The TV draws each turn from above.
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and
