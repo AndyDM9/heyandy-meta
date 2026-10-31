@@ -66,9 +66,9 @@ this house"; "Andy, what did you send to the cloud today?" adds up the day's. Un
 - **A point checked by its own camera.** The motors said Andy pointed within 3 degrees; its own camera showed the
   head sagging after its pointing nod, so Andy corrects the command by what the frame shows (at most twice). The same
   check found that the robot takes the head's direction in the room, with the base's turn already in it: Andy had
-  added the base again and, past 30 degrees, never faced as far round as it thought. Fixed; over 20 unattended
-  searches on a table of keys, glasses, a watch, two keyboards and a cup: 20 pointed, a median 4.3 degrees from the
-  middle of the view, 8.7 at worst (13.7 before the fix).
+  added the base again and, past 30 degrees, never faced as far round as it thought. Fixed; over 35 unattended
+  searches on a table of keys, glasses, a watch, two keyboards and a cup, in two runs: all pointed, a median 4.3 and
+  5.2 degrees from the middle of the view, 8.7 and 8.3 at worst (13.7 before the fix).
 - **How far, from one frame.** MapAnything gives metric depth for the frame a thing was confirmed in, in 0.2 s beside
   SAM 3.1 on one GPU: the same keyboard read 0.92 to 1.00 m from five starting poses.
 - **A robot that measured its own lens.** Checking the 3D room, Andy centred a watch, a cup and glasses, then saw

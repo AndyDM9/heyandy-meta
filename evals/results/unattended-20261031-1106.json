@@ -1,0 +1,285 @@
+{
+ "things": "keys,glasses,watch,keyboard,cup",
+ "check": true,
+ "summary": {
+  "trials": 15,
+  "errors": 0,
+  "pointed": 15,
+  "seconds_median": 11.7,
+  "looks_median": 2,
+  "aim_deg_median": 5.2,
+  "aim_deg_worst": 8.3,
+  "reaimed": 15,
+  "aim_not_seen": 0,
+  "metres_by_thing": {
+   "cup": [
+    0.93,
+    0.95,
+    0.98
+   ],
+   "glasses": [
+    0.99,
+    1.05,
+    1.12
+   ],
+   "keyboard": [
+    0.63,
+    0.64,
+    0.66
+   ],
+   "keys": [
+    0.62,
+    0.63,
+    0.67
+   ],
+   "watch": [
+    0.96,
+    0.97,
+    1.04
+   ]
+  }
+ },
+ "note": "nobody checked what was pointed at: this measures the robot, not the finding",
+ "trials": [
+  {
+   "round": 1,
+   "thing": "keys",
+   "from": [
+    -24.1,
+    12.1
+   ],
+   "pointed": true,
+   "seconds": 12.0,
+   "looks": 2,
+   "aim_deg": 7.5,
+   "reaimed": true,
+   "metres": 0.63,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "glasses",
+   "from": [
+    18.4,
+    16.2
+   ],
+   "pointed": true,
+   "seconds": 11.6,
+   "looks": 2,
+   "aim_deg": 5.9,
+   "reaimed": true,
+   "metres": 1.12,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "watch",
+   "from": [
+    -31.4,
+    0.8
+   ],
+   "pointed": true,
+   "seconds": 12.5,
+   "looks": 3,
+   "aim_deg": 2.5,
+   "reaimed": true,
+   "metres": 0.97,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "keyboard",
+   "from": [
+    -35.3,
+    0.6
+   ],
+   "pointed": true,
+   "seconds": 11.0,
+   "looks": 2,
+   "aim_deg": 5.2,
+   "reaimed": true,
+   "metres": 0.64,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "cup",
+   "from": [
+    23.4,
+    -1.7
+   ],
+   "pointed": true,
+   "seconds": 11.9,
+   "looks": 2,
+   "aim_deg": 8.3,
+   "reaimed": true,
+   "metres": 0.93,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "keys",
+   "from": [
+    3.1,
+    0.3
+   ],
+   "pointed": true,
+   "seconds": 11.5,
+   "looks": 2,
+   "aim_deg": 5.0,
+   "reaimed": true,
+   "metres": 0.62,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "glasses",
+   "from": [
+    -20.5,
+    5.8
+   ],
+   "pointed": true,
+   "seconds": 11.3,
+   "looks": 2,
+   "aim_deg": 4.4,
+   "reaimed": true,
+   "metres": 0.99,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "watch",
+   "from": [
+    33.8,
+    10.2
+   ],
+   "pointed": true,
+   "seconds": 10.9,
+   "looks": 3,
+   "aim_deg": 3.0,
+   "reaimed": true,
+   "metres": 1.04,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "keyboard",
+   "from": [
+    -48.6,
+    1.9
+   ],
+   "pointed": true,
+   "seconds": 11.2,
+   "looks": 2,
+   "aim_deg": 5.1,
+   "reaimed": true,
+   "metres": 0.63,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "cup",
+   "from": [
+    -35.3,
+    16.8
+   ],
+   "pointed": true,
+   "seconds": 12.1,
+   "looks": 2,
+   "aim_deg": 7.0,
+   "reaimed": true,
+   "metres": 0.95,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "keys",
+   "from": [
+    31.0,
+    15.2
+   ],
+   "pointed": true,
+   "seconds": 11.9,
+   "looks": 2,
+   "aim_deg": 3.5,
+   "reaimed": true,
+   "metres": 0.67,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "glasses",
+   "from": [
+    32.6,
+    13.6
+   ],
+   "pointed": true,
+   "seconds": 12.0,
+   "looks": 2,
+   "aim_deg": 5.8,
+   "reaimed": true,
+   "metres": 1.05,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "watch",
+   "from": [
+    44.9,
+    14.8
+   ],
+   "pointed": true,
+   "seconds": 12.4,
+   "looks": 3,
+   "aim_deg": 4.5,
+   "reaimed": true,
+   "metres": 0.96,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "keyboard",
+   "from": [
+    -24.3,
+    16.2
+   ],
+   "pointed": true,
+   "seconds": 10.7,
+   "looks": 2,
+   "aim_deg": 5.5,
+   "reaimed": true,
+   "metres": 0.66,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "cup",
+   "from": [
+    -1.3,
+    13.9
+   ],
+   "pointed": true,
+   "seconds": 11.7,
+   "looks": 2,
+   "aim_deg": 7.0,
+   "reaimed": true,
+   "metres": 0.98,
+   "why": "",
+   "error": null
+  }
+ ]
+}

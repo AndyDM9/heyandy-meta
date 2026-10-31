@@ -290,10 +290,12 @@ searches for a monitor, a keyboard and a chair, 34 pointed, a median 5.2 degrees
 turned. On October 31, on a table with keys, glasses, a watch, two keyboards and a cup, the numbers found why: the
 daemon takes and reports the head's direction **in the room**, the base's turn already in it (the same view with the
 base at 0 and at -30 degrees), and Andy had added the base's turn again, so past 30 degrees it faced only 30 degrees
-round. Fixed (and SAM 3.1 is asked for "bunch of keys": asked for "keys" it outlined all 28 keys of a keyboard). The
-final run, `unattended-20261031-0924`: **20 of 20 pointed, none failed, the thing seen after every point, a median 4.3
+round. Fixed (and SAM 3.1 is asked for "bunch of keys": asked for "keys" it outlined all 28 keys of a keyboard). After
+the fix, `unattended-20261031-0924`: **20 of 20 pointed, none failed, the thing seen after every point, a median 4.3
 degrees from the middle of the view, 8.7 at worst** (13.7 before the fix on the same table), a median 12.0 s each, the
-check included. **Distances repeat within a run:** the same keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m
+check included; on the final code (the lens's own focal length, which reads the same offset about 6% larger, and quicker
+small corrections), `unattended-20261031-1106`: 15 of 15, a median 5.2, 8.3 at worst, 11.7 s (the same 15 with the old,
+slower corrections: 6.0 and 11.2, so run to run the median moves about a degree). **Distances repeat within a run:** the same keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m
 from five starting poses on October 30; on the 31st, four searches each, the keys 0.59 to 0.64 m, the keyboard 0.65 to
 0.71, the cup 0.92 to 1.04, the glasses 1.01 to 1.20 (MapAnything; things were moved between runs, and distances aren't
 yet calibrated against a tape measure, which MapAnything reads about 13% short on public test photos, so Andy says

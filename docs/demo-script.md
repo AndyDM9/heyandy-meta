@@ -44,8 +44,8 @@ what you've lost, and points at it.", every model Meta's, no health advice, the 
    private on it). The things for the takes in place: glasses (and a picture of glasses on the TV), the blue mug and a
    look-alike, keys, the remote; three opaque cups and a small bright ball if the cup game is in.
    **Where to put things:** anywhere on the table in front of the robot. Since the head fix of October 31 (the base's
-   turn had been counted twice), the camera-checked aim is a median 4.3 degrees, 8.7 at worst, across the table, out to
-   about 50 degrees each side (`unattended-20261031-0924`). Keys: a bunch of keys, not a single key, and not touching
+   turn had been counted twice), the camera-checked aim is a median 4 to 5 degrees, under 9 at worst, across the table, out
+   to about 50 degrees each side (`unattended-20261031-0924` and `-1106`). Keys: a bunch of keys, not a single key, and not touching
    a keyboard.
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before

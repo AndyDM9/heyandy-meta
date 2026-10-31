@@ -725,3 +725,8 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   down" 0.002 to 0.13 and "picked up" under 0.05; 0.1 s a clip after a 1.3 s first load, about 0.8 GB on GPU 1.
 - **Not yet measured:** a person putting something down, at a metre or two (Something-Something's clips are close-ups
   of hands: the crop around the movement is meant to close that gap). The founder's test 11.
+
+- **Quicker small corrections, checked (2026-10-31):** with corrections of 5 degrees or less moving in 0.3 s instead of
+  0.6, 15 unattended searches gave a median 5.2 degrees, 8.3 at worst; the same 15 (same seed and table) with the old
+  0.6 s gave 6.0 and 11.2. Not worse, so kept; run to run, the median moves about a degree. The focal length measured
+  the same day reads the same pixel offset about 6% larger than the published one did.
