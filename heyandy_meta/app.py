@@ -462,6 +462,7 @@ class Andy:
         found, words = None, ""
         for client, model, paid, source, reason in (self.planners() if hint else []):
             tools = SearchTools(self.finder, self.places, self.judge, on_tool=self._tool_moves)
+            tools.meant(thing)
             on_look, self.finder.on_look = self.finder.on_look, None  # the plan's own steps show the progress
             try:
                 if paid:
@@ -1148,11 +1149,11 @@ class Andy:
             self.screen.step(f"MapAnything: {found.metres:.1f} m away")
 
     def _found_words(self, f: Found) -> str:
-        where = side(f.yaw) + (f", {how_far(f.metres)}" if f.metres is not None else "")
+        where = side(f.yaw) + (f", {how_far(f.metres, metric=self.language != 'en')}" if f.metres is not None else "")
         if not f.reachable:
             return f"I can't turn far enough to point, but your {f.label} is {where}."
         yours = ", the one you showed me" if self._alike is not None and self.mine.knows(f.label) else ""
-        said = f"I see your {f.label}{yours}, {where}." + (" Right where I last saw it." if f.remembered else "")
+        said = f"I see your {f.label}{yours}, {where}." + (f" Right where I last saw {_it(f.label)}." if f.remembered else "")
         opener = FOUND_OPENERS[_it(f.label)][self._finds % len(FOUND_OPENERS["it"])]  # said like a person, in turn
         self._finds += 1
         said = f"{opener} {said}"
@@ -1182,7 +1183,7 @@ class Andy:
             where = (history[-1]["near"] if history and history[-1]["near"] else side(last[0]))
             moved = f" (moved at {spoken_time(history[-1]['since'])})" if len(history) > 1 else ""
             metres = self.places.metres(label)
-            far = f", {how_far(metres)}" if metres is not None else ""
+            far = f", {how_far(metres, metric=self.language != 'en')}" if metres is not None else ""
             lines.append(f"{label}: seen {_ago(self.clock() - at)}, {where}{far}{moved}")
         watched = self.places.watching()
         lines += [f"{k}: I know it by sight" for k in self.mine.known() if k not in watched]

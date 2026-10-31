@@ -23,6 +23,14 @@ def test_how_far_is_said_roughly_in_feet():
     assert how_far(3.0) == "about 10 feet away"
 
 
+def test_in_spanish_how_far_is_said_in_metres():
+    assert how_far(0.62, metric=True) == "about 60 centimetres away"
+    assert how_far(0.04, metric=True) == "about 10 centimetres away"
+    assert how_far(1.04, metric=True) == "about a metre away"
+    assert how_far(1.3, metric=True) == "about 1.5 metres away"
+    assert how_far(2.1, metric=True) == "about 2 metres away"
+
+
 def test_a_find_says_how_far_and_memory_keeps_it(tmp_path):
     a, _, _ = andy(Thing("keys", 15.0, 28.0), tmp_path=tmp_path)
     a.depth = Depth(1.5)

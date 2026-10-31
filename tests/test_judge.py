@@ -192,6 +192,29 @@ def test_one_found_that_isnt_the_one_described_isnt_pointed_at():
     assert "doesn't look like 'red'" in out and tools.pointed is None
 
 
+def test_the_colour_the_person_said_is_checked_even_if_the_planner_drops_it():
+    room = Room([Thing("cup", -20.0, 15.0, looks="blue")])
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))
+    tools.meant("red cup")
+    tools.call("look", {"object": "cup", "views": ["far left", "left", "right"]})
+    out = tools.call("look_closer", {"object": "cup", "place": "1"})
+    assert "doesn't look like 'red'" in out and tools.pointed is None
+
+
+def test_a_comparison_s_winner_must_also_pass_alone():
+    """On the robot (2026-10-31): one blue cup seen as two places; asked which is red, Glimmer picked one anyway."""
+    room = Room([Thing("cup", -20.0, 15.0, looks="blue"), Thing("cup", 40.0, 15.0, looks="blue")])
+
+    class Picky(SimJudge):
+        def pick(self, found, description):
+            return 0 if len(found) > 1 else super().pick(found, description)  # side by side, always the first
+
+    tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=Picky(room))
+    tools.call("look", {"object": "red cup", "views": ["far left", "left", "right"]})
+    out = tools.call("compare", {"object": "cup", "description": "red cup", "places": list(tools.candidates)[:2]})
+    assert "none looks like" in out and tools.pointed is None
+
+
 def test_a_direction_in_the_object_isnt_taken_for_which_one():
     room = Room([Thing("glasses", 120.0, 20.0)])
     tools = SearchTools(Finder(SimBody(room), SimSegmenter(room)), judge=SimJudge(room))

@@ -71,7 +71,7 @@ def test_a_watched_thing_is_found_where_it_was_last_seen(tmp_path):
     a.hear("keep an eye on my keys")
     a.hear("where are my keys")
     body.log.clear()
-    assert a.hear("where are my keys").endswith("Right where I last saw it.")
+    assert a.hear("where are my keys").endswith("Right where I last saw them.")
     assert [e[0] for e in body.log if e[0] in ("look", "capture")] == ["look", "capture", "look", "capture"]
     # one look straight at the remembered place, then the point (a look) and its check: no sweep
 

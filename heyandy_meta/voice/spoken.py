@@ -64,6 +64,9 @@ def words(text: str, lang: str = "en") -> str:
     text = re.sub(r"\b(\d{1,2}):(\d{2})\b", lambda m: _time(int(m[1]), int(m[2]), lang), text)
     text = re.sub(r"(\d+)\.(\d+)", lambda m: number(int(m[1]), lang) + (" point " if lang == "en" else " coma ")
                   + " ".join(number(int(d), lang) for d in m[2]), text)
+    if lang == "es":  # Spanish writes a decimal with a comma: 1,5 metros
+        text = re.sub(r"(\d+),(\d{1,2})\b", lambda m: number(int(m[1]), lang) + " coma "
+                      + " ".join(number(int(d), lang) for d in m[2]), text)
     text = re.sub(r"(\d+),(\d{3})\b", r"\1\2", text)  # 1,500 -> 1500
     text = re.sub(r"\d+", lambda m: number(int(m[0]), lang) if len(m[0]) <= 6 else
                   " ".join(number(int(d), lang) for d in m[0]), text)

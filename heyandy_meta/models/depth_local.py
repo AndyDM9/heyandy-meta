@@ -33,7 +33,13 @@ class LocalDepth:
         return [t["metres"] if t else None for t in out["things"]]
 
 
-def how_far(metres: float) -> str:
-    """In words, as people in the US say it, and only roughly: the depth is good to about a tenth."""
+def how_far(metres: float, metric: bool = False) -> str:
+    """In words, and only roughly (the depth is good to about a tenth): feet, as people in the US say it, or metres
+    (Spanish: then translated, "a unos 60 centímetros")."""
+    if metric:
+        if metres < 0.95:
+            return f"about {max(10, round(metres * 10) * 10)} centimetres away"
+        half = round(metres * 2) / 2
+        return "about a metre away" if half == 1 else f"about {half:g} metres away"
     feet = round(metres * 3.281)
     return "about a foot away" if feet <= 1 else f"about {feet} feet away"

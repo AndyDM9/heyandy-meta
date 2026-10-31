@@ -15,6 +15,8 @@ def test_times_units_and_abbreviations_are_said_as_people_say_them():
     assert words("I'm Andy, an AI robot. OK?") == "I'm Andy, an A I robot. okay?"
     assert words("1.5 m away") == "one point five m away"
     assert words("a las 3:15", "es") == "a las tres y quince"
+    assert words("a unos 1,5 metros", "es") == "a unos uno coma cinco metros"
+    assert words("1,500 people") == "one thousand five hundred people"
 
 
 def test_phrases_carry_the_pauses_the_punctuation_made():

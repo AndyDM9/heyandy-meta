@@ -120,6 +120,11 @@ class SearchTools:
             if self.on_tool:
                 self.on_tool(False)
 
+    def meant(self, words: str) -> None:
+        """What the person asked for ("the red cup"): its colour or place is checked before any point, whatever object
+        the planner names later (on the robot, 2026-10-31, Glimmer looked for plain "cup" and the colour was lost)."""
+        self._object(words)
+
     def _object(self, obj) -> str | None:
         if not isinstance(obj, str) or not OBJECT.match(obj.strip()):
             return None
@@ -224,6 +229,11 @@ class SearchTools:
         if not seen:
             return "Compared: " + "; ".join(notes) + "."
         i = self.judge.pick([(self.confirmed[p].frame, self.confirmed[p].mask) for p in seen], description.strip())
+        if i is not None and len(seen) > 1:  # shown two of one blue cup and asked for red, Glimmer still picks one
+            meant = " ".join(w for w in description.strip().split() if w.lower() not in obj.split())
+            win = self.confirmed[seen[i]]
+            if self.judge.pick([(win.frame, win.mask)], f"the {obj} that is {meant or description.strip()}") is None:
+                i = None
         for p in seen:
             if i is None or p != seen[i]:
                 self.confirmed.pop(p)  # only the one that fits may be pointed at
