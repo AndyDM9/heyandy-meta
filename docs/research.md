@@ -947,3 +947,26 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   with no look and no frame (8.2 s, the speaking); asked again: six looks, nothing found, "At 6:11, you told me it was
   in the top drawer of the desk" (28.1 s).
 
+## 47. Ring it, in Andy Finder, for every Reachy Mini owner (2026-10-31)
+
+- **Why:** Andy Finder is the widest door (the Reachy Mini app store), but finding needed SAM 3.1 on a GPU or a paid
+  Model API key: most owners couldn't use it on the first try. Finding a phone by its ring needs neither: only the
+  robot's own microphones.
+- **Built:** a "Ring it" card on the app's page: Reachy listens while the person calls the phone (up to 30 s for it to
+  start ringing; it showed "Call your phone now" with the seconds left), turns to the ringing, and nods towards it; with
+  SAM 3.1 it then looks only around there (four views) and, among things seen within 35 degrees of the ringing, takes
+  the nearest (with two monitors, the one by the speaker; the surest had been the other). The page draws each turn
+  from above. Self-contained (the app installs without HeyAndy): flatness, the ringing test and the turn are copied
+  from `companion/sound.py`. Version 0.2.0; the listing leads with it and its screenshot is a staged state, no room.
+- **Two things learned on the robot, fixed in both Andy and Andy Finder:** (1) Andy said "ring it now" and gave up
+  after about 3 s of silence; nobody dials that fast. Both now wait up to 30 s for the ringing to start. (2) Within
+  about 20 degrees of the sound the array reads near zero either way, so stopping at the first near-zero reading
+  stopped as much as 30 degrees off (at -40 one run, -10 another). Now the sound is placed between the nearest yaw
+  it's clearly left of and the nearest it's clearly right of, probing between them until they're 30 degrees apart:
+  in simulation with blind bands of 10 to 25 degrees, at most 5 degrees off from any start.
+- **Measured on the robot:** Andy Finder, four runs (the ringtone started 5 s after the tap, as a dial): placed at
+  -10, -30, -10 and -20 degrees; "computer monitor" found twice at -16.8 (the near monitor), "phone" (none there)
+  twice "I can hear it, but I can't see it"; 30 to 35 s from the tap (`evals/results/finder-ring-*.json`). Andy itself
+  (`evals/sound.py`): the ringtone from three starts at -20, -10, 0; the struck-bar tune at -30, -10, -20 (both within
+  20 degrees, the tune's spread was 30 before); a voice never taken for a ringing.
+

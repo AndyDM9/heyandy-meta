@@ -1,0 +1,372 @@
+{
+ "when": "2026-10-31 18:56",
+ "room_floor": 0.004,
+ "ringings_faced": 6,
+ "of": 6,
+ "spread_deg": {
+  "ringtone": 20.0,
+  "marimba": 20.0
+ },
+ "voice_taken_for_a_ringing": false,
+ "runs": [
+  {
+   "sound": "ringtone",
+   "start": -50.0,
+   "facing": -20.0,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 5
+    },
+    {
+     "chunks": 16,
+     "loud": 6,
+     "tonal": 6,
+     "with_side": 5
+    },
+    {
+     "chunks": 16,
+     "loud": 10,
+     "tonal": 10,
+     "with_side": 8
+    },
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 5
+    },
+    {
+     "chunks": 16,
+     "loud": 2,
+     "tonal": 2,
+     "with_side": 1
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    }
+   ],
+   "steps": [
+    [
+     -50.0,
+     26.0
+    ],
+    [
+     -10.0,
+     -0.0
+    ],
+    [
+     10.0,
+     -3.5
+    ],
+    [
+     -30.0,
+     1.0
+    ]
+   ],
+   "seconds": 18.4
+  },
+  {
+   "sound": "ringtone",
+   "start": 0.0,
+   "facing": -10.0,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 5
+    },
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 4
+    },
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 5
+    }
+   ],
+   "steps": [
+    [
+     0.0,
+     -4.0
+    ],
+    [
+     -40.0,
+     15.5
+    ],
+    [
+     -20.0,
+     5.0
+    ]
+   ],
+   "seconds": 10.1
+  },
+  {
+   "sound": "ringtone",
+   "start": 50.0,
+   "facing": 0.0,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 10,
+     "tonal": 10,
+     "with_side": 10
+    },
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 6
+    },
+    {
+     "chunks": 16,
+     "loud": 7,
+     "tonal": 7,
+     "with_side": 5
+    },
+    {
+     "chunks": 16,
+     "loud": 10,
+     "tonal": 10,
+     "with_side": 8
+    }
+   ],
+   "steps": [
+    [
+     50.0,
+     -25.0
+    ],
+    [
+     10.0,
+     -3.0
+    ],
+    [
+     -30.0,
+     6.0
+    ],
+    [
+     -10.0,
+     3.0
+    ]
+   ],
+   "seconds": 13.8
+  },
+  {
+   "sound": "marimba",
+   "start": -50.0,
+   "facing": -30.0,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 11
+    },
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 11
+    },
+    {
+     "chunks": 16,
+     "loud": 13,
+     "tonal": 13,
+     "with_side": 4
+    },
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 11
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    }
+   ],
+   "steps": [
+    [
+     -50.0,
+     1.0
+    ],
+    [
+     -30.0,
+     -0.0
+    ],
+    [
+     -70.0,
+     3.0
+    ],
+    [
+     -10.0,
+     -0.0
+    ]
+   ],
+   "seconds": 20.2
+  },
+  {
+   "sound": "marimba",
+   "start": 0.0,
+   "facing": -10.0,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 12
+    },
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 6
+    },
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 11
+    },
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 9
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    }
+   ],
+   "steps": [
+    [
+     0.0,
+     -1.0
+    ],
+    [
+     20.0,
+     -1.5
+    ],
+    [
+     -20.0,
+     -0.0
+    ],
+    [
+     -40.0,
+     2.0
+    ]
+   ],
+   "seconds": 19.9
+  },
+  {
+   "sound": "marimba",
+   "start": 50.0,
+   "facing": -20.0,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 11,
+     "tonal": 11,
+     "with_side": 10
+    },
+    {
+     "chunks": 16,
+     "loud": 11,
+     "tonal": 11,
+     "with_side": 10
+    },
+    {
+     "chunks": 16,
+     "loud": 11,
+     "tonal": 11,
+     "with_side": 10
+    },
+    {
+     "chunks": 16,
+     "loud": 12,
+     "tonal": 12,
+     "with_side": 5
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    }
+   ],
+   "steps": [
+    [
+     50.0,
+     -2.0
+    ],
+    [
+     10.0,
+     -2.0
+    ],
+    [
+     -30.0,
+     0.5
+    ],
+    [
+     -50.0,
+     3.0
+    ]
+   ],
+   "seconds": 19.9
+  },
+  {
+   "sound": "voice",
+   "start": 0.0,
+   "facing": null,
+   "heard": [
+    {
+     "chunks": 16,
+     "loud": 2,
+     "tonal": 1,
+     "with_side": 1
+    },
+    {
+     "chunks": 16,
+     "loud": 0,
+     "tonal": 0,
+     "with_side": 0
+    }
+   ],
+   "steps": [],
+   "seconds": 4.3
+  }
+ ]
+}

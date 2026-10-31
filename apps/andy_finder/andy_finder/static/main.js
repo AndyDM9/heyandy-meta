@@ -23,6 +23,38 @@ for (const t of THINGS) {
   const b = document.createElement("button"); b.type = "button"; b.textContent = t; b.onclick = () => ask(t); $("chips").append(b);
 }
 $("ask").onsubmit = (e) => { e.preventDefault(); ask($("thing").value.trim()); };
+$("ring").onclick = async () => {  // Ring it: Reachy listens while you call your phone, then turns to the ringing
+  if (last && last.busy) return;
+  revealed = "";
+  await fetch("/ring", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ thing: "phone" }) });
+  refresh();
+};
+
+function sonar(s) {  // seen from above, front up: each turn of the head, the side it heard the ringing on, then where it is
+  const svg = $("sonar-svg"), R = 100, snd = s.sound || { steps: [] }; svg.replaceChildren();
+  const at = (yaw, r) => [-Math.sin(yaw * Math.PI / 180) * r, -Math.cos(yaw * Math.PI / 180) * r];  // its left on the left
+  for (const r of [R, R * 0.66, R * 0.33]) svg.append(make("circle", { cx: 0, cy: 0, r }, "ring-line"));
+  snd.steps.forEach(([yaw, heard], i) => {
+    const [x, y] = at(yaw, R), now = i === snd.steps.length - 1;
+    svg.append(make("line", { x1: 0, y1: 0, x2: x, y2: y }, now ? "turn now" : "turn"));
+    const [mx, my] = at(yaw + (heard > 0 ? 12 : heard < 0 ? -12 : 0), R * 0.82);
+    svg.append(make("circle", { cx: mx, cy: my, r: now ? 6 : 4 }, now ? "heard now" : "heard"));
+  });
+  if (snd.facing != null) {
+    const [x, y] = at(snd.facing, R * 0.86);
+    for (let i = 0; i < 3; i++) svg.append(make("circle", { cx: x, cy: y, r: 10, style: `animation-delay: ${i * 0.6}s` }, "wave"));
+    svg.append(make("circle", { cx: x, cy: y, r: 9 }, "source"));
+  } else if (s.phase === "listening") svg.append(make("circle", { cx: 0, cy: 0, r: 22 }, "listen"));
+  svg.append(make("rect", { x: -16, y: -9, width: 32, height: 18, rx: 9 }, "robot"));
+  svg.append(make("ellipse", { cx: -7, cy: 0, rx: 2.2, ry: 4.4 }, "eye2"), make("ellipse", { cx: 7, cy: 0, rx: 2.2, ry: 4.4 }, "eye2"));
+  const waiting = snd.waiting != null && !snd.steps.length;
+  $("sonar-title").textContent = s.phase === "unheard" ? "I didn't hear it ring." : s.phase === "heard" ? "It's ringing over there."
+                               : waiting ? "Call your phone now." : "I hear it. Turning to the sound.";
+  $("sonar-line").textContent = s.phase === "unheard" ? "Is the ringer on? Tap Ring it and call again."
+                              : s.phase === "heard" ? s.status
+                              : waiting ? `I'm listening (${snd.waiting} s). Its own microphones; nothing is recorded.`
+                              : "It turns until it hears the ringing straight ahead.";
+}
 
 function marks(w, h, boxes, found) {  // the candidates SAM 3.1 outlined, or the found thing with a spotlight
   const svg = $("marks"); svg.replaceChildren();
@@ -54,7 +86,9 @@ function render(s) {
   last = s;
   const view = $("view"), phase = s.phase || "ready";
   view.className = "eye-view " + phase;
-  $("go").disabled = s.busy;
+  $("go").disabled = s.busy; $("ring").disabled = s.busy;
+  $("ring").textContent = phase === "listening" ? "Listening…" : "Ring it";
+  if (["listening", "heard", "unheard"].includes(phase)) { sonar(s); eyesTo(s.sound && s.sound.steps.length ? s.sound.steps.at(-1)[0] : 0); }
   document.querySelectorAll("#chips button").forEach((b) => (b.disabled = s.busy));
   $("where").textContent = s.local ? "Pictures stay on this computer" : "Pictures go to Meta's Model API";
   $("where").classList.toggle("cloud", !s.local);
@@ -95,14 +129,15 @@ function render(s) {
   $("idle-title").textContent = phase === "missing" ? "Not in view." : "I'm ready.";
   $("idle-line").textContent = phase === "missing" ? "It may be somewhere I can't look: behind me, or under something."
                                                     : "Tap a thing, or type one.";
-  if (phase !== "looking" && phase !== "found") {
+  if (!["looking", "found", "listening", "heard", "unheard"].includes(phase)) {
     eyesTo(phase === "missing" ? (Date.now() / 600 % 2 < 1 ? -40 : 40) : 0);  // looking about, when it couldn't see it
     marks(0, 0, [], null);
   }
 
   const views = $("views"); views.replaceChildren();
-  VIEW_NAMES.forEach((name, i) => {
-    const v = (s.views || [])[i], li = document.createElement("li");
+  const named = (v, i) => !v ? VIEW_NAMES[i] : Math.abs(v.yaw) < 10 ? "middle" : (Math.abs(v.yaw) > 40 ? "far " : "") + (v.yaw > 0 ? "left" : "right");
+  (s.views && s.views.length ? s.views : VIEW_NAMES).forEach((_, i) => {  // each view by where it really looked
+    const v = (s.views || [])[i], li = document.createElement("li"), name = named(v, i);
     if (v && v.done) li.className = v.best >= 0.75 ? "done hit" : "done";
     if (phase === "looking" && s.look && s.look.view === i) li.className = "now";
     li.append(document.createElement("i"), name); views.append(li);

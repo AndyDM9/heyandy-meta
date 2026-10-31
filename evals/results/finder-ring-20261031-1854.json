@@ -1,0 +1,134 @@
+{
+ "when": "2026-10-31 18:54",
+ "how": "Andy Finder on the robot; a two-tone ringtone through the monitor speakers, started 5 s after Ring it",
+ "runs": [
+  {
+   "thing": "computer monitor",
+   "said": "I followed the ringing. There's your computer monitor, a little to my right.",
+   "facing": -10,
+   "steps": [
+    [
+     0,
+     -1
+    ],
+    [
+     20,
+     -3
+    ],
+    [
+     -20,
+     -1
+    ],
+    [
+     -40,
+     13.5
+    ],
+    [
+     -30,
+     2
+    ],
+    [
+     -10,
+     -0.0
+    ],
+    [
+     10,
+     -3.5
+    ]
+   ],
+   "found_yaw": -16.8,
+   "seconds_from_tap": 33.7
+  },
+  {
+   "thing": "phone",
+   "said": "I can hear it, but I can't see it: it's ringing a little to my right, where I'm looking. It may be under something.",
+   "facing": -30,
+   "steps": [
+    [
+     0,
+     -1
+    ],
+    [
+     20,
+     -3
+    ],
+    [
+     -20,
+     -1
+    ],
+    [
+     -40,
+     29
+    ]
+   ],
+   "found_yaw": null,
+   "seconds_from_tap": 30.2
+  },
+  {
+   "thing": "computer monitor",
+   "said": "I followed the ringing. There's your computer monitor, a little to my right.",
+   "facing": -10,
+   "steps": [
+    [
+     0,
+     -1
+    ],
+    [
+     20,
+     -3
+    ],
+    [
+     -20,
+     1
+    ],
+    [
+     -40,
+     14
+    ],
+    [
+     -30,
+     1.5
+    ],
+    [
+     -10,
+     -0.0
+    ],
+    [
+     10,
+     -2.5
+    ]
+   ],
+   "found_yaw": -16.8,
+   "seconds_from_tap": 33.6
+  },
+  {
+   "thing": "phone",
+   "said": "I can hear it, but I can't see it: it's ringing a little to my right, where I'm looking. It may be under something.",
+   "facing": -20,
+   "steps": [
+    [
+     0,
+     -2
+    ],
+    [
+     -40,
+     23
+    ],
+    [
+     -20,
+     -0.0
+    ],
+    [
+     -30,
+     1
+    ],
+    [
+     -10,
+     -0.0
+    ]
+   ],
+   "found_yaw": null,
+   "seconds_from_tap": 34.6
+  }
+ ]
+}

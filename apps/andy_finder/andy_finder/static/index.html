@@ -10,7 +10,7 @@
     <header>
       <svg class="face" viewBox="0 0 380 210" aria-hidden="true"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
         <g class="eyes"><ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></g></svg>
-      <div><h1>Andy Finder</h1><p class="sub">Reachy Mini looks around the room and points at what you've lost.</p></div>
+      <div><h1>Andy Finder</h1><p class="sub">Reachy Mini looks around the room and points at what you've lost, and turns to a phone that rings.</p></div>
       <span class="where" id="where">…</span>
     </header>
 
@@ -19,6 +19,12 @@
       <div class="row"><input id="thing" placeholder="glasses, keys, the remote…" required maxlength="40"><button id="go">Find it</button></div>
       <div class="chips" id="chips" aria-label="Things people often lose"></div>
     </form>
+
+    <section class="ring" aria-label="Find a phone by its ring">
+      <div><b>Lost your phone?</b><span>Tap, then call it from another phone: Reachy turns to the ringing. Nothing to set
+        up: it listens with its own microphones.</span></div>
+      <button id="ring" type="button">Ring it</button>
+    </section>
 
     <section class="eye-view" id="view" aria-live="polite">
       <div class="stage" id="stage">
@@ -29,6 +35,8 @@
             <g class="eyes"><ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></g></svg>
           <b id="idle-title">I'm ready.</b><span id="idle-line">Tap a thing, or type one.</span></div>
         <div class="scan" id="scan"><span id="scan-text"></span></div>
+        <div class="sonar" id="sonar"><svg id="sonar-svg" viewBox="-130 -130 260 260" role="img" aria-label="Which way Reachy hears the ringing, seen from above"></svg>
+          <div><b id="sonar-title"></b><span id="sonar-line"></span></div></div>
       </div>
       <div class="reveal" id="reveal"><small id="r-kick">Found · SAM 3.1</small><h2 id="r-title"></h2>
         <p class="side" id="r-side"></p><div class="nums" id="r-nums"></div></div>

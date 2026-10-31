@@ -94,10 +94,13 @@ found, "You're all set", in three sentences.
    turned up! It's a little to my right, about 3 feet away." The TV's side card and a paired phone show what Andy is
    still looking for; "I found it" or "stop looking" lets go (`memory/lost.py`). On the robot it found a watch it was
    told was lost, pointed 4.1 degrees off the middle and said so out loud, and kept quiet about a wallet that wasn't there.
+   **Andy Finder, for every Reachy Mini owner** (`apps/andy_finder`, the Reachy Mini app store): the same "Ring it" with
+   nothing to set up (no key, no GPU, no internet), and finding anything else with SAM 3.1.
    **"I'm ringing my phone."** A phone under a cushion is invisible to a camera, but it rings. Andy turns its head
    towards the ringing until its microphones hear it straight ahead, as a person turns to a sound, then looks only
    around that way with SAM 3.1, and points: "I followed the ringing. There it is!" Can't see it? It points where the
-   sound is: "I can hear it, but I can't see it. It's ringing a little to my right: it may be under something." A
+   sound is: "I can hear it, but I can't see it. It's ringing a little to my right: it may be under something." It waits
+   up to 30 seconds for the ringing to start (dialling takes a while). A
    tracker on a key ring that beeps works the same way ("listen for my keys"); a voice is never taken for a ringing
    (most of a ringing is pure tone; a voice only now and then). Only each tenth of a second's loudness, tone and
    direction are kept, for 20 seconds; nothing is recorded (`companion/sound.py`). The TV draws each turn from above.

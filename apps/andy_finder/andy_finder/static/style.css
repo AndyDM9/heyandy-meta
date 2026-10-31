@@ -103,3 +103,26 @@ button:disabled { opacity: 0.45; cursor: default; }
 }
 @media (prefers-reduced-motion: reduce) { .found .edge { animation: none; stroke-dashoffset: 0; } .reveal > * { animation: none; opacity: 1; transform: none; }
   .looking .stage::after { animation: none; display: none; } .eyes { transition: none; } }
+
+/* Ring it: a phone found by ear, nothing to set up */
+.ring { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; padding: 1rem 1.2rem; border-radius: 1.4rem;
+        background: var(--panel); border: 2px dashed var(--outline); }
+.ring div { flex: 1; } .ring b { display: block; font-size: 1.15rem; } .ring span { color: var(--muted); font-size: 0.95rem; }
+#ring { padding: 0.75rem 1.3rem; background: var(--outline); color: #070a09; white-space: nowrap; }
+.sonar { position: absolute; inset: 0; display: none; grid-template-columns: minmax(0, 1.1fr) 1fr; align-items: center; gap: 1rem;
+         padding: 1rem 1.4rem; color: var(--porcelain); background: radial-gradient(ellipse at 35% 50%, #1d2a24, var(--dark) 75%); }
+.listening .sonar, .heard .sonar, .unheard .sonar { display: grid; }
+.listening .idle, .heard .idle, .unheard .idle { display: none; }
+.sonar svg { width: 100%; height: 100%; max-height: 100%; }
+.sonar b { display: block; font-size: 1.5rem; line-height: 1.15; } .sonar span { color: rgba(245, 243, 239, 0.75); font-size: 0.95rem; }
+.sonar .ring-line { fill: none; stroke: rgba(245, 243, 239, 0.18); }
+.sonar .turn { stroke: rgba(245, 243, 239, 0.35); stroke-width: 2; stroke-dasharray: 3 4; }
+.sonar .turn.now { stroke: var(--outline); stroke-width: 3; stroke-dasharray: none; }
+.sonar .heard { fill: rgba(255, 207, 92, 0.55); } .sonar .heard.now { fill: var(--outline); }
+.sonar .source { fill: var(--outline); } .sonar .robot { fill: var(--porcelain); } .sonar .eye2 { fill: var(--dark); }
+.sonar .wave { fill: none; stroke: var(--outline); stroke-width: 2.5; transform-box: fill-box; transform-origin: center;
+               animation: wave 1.8s ease-out infinite; }
+.listening .sonar .listen { fill: none; stroke: var(--outline); stroke-width: 2; transform-box: fill-box; transform-origin: center;
+                            animation: wave 2.4s ease-out infinite; }
+@keyframes wave { from { transform: scale(0.5); opacity: 0.9; } to { transform: scale(3); opacity: 0; } }
+@media (max-width: 34rem) { .ring { flex-direction: column; align-items: stretch; } .sonar { grid-template-columns: 1fr; text-align: center; } .sonar svg { max-height: 60%; } }

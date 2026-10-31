@@ -64,8 +64,8 @@ def test_turning_by_the_side_heard_faces_the_sound_from_any_start(source, start)
     head = [start]
     read = compressed(source)
     yaw, steps = turn_to(lambda: read(head[0]), lambda y: head.__setitem__(0, y), start)
-    assert abs(yaw - source) <= 15 + NARROW_DEG  # the array's own blind band, and the last gap
-    assert len(steps) <= 7
+    assert abs(yaw - source) <= NARROW_DEG  # between the nearest clear left and clear right: the blind band's middle
+    assert len(steps) <= 8
 
 
 def test_no_ringing_no_turn():
@@ -155,3 +155,26 @@ def test_by_its_sound_a_thing_far_from_the_ringing_is_turned_down(tmp_path):
     a.ear, a.wait = FakeEar(body, 10.0), lambda s: None
     words = a.hear("I'm ringing my phone")
     assert "I can hear it, but I can't see it." in words and a.finder.last_found is None
+
+
+def test_andy_waits_for_the_ringing_to_start_while_the_person_dials():
+    from heyandy_meta.companion.sound import wait_for
+
+    heard = iter([None] * 7 + [12.0])  # about 11 seconds of dialling, then it rings
+    assert wait_for(lambda: next(heard)) is True
+    assert wait_for(lambda: None, seconds=8.0) is False  # never rings: gives up after the wait
+
+
+def test_a_slow_dial_still_gets_turned_to(tmp_path):
+    a, body, _ = andy(Thing("phone", 40.0, 22.0), tmp_path=tmp_path)
+    ear = FakeEar(body, 40.0)
+    calls = {"n": 0}
+    real = ear.since
+
+    def dialling(t):
+        calls["n"] += 1
+        return [] if calls["n"] <= 6 else real(t)  # silence while the person finds another phone and dials
+
+    ear.since = dialling
+    a.ear, a.wait = ear, lambda s: None
+    assert "I followed the ringing." in a.hear("I'm ringing my phone")

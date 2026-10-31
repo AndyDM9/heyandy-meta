@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "andy_finder"
-version = "0.1.0"
-description = "Ask Reachy Mini where your glasses are: it looks around, finds them with SAM 3.1, and points."
+version = "0.2.0"
+description = "Reachy Mini turns to your ringing phone (nothing to set up), and finds what you've lost with SAM 3.1."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"

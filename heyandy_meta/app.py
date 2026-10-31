@@ -30,7 +30,7 @@ from .companion.follow import follow
 from .companion.guide import guide, height_above
 from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
-from .companion.sound import apart, fan, reading, turn_to
+from .companion.sound import apart, fan, reading, turn_to, wait_for
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
@@ -952,8 +952,12 @@ class Andy:
             return reading(self.ear.since(t), floor)
 
         try:
-            yaw, steps = turn_to(listen, turn, getattr(self.body, "yaw", 0.0),
-                                 on_step=lambda y, s, st: self.screen.listening(thing, st, None))
+            turn(getattr(self.body, "yaw", 0.0))
+            if not wait_for(listen):  # the person dials meanwhile: up to WAIT_S for it to start ringing
+                yaw, steps = None, []
+            else:
+                yaw, steps = turn_to(listen, turn, getattr(self.body, "yaw", 0.0),
+                                     on_step=lambda y, s, st: self.screen.listening(thing, st, None))
         finally:
             self.following = False
             self.gesture("idle")

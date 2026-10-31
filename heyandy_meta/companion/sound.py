@@ -28,10 +28,12 @@ TONAL_SHARE = 0.6  # of the loud chunks, at least this many must be tones: a voi
 LOUDER = 4.0  # times the room's noise floor
 QUIET_FLOOR = 0.004  # a floor for very quiet rooms, so a click isn't "four times louder"
 ENOUGH = 4  # ringing chunks with a side for one reading (a reading listens about 1.6 s: two rings or more)
-AHEAD_DEG = 1.0  # a reading this small is straight ahead
+AHEAD_DEG = 1.0  # a reading this small says nothing about the side (within about 20 degrees of the sound)
 STEP_DEG = 40.0  # a turn towards the side heard, until the sound is between two turns
-NARROW_DEG = 10.0  # then halve the gap, by which side each reading puts the sound, until it's this narrow
-TURNS = 7  # at most
+BRACKET_DEG = 30.0  # placed once the nearest clear left and clear right are this close: the middle is the sound
+NARROW_DEG = BRACKET_DEG / 2  # how far from the sound the middle can be, at most, when the blind band is even
+TURNS = 8  # at most
+WAIT_S = 30.0  # how long Andy waits for the ringing to start
 
 
 def flatness(samples: np.ndarray, rate: int = RATE) -> float:
@@ -87,12 +89,25 @@ def reading(chunks: list[tuple], floor: float) -> float | None:
     return float(np.median([c[3] for c in r])) if r else None
 
 
+def wait_for(listen, seconds: float = WAIT_S, each: float = 1.6, on_wait=None) -> bool:
+    """Until a ringing starts: the person dials after Andy says "ring it now", and that takes a while (another phone
+    found, the number chosen). listen() hears for `each` seconds; True as soon as one hears a ringing."""
+    for i in range(max(1, int(seconds / each))):
+        if on_wait:
+            on_wait(round(seconds - i * each))
+        if listen() is not None:
+            return True
+    return False
+
+
 def turn_to(listen, turn, start: float, reach=(-150.0, 150.0), on_step=None) -> tuple[float | None, list]:
-    """Turn the head towards a ringing: by the side only, since the array's angle is too compressed to trust for how
-    far (see above). listen() -> a reading at the head's current yaw (None: no ringing); turn(yaw) moves the head.
-    STEP_DEG towards the side heard until the sound is between two yaws, then halve the gap until it's NARROW_DEG.
-    Returns (the yaw facing it, or None if nothing was heard; the steps [(yaw, reading)])."""
-    steps, yaw, left, right = [], start, None, None  # left/right: yaws with the sound on that side of the head
+    """Turn the head towards a ringing, by the side heard only: the array's angle is too compressed to say how far,
+    and within about 20 degrees of the sound it reads near zero either way (see above). So zeros say little; what
+    places the sound is the nearest yaw it's clearly left of and the nearest it's clearly right of: the sound is
+    between, in the middle. Turn STEP_DEG towards the side heard until there are both, then look between them where
+    the gap is widest, until the two are BRACKET_DEG apart. listen() -> a reading at the head's yaw (None: no ringing);
+    turn(yaw) moves the head. Returns (the yaw facing it, or None if nothing was heard; the steps [(yaw, reading)])."""
+    steps, yaw = [], start
     for _ in range(TURNS):
         turn(yaw)
         side = listen()
@@ -103,27 +118,38 @@ def turn_to(listen, turn, start: float, reach=(-150.0, 150.0), on_step=None) -> 
         steps.append((yaw, side))
         if on_step:
             on_step(yaw, side, steps)
-        if abs(side) <= AHEAD_DEG:
-            return yaw, steps
-        if side > 0:
-            right = yaw if right is None else max(right, yaw)  # the sound is left of here: it's at a larger yaw
-        else:
-            left = yaw if left is None else min(left, yaw)
-        if right is not None and left is not None:
-            if left - right <= NARROW_DEG:
-                return (left + right) / 2, steps
-            nxt = (left + right) / 2
-        else:
-            nxt = yaw + math.copysign(STEP_DEG, side)
+        left = [y for y, s in steps if s > AHEAD_DEG]  # the sound is left of these yaws: it's at a larger one
+        right = [y for y, s in steps if s < -AHEAD_DEG]
+        lo, hi = (max(left) if left else None), (min(right) if right else None)
+        zeros = [y for y, s in steps if abs(s) <= AHEAD_DEG]
+        if lo is not None and hi is not None:
+            if hi - lo <= BRACKET_DEG or lo >= hi:  # placed (or the readings disagree: settle between them)
+                return (lo + hi) / 2, steps
+            inside = sorted({lo, hi, *(y for y, _ in steps if lo < y < hi)})
+            a, b = max(zip(inside, inside[1:]), key=lambda g: g[1] - g[0])
+            if b - a <= BRACKET_DEG / 2:
+                return (lo + hi) / 2, steps
+            nxt = (a + b) / 2
+        elif lo is not None:  # left of everything clearly: further left (in smaller steps once near it)
+            nxt = max(y for y, _ in steps) + (STEP_DEG if not zeros else STEP_DEG / 2)
+        elif hi is not None:
+            nxt = min(y for y, _ in steps) - (STEP_DEG if not zeros else STEP_DEG / 2)
+        else:  # only near-zeros: it's near here; look a little either side
+            nxt = start + (STEP_DEG / 2 if len(steps) % 2 else -STEP_DEG / 2)
         nxt = min(max(nxt, reach[0]), reach[1])
-        if abs(nxt - yaw) < 1.0:
+        if any(abs(nxt - y) < 1.0 for y, _ in steps):
             break
         yaw = nxt
     if not steps:
         return None, steps
-    if right is not None and left is not None:
-        return (left + right) / 2, steps
-    return min(steps, key=lambda s: abs(s[1]))[0], steps
+    left = [y for y, s in steps if s > AHEAD_DEG]
+    right = [y for y, s in steps if s < -AHEAD_DEG]
+    zeros = [y for y, s in steps if abs(s) <= AHEAD_DEG]
+    if left and right:
+        return (max(left) + min(right)) / 2, steps
+    if zeros:
+        return sum(zeros) / len(zeros), steps
+    return (max(left) + STEP_DEG / 2) if left else (min(right) - STEP_DEG / 2), steps
 
 
 def apart(a: float, b: float) -> float:
