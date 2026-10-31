@@ -94,7 +94,6 @@ class Andy:
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()
         self.screen.online = self.online
-        self.refresh_panels()
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
         self.history: list[tuple[str, str]] = []  # this conversation, in memory only
@@ -122,6 +121,7 @@ class Andy:
         self._pointed = False  # this turn pointed at something
         self.hold_point_s = 1.2 if hasattr(self.body, "motion") else 0.0  # the real robot holds a point a moment
         self._last_turn = float("-inf")
+        self.refresh_panels()  # last: the panels read the language and the rest set above
 
     # --- a turn ---
 

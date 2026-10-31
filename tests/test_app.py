@@ -44,6 +44,15 @@ def said(body):
     return [e[1] for e in body.log if e[0] == "say"]
 
 
+def test_andy_starts_with_a_remembered_distance(tmp_path):
+    """On the robot (2026-10-31): a watched thing with its distance saved, and Andy failed to start."""
+    places = Places(tmp_path / "places.json")
+    places.watch("keys")
+    places.saw("keys", -20.0, 15.0, when=0.0, metres=0.62)
+    a, _, _ = andy(tmp_path=tmp_path)
+    assert "about 2 feet away" in " ".join(str(x) for x in (a.screen.memory or a._memory()))
+
+
 def test_first_turn_says_it_is_an_ai_and_conversation_goes_to_the_device(tmp_path):
     a, body, _ = andy(tmp_path=tmp_path)
     assert a.hear("Good morning") == "I'm Andy, an AI robot. Hello there."
