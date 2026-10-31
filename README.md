@@ -33,7 +33,7 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 7. **"Andy, I'm going out."** Andy looks again where it last saw the things you asked it to keep an eye on, turns and
    points at any still here ("Your keys are still here, on the desk"), says which it didn't see (so they're probably
    with you), reminds you of the next reminder, and, looked up by Muse Spark while the robot was checking, whether to
-   take an umbrella. 7 to 8.5 s with the robot simulated; the TV shows the checklist.
+   take an umbrella. 7 to 8.5 s with the robot simulated, 37 to 42.5 s on the robot; the TV shows the checklist.
 8. **"Andy, let's play the cup game."** Hide a ball under one of a few cups and shuffle them. Andy records the
    shuffle, then replays it through SAM 3.1's Object Multiplex on the computer beside the robot, which tracks every
    cup at once, so identical cups keep their own identities as they cross. Andy points at the cup with the ball, the TV
@@ -258,6 +258,14 @@ noise. Results: `evals/results/`.
 **On the robot** (Reachy Mini Lite, 2026-10-27): a cup found in 7.5 s and a keyboard in 8.2 s, the screen check included
 (7.1 s for the keyboard once Glimmer's picture check went straight to its answer; research.md, 24);
 pointing within about 3 degrees after the head's correction, as its motors report it.
+
+**Start to finish, on the robot** (2026-10-31, requests typed to Andy on the Lite with its voice on, nobody in the room;
+from the request to the end of Andy's spoken answer): a plain find 19 to 25 s ("Let me look.", the sweep, the check, the
+point, how far, the answer); "the blue cup" 17.6 to 23 s, planned by Muse Spark or Glimmer; "the red cup" with only a
+blue one there, 40 to 50 s, and no point; "where are my glasses and what time is it?" 30.5 s (the agent, 2 steps); "I'm
+going out" 37 to 42.5 s (two places looked at again, and the weather); the weather radar on the TV 30.9 s; the map of
+things 39.1 s; the time, from the clock, 2.5 to 4.4 s; in Spanish, a find 20.6 to 25.5 s. Slower than the simulated
+figures above, which leave out the robot's moves and Andy's voice.
 
 **Measured by Andy's own camera** (`evals/unattended.py`; the robot alone in the room, nobody checking what it pointed
 at, so this measures the aim and the reliability, not the finding). On October 30 the check after pointing showed the
