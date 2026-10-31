@@ -24,6 +24,9 @@ table, looks around the room for you, points at the thing, and keeps what it see
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
+- **"Help me reach it."** For someone who can't see well, Andy then watches their hand and talks it onto the thing
+  from their side ("Toward you, and right"), with notes that rise as the hand nears, like a parking sensor: SAM 3.1
+  finds the hand and the thing in each frame, on the computer beside the robot.
 - **"Hey Andy, show me the room."** Five looks, SAM 3.1 marking your things in each, joined by MapAnything into the room's
   shape in 3D on the TV: dots, never a picture, your things as pins with their distances. Gone in two minutes.
 - **"Keep an eye on my keys."** Andy remembers where your chosen things were last seen, in words ("on the desk, behind

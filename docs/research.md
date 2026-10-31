@@ -810,3 +810,33 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **Tested:** the geometry (the mirror case; behind Andy is in front of them; beside them; too close to tell), and the
   whole find in simulation; on the robot with nobody in the room, Andy fell back to its own side as designed.
   **Not yet tried with a person:** the founder's test 12.
+
+## 40. Guide my hand (2026-10-31)
+
+- **Why:** directions get someone to the table; the last half metre is where a hand that can't see sweeps about and
+  knocks things over. Talking a hand onto a thing, from the person's side, is what a sighted friend does.
+- **Built:** after a find, "help me reach it" (or "guide my hand to my keys") starts a loop (`companion/guide.py`): each
+  frame, SAM 3.1 finds the thing and "hand" from one encoding of the frame; the hand nearest the thing is the one
+  reaching. Both are put on the floor plan by the table's height under the camera (the thing's MapAnything distance x
+  sin of its pitch; a hand over that surface is about height / sin of its pitch away), and the way from hand to thing is
+  turned to the person's side (they face Andy; measured at the find, else where their voice came from). Andy says the
+  bigger move ("Left.", "Further, and right.", "A little toward you."), the same words at most every 2.5 s, and between
+  them plays one of five notes up the C major scale as the hand nears, like a parking sensor. It ends when the hand is
+  within 8 cm or its box covers a third of the thing's (or the thing disappears under a hand that was close), on
+  "stop", or after 40 s. Spanish has every phrase by hand, so no translation waits between frames. The TV shows the
+  frame with the thing and the hand outlined and joined, a big arrow for the way to move, the distance and a meter;
+  the found card now suggests "Say 'Hey Andy, guide my hand'". The one-minute story on the public demo has it as a beat.
+- **Measured on the robot (nobody at the table: keys, glasses, a watch, two keyboards, a blue cup):** 34 frames in 20 s
+  (1.7 a second; SAM 3.1 0.55 s median for the cup and "hand" together), **0 hands made up** (no "hand" mask at any
+  score), and "I can't see your hand" every 8 s as designed (`evals/results/guide-20261031-1623.json`).
+- **Not yet tried with a hand:** the founder's test 13 (`evals.guide --thing cup --person`). The direction maths is
+  tested (in front of Andy and beside it; the mirror case), and the whole turn in simulation with a moving hand.
+
+## 41. Text that fits the screen it's on (2026-10-31)
+
+- **Why:** the founder's browser (1920x960 with its toolbars) cut off the last model names on the welcome card.
+- **Built:** after each render, if the card or the side panels hold more than their room, everything on them shrinks
+  together by just enough (CSS zoom, found by bisection, never below 0.6) instead of the bottom being cut off; checked
+  only when what's shown or the window changes. On the welcome card at 1920x960 it's 0.95, at 1920x1080 0.90; most
+  cards need none. Tall and narrow screens have their own one-column layout and scroll instead.
+

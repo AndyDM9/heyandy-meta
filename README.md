@@ -76,6 +76,12 @@ found, "You're all set", in three sentences.
    thing is from your side, with a clock position as people with low vision are often given directions: "behind you,
    on your left, about 4 steps from you, at your 8 o'clock". The TV draws it as a little map from your point of view.
    If Andy can't see you, it says it from its own side, as before (`finder/perspective.py`).
+   **"Hey Andy, help me reach it."** For someone who can't see well, the last half metre is where a hand sweeps the
+   table and knocks the mug over. So Andy keeps its eyes on the thing and watches for your hand (SAM 3.1 finds both in
+   each frame, about twice a second on the computer beside it) and talks your hand in, from your side: "Toward you, and
+   right", "A little further", with a soft note between the words that rises as your hand gets nearer, like a parking
+   sensor, then "That's it! Your mug is right at your fingertips." The TV shows the hand and the thing outlined, and a
+   big arrow for the way to move (`companion/guide.py`).
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and

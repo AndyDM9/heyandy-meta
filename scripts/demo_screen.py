@@ -10,6 +10,7 @@ Scenes: start, idle, finding, found, mine, cups, out, spanish, web, answer, draw
 import argparse
 import functools
 import io
+import math
 import sys
 import time
 from pathlib import Path
@@ -18,14 +19,16 @@ from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from heyandy_meta.finder.perspective import from_them  # noqa: E402
+from heyandy_meta.companion.guide import height_above, instruction, on_surface, their_way  # noqa: E402
+from heyandy_meta.finder.geometry import pixel_to_angles  # noqa: E402
+from heyandy_meta.finder.perspective import from_them, on_plan  # noqa: E402
 from heyandy_meta.finder.search import Found  # noqa: E402
 from heyandy_meta.models.common import Mask  # noqa: E402
 from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -48,6 +51,28 @@ def sample_frame() -> tuple[bytes, Mask]:
     l, t, r, b = box
     outline = f"M 0 0 L {r - l} 0 L {r - l} {b - t} L 0 {b - t} Z"
     return out.getvalue(), Mask("mug", box, 0.91, ((l + r) / 2, (t + b) / 2), (r - l) * (b - t), outline, (1.0, 1.0))
+
+
+HAND = [(1560, 612), (1470, 600), (1400, 588), (1300, 583), (1238, 590), (1234, 608), (1300, 616), (1240, 626), (1232, 646),
+        (1300, 650), (1244, 662), (1240, 680), (1305, 684), (1262, 698), (1264, 714), (1340, 716), (1400, 732),
+        (1480, 746), (1560, 756)]  # a hand reaching in from the right, fingers toward the mug
+
+
+@functools.lru_cache(maxsize=1)
+def guide_frame() -> tuple[bytes, Mask, Mask]:
+    """The mug's table with a hand reaching for it, and both outlines, as SAM 3.1 gives them."""
+    jpeg, mug = sample_frame()
+    img = Image.open(io.BytesIO(jpeg)).convert("RGB")
+    d = ImageDraw.Draw(img)
+    d.rectangle((1555, 604, 1920, 764), fill=(52, 70, 104))  # a sleeve
+    d.polygon(HAND, fill=(222, 170, 136))
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=88)
+    xs, ys = [x for x, _ in HAND], [y for _, y in HAND]
+    box = (min(xs), min(ys), max(xs), max(ys))
+    outline = "M " + " L ".join(f"{x - box[0]} {y - box[1]}" for x, y in HAND) + " Z"
+    hand = Mask("hand", box, 0.88, (sum(xs) / len(xs), sum(ys) / len(ys)), (box[2] - box[0]) * (box[3] - box[1]), outline, (1.0, 1.0))
+    return out.getvalue(), mug, hand
 
 
 CUPS = ((560.0, 1360.0), (960.0, 960.0), (1360.0, 560.0))  # where each cup started and ended: 0 and 2 swapped
@@ -244,6 +269,18 @@ def show(state: ScreenState, scene: str) -> None:
                              "remote: seen 25 minutes ago, behind me on my left, about 9 feet away"])
         state.said("I'm keeping an eye on your keys and your glasses. It's on the screen.", "device")
         state.doing("Speaking", "Looking at you")
+    elif scene == "guide":  # the guide's maths on the drawn frame: someone in front of Andy, a little to its right
+        jpeg, mug, hand = guide_frame()
+        frame = Frame(jpeg, 1920, 1080, -6.0, 14.0)
+        height = height_above(14.0, 1.2)
+        right, further = their_way(on_plan(-20.0, 5.0, 1.1), on_surface(*pixel_to_angles(*hand.center, -6.0, 14.0), height),
+                                   on_surface(*pixel_to_angles(*mug.center, -6.0, 14.0), height))
+        words = instruction(right, further)
+        state.doing("Guiding", "Your hand to your mug")
+        state.guiding("mug", frame, mug, hand, words, round(math.degrees(math.atan2(right, further))), math.hypot(right, further))
+        state._guide["until"] += 3600  # a still for the demo: it stays
+        state.said(words, "device", "SAM 3.1 watched your hand and your mug, on this computer")
+        state.used("SAM 3.1", "device", 9)
     elif scene == "room":
         points, things = sample_room()
         state.room(points, things, 1.0)

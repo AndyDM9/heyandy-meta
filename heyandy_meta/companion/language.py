@@ -16,6 +16,7 @@ from functools import lru_cache
 
 from ..models import glimmer_fast
 from ..models.common import is_local
+from .guide import ES as GUIDE_ES
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,8 @@ PHRASES = {"es": {
     "Let me draw where your things are. It takes a little while.": "Déjeme dibujar dónde están sus cosas. Tarda un poco.",
     "Let me draw that. It takes a little while.": "Déjeme dibujarlo. Tarda un poco.",
     "Okay, I'll speak Spanish now.": "De acuerdo, desde ahora le hablo en español.",
+    "Put your hand out toward it, and I'll guide you.": "Extienda la mano hacia allí, y yo le guío.",
+    "I can't see your hand.": "No veo su mano.",
     # how a find begins (app.FOUND_OPENERS): no gender, so they fit any thing
     "There it is!": "¡Ahí está!", "Found it!": "¡Listo, ahí está!", "Ah, there it is!": "¡Ah, ahí está!",
     "There they are!": "¡Ahí están!", "Found them!": "¡Listo, ahí están!", "Ah, there they are!": "¡Ah, ahí están!",
@@ -73,6 +76,7 @@ PHRASES = {"es": {
     "looked again where your things were last seen; the weather from the web":
         "volví a mirar donde vi sus cosas por última vez; el tiempo, de la web",
 }}
+PHRASES["es"].update(GUIDE_ES)  # guiding a hand: "Left.", "A little further.", with no translator between frames
 # Everyday things, by hand: one word is too little for a translator to go on ("keys" came back "keys").
 THINGS = {"es": {
     "keys": "llaves", "key": "llave", "wallet": "billetera", "purse": "monedero", "glasses": "gafas",

@@ -11,6 +11,7 @@ from dataclasses import dataclass, field, replace
 from ..finder.search import Found
 
 PICTURE_SECONDS = 120
+GUIDE_SECONDS = 20  # a guided hand's last frame stays this long without a new one
 HELP_SECONDS = 60
 DRAWING_SECONDS = 10 * 60
 WEB_SECONDS = 10 * 60
@@ -86,6 +87,8 @@ class ScreenState:
         self._timeline: dict | None = None  # a watched thing's story: {"thing", "items", "usual"}, words only
         self._room: dict | None = None  # the room in 3D: its shape (millimetres, int16 x, y, z), the things, until
         self.rooms = 0  # a version, so the page fetches each room once
+        self._guide: dict | None = None  # guiding a hand: the latest frame, the thing's and the hand's outlines, the words
+        self.guides = 0  # a version per frame
         self._day = Day(dt.date.fromtimestamp(now()), now())
         self._in_turn = False
 
@@ -274,6 +277,26 @@ class ScreenState:
             self._picture, self._web = _Picture(found.frame.image, found, words, self._clock() + PICTURE_SECONDS, trails), None
             self._room = self._timeline = None
 
+    def guiding(self, thing: str, frame, mask, hand, words: str, way: float | None, metres: float | None) -> None:
+        """Guiding a hand to a thing (companion/guide.py): the latest frame with the thing and the hand outlined, the
+        words, and the way on the person's side (degrees: 0 further from them, 90 to their right). Memory only."""
+        if not frame.image:  # the pretend room has no camera: words only
+            return
+        with self._lock:
+            self._picture = self._room = self._timeline = self._web = self.privacy = None
+            self.guides += 1
+            self._guide = {"jpeg": frame.image, "width": frame.width, "height": frame.height, "thing": thing,
+                           "at": _shape(mask), "hand": _shape(hand), "words": words.rstrip("."), "way": way,
+                           "cm": None if metres is None else round(metres * 100), "done": False,
+                           "until": self._clock() + GUIDE_SECONDS}
+
+    def guided(self, words: str) -> None:
+        """The guide is over: its last frame stays a few seconds, with "That's it!" or nothing."""
+        with self._lock:
+            if self._guide:
+                self.guides += 1
+                self._guide.update(words=words, done=True, until=self._clock() + 8)
+
     def game(self, title: str, detail: str = "") -> None:
         """The cup game, stage by stage: "Watching the cups", "Replaying the shuffle"."""
         with self._lock:
@@ -288,7 +311,7 @@ class ScreenState:
             self.looking_for, self._help_until, self._drawing, self._game, self._web = "", 0.0, None, None, None
             self.checklist, self.privacy = None, None
             self._glimpse = None  # the last frame of a search that found nothing goes too
-            self._room = self._timeline = None
+            self._room = self._timeline = self._guide = None
 
     def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
         """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera
@@ -369,6 +392,11 @@ class ScreenState:
                 start, stop = self._timer
                 out["seconds"] = round((stop if stop is not None else self._clock()) - start, 1)
                 out["running"] = stop is None
+            if self._guide and self._clock() >= self._guide["until"]:
+                self._guide = None
+            g = self._guide
+            out["guide"] = {"v": self.guides, "src": "data:image/jpeg;base64," + base64.b64encode(g["jpeg"]).decode(),
+                            **{k: v for k, v in g.items() if k not in ("jpeg", "until")}} if g else None
             out["lang"] = self.lang
             if self._gaze and self._clock() - self._gaze[2] < 30:
                 out["gaze"] = {"yaw": round(self._gaze[0], 1), "pitch": round(self._gaze[1], 1),
@@ -397,6 +425,12 @@ class ScreenState:
         return _in(out, words) if words else out
 
 
+def _shape(m) -> dict | None:
+    """A mask for the TV: its box, outline and middle, in the frame's pixels."""
+    return None if m is None else {"box": list(m.box), "outline": m.outline, "scale": list(m.outline_scale),
+                                   "center": [round(m.center[0]), round(m.center[1])]}
+
+
 def _in(out: dict, tr) -> dict:
     """The snapshot with Andy's own words in the person's language (the caption already is; names of models aren't)."""
     for key in ("head", "looking_for"):
@@ -410,6 +444,8 @@ def _in(out: dict, tr) -> dict:
         out["next"] = {**out["next"], "text": tr(out["next"]["text"])}
     if out["picture"]:
         out["picture"] = {**out["picture"], "words": tr(out["picture"]["words"]), "label": tr(out["picture"]["label"])}
+    if out.get("guide"):
+        out["guide"] = {**out["guide"], "words": tr(out["guide"]["words"]), "thing": tr(out["guide"]["thing"])}
     if out["game"]:
         out["game"] = {**out["game"], "title": tr(out["game"]["title"]), "detail": tr(out["game"]["detail"])}
     if out["checklist"]:

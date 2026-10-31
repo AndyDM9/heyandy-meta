@@ -22,6 +22,11 @@ DRAW_START = re.compile(r"\b(?:draw|paint|sketch)\b|\b(?:make|create)\s+(?:me\s+
 REFINE = re.compile(r"^\W*(?:(?:now|and|ok|okay)\s+)?(?:make (?:it|him|her|them|the)|add|change|turn (?:it|the)|put|give "
                     r"(?:it|him|her)|without|remove|more|less)\b", re.I)
 FOLLOW = re.compile(r"\b(?:follow|track)\s+" + THING + r"(?:\s+with your eyes)?(?:\?|$|[,.!]| please)", re.I)
+# "help me reach it", "guide my hand to my keys": talk the hand onto a thing (companion/guide.py); no thing: the last found
+GUIDE = re.compile(r"\b(?:guide (?:my hand|me)|help me (?:reach|grab|get hold of|pick up|get to|touch)|lead my hand|"
+                   r"talk my hand|take my hand|gu[ií](?:e|a)(?:me| mi mano)|ay[uú]d(?:e|a)me a (?:alcanzar|agarrar|tomar))"
+                   r"(?:lo|la|los|las)?(?:\s+(?:to\s+|over to\s+|a\s+)?" + THING + r")?\s*(?:\?|$|[,.!]| please)", re.I)
+IT = {"it", "them", "that", "this", "those", "there", "one", "the thing", "mis cosas"}
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
 DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have)(?: this| that)? in my hands?\b|\bwhat(?:'s| is) this\b(?! (?:song|noise|sound))"
@@ -121,7 +126,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -248,6 +253,9 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("things_map", text=t)
     if any(rx.search(t) for rx in WEB):
         return Intent("web", text=t)
+    if m := GUIDE.search(t):
+        thing = _thing(m) if m.group("thing") else ""
+        return Intent("guide", thing="" if thing in IT else snap(thing), text=t)
     for rx in MINE if not WATCH.search(t) else ():  # "this is my wallet, keep an eye on it" is watching
         if (m := rx.search(t)) and (thing := snap(_thing(m))).split()[-1] in KNOWN:  # a thing, not "my point"
             return Intent("mine", thing=thing, text=t)

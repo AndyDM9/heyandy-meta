@@ -1,4 +1,5 @@
-"""Andy's sounds: short earcons that say "I heard you", "found it", "a reminder" and "noticed" before any words.
+"""Andy's sounds: short earcons that say "I heard you", "found it", "a reminder" and "noticed" before any words,
+and the notes that rise as Andy guides a hand to a thing.
 
 Made here from plain maths (no model, so every model Andy runs is still Meta's): soft-struck notes whose higher
 harmonics fade faster than the fundamental, as a marimba bar or a small bell does, all in C major so they sound like
@@ -20,6 +21,10 @@ SOUNDS = {
               0.42),  # a rising run to the octave: "there it is!"
     "reminder": ([("E6", 0.0, 0.5, 0.9), ("C6", 0.2, 0.68, 1.0)], 0.4),  # a gentle bell, falling: "excuse me"
     "noticed": ([("D6", 0.0, 0.32, 1.0)], 0.2),  # one soft note: "I saw that"
+    # guiding a hand (companion/guide.py): one short note between the words, up the scale as the hand nears the thing
+    "near1": ([("C5", 0.0, 0.2, 1.0)], 0.16), "near2": ([("E5", 0.0, 0.2, 1.0)], 0.18),
+    "near3": ([("G5", 0.0, 0.2, 1.0)], 0.2), "near4": ([("C6", 0.0, 0.2, 1.0)], 0.22),
+    "near5": ([("E6", 0.0, 0.2, 1.0)], 0.24),
 }
 
 

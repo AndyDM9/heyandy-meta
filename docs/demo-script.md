@@ -33,6 +33,11 @@ my keys", the person walks in and puts the keys down on the table in view; the T
 later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
+**"Help me reach it," if the founder's test 13 goes well:** right after a find, the person (eyes closed, or in dark
+glasses) says "Hey Andy, help me reach it" and puts a hand out; Andy says "Toward you, and right... A little further...
+That's it!" as the notes rise, and the TV shows the hand and the thing outlined with the big arrow. It shows SAM 3.1
+in a closed loop with a person, and who Andy is for. Score it first: `uv run python -m evals.guide --thing cup --person`.
+
 **Things can be anywhere round the robot now:** the sofa at 85 degrees to its left was pointed at 8 of 8. A thing to the
 side or behind, with "I think it's behind you, on the left", makes the agent's moment (Muse Spark plans one look).
 

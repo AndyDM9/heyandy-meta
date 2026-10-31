@@ -27,11 +27,12 @@ from .companion.attention import face_person
 from .companion import cupgame, pictures, web
 from .companion.language import LANGUAGES, TVWords, asked_for
 from .companion.follow import follow
+from .companion.guide import guide, height_above
 from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
 from .finder.geometry import LITE, pixel_to_angles
-from .finder.perspective import from_them
+from .finder.perspective import from_them, on_plan
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
 from .memory.mine import Mine
@@ -119,6 +120,8 @@ class Andy:
         self._last_said = ""  # for "say that again"
         self.quiet_until = 0.0  # "be quiet for an hour": no initiatives of Andy's own until then
         self._listener: tuple | None = None  # where the person is, during a find (yaw, pitch, metres)
+        self._guide_from: tuple | None = None  # the last find (Found, where the person was, when): "guide my hand" to it
+        self.wait = time.sleep  # how a guided hand's frames are paced (tests pass their own)
         self.hey_only = False  # answer only to "Hey Andy" (voice/loop.py); asked for, and remembered
         self._setup: dict | None = None  # the guided first minutes: {"step": "things" or "try", "at", ...}
         self.pairing = None  # phones that may ask Andy from another room (screen/remote.py); None: not started with --remote
@@ -298,6 +301,8 @@ class Andy:
             return self.find(i.thing, text, i.hint)
         if i.kind == "follow":
             return self.follow(i.thing)
+        if i.kind == "guide":
+            return self.guide_hand(i.thing)
         if i.kind == "watch":
             self.places.watch(i.thing)
             return (f"I'll keep an eye on your {i.thing}. I only remember where I last saw {_it(i.thing)}, "
@@ -561,6 +566,7 @@ class Andy:
         self.places.saw(found.label, found.yaw, found.pitch, when=self.clock(), metres=found.metres, how="found")
         self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
+        self._guide_from = (found, self._listener, self.clock())  # "help me reach it" next starts from here
         self.screen.doing("Pointing", f"At your {found.label}")
         if found.aim_deg is not None:  # the check after pointing: did it land?
             self.screen.step(f"checked: pointing at it, {found.aim_deg:.0f}° off the middle"
@@ -757,6 +763,59 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def guide_hand(self, thing: str = "", seconds: float = 40.0) -> str:
+        """"Help me reach it": talk the person's hand onto the thing just found, from their side (companion/guide.py),
+        until the hand is on it, "stop", or 40 s. A thing that wasn't just found is found first."""
+        recent = self._guide_from if self._guide_from and self.clock() - self._guide_from[2] <= GUIDE_AFTER_S else None
+        thing = thing or (recent[0].label if recent else "")
+        if not thing:
+            return "Which thing shall I guide your hand to? Say, for example: guide my hand to my keys."
+        if recent is None or recent[0].label != thing:
+            self._guide_from = None
+            words = self.find(thing, f"where are my {thing}")
+            if self._guide_from is None:
+                return words  # not found, and the find said so
+            self.say(words)
+            recent = self._guide_from
+        else:
+            self.body.look(recent[0].yaw, recent[0].pitch)  # eyes back on it: the head may have turned to the person
+        found, listener, _ = recent
+        # where the person is on the plan: measured at the find, or else where their voice came from, about a metre off
+        person = on_plan(*listener) if listener else on_plan(self.person[0] if self.person else 0.0, 0.0, 1.0)
+        self._stop_following.clear()
+        self.following = True  # the face tracker leaves the head on the thing
+        self.say("Put your hand out toward it, and I'll guide you.")
+        self.screen.doing("Guiding", f"Your hand to your {thing}")
+        frames = [0]
+
+        def shown(frame, mask, hand, words, way, metres):
+            frames[0] += 1
+            self.screen.guiding(thing, frame, mask, hand, words, way, metres)
+
+        try:
+            r = guide(self.body, self.finder.segmenter, thing, (found.yaw, found.pitch),
+                      height_above(found.pitch, found.metres), person, self.say,
+                      lambda name: self.chime(name, even_when_quiet=True), shown, self._stop_following.is_set, seconds,
+                      cam=self.finder._cam, clock=self.clock, wait=self.wait)
+        finally:
+            self.following = False
+            self.screen.doing("Waiting")
+        self.screen.used("SAM 3.1", self.vision_where, frames[0])
+        self._source = "device"
+        self._reason = f"SAM 3.1 watched your hand and your {thing} ({frames[0]} frames), on this computer"
+        is_ = "are" if _it(thing) == "them" else "is"
+        if r.why == "there":
+            self.chime("found")
+            self.gesture("nod")
+            self.screen.guided("That's it!")
+            return f"That's it! Your {thing} {is_} right at your fingertips."
+        self.screen.guided("")
+        where = found.for_you["words"] if found.for_you else side(found.yaw)
+        return {"no hand": "I couldn't see your hand. Come a little closer, and say: guide my hand.",
+                "lost": f"I've lost sight of your {thing}. Ask me where {_it(thing)} {is_}, and I'll look again.",
+                "stopped": "Okay, I've stopped.",
+                "time": f"Let's stop there. Your {thing} {is_} {where}."}[r.why]
 
     def cup_game(self) -> str:
         """The cup game (companion/cupgame.py): watch the ball go under a cup, record the shuffle, replay it with SAM 3.1
@@ -1699,6 +1758,7 @@ def millimetres(points_f16: bytes) -> bytes:
     return struct.pack(f"<{n}h", *(max(-32000, min(32000, round(v * 1000))) for v in struct.unpack(f"<{n}e", points_f16)))
 
 
+GUIDE_AFTER_S = 5 * 60  # "help me reach it" means the thing found this long ago at most
 SETUP_WAIT_S = 5 * 60  # the setup waits this long for an answer, then steps aside
 SKIP = re.compile(r"^\W*(?:andy\W+)?(?:skip(?: it| that)?|not now|later|stop(?: the setup)?|cancel|never ?mind|no thanks?)\W*$", re.I)
 COMMON_THINGS = ("reading glasses", "sunglasses", "glasses", "keys", "phone", "remote", "wallet", "purse", "watch", "mug",

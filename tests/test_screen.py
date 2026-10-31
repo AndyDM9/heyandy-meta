@@ -288,3 +288,16 @@ def test_a_tall_or_narrow_screen_gets_one_readable_column():
     assert "body.storying .stage { transform: none; height" not in page  # the story's TV is the tall layout, not a 16:9 miniature
     assert "overflow: visible; transform-origin: var(--ox) var(--oy);" in page
     assert "const tx = keep(W * 0.68 - ox," in page and "const ty = keep(H * 0.36 - oy," in page
+
+
+def test_a_card_with_more_than_its_room_shrinks_together_and_pictures_give_way_first():
+    """The founder's browser cut off the last model names on the welcome card (2026-10-31): a card that holds more
+    than its room now shrinks all together, never below 0.6, instead of losing its bottom; a picture beside its facts
+    takes only the height that's left, so words don't shrink for it."""
+    from importlib.resources import files
+
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    assert "function fitAll()" in page and "fit(card, [$(\"body\")]); fit(side, []);" in page and "let lo = 0.6, hi = 1;" in page
+    assert "    fitAll();\n    ambient(s);" in page  # after every render; it only works when what's shown changes
+    assert ".split > figure svg { height: 100%; width: auto; max-width: 100%; }" in page
+    assert "#help { place-items: start center; overflow-y: auto;" in page  # a phone scrolls the help instead

@@ -79,8 +79,37 @@
   #body { min-height: 0; display: grid; align-content: start; overflow: hidden; }
   #body:has(.drawing), #body:has(.web) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
+  /* guiding a hand: the view, and the way to move, big enough to read from across a room or with low vision */
+  .guide .thing { fill: none; stroke: var(--outline); stroke-width: 5; }
+  .guide .hand { fill: none; stroke: var(--accent); stroke-width: 4; stroke-dasharray: 10 6; }
+  .guide .reach { stroke: #F5F3EF; stroke-width: 4; stroke-dasharray: 2 9; stroke-linecap: round; }
+  .guide .way { display: grid; justify-items: center; gap: 1rem; text-align: center; align-self: center; }
+  .split.guide { grid-template-columns: auto minmax(0, 1fr); }
+  .guide .dial { width: 12rem; height: 12rem; min-width: 12rem; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--accent) 7%, transparent);
+                 display: grid; place-items: center; box-shadow: inset 0 0 0 0.35rem var(--accent); }
+  .guide .dial svg { width: 8.8rem; height: 8.8rem; transform: rotate(var(--a)); transition: transform 0.35s ease-out; }
+  .guide .dial path { fill: var(--accent); }
+  .guide .dial .check { font-size: 6.5rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .guide .dial .wait { font-size: 1.6rem; color: var(--muted); padding: 2rem; animation: g-wait 1.6s ease-in-out infinite; }
+  @keyframes g-wait { 50% { opacity: 0.45; } }
+  .guide .row { display: flex; align-items: flex-end; gap: 1.4rem; }
+  .guide .far { text-align: left; }
+  .guide .far b { display: block; font-family: "Atkinson Mono", monospace; font-size: 3.2rem; color: var(--accent); line-height: 1; }
+  .guide .far span { font-size: 1.4rem; color: var(--muted); }
+  .guide .meter { display: flex; gap: 0.5rem; align-items: flex-end; height: 3rem; }
+  .guide .meter i { width: 1.6rem; border-radius: 0.4rem; background: color-mix(in srgb, var(--muted) 25%, transparent); }
+  .guide .meter i:nth-child(1) { height: 20%; } .guide .meter i:nth-child(2) { height: 40%; } .guide .meter i:nth-child(3) { height: 60%; }
+  .guide .meter i:nth-child(4) { height: 80%; } .guide .meter i:nth-child(5) { height: 100%; }
+  .guide .meter i.on { background: var(--outline); }
+  .guide .way small, small.next-try { font-size: 1.25rem; color: var(--muted); }
+  small.next-try { display: block; margin-top: 0.6rem; border-left: 0.3rem solid var(--outline); padding-left: 0.8rem; }
   figure { margin: 0; min-height: 0; }
   figure svg { width: 100%; height: auto; max-height: 36rem; border-radius: 1.4rem; display: block; }
+  /* a picture beside its facts takes the height the card has left, so the words never shrink to make room for it */
+  #body:has(> .split) { align-content: stretch; }
+  #body > .split { height: 100%; }
+  .split > figure { height: 100%; display: grid; grid-template-rows: minmax(0, auto) auto; align-content: start; }
+  .split > figure svg { height: 100%; width: auto; max-width: 100%; }
   figure.live small { display: block; margin-top: 0.5rem; font-size: 1.25rem; color: var(--muted); }
   .candidate { fill: none; stroke: var(--outline); stroke-width: 4; stroke-dasharray: 10 7; }
   .facts { display: grid; gap: 1.1rem; font-size: 1.6rem; align-content: start; min-height: 0; overflow: hidden; }
@@ -319,6 +348,9 @@
     .panel { padding: 1.3rem 1.4rem; border-radius: 1.4rem; }
     #card h1, #card.found h1 { font-size: 2.3rem; -webkit-line-clamp: 5; }
     .split, .memory, .story, .does, #help .cols { grid-template-columns: 1fr; }
+    .split.guide { grid-template-columns: 1fr; } .guide .way { order: -1; }
+    #body > .split, .split > figure { height: auto; } .split > figure svg { height: auto; width: 100%; }
+    #help { place-items: start center; overflow-y: auto; padding: 1rem 0; } #help .panel { width: 92vw; padding: 1.6rem 1.4rem; }
     .facts.withplan { grid-template-columns: minmax(0, 1fr) auto; }
     .try { font-size: 2.4rem; } .answer { font-size: 1.9rem; }
     .room canvas { height: 72vw; } #body:has(.room) { align-content: start; }
@@ -413,7 +445,7 @@
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
-    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p></div>
+    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p></div>
     <div><h3>Remember things</h3><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p></div>
     <div><h3>Talk, look, make</h3><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p></div>
   </div>
@@ -422,7 +454,7 @@
   <h1>¿Qué puedo pedirle a Andy?</h1>
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
-    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p></div>
+    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p></div>
     <div><h3>Recordar cosas</h3><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p></div>
     <div><h3>Hablar, mirar, crear</h3><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p></div>
   </div>
@@ -444,6 +476,10 @@
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
     "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
     "Connect your phone": "Conecte su teléfono",
+    "Put your hand out toward it": "Extienda la mano hacia allí", "from your hand": "de su mano",
+    "Your way, from where you are": "Su camino, desde donde está", "Waiting for your hand": "Esperando su mano",
+    "What I see now · SAM 3.1 outlines the thing and your hand, on this computer": "Lo que veo ahora · SAM 3.1 marca la cosa y su mano, en esta computadora",
+    "Say “Hey Andy, guide my hand” and I'll talk your hand onto it": "Diga “Oye Andy, guíe mi mano” y le guío la mano hasta allí",
     "On your phone, open this address and type the six numbers": "En su teléfono, abra esta dirección y escriba los seis números",
     "In passing": "De pasada", "Put down": "Lo dejó", "Room scan": "Escaneo de la sala",
     "Seen": "Visto", "Picked up": "Lo recogió",
@@ -488,7 +524,7 @@
                   "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -497,6 +533,7 @@
     ["idle", 7, "Meet Andy", "A tabletop robot that finds what you've lost and points at it. This is the TV beside it."],
     ["finding", 7, "You ask", "“Hey Andy, where's my mug?” It looks around the room; SAM 3.1 outlines every candidate, live."],
     ["found", 9, "It finds it", "It points, checks the point with its own camera, and MapAnything measures how far away."],
+    ["guide", 8, "It guides your hand", "Can't see well? It watches your hand and talks it onto the thing, from your side: “Toward you, and right.”"],
     ["room", 9, "It knows your room", "Five looks become your room in 3D, things pinned. Its shape only, never a picture."],
     ["cups", 7, "Identical cups, told apart", "SAM 3.1 Object Multiplex follows every cup at once through the shuffle."],
     ["out", 7, "Before you go", "It points at what you'd leave behind, and Muse Spark checks whether you'll need an umbrella."],
@@ -882,6 +919,45 @@
     box.append(el("small", LANG === "es" ? "Desde donde está usted" : `From where you are · your ${fy.clock} o'clock`), svg);
     return box;
   }
+  // Guiding a hand (companion/guide.py): what Andy sees, the thing and the hand outlined and joined, beside the way to
+  // move from the person's side, how far is left, and a meter that fills as the notes rise.
+  function guided(g) {
+    const split = el("div", null, "split guide"), svg = document.createElementNS(svgNS, "svg");
+    const shapes = [g.at, g.hand].filter(Boolean), aspect = g.width / g.height;
+    const l = Math.min(...shapes.map(m => m.box[0])), t = Math.min(...shapes.map(m => m.box[1]));
+    const r = Math.max(...shapes.map(m => m.box[2])), b = Math.max(...shapes.map(m => m.box[3]));
+    const w = shapes.length ? Math.min(Math.max((r - l) * 1.8, (b - t) * 1.8 * aspect, g.width / 3), g.width) : g.width, h = w / aspect;
+    const x = Math.min(Math.max((l + r) / 2 - w / 2, 0), g.width - w), y = Math.min(Math.max((t + b) / 2 - h / 2, 0), g.height - h);
+    svg.setAttribute("viewBox", shapes.length ? [x, y, w, h].map(Math.round).join(" ") : `0 0 ${g.width} ${g.height}`);
+    svg.setAttribute("role", "img"); svg.setAttribute("aria-label", `Andy's view: your ${g.thing}` + (g.hand ? " and your hand" : ""));
+    const add = (tag, attrs) => { const e = document.createElementNS(svgNS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); svg.append(e); return e; };
+    add("image", { href: g.src, width: g.width, height: g.height });
+    const outline = (m, cls) => add("path", { d: m.outline || `M ${m.box[0]} ${m.box[1]} H ${m.box[2]} V ${m.box[3]} H ${m.box[0]} Z`, class: cls,
+      transform: m.outline ? `translate(${m.box[0]} ${m.box[1]}) scale(${m.scale[0]} ${m.scale[1]})` : "", "vector-effect": "non-scaling-stroke" });
+    if (g.at && g.hand && !g.done) add("path", { d: `M ${g.hand.center[0]} ${g.hand.center[1]} L ${g.at.center[0]} ${g.at.center[1]}`, class: "reach", "vector-effect": "non-scaling-stroke" });
+    if (g.at) outline(g.at, "thing");
+    if (g.hand) outline(g.hand, "hand");
+    const fig = el("figure"); fig.append(svg, el("small", T("What I see now · SAM 3.1 outlines the thing and your hand, on this computer")));
+    const way = el("div", null, "way"), dial = el("div", null, "dial");
+    if (g.done && g.words) dial.append(el("div", "✓", "check"));
+    else if (g.way != null) {
+      const a = document.createElementNS(svgNS, "svg"); a.setAttribute("viewBox", "-50 -50 100 100"); a.setAttribute("aria-hidden", "true");
+      a.style.setProperty("--a", g.way + "deg");
+      const p = document.createElementNS(svgNS, "path"); p.setAttribute("d", "M 0 -42 L 30 -6 L 11 -6 L 11 40 L -11 40 L -11 -6 L -30 -6 Z"); a.append(p);
+      dial.append(a);
+    } else dial.append(el("div", T("Waiting for your hand"), "wait"));
+    way.append(dial);
+    const row = el("div", null, "row");
+    if (g.cm != null && !g.done) {
+      const far_ = el("div", null, "far"); far_.append(el("b", LANG === "es" ? g.cm + " cm" : Math.max(1, Math.round(g.cm / 2.54)) + " in"), el("span", T("from your hand")));
+      row.append(far_);
+    }
+    const level = g.done && g.words ? 5 : g.cm == null ? 0 : 1 + Math.min(4, Math.floor((1 - Math.min(g.cm, 50) / 50) * 5));
+    const meter = el("div", null, "meter"); for (let i = 1; i <= 5; i++) meter.append(el("i", null, i <= level ? "on" : null));
+    row.append(meter);
+    way.append(row, el("small", T("Your way, from where you are")));
+    split.append(fig, way); return split;
+  }
   function steps(list, tag = "ol") { const o = el(tag, null, "steps"); for (const s of list) o.append(el("li", s)); return o; }
   function card(s) {
     const body = $("body");
@@ -957,6 +1033,12 @@
       kicker = T("The room in 3D"); title = T("Your things, as I measured them just now");
       const key = "room:" + s.room.v + ":" + LANG;
       if (key !== pictureKey) { pictureKey = key; body.replaceChildren(room(s.room)); }
+    } else if (s.guide) {
+      const g = s.guide;
+      kicker = LANG === "es" ? `Guiando su mano: ${g.thing}` : `Guiding your hand to your ${g.thing}`;
+      title = g.words || (g.done ? "" : g.hand ? "" : T("Put your hand out toward it"));
+      const key = "guide:" + g.v + LANG;
+      if (key !== pictureKey) { pictureKey = key; body.replaceChildren(guided(g)); }
     } else if (s.picture) {
       kicker = T(s.game ? "The cup game" : "Found"); title = s.picture.words;
       const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
@@ -984,7 +1066,9 @@
           const f = el("div", T("SAM 3.1 Object Multiplex followed every cup at once, on this computer"));
           f.prepend(el("b", s.picture.trails ? s.picture.trails.length + " cups" : "")); facts.append(f);
         }
-        const split = el("div", null, "split"); split.append(picture(s.picture), facts); body.replaceChildren(split);
+        const fig = picture(s.picture);  // under the picture, what to say next: it gives up the room, not the words
+        if (!s.game && !s.picture.trails) fig.append(el("small", T("Say “Hey Andy, guide my hand” and I'll talk your hand onto it"), "next-try"));
+        const split = el("div", null, "split"); split.append(fig, facts); body.replaceChildren(split);
         if (!s.game && !s.picture.trails && s.picture.seconds_left >= 112) reveal(s.picture, s.seconds);  // a find just now
       }
     } else {
@@ -1182,12 +1266,39 @@
     $("captions").classList.toggle("long", s.caption.length > 150);  // a long answer: smaller, and never over the cards  // Andy's words only, never the person's
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
     $("help").hidden = !s.help;
+    fitAll();
     ambient(s);
     if (s.demo && !scenes) {  // the public demo: the story first, unless a link asked for one scene
       scenes = s.demo;
       if (!chosen && !new URLSearchParams(location.search).has("explore") && scenes.includes("room")) startStory(); else demoBar();
     }
   }
+  // Text that fits the screen it's on: when a card has more to show than its room (a short browser window, a long
+  // answer, every model's name), everything on it shrinks together, just enough and never below 0.6, rather than
+  // the bottom being cut off. Checked whenever what's shown or the window's size changes.
+  let fitSig = "";
+  const TALL = matchMedia("(max-aspect-ratio: 6/5), (max-width: 900px)");  // the one-column layout (the styles)
+  function fitAll() {
+    const card = $("card"), side = document.querySelector(".side");
+    const sig = [card.textContent, side.textContent.length, pictureKey, innerWidth, innerHeight].join("|");
+    if (sig === fitSig) return;
+    fitSig = sig;
+    if (TALL.matches) { [...card.children, ...side.children].forEach(k => { k.style.zoom = ""; }); return; }  // it scrolls
+    fit(card, [$("body")]); fit(side, []);
+  }
+  function fit(box, inner) {
+    const kids = [...box.children], over = () => [box, ...inner].some(e => e.scrollHeight > e.clientHeight + 1);
+    kids.forEach(k => { k.style.zoom = ""; });
+    if (!over()) return;
+    let lo = 0.6, hi = 1;
+    for (let i = 0; i < 7; i++) {
+      const mid = (lo + hi) / 2;
+      kids.forEach(k => { k.style.zoom = mid; });
+      if (over()) hi = mid; else lo = mid;
+    }
+    kids.forEach(k => { k.style.zoom = (lo * 0.985).toFixed(3); });  // a hair to spare: no border on the edge
+  }
+  document.fonts?.ready.then(() => { fitSig = ""; fitAll(); });
   async function tick() {
     // A static copy (the public Space) reads saved sample scenes; the robot's TV asks its own server.
     const url = window.HEYANDY_STATIC ? `scenes/${scene() || "idle"}.json` : "/state.json" + (scenes ? "?scene=" + scene() : "");
