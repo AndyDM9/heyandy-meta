@@ -6,7 +6,7 @@ personal in view). The TV page is screen-recorded at the same time.
 
 | Time | On screen | Said, and what happens |
 |---|---|---|
-| 0:00–0:06 | Title card | **Required first line (FAQ):** what existed before (a Reachy Mini; our own earlier object-finding prototype) and that everything shown was built this week on Meta's models. *(the founder's exact words)* |
+| 0:00–0:06 | Title card (`film/card-title.mp4`) | **Required first line (FAQ):** what existed before (a Reachy Mini; our own earlier object-finding prototype) and that everything shown was built this week on Meta's models. *(the founder's exact words)* |
 | 0:06–0:16, a caption over the problem shot | One plain line, as the organizers asked (Oct 30 ruling): | "Andy gives no health advice. It finds things, remembers where they are, and reminds you of what you asked." |
 | 0:06–0:16 | A person patting their pockets | The problem in one line: the same few things go missing every day, and a camera that streams your home to the cloud is a camera most people won't have. |
 | 0:16–0:55 | **The uncut find**, robot and TV side by side, badge "autonomous · uncut · 1× speed" | "Hey Andy, where are my glasses?" Andy turns to the voice, "Let me look", sweeps, **skips the glasses on the TV**, looks closer and points: "There they are! I see your glasses, to my right, about 5 feet away. Not the picture of one on the screen." The TV, filmed beside the robot: **while it looks, each view live with SAM 3.1's outlines on every candidate**; then the found picture with three large figures (seconds to find it, degrees off target checked by its camera, feet away from MapAnything) and the models used. |
@@ -15,8 +15,8 @@ personal in view). The TV page is screen-recorded at the same time.
 | 1:32–1:46 | **Unplug the network** | The TV says Offline; "Hey Andy, where's the remote?" still works: SAM 3.1, Glimmer and the voice are on the computer beside the robot. "Pictures and voice stay in your home." |
 | 1:46–2:04 | Quick cuts | **"Hey Andy, show me the room"** (five looks, then the room's shape in 3D turning on the TV with your things pinned: MapAnything; about 35 s, so a labelled time cut to the TV) · "What am I holding?" (Glimmer says, locally) · "Draw me a lighthouse at dawn" (Muse Image fills the TV) · "Show me the weather radar on the TV" (Muse Spark's computer use, each click on the TV; about 31 s on the robot, a labelled time cut) |
 | 2:04–2:16 | The reminder, two minutes later (a labelled time cut) | Andy finds the person, turns to them: "You asked me to remind you: call Sam." |
-| 2:16–2:44 | The numbers and the models | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 (and V-JEPA 2, if "Andy notices" is in) on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
-| 2:44–3:00 | Robot close-up, then the demo's address | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. Last frame: the Space's address and "Ask Andy yourself" (typing "I'm ringing my phone" into it on screen). |
+| 2:16–2:44 | The numbers and the models (`film/card-numbers.mp4`, 22.6 s, every figure read from `evals/results` when it's made) | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 (and V-JEPA 2, if "Andy notices" is in) on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
+| 2:44–3:00 | Robot close-up, then the end card (`film/card-end.mp4`) | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. Last frame: the Space's address and "Ask Andy yourself" (typing "I'm ringing my phone" into it on screen). |
 
 **The cup game, if it scores well with real cups:** it replaces "Follow the mug" at 0:55 to 1:12 and becomes the X clip.
 "Hey Andy, let's play the cup game": the ball goes under a cup, a slow shuffle, "Let me replay that" (a labelled time cut over
@@ -118,3 +118,8 @@ safety or loneliness claims; the people Andy is for are "people who live at home
 shown beyond a silhouette.
 
 **For X (Most Viral):** the uncut find (or the cup game, if it's in) cut to 30 seconds, captions burned in, the same badge. Posted as soon as there's a good take: the prize counts engagement through November 8, and the post's link goes into the submission (`docs/rules.md`).
+
+**The made pieces:** `uv run python scripts/film_cards.py` renders the title, the numbers and the models, and the end
+card as 1080p MP4s in `film/` (sharp: each frame drawn on its own). The title's line is the founder's words: pass them
+with `--line "..."`. A figure the result files don't support stops the render (`--check` lists them with their files).
+

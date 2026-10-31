@@ -1,0 +1,35 @@
+import sys
+from pathlib import Path
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+import film_cards  # noqa: E402
+
+
+def test_the_figures_come_from_the_files_and_say_what_they_say():
+    figs = {f["from"]: f["big"] for f in film_cards.figures()}
+    assert figs["evals/results/unattended-*"] == "112 of 112"
+    assert figs["privacy-audit"].startswith("0 of ")
+    assert all(f["line"] and f["from"] for f in film_cards.figures())
+
+
+def test_a_figure_the_files_dont_support_stops_the_render(monkeypatch):
+    real = film_cards._load
+
+    def leaky(name):
+        data = real(name)
+        if name == "privacy-audit.json":
+            data["summary"] = {**data["summary"], "camera_pictures_to_cloud": 1}
+        return data
+
+    monkeypatch.setattr(film_cards, "_load", leaky)
+    with pytest.raises(SystemExit, match="privacy-audit"):
+        film_cards.figures()
+
+
+def test_each_card_has_its_words_and_a_length():
+    for body, seconds in (film_cards.title(film_cards.LINE), film_cards.numbers(film_cards.figures()), film_cards.end()):
+        assert 5 <= seconds <= 30 and "<" in body
+    assert "Before this week" in film_cards.title(film_cards.LINE)[0]
+    assert film_cards.DEMO in film_cards.end()[0]

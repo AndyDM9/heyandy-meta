@@ -17,7 +17,7 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [ ] Any last questions in Discord #questions (November 3 is the last full day for them).
 
 **On November 4, in this order**
-1. [ ] The video: 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
+1. [ ] The video (the made cards: `uv run python scripts/film_cards.py --line "<the founder's words>"`): 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
        where anyone can watch it signed out.
 2. [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
        the link in it), the measured results, what was pre-existing, the limits; refresh the
