@@ -451,7 +451,7 @@
         if (s.picture.metres != null) stat(LANG === "es" ? s.picture.metres.toFixed(1) + " m" : Math.round(s.picture.metres * 3.281) + " ft",
                                            LANG === "es" ? "de distancia (MapAnything)" : "away (MapAnything)");
         if (stats.children.length) facts.append(stats);
-        if (s.steps.length) facts.append(steps(s.steps.slice(-3)));  // the latest steps; the figures above say the rest
+        if (s.steps.length) facts.append(steps(s.steps.slice(-2)));  // the latest steps; the figures above say the rest
         if (s.game) {
           const f = el("div", T("SAM 3.1 Object Multiplex followed every cup at once, on this computer"));
           f.prepend(el("b", s.picture.trails ? s.picture.trails.length + " cups" : "")); facts.append(f);

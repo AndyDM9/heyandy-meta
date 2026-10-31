@@ -197,13 +197,13 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 text colour at least 7:1 against its panel (tested), and the Atkinson Hyperlegible typeface (large, high-contrast type) served
 by Andy itself: the TV asks nothing of anyone outside the house.
 
-![Found: the picture with the mug outlined, the plan, the time and the models used](docs/images/tv-found.png)
+![Found: the picture with the mug outlined; the time, how far off target the point landed and how far away; the models used](docs/images/tv-found.png)
 
 | | |
 |---|---|
-| ![Finding](docs/images/tv-finding.png) | ![An answer with sources](docs/images/tv-answer.png) |
+| ![Finding: what Andy sees, live, the candidate outlined by SAM 3.1](docs/images/tv-finding.png) | ![An answer with sources](docs/images/tv-answer.png) |
 | ![At night](docs/images/tv-found-night.png) | ![What can I ask?](docs/images/tv-help.png) |
-| ![A picture from your words, by Muse Image](docs/images/tv-drawing.png) | ![What Andy remembers](docs/images/tv-memory.png) |
+| ![A picture from your words, by Muse Image](docs/images/tv-drawing.png) | ![What Andy remembers: a floor plan in feet, from MapAnything's distances](docs/images/tv-memory.png) |
 
 **Try it in your browser:** [huggingface.co/spaces/heyandy-ai/andy](https://huggingface.co/spaces/heyandy-ai/andy), the
 same page on sample data (pick a scene at the top). Or locally, with no robot: `uv run python scripts/demo_screen.py
