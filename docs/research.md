@@ -730,3 +730,8 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   0.6, 15 unattended searches gave a median 5.2 degrees, 8.3 at worst; the same 15 (same seed and table) with the old
   0.6 s gave 6.0 and 11.2. Not worse, so kept; run to run, the median moves about a degree. The focal length measured
   the same day reads the same pixel offset about 6% larger than the published one did.
+
+- **The same, as scorecards (2026-10-31, 11:30):** `evals/lens.py` again: 1049 px (78 sightings; 2.95 degrees RMS,
+  the published 1116 px 3.41). `evals/room.py`, three scans: looks agree to a median 0.9 degrees within a scan (small
+  things up to 2.3; the keyboard, partly out of some looks, 4.9 to 7.6), scan to scan within 1 degree and 8 cm.
+  `evals/notice.py`, 10 empty-table clips: nothing noticed, V-JEPA 2 asked once ("put down" 0.015).

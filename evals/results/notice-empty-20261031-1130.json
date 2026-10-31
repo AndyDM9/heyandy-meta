@@ -1,0 +1,83 @@
+{
+ "when": "2026-10-31 11:30",
+ "summary": {
+  "clips": 10,
+  "person": false,
+  "asked_v_jepa": 1,
+  "false_alarms": 0,
+  "right": 10,
+  "put_scores": [
+   0.0147
+  ]
+ },
+ "clips": [
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0013,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0001,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0158,
+   "put": 0.0147,
+   "taken": 0.0034,
+   "seconds": 0.489,
+   "top": [
+    [
+     "Showing [something] next to [something]",
+     0.4153
+    ]
+   ]
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  },
+  {
+   "expect": "nothing",
+   "got": "nothing",
+   "moved": 0.0,
+   "top": []
+  }
+ ]
+}

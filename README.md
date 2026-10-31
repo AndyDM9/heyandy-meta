@@ -301,13 +301,18 @@ from five starting poses on October 30; on the 31st, four searches each, the key
 yet calibrated against a tape measure, which MapAnything reads about 13% short on public test photos, so Andy says
 "about").
 
-**The room in 3D, and the robot's own lens** (2026-10-31, on the robot): MapAnything's depth for each of five looks,
-each pixel's ray from Andy's own camera and turned by the head's measured angles, puts a thing seen from several looks
-in one place: the watch from three looks at -36.4, -35.4 and -34.5 degrees and 0.80 to 0.89 m (letting MapAnything join
-the looks itself, they came out 1.3 times too wide: -30 and -41). Checking that, Andy measured its own lens: a watch, a
-cup and glasses each centred, then seen from 27 head angles up to 42 degrees off. The published focal length (1116 px at
-1080p) put things up to 4.7 degrees out near the edges of the view; 1054 fits all 80 sightings, so the sweep's first
-guesses, the merging of one thing seen in two views, and the room now use it.
+**The room in 3D, and the robot's own lens** (2026-10-31, on the robot; `evals/room.py`, `evals/lens.py`): MapAnything's
+depth for each of five looks, each pixel's ray from Andy's own camera, turned by the head's measured angles. Letting
+MapAnything join the looks itself, a watch read -30 and -41 degrees from two looks (1.3 times too wide); this way, over
+three scans (`room-20261031-1129`), a thing seen from two or three looks agreed to a median 0.9 degrees, small things
+within 2.3 (a keyboard, half out of some looks, 4.9 to 7.6), and scan to scan every thing landed within 1 degree and 8
+cm; about 13 s for the five looks, 1.0 s for MapAnything. Andy measured its own lens too: a watch, a cup and glasses
+each centred, then seen from 27 head angles up to 42 degrees off. The published focal length (1116 px at 1080p) fits
+worse than the one measured, 1054 and 1049 px in two runs (`lens-20261031-1128`, 78 sightings: 2.95 degrees RMS against
+3.41, head noise included); out near the edges of the view the published one put things up to 4.7 degrees out. Andy uses
+1054: the sweep's first guesses, merging one thing seen in two views, and the room. **Noticing** (`evals/notice.py`,
+`notice-empty-20261031-1130`): 10 clips of the empty table with the head still, 0 noticed; V-JEPA 2 asked once (1.6% of
+the picture changed), "put down" 0.015.
 
 **The agent** (`evals/agent.py`, 12 requests with more than one part, simulated room, real models): Muse Spark 12 of
 12, Muse Glimmer on this computer 12 of 12; a request counts only if everything asked happened. The first run was 6 of
