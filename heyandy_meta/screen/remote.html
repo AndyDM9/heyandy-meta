@@ -57,6 +57,8 @@
   .pair p { margin: 0 0 1rem; color: var(--muted); }
   .pair input { font: 700 1.9rem/1 "Atkinson Mono", monospace; letter-spacing: 0.35em; text-align: center; }
   .fine { margin-top: 1.4rem; font-size: 0.8rem; color: var(--muted); }
+  .card.lost { display: flex; gap: 0.7rem; align-items: center; padding: 0.8rem 1rem; }
+  .card.lost i { width: 0.8rem; height: 0.8rem; flex: none; border-radius: 50%; background: var(--outline); animation: pulse 1.4s ease-in-out infinite alternate; }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { .edge { animation: none; stroke-dashoffset: 0; } .looking i { animation: none; } }
 </style>
@@ -82,6 +84,7 @@
       <form id="ask-form"><input id="text" placeholder="Ask Andy…" maxlength="200" autocomplete="off" enterkeyhint="send"><button id="send">Ask</button></form>
       <div class="chips" id="chips"></div>
     </div>
+    <div class="card lost" id="lost" hidden><i></i><span id="lost-text"></span></div>
     <div class="card answer" id="answer" hidden>
       <div class="looking" id="looking" hidden><i></i><span id="looking-text"></span></div>
       <div class="shot" id="shot" hidden><svg id="pic" preserveAspectRatio="xMidYMid slice"></svg></div>
@@ -129,6 +132,9 @@
     $("words").replaceChildren();
     if (asked) { const sm = document.createElement("small"); sm.textContent = "You asked: " + asked; $("words").append(sm); }
     $("words").append(s.caption || "");
+    const lost = s.lost || [], your = lost.map(t => "your " + t), list = your.length > 1 ? your.slice(0, -1).join(", ") + " and " + your.at(-1) : your[0];
+    $("lost").hidden = !lost.length;  // what Andy is still looking for: the find shows up here when it turns up
+    $("lost-text").textContent = lost.length ? `Andy is still looking for ${list}, and will tell you here when it turns up.` : "";
     $("shot").hidden = !p;
     const key = p ? p.src.length + ":" + p.box.join(",") : "";
     if (p && key !== lastKey) {  // the find: the picture, darkened, a spotlight and an outline drawing itself

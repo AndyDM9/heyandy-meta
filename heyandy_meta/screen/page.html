@@ -80,6 +80,13 @@
   #body:has(.drawing), #body:has(.web) { align-content: stretch; }
   .split { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; min-height: 0; align-items: start; }
   /* guiding a hand: the view, and the way to move, big enough to read from across a room or with low vision */
+  /* still looking for: an amber dot that breathes, so "Andy hasn't given up" reads from across the room */
+  ul.lost { list-style: none; margin: 0 0 1rem; padding: 0.7rem 0.9rem; display: grid; gap: 0.45rem; border-radius: 1rem;
+            background: color-mix(in srgb, var(--outline) 16%, transparent); font-size: 1.35rem; }
+  ul.lost li { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+  ul.lost i { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--outline); align-self: center; flex: none;
+              animation: g-wait 1.6s ease-in-out infinite; }
+  ul.lost span { color: var(--muted); font-size: 1.15rem; }
   .guide .thing { fill: none; stroke: var(--outline); stroke-width: 5; }
   .guide .hand { fill: none; stroke: var(--accent); stroke-width: 4; stroke-dasharray: 10 6; }
   .guide .reach { stroke: #F5F3EF; stroke-width: 4; stroke-dasharray: 2 9; stroke-linecap: round; }
@@ -475,7 +482,7 @@
     "Nothing yet. “Hey Andy, keep an eye on my keys.”": "Nada todavía. “Oye Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
     "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
-    "Connect your phone": "Conecte su teléfono",
+    "Connect your phone": "Conecte su teléfono", "It turned up · Andy kept looking": "Apareció · Andy siguió buscando",
     "Put your hand out toward it": "Extienda la mano hacia allí", "from your hand": "de su mano",
     "Your way, from where you are": "Su camino, desde donde está", "Waiting for your hand": "Esperando su mano",
     "What I see now · SAM 3.1 outlines the thing and your hand, on this computer": "Lo que veo ahora · SAM 3.1 marca la cosa y su mano, en esta computadora",
@@ -524,18 +531,19 @@
                   "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   // Story mode: what a visitor sees first on the public demo (never on Andy's own TV, and not when a link names a scene).
   const STORY = [
-    ["idle", 7, "Meet Andy", "A tabletop robot that finds what you've lost and points at it. This is the TV beside it."],
-    ["finding", 7, "You ask", "“Hey Andy, where's my mug?” It looks around the room; SAM 3.1 outlines every candidate, live."],
+    ["idle", 6, "Meet Andy", "A tabletop robot that finds what you've lost and points at it. This is the TV beside it."],
+    ["finding", 6, "You ask", "“Hey Andy, where's my mug?” It looks around the room; SAM 3.1 outlines every candidate, live."],
     ["found", 9, "It finds it", "It points, checks the point with its own camera, and MapAnything measures how far away."],
+    ["turned", 7, "It doesn't give up", "Not found? It keeps looking while you get on with your day, and tells you the moment it turns up."],
     ["guide", 8, "It guides your hand", "Can't see well? It watches your hand and talks it onto the thing, from your side: “Toward you, and right.”"],
     ["room", 9, "It knows your room", "Five looks become your room in 3D, things pinned. Its shape only, never a picture."],
-    ["cups", 7, "Identical cups, told apart", "SAM 3.1 Object Multiplex follows every cup at once through the shuffle."],
+    ["cups", 6, "Identical cups, told apart", "SAM 3.1 Object Multiplex follows every cup at once through the shuffle."],
     ["out", 7, "Before you go", "It points at what you'd leave behind, and Muse Spark checks whether you'll need an umbrella."],
     ["spanish", 6, "Your language", "It hears and speaks Spanish; Muse Glimmer translates on the computer beside the robot."],
     ["privacy", 8, "Nothing leaves the house", "Pictures and voice stay home. Every word sent to the cloud is on a receipt."],
@@ -647,8 +655,16 @@
       const li = el("li", what[0].toUpperCase() + what.slice(1));
       li.append(el("span", seen ? " · " + where.split(",")[0] : where)); list.append(li);
     }
-    $("watching").replaceChildren(...(list.children.length ? (seen ? [dial(s.map), list] : [list])
-                                     : [el("div", T("Nothing yet. “Hey Andy, keep an eye on my keys.”"), "when")]));
+    // what a search missed, and Andy keeps looking for (memory/lost.py): first, with when it was asked and the looks since
+    const lost = el("ul", null, "lost");
+    for (const x of s.lost || []) {
+      const at = new Date(x.since * 1000).toLocaleTimeString(LOCALE(), { hour: "numeric", minute: "2-digit" }).toLowerCase();
+      const li = el("li"); li.append(el("i"), el("b", x.thing[0].toUpperCase() + x.thing.slice(1)),
+        el("span", LANG === "es" ? ` · lo busco desde las ${at}` : ` · still looking, since ${at}` + (x.looks ? ` · ${x.looks} look${x.looks === 1 ? "" : "s"}` : "")));
+      lost.append(li);
+    }
+    $("watching").replaceChildren(...(lost.children.length ? [lost] : []), ...(list.children.length ? (seen ? [dial(s.map), list] : [list])
+                                     : lost.children.length ? [] : [el("div", T("Nothing yet. “Hey Andy, keep an eye on my keys.”"), "when")]));
   }
   // What Andy remembers, as a map around it: front is up, left is left; older sightings fade. With MapAnything's
   // distances it's a floor plan: each thing at its measured distance along the floor, rings in feet. Without them
@@ -1040,7 +1056,7 @@
       const key = "guide:" + g.v + LANG;
       if (key !== pictureKey) { pictureKey = key; body.replaceChildren(guided(g)); }
     } else if (s.picture) {
-      kicker = T(s.game ? "The cup game" : "Found"); title = s.picture.words;
+      kicker = T(s.game ? "The cup game" : s.picture.turned ? "It turned up · Andy kept looking" : "Found"); title = s.picture.words;
       const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
       if (key !== pictureKey) {
         pictureKey = key;

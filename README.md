@@ -82,6 +82,13 @@ found, "You're all set", in three sentences.
    right", "A little further", with a soft note between the words that rises as your hand gets nearer, like a parking
    sensor, then "That's it! Your mug is right at your fingertips." The TV shows the hand and the thing outlined, and a
    big arrow for the way to move (`companion/guide.py`).
+   **It doesn't give up.** When a search misses ("I couldn't find your wallet from here"), Andy promises to keep
+   looking ("I'll keep looking, and tell you when I see it") and does: every few minutes while the room is quiet, for
+   up to two hours, one look around for everything still missing (SAM 3.1, all of them from one encoding of each
+   view). A thing spotted gets the full search, which checks it and points; then, unprompted: "Good news: your watch
+   turned up! It's a little to my right, about 3 feet away." The TV's side card and a paired phone show what Andy is
+   still looking for; "I found it" or "stop looking" lets go (`memory/lost.py`). On the robot it found a watch it was
+   told was lost, pointed 4.1 degrees off the middle and said so out loud, and kept quiet about a wallet that wasn't there.
 3. **The TV shows what Andy sees, live, as it searches** (each view, every candidate outlined by SAM 3.1), **then the
    picture it found them in,** with the mask drawn, the time, how far off target the point landed and how far away. The picture is kept in memory only, never saved.
 4. **"Hey Andy, show me the room."** Andy looks across the room five times; SAM 3.1 marks your things in each look, and

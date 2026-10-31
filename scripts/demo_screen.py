@@ -28,7 +28,7 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "guide", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "turned", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
@@ -281,6 +281,26 @@ def show(state: ScreenState, scene: str) -> None:
         state._guide["until"] += 3600  # a still for the demo: it stays
         state.said(words, "device", "SAM 3.1 watched your hand and your mug, on this computer")
         state.used("SAM 3.1", "device", 9)
+    elif scene == "turned":  # lost and found: a search missed the mug; Andy kept looking, and it turned up
+        state.looking_out([{"thing": "wallet", "since": time.time() - 52 * 60, "looks": 17}])
+        state.looking("mug")
+        state.timer_start()
+        state.step("looked again: SAM 3.1 spotted it")
+        state.step("look closer and point: confirmed, a little to my right")
+        state.step("checked: pointing at it, 2° off the middle")
+        state.timer_stop()
+        state._timer = (time.monotonic() - 6.1, time.monotonic())
+        jpeg, mask = sample_frame()
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=2, aim_deg=2.0, metres=1.2)
+        since = time.strftime("%-I:%M", time.localtime(time.time() - 25 * 60))
+        words = f"Good news: your mug turned up! It's a little to my right, about 4 feet away. I'd been looking out for it since {since}."
+        state.found(found, words)
+        state.turned_up(words)
+        state._picture.until += 3600  # a still for the demo: it stays
+        state.said(words, "device", "Andy kept looking: SAM 3.1 spotted it, and the search confirmed it")
+        state.used("SAM 3.1", "device", 6)
+        state.used("MapAnything (how far)", "device")
+        state.doing("Speaking", "At your mug")
     elif scene == "room":
         points, things = sample_room()
         state.room(points, things, 1.0)

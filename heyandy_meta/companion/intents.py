@@ -26,6 +26,14 @@ FOLLOW = re.compile(r"\b(?:follow|track)\s+" + THING + r"(?:\s+with your eyes)?(
 GUIDE = re.compile(r"\b(?:guide (?:my hand|me)|help me (?:reach|grab|get hold of|pick up|get to|touch)|lead my hand|"
                    r"talk my hand|take my hand|gu[ií](?:e|a)(?:me| mi mano)|ay[uú]d(?:e|a)me a (?:alcanzar|agarrar|tomar))"
                    r"(?:lo|la|los|las)?(?:\s+(?:to\s+|over to\s+|a\s+)?" + THING + r")?\s*(?:\?|$|[,.!]| please)", re.I)
+# lost and found (memory/lost.py): "I found my keys", "stop looking for the wallet", "what are you looking for?"
+FOUND_IT = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:(?:oh|ah|okay|ok|good news|never ?mind|it'?s fine)\W+)*"
+                      r"(?:i(?:'ve| have)? |we(?:'ve| have)? |i just )?found (?:(?:it|them)(?:\W*$|\W+(?:already|myself|"
+                      r"thanks|thank you|under|on|in|behind|by|next|at)\b)|(?:my|the|our) [a-z][a-z '\-]{1,38}?(?:\W|$))"
+                      r"|^\W*(?:(?:oye )?andy\W+)?(?:ya )?(?:lo|la|los|las) encontr[eé]\b", re.I)
+STOP_LOOKING = re.compile(r"\b(?:stop|quit|give up|no need to keep) (?:looking|searching)\b|\bdeja(?:r)? de buscar\b|"
+                          r"\byou can stop looking\b", re.I)
+LOOKING_FOR = re.compile(r"\bwhat (?:are you|you're|are you still) (?:looking|searching) for\b|\bqu[eé] (?:est[aá]s|est[aá]) buscando\b", re.I)
 IT = {"it", "them", "that", "this", "those", "there", "one", "the thing", "mis cosas"}
 WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
 FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
@@ -126,7 +134,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -238,6 +246,12 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("calling", thing="any", text=t)
     if SETUP.search(t):
         return Intent("setup", text=t)
+    if FOUND_IT.search(t):
+        return Intent("lost_done", thing="found", text=t)
+    if STOP_LOOKING.search(t):
+        return Intent("lost_done", thing="stop", text=t)
+    if LOOKING_FOR.search(t):
+        return Intent("lost_list", text=t)
     for kind, rx in (("story", STORY), ("usual", USUAL)):  # only a thing people lose, not "the world today"
         if (m := rx.search(t)) and (thing := snap(next(g for g in m.groups() if g).strip())).split()[-1] in KNOWN:
             return Intent(kind, thing=thing, text=t)

@@ -25,6 +25,7 @@ class _Picture:
     words: str
     until: float
     trails: list | None = None  # the cup game: each cup's path through the shuffle, [(points, is_the_one)]
+    turned: bool = False  # lost and found: Andy kept looking, and this is it turning up
 
 
 @dataclass
@@ -66,6 +67,7 @@ class ScreenState:
         self.next_reminder: tuple[str, float] | None = None  # (the person's words, when), epoch seconds
         self.watching: list[str] = []  # what Andy keeps an eye on, and where it last saw each
         self.watching_map: list[dict] = []  # the same as directions, for the TV's map
+        self.lost: list[dict] = []  # what a search missed and Andy keeps looking for: {"thing", "since", "looks"}
         self._help_until = 0.0
         self.quiet_text = ""  # "Quiet until 9:40", while Andy keeps quiet
         self.language = ""  # "Español", while Andy hears and speaks Spanish
@@ -121,6 +123,11 @@ class ScreenState:
     def reminder_next(self, text: str | None, at: float = 0.0) -> None:
         with self._lock:
             self.next_reminder = (text, at) if text else None
+
+    def looking_out(self, items: list[dict]) -> None:
+        """What Andy is still looking for (memory/lost.py): each thing, since when (epoch s), and how many looks."""
+        with self._lock:
+            self.lost = list(items)
 
     def keeping(self, lines: list[str], where: list[dict] | None = None) -> None:
         with self._lock:
@@ -297,6 +304,12 @@ class ScreenState:
                 self.guides += 1
                 self._guide.update(words=words, done=True, until=self._clock() + 8)
 
+    def turned_up(self, words: str) -> None:
+        """The find on the TV is a lost thing turning up (memory/lost.py): its card says so, with Andy's words."""
+        with self._lock:
+            if self._picture:
+                self._picture.turned, self._picture.words = True, words
+
     def game(self, title: str, detail: str = "") -> None:
         """The cup game, stage by stage: "Watching the cups", "Replaying the shuffle"."""
         with self._lock:
@@ -358,7 +371,7 @@ class ScreenState:
                    "models": [{"name": n, "where": w, "times": t} for n, (w, t) in self.models.items()],
                    "state": self.state, "head": self.head, "looking_for": self.looking_for,
                    "next": {"text": self.next_reminder[0], "at": self.next_reminder[1]} if self.next_reminder else None,
-                   "watching": list(self.watching), "map": list(self.watching_map),
+                   "watching": list(self.watching), "map": list(self.watching_map), "lost": list(self.lost),
                    "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None,
                    "quiet": self.quiet_text, "outbox": list(self.outbox), "language": self.language,
@@ -417,6 +430,7 @@ class ScreenState:
                     # measured: how far off the middle of the view the point landed, and how far away (MapAnything)
                     "aim_deg": getattr(f, "aim_deg", None), "metres": getattr(f, "metres", None),
                     "for_you": getattr(f, "for_you", None),  # where it is from the person's side, and the plan
+                    "turned": p.turned,
                 }
                 if p.trails:
                     out["picture"]["trails"] = [{"d": "M " + " L ".join(f"{x:.0f} {y:.0f}" for x, y in pts),
@@ -440,6 +454,7 @@ def _in(out: dict, tr) -> dict:
     if out["memory"] is not None:
         out["memory"] = [tr(x) for x in out["memory"]]
     out["map"] = [{**m, "label": tr(m["label"])} for m in out["map"]]
+    out["lost"] = [{**x, "thing": tr(x["thing"])} for x in out.get("lost", [])]
     if out["next"]:
         out["next"] = {**out["next"], "text": tr(out["next"]["text"])}
     if out["picture"]:

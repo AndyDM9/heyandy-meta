@@ -24,6 +24,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
+- **It doesn't give up.** A search that misses becomes a promise: Andy keeps looking every few minutes for two hours
+  and, when the thing turns up, points and says "Good news: your watch turned up!" (on the robot, unprompted).
 - **"Help me reach it."** For someone who can't see well, Andy then watches their hand and talks it onto the thing
   from their side ("Toward you, and right"), with notes that rise as the hand nears, like a parking sensor: SAM 3.1
   finds the hand and the thing in each frame, on the computer beside the robot.

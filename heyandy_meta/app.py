@@ -35,6 +35,7 @@ from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
 from .finder.search import Finder, Found, Segmenter
 from .memory.glance import glance
+from .memory.lost import LOOK_EVERY_S, Lost, spot
 from .memory.mine import Mine
 from .memory.places import Places
 from .models.common import Chat, Mask, Reply
@@ -98,6 +99,9 @@ class Andy:
         self.router = Router(self.device, self.cloud or NoCloud())
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()
+        self.lost = Lost(self.places.path.parent / "lost.json", clock=self.clock)  # what a search missed: Andy keeps looking
+        self._last_lost_look = self.clock()
+        self._background = False  # a search Andy started itself (lost and found): no "Let me look", no "oops"
         self.screen.online = self.online
         self._source = self._reason = ""
         self.lock = threading.RLock()  # one thing at a time moves the body: keyboard, voice or a reminder
@@ -245,6 +249,7 @@ class Andy:
         else:
             self.screen.reminder_next(None)
         self.screen.keeping(self._memory(), self._memory_map())
+        self.screen.looking_out([{"thing": t, "since": self.lost.since(t), "looks": self.lost.looks(t)} for t in self.lost.looking()])
 
     def _answer(self, text: str) -> str:
         if self._setup and self.clock() - self._setup["at"] <= SETUP_WAIT_S:  # the person answering the setup's step
@@ -303,6 +308,12 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind == "lost_done":
+            return self.stop_looking(text, found=i.thing == "found")
+        if i.kind == "lost_list":
+            lost = self.lost.looking()
+            return (f"I'm still looking for {_join(lost)}. I'll tell you when I see "
+                    f"{'them' if len(lost) > 1 else _it(lost[0])}." if lost else "Nothing right now. Everything you asked me to find turned up.")
         if i.kind == "watch":
             self.places.watch(i.thing)
             return (f"I'll keep an eye on your {i.thing}. I only remember where I last saw {_it(i.thing)}, "
@@ -507,7 +518,8 @@ class Andy:
         checks = getattr(self.judge, "calls", 0)
         self.finder.looks, self.finder.passed, self._alike, self._not_yours = 0, [], None, False
         self.screen.looking(thing)
-        self.say("Let me look.", soon=True)  # answer at once, and start looking while it's said
+        if not self._background:
+            self.say("Let me look.", soon=True)  # answer at once, and start looking while it's said
         try:  # where the person is, while Andy still faces them: so the answer can be given from their side
             self._listener = self._measure_listener()
         except (LocalUnavailable, RuntimeError, IndexError):
@@ -567,6 +579,7 @@ class Andy:
         self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
         self._guide_from = (found, self._listener, self.clock())  # "help me reach it" next starts from here
+        self.lost.drop(found.label)  # found: no need to keep looking
         self.screen.doing("Pointing", f"At your {found.label}")
         if found.aim_deg is not None:  # the check after pointing: did it land?
             self.screen.step(f"checked: pointing at it, {found.aim_deg:.0f}° off the middle"
@@ -575,7 +588,7 @@ class Andy:
         words = words or self._found_words(found)
         self.screen.found(found, words)  # the TV's Reveal starts...
         self.chime("found")  # ...as Andy's "there it is!" sound plays, before the words
-        return words + self._offer_to_watch(found.label, (found.yaw, found.pitch))
+        return words + ("" if self._background else self._offer_to_watch(found.label, (found.yaw, found.pitch)))
 
     def _offer_to_watch(self, thing: str, where=(0.0, 0.0), times: int = 3, within_s: float = 7 * 24 * 3600) -> str:
         """Asked for the same thing a few times this week, and not kept an eye on: offer, once a week. Only the word and
@@ -763,6 +776,19 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def stop_looking(self, text: str, found: bool) -> str:
+        """"I found my keys" / "stop looking for the wallet": let go of what Andy was still looking for (a thing named,
+        or all of it). Said of something Andy wasn't looking for, it's just good news."""
+        lost = self.lost.looking()
+        named = [t for t in lost if re.search(r"\b" + re.escape(t) + r"\b", text, re.I)]
+        gone = [g for t in (named or lost) for g in self.lost.drop(t)]
+        self.refresh_panels()
+        if found:
+            return f"Glad {_join(gone) if named else 'it'} turned up!" if gone else "Glad you found it!"
+        if not gone:
+            return "I wasn't looking for anything just now."
+        return f"Okay, I'll stop looking for {_join(gone)}."
 
     def guide_hand(self, thing: str = "", seconds: float = 40.0) -> str:
         """"Help me reach it": talk the person's hand onto the thing just found, from their side (companion/guide.py),
@@ -1531,12 +1557,20 @@ class Andy:
         return said
 
     def _not_found(self, thing: str) -> str:
+        if self._background:
+            return ""  # Andy's own second look: nothing to say, and it keeps looking
         self.emote("oops1")
+        again, since = not self.lost.add(thing), self.lost.since(thing)
+        looks = self.lost.looks(thing)
+        promise = (f" Still no sign of {_it(thing)}: I've looked {looks} time{'s' if looks != 1 else ''} since "
+                   f"{spoken_time(since)}. I'll keep at it." if again and since else
+                   f" I'll keep looking, and tell you when I see {_it(thing)}.")
+        self.refresh_panels()
         if self._not_yours or "not yours" in self.finder.why:
-            return f"I saw a {thing}, but not yours. Could you tell me where you last had {_it(thing)}?"
+            return f"I saw a {thing}, but not yours.{promise} Could you tell me where you last had {_it(thing)}?"
         if "picture" in self.finder.why:
-            return f"I only saw a picture of {thing} on a screen. Could you tell me where you last had {_it(thing)}?"
-        return f"Hmm, I couldn't find your {thing} from here. Where did you last have {_it(thing)}?"
+            return f"I only saw a picture of {thing} on a screen.{promise} Could you tell me where you last had {_it(thing)}?"
+        return f"Hmm, I couldn't find your {thing} from here.{promise} Where did you last have {_it(thing)}?"
 
     def _memory(self) -> list[str]:
         lines = []
@@ -1679,7 +1713,44 @@ class Andy:
             finally:
                 self.gesture("idle")
                 self.screen.doing("Waiting")
+        if not self.quiet() and now - self._last_lost_look >= LOOK_EVERY_S and self.lost.looking():
+            self._last_lost_look = now
+            self._look_again()
         self.refresh_panels()
+
+    def _look_again(self) -> str | None:
+        """Lost and found (memory/lost.py): one look around for everything a search missed; a thing spotted gets the
+        full search (it checks, points and measures), and if that finds it, Andy says so. What it said, or None."""
+        lost = self.lost.looking()
+        self.interrupt_noticing()
+        self.gesture("searching")
+        self.screen.doing("Working", "Looking again for " + _join(lost))
+        try:
+            spotted = spot(self.body, self.segmenter, lost)
+        finally:
+            self.gesture("idle")
+            self.screen.doing("Waiting")
+        self.lost.looked(lost)
+        for thing in [t for t in lost if t in spotted]:
+            since = self.lost.since(thing)
+            self.finder.last_found, self._background = None, True
+            try:
+                self.find(thing, f"where is my {thing}")  # it checks, points and measures; the words are said below
+            finally:
+                self._background = False
+            f = self.finder.last_found
+            if f is None:
+                continue  # a glimpse the search didn't confirm: keep looking, and say nothing
+            where = (f"{f.for_you['words']}, at your {f.for_you['clock']} o'clock" if f.for_you else
+                     side(f.yaw) + (f", {how_far(f.metres, metric=self.language != 'en')}" if f.metres is not None else ""))
+            its = "They're" if _it(thing) == "them" else "It's"
+            said = (f"Good news: your {thing} turned up! {its} {where}."
+                    + (f" I'd been looking out for {_it(thing)} since {spoken_time(since)}." if since else ""))
+            self._source, self._reason = "device", "Andy kept looking: SAM 3.1 spotted it, and the search confirmed it"
+            self.screen.turned_up(said)
+            self.say(self.disclosure.prefix() + said)
+            return said
+        return None
 
     def _find_person(self):
         self.gesture("searching")

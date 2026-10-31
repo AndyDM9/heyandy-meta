@@ -88,6 +88,7 @@ def phone_state(snap: dict) -> dict:
                                                 "aim_deg", "metres")}
     out["sent"] = [{"to": o["to"], "words": o["words"]} for o in snap.get("outbox") or []]
     out["models"] = [m["name"] for m in snap.get("models") or []]
+    out["lost"] = [x["thing"] for x in snap.get("lost") or []]  # what Andy is still looking for: the words only
     return out
 
 

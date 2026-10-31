@@ -33,6 +33,11 @@ my keys", the person walks in and puts the keys down on the table in view; the T
 later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
+**"It doesn't give up" (works on the robot):** "Hey Andy, where's my watch?" with the watch out of the room: "I couldn't
+find your watch from here. I'll keep looking, and tell you when I see it." The side card says "Watch · still looking".
+Put the watch on the table and wait (a labelled time cut: up to three minutes); Andy looks around, points and says,
+unprompted, "Good news: your watch turned up!" It turns the one moment a finder fails into the moment it shows it cares.
+
 **"Help me reach it," if the founder's test 13 goes well:** right after a find, the person (eyes closed, or in dark
 glasses) says "Hey Andy, help me reach it" and puts a hand out; Andy says "Toward you, and right... A little further...
 That's it!" as the notes rise, and the TV shows the hand and the thing outlined with the big arrow. It shows SAM 3.1

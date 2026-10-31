@@ -840,3 +840,24 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   only when what's shown or the window changes. On the welcome card at 1920x960 it's 0.95, at 1920x1080 0.90; most
   cards need none. Tall and narrow screens have their own one-column layout and scroll instead.
 
+## 42. It doesn't give up: lost and found (2026-10-31)
+
+- **Why:** the moment a finder fails is the moment people decide whether to trust it. "I couldn't find your wallet"
+  ends the conversation; a friend would say "I'll keep an eye out for it".
+- **Built:** a missed search adds the thing to a small list on this computer (`memory/lost.py`: the word, when it was
+  first asked for, the looks since; private, kept across a restart, let go after two hours). Every three minutes
+  while the room isn't quiet, the idle tick looks around once for everything on it (`spot`: SAM 3.1, every lost thing
+  from one encoding of each view; masks under 0.5 ignored). A thing spotted gets the full search, with its checks and
+  the point, in the background: no "Let me look", no "oops" if it doesn't confirm. Confirmed, Andy says, with the AI
+  disclosure when it speaks first: "Good news: your watch turned up! It's a little to my right, about 3 feet away. I'd
+  been looking out for it since 4:53." Asked again before then: "Still no sign of it: I've looked 4 times since
+  3:12." Any find the person asks for, "I found it", "stop looking" (and Spanish) let go; "what are you looking
+  for?" lists them. The TV's side card shows each with a breathing amber dot, the found card says "It turned up · Andy
+  kept looking", the paired phone shows the list, and the public demo's story has it as a beat.
+- **Measured on the robot** (`evals/lost.py`, the app built as the service builds it, a scratch memory):
+  told a watch (on the table) and a wallet (not in the room) were lost, one look-again took 30.8 s, spotted the watch,
+  confirmed it, pointed 4.1 degrees off the middle, measured 0.95 m and said so out loud; the wallet stayed on the list,
+  nothing said about it. Told a wallet, a phone and a remote were lost (none on the table), it found a phone 83 degrees
+  to its left at 1.15 m, checked and pointed 3.0 degrees off; a tight crop of that spot looks like a phone lying flat (for
+  the founder to confirm), so most likely a real phone at the far left of the room rather than a false alarm. The wallet and the remote stayed on the list, in silence.
+

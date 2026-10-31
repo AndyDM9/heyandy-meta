@@ -1,0 +1,24 @@
+{
+ "when": "2026-10-31 16:53",
+ "present": [
+  "watch"
+ ],
+ "absent": [
+  "wallet"
+ ],
+ "said": "Good news: your watch turned up! It's a little to my right, about 3 feet away. I'd been looking out for it since 4:53.",
+ "everything_said": [
+  "I'm Andy, an AI robot. Good news: your watch turned up! It's a little to my right, about 3 feet away. I'd been looking out for it since 4:53."
+ ],
+ "still_looking": [
+  "wallet"
+ ],
+ "seconds": 30.8,
+ "pointed_at": {
+  "label": "watch",
+  "yaw": -34.5,
+  "pitch": 15.8,
+  "aim_deg": 4.1,
+  "metres": 0.95
+ }
+}

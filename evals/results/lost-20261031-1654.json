@@ -1,0 +1,25 @@
+{
+ "when": "2026-10-31 16:54",
+ "present": [],
+ "absent": [
+  "wallet",
+  "phone",
+  "remote"
+ ],
+ "said": "Good news: your phone turned up! It's to my left, about 4 feet away. I'd been looking out for it since 4:53.",
+ "everything_said": [
+  "I'm Andy, an AI robot. Good news: your phone turned up! It's to my left, about 4 feet away. I'd been looking out for it since 4:53."
+ ],
+ "still_looking": [
+  "wallet",
+  "remote"
+ ],
+ "seconds": 31.2,
+ "pointed_at": {
+  "label": "phone",
+  "yaw": 83.3,
+  "pitch": 14.3,
+  "aim_deg": 3.0,
+  "metres": 1.15
+ }
+}
