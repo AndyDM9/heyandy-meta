@@ -59,6 +59,13 @@ HONEST = ("I can't do that from a chat. Say it to me directly, like: Hey Andy, r
 ANSWER_WITHIN_S = 60
 WEB_MORE_WITHIN_S = 3 * 60  # "scroll down", "go back": the web page on the TV, for three minutes
 REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten minutes  # how long Andy's question ("remind you about what, and when?") waits for the answer
+# A chat model saying Andy can't see, move or find things: untrue of a robot that does exactly that (offline, Glimmer
+# answered "where's the remote?", misheard, with "I can't see or move around to find things", Nov 1 rehearsal).
+CANT = re.compile(r"\bI(?: can'?t| cannot| am not able to|'m not able to| am unable to|'m unable to) (?:physically )?"
+                  r"(?:see(?! (?:the future|why|how|what|that|it happening|myself))\b|move(?: around)?\b|look around\b|"
+                  r"(?:find|search for|look for) (?:things|objects|items|it|them|your)\b|point\b)"
+                  r"|\bI don'?t have (?:eyes|a body|a camera|hands)\b", re.I)
+SEEING = "I can look around the room and point at things. Say: Hey Andy, where are my keys?"
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
                     r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
@@ -545,6 +552,11 @@ class Andy:
                 if CLAIMS.search(sentence):
                     self._reason += "; a promise the model can't keep was replaced"
                     parts.append(HONEST)
+                    break
+                if CANT.search(sentence):
+                    self._reason += "; the model said Andy can't see or find things, which isn't so"
+                    parts.append(SEEING)
+                    self._say_now(SEEING)
                     break
                 parts.append(sentence)
                 self._say_now(sentence)

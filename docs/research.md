@@ -1263,3 +1263,22 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   "forget my things": one of Andy's commands, which deletes what it remembers. Now a forget heard in another
   language asks first ("Shall I forget your keys? Say yes and I will."), and only what Andy remembers can be
   forgotten; said in English, it's at once, as before.
+
+## 59. The dress rehearsal: every storyboard line on the robot before filming (November 1)
+
+- **Why:** the video's shots are filmed once or twice, by the founder, and today's changes (languages, crisis checks,
+  the TV) had only been tested against a simulated robot.
+- **Built:** `evals/rehearsal.py`: each line of the storyboard spoken in Andy's own voice, heard by its own ears through
+  the voice loop, and taken as a whole turn on the robot, the TV showing it; per shot what Andy heard and said, the
+  time, whether it pointed, and what to fix. "What am I holding?" and the reminder two minutes later need a person or
+  a wait and are listed, not rehearsed.
+- **First run (`rehearsal-20261101-1353.json`): 8 of 9.** The failure was the offline shot: "Hey Andy, where's the
+  remote?" was heard as "hey andy was the remote", wasn't taken for a search, and Glimmer, as conversation, answered "I
+  can't see or move around to find things", untrue of Andy and fatal on camera. Two fixes: "was the/my <a thing Andy
+  knows>" is a search (never "was the door locked?"); and a chat sentence saying Andy can't see, move or find things
+  is replaced with what it can do ("I can look around the room and point at things..."), as a promise it can't keep
+  already was; both checked both ways, ordinary "can't"s untouched ("I can't wait to see you").
+- **Second run (`rehearsal-20261101-1358.json`):** the offline shot found the remote, but it was past where the head
+  can point; the Mandarin find missed the glasses that the English one found at the same moment. Run again, both
+  found them: at about 5 feet they're found every time in English and two times in four in Mandarin (the same
+  search, from the same translation: the thing, not the language). For filming: closer, and in front.

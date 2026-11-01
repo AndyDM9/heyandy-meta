@@ -8,6 +8,7 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [ ] The founder's tests of what hasn't been tried on the robot yet (the founder's own test list: the cup game, my
       mug, going out, Spanish, "what's that?"), so the video and the text show only what works.
 - [ ] `uv run python scripts/preflight.py --cloud` says READY (and again on the morning of November 4).
+- [ ] The dress rehearsal says READY TO FILM, the room as it will be filmed (`docs/demo-script.md` step 2b).
 - [ ] Film: the uncut find, follow the mug (or the cup game), several things at once, the network unplugged, a reminder
       (`docs/demo-script.md`). Recording the TV needs `uv run --with playwright playwright install ffmpeg` once.
 - [ ] The physical scorecard (`evals/physical.py`), and its numbers in the README.

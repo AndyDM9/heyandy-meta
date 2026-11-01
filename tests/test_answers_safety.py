@@ -105,3 +105,16 @@ def test_everyday_words_arent_a_crisis(text):
     from heyandy_meta.companion.safety import crisis
 
     assert not crisis(text)
+
+
+def test_a_chat_reply_saying_andy_cant_see_or_find_things_is_replaced_and_ordinary_cants_are_not():
+    """Offline, Glimmer answered a misheard "where's the remote?" with "I can't see or move around to find things"
+    (Nov 1 rehearsal): untrue of Andy. Only claims about the robot's own senses and body are replaced."""
+    from heyandy_meta.app import CANT
+
+    for said in ["I can't see or move around to find things, so I can't check on the remote.", "I'm not able to look around.",
+                 "I don't have eyes, sadly.", "I can't find things in your house.", "I cannot see your room."]:
+        assert CANT.search(said), said
+    for said in ["I can't find a good recipe for that.", "I cannot see the future.", "I can't wait to see you",
+                 "I can't see why not!", "I can't remember that day."]:
+        assert not CANT.search(said), said

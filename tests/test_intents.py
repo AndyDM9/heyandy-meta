@@ -95,3 +95,10 @@ def test_a_colour_says_which_one_so_the_planner_compares():
 def test_the_time_the_room_and_a_search_are_told_apart(said, kind, thing):
     i = parse(said)
     assert (i.kind, i.thing) == (kind, thing)
+
+
+def test_where_heard_as_was_is_a_search_only_for_a_thing_andy_knows():
+    """Omnilingual ASR on the robot heard "where's the remote?" as "was the remote" (Nov 1 rehearsal)."""
+    assert parse("was the remote").kind == "find" and parse("was the remote").thing == "remote"
+    assert parse("was my glasses?").kind == "find"
+    assert parse("was the door locked?").kind != "find" and parse("was my daughter here").kind != "find"

@@ -251,7 +251,13 @@ def normalise(text: str) -> str:
     # Heard again and again for "where are my" (Omnilingual ASR, all sizes, 2026-10-27).
     t = re.sub(r"\bwears (the|my|our)\b", r"where's \1", t, flags=re.I)
     t = re.sub(r"\buntil (minutes|hours)\b", r"in two \1", t, flags=re.I)  # "in two" heard as "until"
-    return re.sub(r"\bwhere (?:am i|are i|am my|r my)\b", "where are my", t, flags=re.I)
+    t = re.sub(r"\bwhere (?:am i|are i|am my|r my)\b", "where are my", t, flags=re.I)
+    # "Where's the remote?" heard as "was the remote" (Omnilingual ASR on the robot, Nov 1): only for a thing Andy knows,
+    # and only the whole of it, so "was the door locked?" stays a question
+    m = re.match(r"^\W*was (the|my|our) ([a-z][a-z ]{1,30}?)\W*$", t, re.I)
+    if m and m.group(2).split()[-1].lower() in KNOWN:
+        t = f"where's {m.group(1)} {m.group(2)}?"
+    return t
 
 
 def parse(text: str, now: dt.datetime | None = None) -> Intent:
