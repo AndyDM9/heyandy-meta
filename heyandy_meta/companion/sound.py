@@ -16,7 +16,6 @@ the loud chunks of two ringtones 0.000 to 0.008, of a spoken sentence 0.004 to 0
 a direction from the array. Nothing is recorded: per chunk only its loudness, its flatness and its direction are kept,
 for 20 seconds.
 """
-import math
 import time
 from collections import deque
 

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from heyandy_meta.companion.intents import parse
-from heyandy_meta.companion.sound import (AHEAD_DEG, NARROW_DEG, RATE, Ear, fan, flatness, reading, ringing,
+from heyandy_meta.companion.sound import (NARROW_DEG, RATE, Ear, fan, flatness, reading, ringing,
                                           turn_to)
 from heyandy_meta.robot.sim import Thing
 from heyandy_meta.screen.state import ScreenState

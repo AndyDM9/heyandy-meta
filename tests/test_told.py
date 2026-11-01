@@ -3,7 +3,7 @@ import pytest
 from heyandy_meta.companion.intents import parse
 from heyandy_meta.memory.told import TOLD_FOR_S, Told, yours
 from heyandy_meta.robot.sim import Thing
-from tests.test_app import andy, said
+from tests.test_app import andy
 
 
 def test_told_places_are_kept_as_words_with_when_and_let_go_after_a_year(tmp_path):

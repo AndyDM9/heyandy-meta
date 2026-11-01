@@ -13,7 +13,8 @@ def test_each_sound_is_short_clean_and_below_andys_voice(name):
     assert abs(s[0]) < 1e-3 and abs(s[-1]) < 1e-3  # no click at either end
     assert 0.15 <= np.max(np.abs(s)) <= 0.45  # under Andy's voice, which peaks near 0.89
     spec, f = np.abs(np.fft.rfft(s)), np.fft.rfftfreq(len(s), 1 / RATE)
-    assert spec[f > 4000].sum() / spec.sum() < 0.06  # warm, not shrill, on a small speaker
+    # warm, not shrill, on a small speaker; filming's clap is high on purpose (a camera's mark, played once a take)
+    assert spec[f > 4000].sum() / spec.sum() < (0.15 if name == "clap" else 0.06)
     loudest = f[np.argmax(spec)]
     assert any(abs(loudest - NOTE[n]) < 8 for n, *_ in SOUNDS[name][0])  # the tune is what sounds
 

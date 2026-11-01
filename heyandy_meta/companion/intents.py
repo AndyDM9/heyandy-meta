@@ -63,6 +63,11 @@ TELL = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:remember(?: that)?\W+)?(?:i
                   r"(?:is|are|'s|'re) (?:now |kept |always )?" + _WHERE.replace("where", "where2") + r"\W*$", re.I)
 NOT_THINGS = {"kids", "children", "child", "baby", "dog", "cat", "husband", "wife", "mom", "dad", "mum", "kettle", "tv",
               "heating", "oven", "washing", "dishwasher", "car", "light", "lights", "music", "radio", "it", "them", "that"}
+# filming (app.py film): "we're filming", "take two" (a clap to sync to), "cut", "that's a wrap"
+FILM_ON = re.compile(r"\b(?:we'?re|we are|i'?m|i am) (?:about to |going to )?(?:start )?filming\b|\b(?:start|turn on) filming(?: mode)?\b|\bfilming mode\b", re.I)
+TAKE = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?(?:take (?P<n>one|two|three|four|five|six|seven|eight|nine|ten|\d{1,2})|next take|new take)\b(?:\W+(?:and )?action)?\W*$", re.I)
+CUT = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?cut\W*$", re.I)
+FILM_OFF = re.compile(r"\bthat'?s a wrap\b|\b(?:stop|done|finished|end) filming\b|\bwe'?re done filming\b|\bfilming (?:is )?over\b", re.I)
 # "show me under the hood": the TV's /hood page (screen/hood.py)
 HOOD = re.compile(r"\bunder the hood\b|\bhow (?:did|do) you (?:do|find) (?:that|it)\b|\bshow me (?:the|your) (?:timings|workings|insides)\b|"
                   r"\bhow fast (?:are|were) you\b|\bdebajo del cap[oó]\b", re.I)
@@ -170,7 +175,7 @@ DAILY = re.compile(r"\b(?:every day|every morning|every evening|every night|dail
 
 @dataclass(frozen=True)
 class Intent:
-    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | tell | self_check | hood | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
+    kind: str  # calling | setup | pair_phone | forget_phones | story | usual | room | time | quiet | unquiet | motion | voice | last_seen | find | follow | guide | sound | home_set | home_check | home_where | home_forget | tell | self_check | hood | film_on | take | cut | film_off | lost_done | lost_list | watch | forget | remember | reminders | remind | game | pointing | going_out | things_map | web | mine | describe | draw | help | world
     #            | chat
     thing: str = ""
     text: str = ""  # a reminder's words, or the original request
@@ -299,6 +304,11 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         said = {"cell": "phone", "cell phone": "phone", "cellphone": "phone", "mobile": "phone", "mobile phone": "phone",
                 "teléfono": "phone", "telefono": "phone", "celular": "phone", "móvil": "phone", "movil": "phone"}.get(said.lower(), said)
         return Intent("sound", thing="phone" if said in IT else snap(said), text=t)
+    for kind, rx in (("film_off", FILM_OFF), ("film_on", FILM_ON), ("take", TAKE), ("cut", CUT)):
+        if m := rx.search(t):
+            n = m.groupdict().get("n") if kind == "take" else None
+            words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+            return Intent(kind, thing=str(words.get(n.lower(), n)) if n and not n.isdigit() else (n or ""), text=t)
     if HOOD.search(t):
         return Intent("hood", text=t)
     if SELF_CHECK.search(t):

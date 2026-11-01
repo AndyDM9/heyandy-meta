@@ -1,0 +1,147 @@
+{
+ "when": "2026-10-31 21:12",
+ "film_on": "I'm Andy, an AI robot. Filming mode: my own initiatives wait until you're done, so nothing interrupts a take. Say 'take one' and I'll clap to mark it.",
+ "takes": [
+  {
+   "take": 1,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.766,
+   "match": 0.24,
+   "flash": 1
+  },
+  {
+   "take": 2,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.669,
+   "match": 0.29,
+   "flash": 2
+  },
+  {
+   "take": 3,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.631,
+   "match": 0.45,
+   "flash": 3
+  },
+  {
+   "take": 4,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.683,
+   "match": 0.33,
+   "flash": 4
+  },
+  {
+   "take": 5,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.657,
+   "match": 0.37,
+   "flash": 5
+  },
+  {
+   "take": 6,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.665,
+   "match": 0.44,
+   "flash": 6
+  },
+  {
+   "take": 7,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.654,
+   "match": 0.56,
+   "flash": 7
+  },
+  {
+   "take": 8,
+   "said": "",
+   "turn_s": 0.3,
+   "heard": true,
+   "heard_after_sent_s": 0.52,
+   "match": 0.36,
+   "flash": 8
+  }
+ ],
+ "cut": "Cut: take 8, 2 seconds.",
+ "wrap": "That's a wrap: 8 takes, listed in film/takes.json. I'm back to my usual self.",
+ "heard": 8,
+ "of": 8,
+ "log": {
+  "sessions": [
+   {
+    "since": 1793495506.6883793,
+    "takes": [
+     {
+      "take": 1,
+      "clap": 1793495517.366,
+      "heard": true,
+      "seconds": null,
+      "match": 0.24
+     },
+     {
+      "take": 2,
+      "clap": 1793495520.568,
+      "heard": true,
+      "seconds": null,
+      "match": 0.29
+     },
+     {
+      "take": 3,
+      "clap": 1793495523.828,
+      "heard": true,
+      "seconds": null,
+      "match": 0.45
+     },
+     {
+      "take": 4,
+      "clap": 1793495527.179,
+      "heard": true,
+      "seconds": null,
+      "match": 0.33
+     },
+     {
+      "take": 5,
+      "clap": 1793495530.451,
+      "heard": true,
+      "seconds": null,
+      "match": 0.37
+     },
+     {
+      "take": 6,
+      "clap": 1793495533.758,
+      "heard": true,
+      "seconds": null,
+      "match": 0.44
+     },
+     {
+      "take": 7,
+      "clap": 1793495537.045,
+      "heard": true,
+      "seconds": null,
+      "match": 0.56
+     },
+     {
+      "take": 8,
+      "clap": 1793495540.21,
+      "heard": true,
+      "seconds": 2.8,
+      "match": 0.36
+     }
+    ]
+   }
+  ]
+ }
+}

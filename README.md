@@ -330,6 +330,12 @@ daemon (`heyandy-robot`) and Andy itself (`heyandy-app`). Before a demo, `script
 answers (about a minute, no camera). Muse Spark is used when `MODEL_API_KEY` is set in `~/.config/heyandy-meta/env`
 (chmod 600) and `HEYANDY_PAID_CALLS=1`; spend stops at a hard cap of $140.
 
+**Filming Andy:** say "Hey Andy, we're filming". Andy keeps its own initiatives for after (reminders still come), and
+each "take one" gets a clap: two quick high notes, timed by Andy's own microphones, and a "TAKE 1" flash on the TV.
+`scripts/make_film.py sync` then finds the clap in the camera's sound and lines the TV's recording up on it, and
+"that's a wrap" ends it. (On the robot, the speaker plays a sound 0.52 to 0.77 s after it's sent, so it's timed by ear;
+`evals/results/filming-20261031-2112.json`, 8 of 8 claps heard.) The steps: `docs/demo-script.md`.
+
 ## Layout
 ```
 heyandy_meta/app.py        one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it

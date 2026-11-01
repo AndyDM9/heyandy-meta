@@ -112,23 +112,34 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    a keyboard.
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Hey Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
-   each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/take1.webm --room-is-staged`
-   (once beforehand: `uv run --with playwright playwright install ffmpeg`). Line it up with the camera footage in the
-   edit: Andy's first word is an easy sync point.
-5. **Takes,** in the storyboard's order. Speak at a normal distance, start with "Andy", and wait for Andy to finish.
+   each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/tv-take1.webm --room-is-staged`
+   (once beforehand: `uv run --with playwright playwright install ffmpeg`). It writes `film/tv-take1.json` beside it:
+   when it started, for step 8's sync.
+5. **"Hey Andy, we're filming."** Filming mode: Andy's own initiatives wait until "that's a wrap" (no glancing round
+   for watched things, no evening home check, no holding still to notice, no offers to keep an eye on things), and the
+   TV never turns into Andy's face mid-take. Reminders still come, because they were asked for.
+6. **Takes,** in the storyboard's order. Cameras rolling, then say **"take one"** ("take two", "next take"): Andy says
+   nothing, plays two quick high notes (the clap), and the TV flashes "TAKE 1" for under a second. That's the mark
+   step 8 lines everything up on; Andy times the clap by its own microphones and writes it to `film/takes.json`. Then
+   the take: speak at a normal distance, start with "Andy", and wait for Andy to finish. **"Cut"** and Andy says how long
+   the take ran.
    Something goes wrong: "Hey Andy, stop", then the next take; if Andy stops answering, restart it (step 1's command, 20 s)
    and run the preflight again.
-6. **Between takes:** nothing to delete on this computer (Andy keeps no pictures or audio); `film/` is never committed.
+   **"That's a wrap"** at the end: Andy is its usual self again.
+7. **Between takes:** nothing to delete on this computer (Andy keeps no pictures or audio); `film/` is never committed.
    Keep every take that's used, uncut, for the "autonomous · uncut · 1× speed" badge.
-7. **After a good take** (a minute each, all on this computer): captions from Andy's own hearing, read and corrected by
-   hand, then the piece with the captions and the badge burned in, the robot and the TV side by side:
+8. **After a good take** (a minute each, all on this computer): the sync, captions from Andy's own hearing, read and
+   corrected by hand, then the piece with the captions and the badge burned in, the robot and the TV side by side:
    ```bash
+   uv run python scripts/make_film.py sync film/take1.mp4 --tv film/tv-take1.webm   # finds the clap; prints the burn line
    uv run python scripts/make_film.py captions film/take1.mp4          # -> film/take1.srt; fix any wrong word
-   uv run python scripts/make_film.py burn film/take1.mp4 --tv film/tv-take1.webm --tv-offset 0.8 --out film/find.mp4
+   uv run python scripts/make_film.py burn film/take1.mp4 --tv film/tv-take1.webm --tv-offset 4.31 --start 7.9 --out film/find.mp4
    uv run python scripts/make_film.py burn film/take1.mp4 --start 12 --end 42 --shape vertical --out film/x-clip.mp4
    ```
-   `--tv-offset` is the second of the TV recording that matches the take's first frame. A piece across a time cut gets
-   its own badge: `--badge "autonomous · 1× speed · two minutes later"`.
+   `sync` hears the clap in the camera's sound, reads when Andy heard it and when the TV recording started, and prints
+   the burn command with `--tv-offset` (the TV recording's second at the take's first frame) and a `--start` just after
+   the clap and the flash, so the piece starts clean. It also checks the TV's own flash is where it should be in its
+   recording. A piece across a time cut gets its own badge: `--badge "autonomous · 1× speed · two minutes later"`.
 
 **Rules for filming:** no Meta logos; no music we don't own; subtitles burned in; no condition names and no health,
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never

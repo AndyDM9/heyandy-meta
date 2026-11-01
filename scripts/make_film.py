@@ -3,13 +3,18 @@
 Everything runs on this computer: the captions come from Andy's own hearing (Omnilingual ASR, the heyandy-voice
 service), and nothing is uploaded. Takes and what's made from them go in film/ (git-ignored).
 
+    uv run python scripts/make_film.py sync film/take1.mp4 --tv film/tv-take1.webm   # where the TV lines up
     uv run python scripts/make_film.py captions film/take1.mp4        # -> film/take1.srt: read it, fix any word
     uv run python scripts/make_film.py burn film/take1.mp4 --tv film/tv-take1.webm --tv-offset 0.8 --out film/find.mp4
     uv run python scripts/make_film.py burn film/take1.mp4 --start 12 --end 42 --shape square --out film/x-clip.mp4
 
 One take in, one piece out, so the badge ("autonomous · uncut · 1× speed") is true by construction. A piece across a
 time cut (the reminder, two minutes later) says so: --badge "autonomous · 1× speed · two minutes later".
---tv-offset is the second of the TV recording that matches the take's first frame (Andy's first word is an easy mark).
+--tv-offset is the second of the TV recording that matches the take's first frame. sync finds it: in filming mode
+("Hey Andy, we're filming", then "take one") Andy claps (two short notes) and writes the clap's time to
+film/takes.json; sync hears the clap in the camera's sound and reads when the TV recording started (record_tv.py's
+.json), so the offset is measured, not guessed; it checks it against the TV's own "TAKE n" flash in its recording, and
+prints the burn command, starting just after the clap so the piece starts clean.
 Needs an ffmpeg with the subtitles and drawtext filters (Ubuntu's /usr/bin/ffmpeg has them; set FFMPEG otherwise).
 """
 import argparse
@@ -65,6 +70,45 @@ def speech_spans(samples: np.ndarray, rate: int = RATE, gap_s: float = 0.45, lon
         k = int(np.ceil((b - a) / longest_s))
         pieces += [(round(a + (b - a) * j / k, 2), round(a + (b - a) * (j + 1) / k, 2)) for j in range(k)]
     return pieces
+
+
+def find_clap(samples: np.ndarray) -> list[tuple[float, float]]:
+    """Where Andy's clap is in a take's sound: (seconds, match 0 to 1), the best three (heyandy_meta/voice/earcons.py)."""
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from heyandy_meta.voice.earcons import RATE as EARCON_RATE, find
+
+    assert EARCON_RATE == RATE
+    return find(samples, "clap")
+
+
+def flashes(video: Path, fps: int = 25) -> list[float]:
+    """When the TV recording shows a "TAKE n" flash: the seconds where the whole screen turns to its inverse (each
+    frame's mean brightness, from 16 by 9 grey pixels, far from the recording's usual)."""
+    raw = subprocess.run([FFMPEG, "-v", "error", "-i", str(video), "-vf", f"fps={fps},scale=16:9,format=gray",
+                          "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+    means = np.frombuffer(raw, np.uint8).reshape(-1, 144).mean(axis=1)
+    if not len(means):
+        return []
+    away = np.abs(means - np.median(means)) > 90
+    return [round(i / fps, 2) for i in range(len(away)) if away[i] and (i == 0 or not away[i - 1])]
+
+
+def sync(take_sound: np.ndarray, clap_wall: float, tv_started: float, tv_flashes: list[float] | None = None) -> dict:
+    """The take's clap, lined up with the TV recording: the TV's second at the take's first frame (--tv-offset), and
+    where to start the piece (just after the clap and the TV's flash)."""
+    found = find_clap(take_sound)
+    if not found:
+        return {"error": "no clap in the take's sound"}
+    at, match = found[0]
+    sure = round(1 - (found[1][1] / match if len(found) > 1 else 0.0), 2)  # how far it stands above the next best
+    tv_clap = clap_wall - tv_started  # the TV recording's second when Andy clapped
+    out = {"clap": at, "match": match, "sure": sure, "tv_offset": round(tv_clap - at, 2), "start": round(max(at + 1.2, at - tv_clap + 0.1), 2)}
+    if tv_flashes is not None:  # the TV's own flash: as the clap is sent, give or take a poll (the page asks every 0.4 s)
+        near = [f - tv_clap for f in tv_flashes if -1.0 <= f - tv_clap <= 2.0]
+        out["flash_after_clap"] = round(near[0], 2) if near else None
+    return out
 
 
 def transcribe(samples: np.ndarray, url: str, language: str) -> str:
@@ -171,6 +215,11 @@ def main() -> None:
     c.add_argument("take", type=Path)
     c.add_argument("--voice-url", default="http://127.0.0.1:8092")
     c.add_argument("--language", default="eng_Latn", help="spa_Latn for a take in Spanish")
+    y = sub.add_parser("sync", help="line the TV's recording up with a take, by the clap of 'take one' (filming mode)")
+    y.add_argument("take", type=Path)
+    y.add_argument("--tv", type=Path, required=True, help="the TV page's recording (scripts/record_tv.py), its .json beside it")
+    y.add_argument("--take-number", type=int, help="which take in film/takes.json (default: the one in the TV recording)")
+    y.add_argument("--takes", type=Path, default=Path(__file__).resolve().parents[1] / "film" / "takes.json")
     b = sub.add_parser("burn", help="make a piece: captions and badge burned in, the TV beside the robot")
     b.add_argument("take", type=Path)
     b.add_argument("--out", type=Path, required=True)
@@ -182,6 +231,32 @@ def main() -> None:
     b.add_argument("--srt", type=Path, help="default: the take's own .srt, if there is one")
     b.add_argument("--badge", default=BADGE, help="'' for none")
     args = ap.parse_args()
+
+    if args.do == "sync":
+        started = json.loads(args.tv.with_suffix(".json").read_text())["started"]
+        takes = [t for session in json.loads(args.takes.read_text())["sessions"] for t in session["takes"]]
+        if args.take_number is not None:
+            takes = [t for t in takes if t["take"] == args.take_number]
+        takes = [t for t in takes if t["clap"] >= started] or takes  # clapped while the TV was recording
+        if not takes:
+            raise SystemExit(f"no take {args.take_number} in {args.takes}")
+        t = min(takes, key=lambda t: abs(t["clap"] - started))
+        r = sync(audio(args.take), t["clap"], started, flashes(args.tv))
+        if "error" in r:
+            raise SystemExit(r["error"] + ": was it filmed in filming mode, with 'take one' said on camera?")
+        print(f"take {t['take']}: the clap at {r['clap']:.2f} s in {args.take.name} (sure {r['sure']:.0%}); "
+              f"the TV recording's {t['clap'] - started:.2f} s")
+        if r.get("flash_after_clap") is not None:  # the flash shows as the clap is sent; the speaker plays it ~0.65 s later
+            x = r["flash_after_clap"]
+            print(f"  checked: the TV's own flash is in its recording {abs(x):.2f} s {'before' if x < 0 else 'after'} the clap "
+                  f"(expected within a second{'' if t.get('heard') else ': this clap was timed when sent, not heard'})")
+        elif "flash_after_clap" in r:
+            print("  the TV's flash isn't in its recording near the clap: was it recording then?")
+        if r["sure"] < 0.3:
+            print("  not sure: listen at that second for the two notes before using it")
+        print(f"\n  uv run python scripts/make_film.py burn {args.take} --tv {args.tv} --tv-offset {r['tv_offset']} "
+              f"--start {r['start']} --out film/take{t['take']}.mp4")
+        return
 
     if args.do == "captions":
         sound = audio(args.take)

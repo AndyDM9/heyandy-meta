@@ -4,7 +4,7 @@ from heyandy_meta.companion.intents import parse
 from heyandy_meta.companion.selfcheck import Part, Report, check, summary
 from heyandy_meta.robot.sim import Thing
 from heyandy_meta.screen.state import ScreenState
-from tests.test_app import andy, said
+from tests.test_app import andy
 
 
 class Service:

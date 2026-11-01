@@ -5,7 +5,8 @@
 
 For filming in the staged room only: the recording keeps whatever the TV shows (the found picture, captions). It
 drives a browser already open for automation (Chrome with --remote-debugging-port, default 9333), or starts a
-headless one if none is there. Nothing is uploaded.
+headless one if none is there. Nothing is uploaded. Beside the video, <out>.json says when the recording started (this
+computer's clock), so make_film.py sync can line it up with a take's clap ("take two", in filming mode).
 """
 import argparse
 import json
@@ -43,6 +44,7 @@ def main() -> None:
         ctx = browser.new_context(viewport={"width": 1920, "height": 1080},
                                   record_video_dir=str(tmp), record_video_size={"width": 1920, "height": 1080})
         page = ctx.new_page()
+        started = time.time()  # the recording's first frame, near enough (it starts with the page)
         page.goto(args.url)
         print(f"recording {args.url} for {args.seconds:.0f} s ...")
         start = time.monotonic()
@@ -53,6 +55,7 @@ def main() -> None:
         browser.close()
     shutil.move(video, out)
     shutil.rmtree(tmp, ignore_errors=True)
+    out.with_suffix(".json").write_text(json.dumps({"started": round(started, 3), "url": args.url}))
     print("saved", out)
 
 

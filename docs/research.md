@@ -1046,3 +1046,30 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   then 0.78 s; MapAnything, then 0.21 s; SeamlessM4T v2 speaking, counting up; and, while it spoke, SAM 3.1 running again
   for the aim check (section 50).
 
+## 52. Filming mode: the takes, and a clap to line them up on (2026-10-31)
+
+- **Why:** the demo is 25% of the score and the organizers want the end-to-end flow on camera with the models' calls
+  visible (section 51), so the film is the robot and the TV side by side. Filming day had three snags. Andy's own
+  initiatives (a glance round for watched things, the 9 PM home check, the lost-things look, holding still to notice,
+  "shall I keep an eye on it?") could break into a take. The TV turned into Andy's face after a quiet minute. And
+  the TV's recording had to be lined up with the camera by eye ("Andy's first word is an easy mark").
+- **Built:** "Hey Andy, we're filming" (`film_on`): those initiatives wait until "that's a wrap" and the TV stays
+  awake; reminders still come, because they were asked for. "Take two" / "next take" (`take`) says nothing, so the take
+  starts clean. It plays the clap (two 0.1 s notes on A6, 1760 Hz, a pitch no other sound of Andy's has, even in its
+  overtones; a test checks it), flashes "TAKE 2" full screen on the TV in its colours inverted, and logs the take in
+  `film/takes.json`. "Cut" says how long it ran. `record_tv.py` writes when its recording started.
+  `make_film.py sync` finds the clap in the camera's sound with a normalised cross-correlation around the clap's
+  pitch (`earcons.find`), takes the TV's second at the clap from the two clocks, checks the TV's own flash is there in
+  its recording, and prints the burn command, starting just after the clap.
+- **Measured on the robot:** the speaker played the clap **0.52 to 0.77 s after it was sent** (8 takes,
+  `evals/results/filming-20261031-2112.json`). Logging the time it was sent would have put the TV about two thirds of a
+  second out. So Andy times it by ear: the robot keeps its microphones' last 8 s, its own sounds included, and the samples' wall time is
+  the least delayed arrival less the samples before it (arrivals were steady to 2 to 4 ms in a 15 s recording). All 8
+  claps were found (match 0.24 to 0.56; the array damps what the robot itself plays, which a camera's microphone
+  won't), and each take's turn took 0.3 s, so the words after "take one" aren't missed. A first run timed the whole
+  8 s window at once and put one clap 0.05 s *before* it was sent: samples lost earlier in the window shift
+  everything after them. It's timed from the pulls near the clap now, and that run was dropped.
+- **Checked on the page:** the TV recorded headless with a flash 3.05 s in; `make_film.flashes` found it at 3.16 s
+  (the page asks every 0.4 s). In synthetic rooms (noise, a voice, every other earcon, an echo), the clap is found to
+  within 20 ms down to quieter than the room (match ≥ 0.82, next best ≤ 0.39).
+- **Not yet:** a real camera's take, which is for filming day.

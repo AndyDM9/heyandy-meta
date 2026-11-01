@@ -15,6 +15,7 @@ import struct
 import threading
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from openai import APIError
 
@@ -123,6 +124,8 @@ class Andy:
         self._background = False  # a search Andy started itself (lost and found): no "Let me look", no "oops"
         self._no_promise = False  # a search for setting a home: if it misses, no "I'll keep looking"
         self._home_checked = None  # the day of the last evening home check
+        self.filming: dict | None = None  # filming mode: {"since", "takes": [{"take", "clap", "seconds"}]}; Andy's own initiatives wait
+        self.film_log = Path(__file__).resolve().parents[1] / "film" / "takes.json"  # git-ignored, beside the takes
         self.ear = None  # what the microphones heard lately, as numbers (companion/sound.py Ear); on the robot only
         self._by_sound: float | bool = False  # a search by sound: the yaw it rang at (look only near it, no memory)
         self.screen.online = self.online
@@ -367,6 +370,8 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind in ("film_on", "take", "cut", "film_off"):
+            return self.film(i.kind, i.thing)
         if i.kind == "hood":
             self.screen.show_hood()
             self._source, self._reason = "device", "every turn timed on this computer: numbers only"
@@ -726,7 +731,7 @@ class Andy:
         now = self.clock()
         entry = asked.setdefault(thing, {"at": [], "offered": 0.0})
         entry["at"] = [t for t in entry["at"] if now - t <= within_s] + [now]
-        offer = (len(entry["at"]) >= times and thing not in self.places.watching()
+        offer = (not self.filming and len(entry["at"]) >= times and thing not in self.places.watching()
                  and now - entry["offered"] > within_s)
         if offer:
             entry["offered"] = now
@@ -902,6 +907,76 @@ class Andy:
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
 
+    def film(self, kind: str, number: str = "") -> str:
+        """Filming mode, for the demo's takes. "We're filming": Andy's own initiatives wait (looking around for watched or
+        lost things, the evening home check, holding still to notice, offers to keep an eye on things), the TV stays
+        awake; reminders still come, as they were asked for. "Take two": no words (the take starts clean) but a clap,
+        the TV flashing "TAKE 2", and its exact time written to film/takes.json, so make_film.py sync can line the TV's
+        recording up with the camera. "Cut" says how long the take ran; "that's a wrap" ends it."""
+        now = time.time()
+        if kind == "film_on" or (self.filming is None and kind == "take"):
+            self.filming = self.filming or {"since": now, "takes": []}
+            self.screen.filming(True)
+            if kind == "film_on":
+                return ("Filming mode: my own initiatives wait until you're done, so nothing interrupts a take. Say 'take "
+                        "one' and I'll clap to mark it.")
+        if self.filming is None:
+            return "We're not filming. Say 'we're filming' first."
+        takes = self.filming["takes"]
+        if kind == "take":
+            n = int(number) if number.isdigit() else (takes[-1]["take"] + 1 if takes else 1)
+            self.screen.flash(f"TAKE {n}")
+            take = {"take": n, "clap": round(time.time(), 3), "heard": False, "seconds": None}
+            c = getattr(self.body, "chime", None)
+            if c:
+                c("clap")  # even when sounds are off: it's the mark the edit lines up on
+            takes.append(take)
+            self._film_save()
+            if hasattr(self.body, "heard_lately"):  # when it came out of the speaker, by Andy's own ears, meanwhile
+                threading.Thread(target=self._clap_heard, args=(take, self.filming), daemon=True).start()
+            return ""  # nothing said: the take starts clean
+        if kind == "cut":
+            if not takes or takes[-1]["seconds"] is not None:
+                return "Cut, but no take was running. Say 'take one' to start one."
+            t = takes[-1]
+            t["seconds"] = round(now - t["clap"], 1)
+            self._film_save()
+            m, sec = divmod(int(t["seconds"]), 60)
+            return f"Cut: take {t['take']}, {f'{m} minute{chr(115) * (m != 1)} ' if m else ''}{sec} second{'s' * (sec != 1)}."
+        n = len(takes)
+        self.filming = None
+        self.screen.filming(False)
+        return (f"That's a wrap: {n} take{'s' * (n != 1)}, listed in film/takes.json. I'm back to my usual self."
+                if n else "That's a wrap. I'm back to my usual self.")
+
+    def _clap_heard(self, take: dict, session: dict, wait_s: float = 2.0) -> None:
+        """The clap's time as Andy's microphones heard it: the speaker starts a sound about two thirds of a second after
+        it's sent (0.52 to 0.77 s on the robot, evals/filming.py), too late to line a recording up on the time it was
+        sent. Found in the microphones' last few seconds, within 1.5 s of being sent."""
+        from .voice.earcons import RATE, find, sound
+
+        time.sleep(wait_s)
+        samples, start = self.body.heard_lately(around=take["clap"])
+        if samples is None:
+            return
+        a = int((take["clap"] - start - 0.2) * RATE)
+        if a < 0:
+            return
+        found = find(samples[a: a + int(1.7 * RATE) + len(sound("clap"))], "clap")
+        if found and found[0][1] >= 0.15:  # on the robot its own clap matches 0.24 to 0.56 (its microphones damp what it plays)
+            take["clap"], take["heard"], take["match"] = round(start + a / RATE + found[0][0], 3), True, found[0][1]
+            self._film_save(session)
+
+    def _film_save(self, session: dict | None = None) -> None:
+        session = session or self.filming
+        try:
+            self.film_log.parent.mkdir(parents=True, exist_ok=True)
+            log = json.loads(self.film_log.read_text()) if self.film_log.exists() else {"sessions": []}
+            log["sessions"] = [s for s in log["sessions"] if s["since"] != session["since"]] + [session]
+            self.film_log.write_text(json.dumps(log, indent=1))
+        except (OSError, ValueError):
+            pass  # the takes still happened; only the list is missing
+
     def _services(self) -> list[dict]:
         """For /hood: each local service and whether it answers, at most every 5 s (the page asks every second)."""
         from .companion.selfcheck import ping
@@ -1067,7 +1142,7 @@ class Andy:
         floor = self.ear.floor()  # the room's own noise, from the last few seconds, before it rings
         self._stop_following.clear()
         self.following = True  # the face tracker leaves the head alone while it turns to the sound
-        self.say(f"Ring it now, and I'll turn to the sound." if thing in RINGS else
+        self.say("Ring it now, and I'll turn to the sound." if thing in RINGS else
                  f"Make your {thing} beep now, and I'll turn to the sound.")
         self.screen.listening(thing, [], None)
         self.gesture("searching")  # still: the motors mustn't be what it hears
@@ -1949,7 +2024,7 @@ class Andy:
         is set if a turn (or a reminder, or a glance) interrupts the clip."""
         motion = getattr(self.body, "motion", None)
         with self._notice_lock:
-            if motion is None or not self.lock.acquire(blocking=False):
+            if motion is None or self.filming or not self.lock.acquire(blocking=False):
                 return None
             try:
                 if motion.mode != "idle":
@@ -2059,6 +2134,9 @@ class Andy:
             self.reminders.deliver(r, (lambda: True) if self.quiet() else self._find_person,
                                    lambda words: (self.chime("reminder", even_when_quiet=True),
                                                   self.say(self.disclosure.prefix() + words)), now)
+        if self.filming:  # a take mustn't be interrupted: only reminders (asked for) come
+            self.refresh_panels()
+            return
         if not self.quiet() and self.places.watching() and now - self._last_glance >= GLANCE_EVERY_S:
             self._last_glance = now
             self.interrupt_noticing()

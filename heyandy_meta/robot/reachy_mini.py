@@ -13,6 +13,7 @@ import math
 import struct
 import threading
 import time
+from collections import deque
 
 from .body import Frame, Reach
 from .motion import Motion, Pose
@@ -71,6 +72,8 @@ class ReachyBody:
         self._moving = threading.RLock()  # one sender at a time: a move, or the body-language loop
         self._gaze: tuple[float, float] | None = None  # a direction to ease the head towards (the person's face)
         self._stop = threading.Event()
+        self._raw: deque = deque()  # the microphones' last 8 s, even while Andy speaks: (arrival, samples end, samples)
+        self._raw_n = 0
         if alive and self._full_pose is not None:
             threading.Thread(target=self._live, daemon=True, name="body-language").start()
 
@@ -256,6 +259,22 @@ class ReachyBody:
                 self.motion.set_mode("idle" if before in ("speaking", "listening") else before)
             self._quiet_until = time.monotonic() + 0.4  # the room's echo of Andy's own voice
 
+    def heard_lately(self, around: float | None = None, rate: int = 16000):
+        """The microphones' last few seconds, Andy's own sounds included, and the wall-clock time of their first sample
+        (None if not listening). The speaker starts a sound about two thirds of a second after it's sent (0.52 to
+        0.77 s, eight claps on this robot, evals/filming.py), but the microphones' samples arrive steadily (to 2 to 4 ms), so a sound's time is better read from here: each
+        pull's arrival less the samples before it, the least delayed of them, is when the samples start. Only the pulls
+        within a few seconds of `around` (a wall-clock time) are used, so samples lost earlier don't shift it."""
+        import numpy as np
+
+        raw = list(self._raw)
+        if not raw:
+            return None, None
+        start_n = raw[0][1] - len(raw[0][2])
+        near = [r for r in raw if around is None or around - 1.0 <= r[0] <= around + 3.0] or raw
+        start = min(arrival - (end - start_n) / rate for arrival, end, _ in near)
+        return np.concatenate([r[2] for r in raw]), start
+
     def listen(self, stop, poll_s: float = 0.02):
         """Yield (mono samples, speech detected, direction of the voice as a yaw) until ``stop`` is set.
 
@@ -273,9 +292,15 @@ class ReachyBody:
                 # Each pull waits up to 20 ms and 10 ms chunks keep arriving, so take about 100 ms at a time.
                 while len(chunks) < 10 and (c := media.get_audio_sample()) is not None:
                     chunks.append(c)
+                if chunks:  # kept a few seconds for heard_lately (filming's clap), never stored
+                    raw = np.concatenate(chunks)
+                    raw = raw.mean(axis=1) if raw.ndim == 2 else raw
+                    self._raw_n += len(raw)
+                    self._raw.append((time.time(), self._raw_n, raw))
+                    while self._raw and self._raw[0][1] < self._raw_n - 8 * 16000:
+                        self._raw.popleft()
                 if chunks and not getattr(self, "speaking", False) and time.monotonic() >= getattr(self, "_quiet_until", 0):
-                    audio = np.concatenate(chunks)
-                    mono = audio.mean(axis=1) if audio.ndim == 2 else audio
+                    mono = raw
                     doa = media.get_DoA()
                     flag = bool(doa and doa[1])
                     yaw = self.yaw + 90.0 - math.degrees(doa[0]) if flag else None

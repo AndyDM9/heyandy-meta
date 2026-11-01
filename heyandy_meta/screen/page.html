@@ -374,6 +374,13 @@
   #ambient .notes b { font-weight: 750; }
   @keyframes breathe { 50% { transform: scale(1.025) translateY(-0.4rem); } }
   @media (prefers-reduced-motion: reduce) { #ambient .face { animation: none; } #ambient .eyes { transition: none; } }
+  /* Filming (app.py film): "take two" flashes the whole TV, the page's colours inverted, for a moment: the take's mark,
+     seen on set and in the TV's own recording (make_film.py sync checks the recording against it). */
+  #flash { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 30; display: grid; place-items: center;
+           background: var(--ink); color: var(--bg2); font: 800 22vmin/1 "Atkinson Next", sans-serif; letter-spacing: -0.03em;
+           opacity: 0; pointer-events: none; }
+  #flash.on { animation: flash 0.9s linear forwards; }
+  @keyframes flash { 0%, 55% { opacity: 1; } 100% { opacity: 0; } }
 
   /* Story mode (the public demo only): a one-minute guided film of Andy's TV, chapter by chapter, then a call to act */
   #story { position: fixed; top: 0; left: 0; right: 0; z-index: 7; padding: 1.3rem 5rem 1.4rem; color: #F5F3EF;
@@ -539,6 +546,7 @@
   <button type="button" role="menuitem" id="m-help"><b>What can I ask?</b><span>Things to say to Andy</span></button>
   <p>Say <b>“Hey Andy, are you OK?”</b> and Andy checks itself.</p>
 </div>
+<div id="flash" aria-hidden="true"></div>
 <div id="ambient" aria-hidden="true"><div class="in">
   <svg class="face" viewBox="0 0 380 210"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
     <g class="eyes"><ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></g></svg>
@@ -570,7 +578,7 @@
   const TRY = ["“Hey Andy, where are my glasses?”", "“Hey Andy, keep an eye on my keys.”", "“Hey Andy, remind me at 3 pm to call Sam.”",
                "“Hey Andy, draw me a picture of a cat in a sunny garden.”", "“Hey Andy, what am I holding?”", "“Hey Andy, let's play the cup game.”", "“Hey Andy, this is my mug.”", "“Hey Andy, show me the weather radar on the TV.”",
                "“Hey Andy, the blue mug, next to the laptop.”", "“Hey Andy, what do you remember?”", "“Hey Andy, what did you send to the cloud today?”", "“Hey Andy, what can I ask?”"];
-  let lastCaption = "", captionAt = 0, pictureKey = "", helpUntil = 0, revealedShot = "";
+  let lastCaption = "", captionAt = 0, pictureKey = "", helpUntil = 0, revealedShot = "", flashed = 0;
   // Settings: a gear, top right, for a mouse or a TV remote (Tab, Enter, Escape). Under the hood is its own page.
   const hoodUrl = () => (window.HEYANDY_STATIC ? "hood.html" : "hood");
   function menu(open) {
@@ -1520,7 +1528,8 @@
   function ambient(s) {
     const quiet = s.state === "Waiting" && !s.picture && !s.drawing && !s.web && !s.room && !s.timeline && !s.pairing && !s.setup && !s.checklist && !s.privacy
                   && !s.memory && !s.running && !s.help && !s.game && !(s.caption && Date.now() - captionAt < 12000);
-    if (!quiet || story || document.getElementById("end") || (scenes && !forceAmbient)) quietSince = Date.now();
+    // while filming, the TV stays on what Andy did (a quiet minute in a take isn't the end of it)
+    if (!quiet || story || document.getElementById("end") || (scenes && !forceAmbient) || (s.filming && !forceAmbient)) quietSince = Date.now();
     const on = forceAmbient ? quiet || !!scenes : Date.now() - quietSince > AMBIENT_AFTER_MS;
     document.body.classList.toggle("ambient", on);
     if (!on) return;
@@ -1581,6 +1590,11 @@
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
     $("help").hidden = !(s.help || Date.now() < helpUntil);
     if (s.hood && !window.HEYANDY_STATIC) location.href = "hood?from=andy";  // "show me under the hood", by voice
+    if (s.flash && s.flash.v !== flashed) {  // "take two": the mark, once
+      flashed = s.flash.v;
+      const f = $("flash");
+      f.textContent = s.flash.text; f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
+    }
     fitAll();
     ambient(s);
     if (s.demo && !scenes) {  // the public demo: the story first, unless a link asked for one scene
