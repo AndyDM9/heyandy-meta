@@ -8,6 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - run: uv sync --extra dev --locked
+      - run: uv sync --extra dev --extra browse --locked
+      # the TV page in a real browser (tests/test_page_runs.py and the eyes pages): they caught a page that stopped
+      # drawing in Chinese, and skip without a browser
+      - run: uv run playwright install --with-deps chromium
       - run: uv run pytest -q
       - run: uv run ruff check heyandy_meta tests scripts evals local apps
