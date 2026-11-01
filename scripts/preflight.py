@@ -178,11 +178,15 @@ def main() -> None:
 
     @check("GPU memory for the cup game")
     def _():
-        out = subprocess.run(["nvidia-smi", "--query-gpu=index,memory.used,memory.total", "--format=csv,noheader,nounits"],
-                             capture_output=True, text=True).stdout.strip().splitlines()
-        gpu1 = next(line for line in out if line.startswith("1,"))
-        used, total = (int(x) for x in gpu1.split(",")[1:])
-        free = (total - used) / 1024
+        for _ in range(4):  # just after Andy starts, its first looks hold GPU 1 for a few seconds: look again first
+            out = subprocess.run(["nvidia-smi", "--query-gpu=index,memory.used,memory.total", "--format=csv,noheader,nounits"],
+                                 capture_output=True, text=True).stdout.strip().splitlines()
+            gpu1 = next(line for line in out if line.startswith("1,"))
+            used, total = (int(x) for x in gpu1.split(",")[1:])
+            free = (total - used) / 1024
+            if free >= 4:
+                break
+            time.sleep(10)
         if free < 4:
             raise RuntimeError(f"GPU 1 has {free:.1f} GB free; tracking needs about 2.7 GB more (detection batch 2)")
         return f"GPU 1: {free:.1f} GB free"
