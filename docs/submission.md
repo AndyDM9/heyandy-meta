@@ -84,11 +84,11 @@ this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's
 
 *Search, simulated* (seeded rooms): with look-alikes described, the fixed sweep pointed at the wrong one 20 times in
 100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark 18 of 20, 1 wrong). Things behind the robot: **Glimmer 20 of 20
-in 4.0 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
+in 4.6 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12, Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
-*Languages:* Spanish **41 of 41** written requests reach the right ability, **34 of 41** said aloud and heard back;
+*Languages:* Spanish **41 of 41** written requests reach the right ability, **36 of 41** said aloud and heard back;
 thirteen more (Mandarin to Ukrainian, 104 requests) **100 and 85** on the first run, 104 and 89 with the rules it showed
 were missing.
 *Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables).

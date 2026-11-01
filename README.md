@@ -454,16 +454,17 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 
 | Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
 |---|---|---|---|
-| The thing in front | 96 found, 0 wrong | 19, 0 wrong | 19, 0 wrong |
-| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.0 looks | **18**, 0 wrong, 4.2 looks |
-| A picture of it on the TV too | 94, 0 wrong | 19, 0 wrong | 19, 0 wrong |
+| The thing in front | 96 found, 0 wrong | **20**, 0 wrong | 19, 0 wrong |
+| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.6 looks | **18**, 0 wrong, 4.2 looks |
+| A picture of it on the TV too | 94, 0 wrong | **20**, 0 wrong | 19, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
 | Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 1 wrong |
-| Planning time (model only; not counting "not there") | none | 8 to 13 s | **6 to 8 s** |
+| Planning time (model only; not counting "not there") | none | 9 to 12 s | **6 to 8 s** |
 
 Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Every
 column was rerun on October 30 on the final code, and Glimmer's again on October 31 after the search tools' colour
-fixes, with the same results (a look now counts the check after pointing; Glimmer runs without its
+fixes, with the same results, and Glimmer's once more on November 1 on the final code (20, 20, 20, 20 and 18: one
+more found in front and one more beside a TV than before; a look now counts the check after pointing; Glimmer runs without its
 drafter, so it plans more slowly; the October 28 runs are kept as `*-oct28.json`). Two rounds of fixes came from this scorecard, and the earlier runs are
 kept:
 - **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
@@ -528,10 +529,10 @@ the picture changed), "put down" 0.015.
 12; what failed and what changed is in `docs/research.md`, section 26.
 
 **Spanish** (`evals/spanish.py`, 41 requests, several ways of asking for each ability): written, 41 of 41 reach the
-right ability; said by Andy's voice (Meta's SeamlessM4T v2) and heard by Omnilingual ASR, 34 of 41 (hearing slips on the
+right ability; said by Andy's voice (Meta's SeamlessM4T v2) and heard by Omnilingual ASR, 36 of 41 (rerun November 1; hearing slips on the
 synthetic voice; 40 of 41 with the earlier non-Meta voice, before every model had to be Meta's). That's after two translation rules this scorecard showed were needed ("vaso" is a cup, and
 a question stays a question when speech-to-text drops the question marks): 38 and 37 before. Glimmer translates each in
-a median 0.49 s (at most 0.71), on the computer beside the robot.
+a median 0.46 s (at most 0.65), on the computer beside the robot.
 
 **Thirteen more languages** (`evals/languages.py`, `languages-20261101-1059`; eight everyday requests each, written by
 hand for the test): written, **100 of 104** reach the right ability (ten languages 8 of 8; Vietnamese and Italian 7,
@@ -549,7 +550,7 @@ turns pass:** none of the 24 camera pictures reached the cloud (rerun Oct 30 on 
 its receipt; every word from the home that was sent was on its turn's receipt (40 of 43 pieces word for word; the other
 3 are the person's words inside Andy's own instructions, for a picture and the web); the crisis words reached no model
 at all. 11 of the 21 turns sent nothing. With
-the network off, the same day sent nothing to the cloud, and Andy answered every turn.
+the network off, the same day sent nothing to the cloud, and Andy answered every turn (rerun November 1: 21 of 21).
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second
@@ -572,7 +573,9 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   synthetic voice slips most in Korean and Vietnamese, and a mishearing becomes some other request (never one that
   deletes or sends). The hand-written lines in each language should be read by a native speaker before a home relies on
   them; Llama Guard 3 was trained for seven of the fifteen, so in the other eight the crisis word list is the check to
-  rely on. SeamlessM4T v2 speaks 36 languages and Omnilingual ASR hears far more: another is a few hand-written lines.
+  rely on. The TV's labels in the thirteen newer languages are Glimmer's translations, made on this computer: a few
+  read awkwardly (Mandarin's "steps" came out as a procedure's). SeamlessM4T v2 speaks 36 languages and Omnilingual
+  ASR hears far more: another is a few hand-written lines.
 
 ## Licence
 Apache-2.0, for this repository's own code. **The models keep their own licences:** Muse Glimmer, SAM 3.1, MapAnything,

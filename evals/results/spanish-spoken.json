@@ -1,12 +1,12 @@
 {
  "summary": {
   "requests": 41,
-  "right": 34,
+  "right": 36,
   "spoken": true,
-  "seconds_median": 0.492,
-  "seconds_max": 0.69,
+  "seconds_median": 0.453,
+  "seconds_max": 0.637,
   "translator_failures": 0,
-  "when": "2026-10-30 19:09"
+  "when": "2026-11-01 11:12"
  },
  "rows": [
   {
@@ -16,7 +16,7 @@
    "want": "find",
    "got": "find",
    "right": true,
-   "seconds": 0.601
+   "seconds": 0.593
   },
   {
    "spanish": "¿Has visto mis llaves?",
@@ -25,7 +25,7 @@
    "want": "find",
    "got": "watch",
    "right": false,
-   "seconds": 0.496
+   "seconds": 0.444
   },
   {
    "spanish": "No encuentro el control remoto",
@@ -34,7 +34,7 @@
    "want": "find",
    "got": "find",
    "right": true,
-   "seconds": 0.508
+   "seconds": 0.446
   },
   {
    "spanish": "Busca mi cartera, por favor",
@@ -43,7 +43,7 @@
    "want": "find",
    "got": "find",
    "right": true,
-   "seconds": 0.432
+   "seconds": 0.404
   },
   {
    "spanish": "¿Dónde dejé el teléfono?",
@@ -52,7 +52,7 @@
    "want": "find",
    "got": "last_seen",
    "right": false,
-   "seconds": 0.524
+   "seconds": 0.473
   },
   {
    "spanish": "Recuérdame a las cuatro de la tarde llamar a mi hija",
@@ -61,7 +61,7 @@
    "want": "remind",
    "got": "remind",
    "right": true,
-   "seconds": 0.644
+   "seconds": 0.588
   },
   {
    "spanish": "Avísame en veinte minutos que apague el horno",
@@ -70,7 +70,7 @@
    "want": "remind",
    "got": "remind",
    "right": true,
-   "seconds": 0.69
+   "seconds": 0.601
   },
   {
    "spanish": "Recuérdame mañana a las nueve regar las plantas",
@@ -79,7 +79,7 @@
    "want": "remind",
    "got": "remind",
    "right": true,
-   "seconds": 0.681
+   "seconds": 0.637
   },
   {
    "spanish": "¿Qué recordatorios tengo?",
@@ -88,7 +88,7 @@
    "want": "reminders",
    "got": "reminders",
    "right": true,
-   "seconds": 0.492
+   "seconds": 0.453
   },
   {
    "spanish": "Vigila mis llaves",
@@ -97,7 +97,7 @@
    "want": "watch",
    "got": "watch",
    "right": true,
-   "seconds": 0.521
+   "seconds": 0.464
   },
   {
    "spanish": "No pierdas de vista mis gafas",
@@ -106,7 +106,7 @@
    "want": "watch",
    "got": "watch",
    "right": true,
-   "seconds": 0.503
+   "seconds": 0.499
   },
   {
    "spanish": "Olvida mis llaves",
@@ -115,7 +115,7 @@
    "want": "forget",
    "got": "forget",
    "right": true,
-   "seconds": 0.395
+   "seconds": 0.382
   },
   {
    "spanish": "Sigue la taza con los ojos",
@@ -124,7 +124,7 @@
    "want": "follow",
    "got": "follow",
    "right": true,
-   "seconds": 0.432
+   "seconds": 0.401
   },
   {
    "spanish": "Sigue el control remoto",
@@ -133,7 +133,7 @@
    "want": "follow",
    "got": "follow",
    "right": true,
-   "seconds": 0.441
+   "seconds": 0.408
   },
   {
    "spanish": "¿Qué tengo en la mano?",
@@ -142,7 +142,7 @@
    "want": "describe",
    "got": "describe",
    "right": true,
-   "seconds": 0.481
+   "seconds": 0.461
   },
   {
    "spanish": "¿Qué hay en la mesa?",
@@ -151,7 +151,7 @@
    "want": "describe",
    "got": "describe",
    "right": true,
-   "seconds": 0.483
+   "seconds": 0.428
   },
   {
    "spanish": "¿Qué es esto?",
@@ -160,7 +160,7 @@
    "want": "describe",
    "got": "describe",
    "right": true,
-   "seconds": 0.459
+   "seconds": 0.419
   },
   {
    "spanish": "Dibújame un gato durmiendo al sol",
@@ -169,7 +169,7 @@
    "want": "draw",
    "got": "draw",
    "right": true,
-   "seconds": 0.581
+   "seconds": 0.51
   },
   {
    "spanish": "Pinta un barco en el mar al atardecer",
@@ -178,7 +178,7 @@
    "want": "draw",
    "got": "draw",
    "right": true,
-   "seconds": 0.588
+   "seconds": 0.556
   },
   {
    "spanish": "Muéstrame el radar del tiempo en la tele",
@@ -187,7 +187,7 @@
    "want": "web",
    "got": "web",
    "right": true,
-   "seconds": 0.578
+   "seconds": 0.543
   },
   {
    "spanish": "Pon una receta de flan en la pantalla",
@@ -196,16 +196,16 @@
    "want": "web",
    "got": "web",
    "right": true,
-   "seconds": 0.587
+   "seconds": 0.537
   },
   {
    "spanish": "¿Qué tiempo hará mañana?",
    "heard": "quitiempo a la mañana",
    "english": "What time is it in the morning?",
    "want": "world",
-   "got": "chat",
-   "right": false,
-   "seconds": 0.557
+   "got": "world",
+   "right": true,
+   "seconds": 0.521
   },
   {
    "spanish": "¿A qué hora abre el banco hoy?",
@@ -214,7 +214,7 @@
    "want": "world",
    "got": "world",
    "right": true,
-   "seconds": 0.565
+   "seconds": 0.519
   },
   {
    "spanish": "Juguemos al juego de los vasos",
@@ -223,7 +223,7 @@
    "want": "game",
    "got": "game",
    "right": true,
-   "seconds": 0.474
+   "seconds": 0.438
   },
   {
    "spanish": "Vamos a jugar con los vasos",
@@ -232,7 +232,7 @@
    "want": "game",
    "got": "game",
    "right": true,
-   "seconds": 0.471
+   "seconds": 0.453
   },
   {
    "spanish": "Esta es mi taza",
@@ -241,7 +241,7 @@
    "want": "mine",
    "got": "mine",
    "right": true,
-   "seconds": 0.452
+   "seconds": 0.434
   },
   {
    "spanish": "Este es mi bolso",
@@ -250,7 +250,7 @@
    "want": "mine",
    "got": "mine",
    "right": true,
-   "seconds": 0.458
+   "seconds": 0.428
   },
   {
    "spanish": "Me voy, ¿llevo todo?",
@@ -259,7 +259,7 @@
    "want": "going_out",
    "got": "going_out",
    "right": true,
-   "seconds": 0.601
+   "seconds": 0.538
   },
   {
    "spanish": "Salgo a la tienda",
@@ -268,16 +268,16 @@
    "want": "going_out",
    "got": "chat",
    "right": false,
-   "seconds": 0.488
+   "seconds": 0.504
   },
   {
    "spanish": "¿Se me olvida algo?",
    "heard": "se me olvide algo",
-   "english": "I forgot something",
+   "english": "Am I forgetting anything?",
    "want": "going_out",
-   "got": "chat",
-   "right": false,
-   "seconds": 0.447
+   "got": "going_out",
+   "right": true,
+   "seconds": 0.445
   },
   {
    "spanish": "Dibuja un mapa de mis cosas",
@@ -286,7 +286,7 @@
    "want": "things_map",
    "got": "things_map",
    "right": true,
-   "seconds": 0.539
+   "seconds": 0.482
   },
   {
    "spanish": "Habla más despacio",
@@ -295,7 +295,7 @@
    "want": "voice",
    "got": "voice",
    "right": true,
-   "seconds": 0.429
+   "seconds": 0.407
   },
   {
    "spanish": "Habla más alto, no te oigo",
@@ -304,7 +304,7 @@
    "want": "voice",
    "got": "voice",
    "right": true,
-   "seconds": 0.544
+   "seconds": 0.509
   },
   {
    "spanish": "Repite eso, por favor",
@@ -313,7 +313,7 @@
    "want": "voice",
    "got": "voice",
    "right": true,
-   "seconds": 0.422
+   "seconds": 0.389
   },
   {
    "spanish": "Quédate callado una hora",
@@ -322,7 +322,7 @@
    "want": "quiet",
    "got": "quiet",
    "right": true,
-   "seconds": 0.465
+   "seconds": 0.429
   },
   {
    "spanish": "Muévete menos",
@@ -331,7 +331,7 @@
    "want": "motion",
    "got": "chat",
    "right": false,
-   "seconds": 0.494
+   "seconds": 0.412
   },
   {
    "spanish": "¿Qué puedo pedirte?",
@@ -340,16 +340,16 @@
    "want": "help",
    "got": "help",
    "right": true,
-   "seconds": 0.524
+   "seconds": 0.496
   },
   {
    "spanish": "¿Qué recuerdas?",
    "heard": "qué recuerdas",
-   "english": "What do you remember?",
+   "english": "What do you remember",
    "want": "remember",
    "got": "remember",
    "right": true,
-   "seconds": 0.489
+   "seconds": 0.408
   },
   {
    "spanish": "¿Cómo estás hoy?",
@@ -358,7 +358,7 @@
    "want": "chat",
    "got": "chat",
    "right": true,
-   "seconds": 0.477
+   "seconds": 0.426
   },
   {
    "spanish": "Cuéntame algo bonito",
@@ -367,7 +367,7 @@
    "want": "chat",
    "got": "chat",
    "right": true,
-   "seconds": 0.449
+   "seconds": 0.406
   },
   {
    "spanish": "Habla en inglés",
@@ -376,7 +376,7 @@
    "want": "language",
    "got": "chat",
    "right": false,
-   "seconds": 0.438
+   "seconds": 0.422
   }
  ]
 }
