@@ -43,11 +43,21 @@ def page() -> str:
     return html.replace("{{outline}}", OUTLINE)
 
 
+def hood_json(state: ScreenState, sample: bool = False) -> dict:
+    """What /hood shows: the turns' timings, numbers and models' names only. The public demo (no robot) shows a turn
+    recorded on the robot, and says so."""
+    if sample or state.hood is None:
+        return {**json.loads(files(__package__).joinpath("hood_sample.json").read_text()), "sample": True}
+    services = state.services() if callable(state.services) else []
+    return {**state.hood.snapshot(), "services": services, "show_s": state.hood_left(), "sample": False}
+
+
 def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes: dict | None = None,
           frame_ancestors: str = "'none'", any_host: bool = False) -> ThreadingHTTPServer:
     """The TV page and its state, read-only. scenes (the public demo only): name -> a snapshot made on request, so
     each visitor picks a scene for themselves and nobody can change what anyone else sees."""
     body = page().encode()
+    hood_page = files(__package__).joinpath("hood.html").read_text().encode()
     # Only asked for by its own name: a page that tricks a browser into "andy.localhost" (DNS rebinding) gets nothing,
     # because the TV's state holds the last camera picture. The public sample demo (any_host) has no pictures.
     hosts = ("127.0.0.1", "localhost", "[::1]", host)
@@ -68,6 +78,10 @@ def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes:
                 if scenes:
                     snap["demo"] = list(scenes)
                 self._send(200, "application/json", json.dumps(snap).encode())
+            elif url.path == "/hood":  # under the hood: each turn's stages and timings (screen/hood.py)
+                self._send(200, "text/html; charset=utf-8", hood_page)
+            elif url.path == "/hood.json":
+                self._send(200, "application/json", json.dumps(hood_json(state, sample=bool(scenes))).encode())
             elif url.path == "/drawing.webp" and state.drawing_bytes():
                 self._send(200, "image/webp", state.drawing_bytes())
             elif url.path == "/web.jpg" and state.web_bytes():

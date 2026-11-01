@@ -91,6 +91,9 @@ class ScreenState:
         self.rooms = 0  # a version, so the page fetches each room once
         self._guide: dict | None = None  # guiding a hand: the latest frame, the thing's and the hand's outlines, the words
         self.guides = 0  # a version per frame
+        self.hood = None  # under the hood (screen/hood.py), set by the app: each turn's timings, for /hood
+        self.services = None  # a callable: each local service and whether it answers, for /hood (set by the app)
+        self._hood_until = 0.0  # "show me under the hood": the TV opens the page until then
         self._checked: dict | None = None  # "are you OK?": each part, its status and detail, and how long it took
         self._told: dict | None = None  # an answer from what the person told Andy: the thing, their words, when
         self._homes: dict | None = None  # "is everything home?": each thing home, away (where it is) or not seen
@@ -302,6 +305,14 @@ class ScreenState:
                            "cm": None if metres is None else round(metres * 100), "done": False,
                            "until": self._clock() + GUIDE_SECONDS}
 
+    def show_hood(self, seconds: float = 90.0) -> None:
+        """"Show me under the hood": the TV opens the /hood page for a while, then comes back."""
+        with self._lock:
+            self._hood_until = self._clock() + seconds
+
+    def hood_left(self) -> float:
+        return max(0.0, round(self._hood_until - self._clock(), 1))
+
     def self_check(self, rows: list[dict], seconds: float) -> None:
         """Andy's check of itself (companion/selfcheck.py): {"name", "model", "status", "detail"} per part."""
         with self._lock:
@@ -458,6 +469,7 @@ class ScreenState:
             out["guide"] = {"v": self.guides, "src": "data:image/jpeg;base64," + base64.b64encode(g["jpeg"]).decode(),
                             **{k: v for k, v in g.items() if k not in ("jpeg", "until")}} if g else None
             out["lang"] = self.lang
+            out["hood"] = self._clock() < self._hood_until  # the TV opens /hood while this is on
             if self._gaze and self._clock() - self._gaze[2] < 30:
                 out["gaze"] = {"yaw": round(self._gaze[0], 1), "pitch": round(self._gaze[1], 1),
                                "age": round(self._clock() - self._gaze[2], 1)}

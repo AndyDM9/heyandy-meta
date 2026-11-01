@@ -987,3 +987,23 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   (MapAnything): I can still find things and point, but not say how far.", then MapAnything started again and
   answering. The first run also said "is my microphone covered?" because the eval wasn't feeding the ear; it does now.
 
+## 49. Under the hood, and a Settings gear on the TV (2026-10-31)
+
+- **Why:** our own earlier object-finding prototype (none of its code is here) had a gear with "Under the hood": a turn's stages and
+  timings, readable in five seconds on camera. Andy's turns here are physical and run on several of Meta's models;
+  showing them as they happen is the technical depth, seen.
+- **Built:** `screen/hood.py` times every turn from the end of the person's words (the voice loop passes when they
+  ended and how long Omnilingual ASR took): thin wrappers around what does each stage record when each call ran and
+  which model (the robot's motors and camera; SAM 3.1, DINOv2 and V-JEPA 2 through SAM's server; Glimmer's picture
+  checks and planning; MapAnything; Llama Guard 3; Glimmer or Muse Spark answering) and the voice is timed in `say`;
+  the "heard" note counts as the first sound. Only numbers and names, the last 12 turns, in memory. The TV serves
+  `/hood` (a dark page: the latest turn as a waterfall to scale, each local service's health, counts since start,
+  recent turns as bars) and `/hood.json`; a gear, top right, opens a menu (Under the hood, What can I ask?, and "say
+  'are you OK?'"); "how did you do that?" or "show me under the hood" opens it by voice and it comes back after. The
+  public demo's copy shows turns recorded on the robot and says it's a sample; Ask Andy routes there too.
+- **Measured on the robot** (`evals/hood.py`: the question spoken in Andy's voice, heard by Omnilingual ASR, then the
+  turn): a search, 15.4 s from the end of the words to done, the first sound at 0.16 s; hearing 0.16 s, Llama Guard
+  0.04, the head and base 5.2, the camera 0.23 over three frames, SAM 3.1 2.2 over three looks, Glimmer's check 0.74,
+  MapAnything 0.52, speaking 4.9. Most of the wait is the body moving and the answer being said, not the models: the
+  place to make Andy faster is the motion (fewer, shorter moves) and saying the answer while still pointing.
+

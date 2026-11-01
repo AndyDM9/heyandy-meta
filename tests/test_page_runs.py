@@ -72,3 +72,25 @@ def test_the_public_demo_runs_and_asking_andy_plays_a_scene(browser):
         assert seen["routes"] == ["guide", "find", "room"]
     finally:
         server.shutdown()
+
+
+def test_the_settings_gear_opens_its_menu_and_under_the_hood_runs(browser):
+    from heyandy_meta.screen.hood import Hood
+
+    state = ScreenState()
+    state.hood = Hood()
+    server = serve(state, port=0)
+    seen = {}
+
+    def gear(page):
+        page.click("#gear")
+        seen["menu"] = page.evaluate("() => !document.getElementById('menu').hidden")
+        page.click("#m-hood")
+        page.wait_for_timeout(1500)
+        seen["url"], seen["title"] = page.url, page.evaluate("() => document.querySelector('h1').textContent")
+
+    try:
+        assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/", 1200, gear) == []
+        assert seen["menu"] and seen["url"].endswith("/hood") and seen["title"] == "Under the hood"
+    finally:
+        server.shutdown()

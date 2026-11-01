@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Under the hood · Andy</title>
+<link rel="icon" href="data:,">
+<style>
+  /* Atkinson Hyperlegible, served by Andy itself (the TV asks nobody else). */
+  @font-face { font-family: "Atkinson Next"; src: url("fonts/AtkinsonHyperlegibleNext.ttf"); font-weight: 200 800; }
+  @font-face { font-family: "Atkinson Mono"; src: url("fonts/AtkinsonHyperlegibleMono.ttf"); font-weight: 200 800; }
+  /* One colour per kind of work, the same everywhere on the page; every bar to scale, so a slow step looks slow. */
+  :root { --ground: #0b110f; --panel: #142019; --ink: #f5f3ef; --soft: rgba(245, 243, 239, 0.66); --rule: rgba(245, 243, 239, 0.14);
+          --track: rgba(245, 243, 239, 0.06); --gold: #ffcf5c;
+          --hear: #ffcf5c; --safety: #8fd3c9; --think: #9fb7e6; --plan: #9fb7e6; --check: #9fb7e6; --move: #a9b4b0;
+          --camera: #d6dbd8; --see: #7fc4a8; --know: #6fb3e0; --notice: #b39ddb; --measure: #c3a6f0; --speak: #f4a582; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: radial-gradient(ellipse at 80% -10%, #1d2a24, var(--ground) 60%); background-color: var(--ground);
+         color: var(--ink); min-height: 100vh; font-family: "Atkinson Next", sans-serif; padding: 3vh 4vw 5vh; }
+  .num { font-family: "Atkinson Mono", monospace; font-variant-numeric: tabular-nums; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4em 2vw; }
+  .back { flex-basis: 100%; font-size: clamp(15px, 1.2vw, 21px); color: var(--soft); }
+  .back a { color: inherit; text-underline-offset: 0.2em; }
+  h1 { font-size: clamp(32px, 3.2vw, 58px); margin: 0; line-height: 1.05; letter-spacing: -0.015em; }
+  .lede { color: var(--soft); font-size: clamp(15px, 1.25vw, 22px); margin: 0; max-width: 72ch; }
+  .sample { color: var(--gold); font-weight: 700; }
+  h2 { font-size: clamp(16px, 1.25vw, 22px); color: var(--soft); font-weight: 600; margin: 0 0 1.2vh; letter-spacing: 0.02em; }
+
+  /* the latest turn: how long it took, then the same wait laid out stage by stage */
+  .latest { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3.2fr); gap: 2vh 3vw; align-items: center;
+            margin: 2.4vh 0 0; padding: 2.6vh 0; border-top: 2px solid var(--rule); border-bottom: 2px solid var(--rule); }
+  .big { font: 700 clamp(64px, 8vw, 160px)/0.9 "Atkinson Mono", monospace; margin: 0; letter-spacing: -0.03em; }
+  .big small { font-size: 0.34em; color: var(--soft); letter-spacing: 0; margin-left: 0.15em; }
+  .what { font-size: clamp(17px, 1.45vw, 26px); margin: 1.2vh 0 0; line-height: 1.3; max-width: 24ch; }
+  .first { color: var(--soft); font-size: clamp(14px, 1.1vw, 19px); margin: 0.8vh 0 0; }
+  .first b { color: var(--ink); }
+  .fall { display: grid; gap: 1vh; }
+  .row { display: grid; grid-template-columns: minmax(10rem, 1.15fr) 3fr 5.5rem; gap: 1.4vw; align-items: center; }
+  .row b { display: block; font-size: clamp(15px, 1.2vw, 21px); }
+  .row span { display: block; font-size: clamp(12px, 0.95vw, 16px); color: var(--soft); }
+  .track { position: relative; height: clamp(16px, 1.6vh, 24px); background: var(--track); border-radius: 6px; }
+  .seg { position: absolute; top: 0; bottom: 0; border-radius: 4px; min-width: 3px; }
+  .row .t { text-align: right; font-size: clamp(14px, 1.1vw, 20px); }
+  .axis { display: grid; grid-template-columns: minmax(10rem, 1.15fr) 3fr 5.5rem; gap: 1.4vw; color: var(--soft);
+          font-size: clamp(12px, 0.9vw, 15px); }
+  .axis div { display: flex; justify-content: space-between; }
+
+  /* now: each service, and what Andy has done since it started */
+  .now { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3vw; margin-top: 3vh; }
+  ul.dots, ul.since { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1vh 1.6vw; }
+  ul.dots li { display: flex; gap: 0.6em; align-items: baseline; font-size: clamp(14px, 1.1vw, 19px); }
+  ul.dots i { width: 0.75em; height: 0.75em; border-radius: 50%; background: #7fc4a8; align-self: center; flex: none; }
+  ul.dots li.off i { background: #e5776b; } ul.dots small { color: var(--soft); }
+  ul.since li { font-size: clamp(14px, 1.1vw, 19px); color: var(--soft); } ul.since b { color: var(--ink); }
+  ul.since li.zero b { color: var(--gold); }
+
+  /* earlier turns, newest first, each a bar to the same scale */
+  .earlier { margin-top: 3.4vh; }
+  ol.turns { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.2vh; }
+  ol.turns li { display: grid; grid-template-columns: 6rem 1fr; gap: 1.4vw; align-items: center; }
+  ol.turns .bar { position: relative; height: clamp(14px, 1.4vh, 20px); background: var(--track); border-radius: 6px; overflow: hidden; }
+  ol.turns small { grid-column: 2; color: var(--soft); font-size: clamp(12px, 0.95vw, 16px); }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.6vh 1.4vw; margin-top: 1.4vh; color: var(--soft); font-size: clamp(12px, 0.95vw, 16px); }
+  .legend i { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 3px; margin-right: 0.4em; vertical-align: -0.05em; }
+  .empty { color: var(--soft); font-size: clamp(16px, 1.3vw, 22px); }
+  @media (max-width: 900px) {
+    .latest, .now { grid-template-columns: 1fr; } .row, .axis { grid-template-columns: 1fr 4.5rem; } .row > div:first-child { grid-column: 1 / -1; }
+    .axis > :first-child { display: none; } .row .track { grid-column: 1; } .axis div { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <p class="back"><a href="./" id="back">← Andy's screen</a></p>
+    <h1>Under the hood</h1>
+    <p class="lede" id="lede">Each turn, timed live on the computer beside Andy: which of Meta's models did what, and when.
+      Only numbers and names are kept, in memory: never your words, never a picture.</p>
+  </header>
+  <section class="latest" aria-live="polite">
+    <div><p class="big num" id="total">–</p><p class="what" id="what">Waiting for a turn: say “Hey Andy, where are my keys?”</p>
+      <p class="first" id="first"></p></div>
+    <div><div class="fall" id="fall"></div><div class="axis" id="axis" hidden><span></span><div><span>0</span><span id="axis-end"></span></div><span></span></div></div>
+  </section>
+  <section class="now">
+    <div><h2>On the computer beside Andy, now</h2><ul class="dots" id="services"></ul></div>
+    <div><h2>Since Andy started</h2><ul class="since" id="since"></ul></div>
+  </section>
+  <section class="earlier"><h2>Recent turns, newest first</h2><ol class="turns" id="turns"></ol><div class="legend" id="legend"></div></section>
+<script>
+  // Polls hood.json (numbers and models' names only) every second: the latest turn as a waterfall, the recent turns
+  // as bars to one scale. Opened by voice ("show me under the hood"), it goes back to Andy's screen after.
+  const $ = id => document.getElementById(id), el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  const ORDER = ["hear", "safety", "think", "plan", "move", "camera", "see", "know", "notice", "check", "measure", "speak"];
+  const fromAndy = new URLSearchParams(location.search).has("from");
+  let seenShow = false;
+  const s1 = x => x < 10 ? x.toFixed(2) : x.toFixed(1);
+  function render(h) {
+    const st = h.stages || {}, L = h.latest;
+    if (h.sample) $("lede").replaceChildren(el("span", "A sample: ", "sample"),
+      "a search recorded on the robot (October 31), timed as Andy times every turn. On the robot it's live, and only the numbers are kept, never the words.");
+    if (L) {
+      $("total").replaceChildren(s1(L.total), el("small", "s"));
+      $("what").textContent = `From the end of your words to done: ${L.what}`;
+      $("first").replaceChildren(...(L.first_sound != null ? ["Andy's first sound at ", el("b", s1(L.first_sound) + " s")] : []));
+      const rows = {}, total = Math.max(L.total, 0.01);
+      for (const [stage, a, b, model] of L.spans) (rows[stage] ||= { stage, spans: [], model: model || (st[stage] || [])[1] || "" }).spans.push([a, b]);
+      const fall = $("fall"); fall.replaceChildren();
+      for (const r of Object.values(rows).sort((x, y) => Math.min(...x.spans.map(s => s[0])) - Math.min(...y.spans.map(s => s[0])))) {
+        const [label, , where] = st[r.stage] || [r.stage, "", ""], row = el("div", null, "row"), name = el("div"), track = el("div", null, "track");
+        name.append(el("b", label), el("span", [r.model, where].filter(Boolean).join(" · ")));
+        for (const [a, b] of r.spans) { const g = el("i", null, "seg"); g.style.left = (100 * Math.max(0, a) / total) + "%"; g.style.width = (100 * Math.max(0, b - a) / total) + "%"; g.style.background = `var(--${r.stage}, #ccc)`; track.append(g); }
+        const sum = r.spans.reduce((t, [a, b]) => t + (b - a), 0);
+        row.append(name, track, el("span", s1(sum) + " s", "t num")); fall.append(row);
+      }
+      $("axis").hidden = false; $("axis-end").textContent = s1(L.total) + " s";
+    }
+    $("services").replaceChildren(...(h.services || []).map(v => { const li = el("li", null, v.ok ? "" : "off"); li.append(el("i"), el("span", v.model), el("small", v.ok ? (v.ms != null ? v.ms + " ms" : "") : "not answering")); return li; }));
+    const n = h.since || {}, since = [["turns", n.turns], ["SAM 3.1 looks", n.see], ["camera frames", n.camera], ["head moves", n.move],
+                                      ["MapAnything measures", n.measure], ["picture checks (Glimmer)", n.check], ["things known by sight (DINOv2)", n.know]];
+    $("since").replaceChildren(...since.filter(([k, v]) => v != null && (v > 0 || k === "turns")).map(([k, v]) => { const li = el("li"); li.append(el("b", String(v), "num"), " " + k); return li; }),
+                               (() => { const li = el("li", null, "zero"); li.append(el("b", "0", "num"), " camera pictures sent to the cloud, by design"); return li; })());
+    const turns = (h.turns || []).slice().reverse(), max = Math.max(1, ...turns.map(t => t.total)), list = $("turns"); list.replaceChildren();
+    if (!turns.length) list.append(el("li", "None yet.", "empty"));
+    for (const t of turns) {
+      const li = el("li"), bar = el("div", null, "bar"); let at = 0;
+      for (const stage of ORDER) if (t.stages[stage]) { const g = el("i", null, "seg"); g.style.left = (100 * at / max) + "%"; g.style.width = (100 * t.stages[stage] / max) + "%"; g.style.background = `var(--${stage})`; bar.append(g); at += t.stages[stage]; }
+      li.append(el("b", s1(t.total) + " s", "num"), bar, el("small", t.what)); list.append(li);
+    }
+    $("legend").replaceChildren(...ORDER.filter(k => st[k]).map(k => { const d = el("span"); const i = el("i"); i.style.background = `var(--${k})`; d.append(i, `${st[k][0]} (${st[k][1]})`); return d; }));
+    if (fromAndy) { if (h.show_s > 0) seenShow = true; else if (seenShow) location.href = "./"; }  // opened by voice: back after
+  }
+  async function tick() { try { render(await (await fetch("hood.json", { cache: "no-store" })).json()); } catch (e) {} setTimeout(tick, 1000); }
+  tick();
+</script>
+</body>
+</html>

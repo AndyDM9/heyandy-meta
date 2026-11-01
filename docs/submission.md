@@ -24,6 +24,8 @@ table, looks around the room for you, points at the thing, and keeps what it see
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
+- **Under the hood.** The TV's gear, or "how did you do that?", lays out each turn live, stage by stage, with which of
+  Meta's models did each and where: on the robot, the first sound 0.16 s after the words.
 - **"I'm putting my passport in the top drawer."** What it's told, it remembers in your words, for the places no
   camera sees, and answers at once: "You told me on Tuesday at 3:12: in the top drawer of the desk."
 - **Homes, so things stop getting lost.** "My keys live here", then "is everything home?" (and every evening at 9):

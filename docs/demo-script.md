@@ -33,6 +33,11 @@ my keys", the person walks in and puts the keys down on the table in view; the T
 later, "Hey Andy, where are my keys?" goes straight there in one look. It shows V-JEPA 2, Meta's video world model, doing
 what a still picture can't: seeing an action. Leave it out if it misses more than it catches.
 
+**"How did you do that?" (works on the robot), right after the uncut find:** "Hey Andy, how did you do that?" and the
+TV turns to Under the hood with that very search laid out stage by stage, to scale: hearing (Omnilingual ASR), the
+head's moves, SAM 3.1 at each look, Glimmer's check, MapAnything, the voice; the first sound in a fraction of a
+second. Two seconds of it shows the technical depth better than any slide; it goes back to Andy's screen by itself.
+
 **"Are you OK?" (works on the robot), in the unplugged-network cut:** with the network out, "Hey Andy, are you OK?":
 "I'm fine, thanks for asking! I can see, recognise things, tell how far, think, hear and speak, and move, all on this
 computer", the TV listing every part with its time. It says, in Andy's own voice, that nothing it needs is in the cloud.

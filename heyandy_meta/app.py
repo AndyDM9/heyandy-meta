@@ -48,6 +48,7 @@ from .models.retry import CloudUnavailable
 from .private import write_private
 from .router import Router, decide
 from .robot.body import Body
+from .screen.hood import Hood
 from .screen.state import ScreenState
 
 GLANCE_EVERY_S = 5 * 60
@@ -91,6 +92,19 @@ class Andy:
     clock: object = time.time
 
     def __post_init__(self):
+        # Under the hood (screen/hood.py): each turn timed, stage by stage, by thin wrappers around what does each
+        # stage; only numbers and the models' names, in memory. The TV's /hood page shows them.
+        self.hood = Hood()
+        self.screen.hood = self.hood
+        self.body = self.hood.wrap(self.body, {"look": ("move", "the robot's motors"), "point": ("move", "the robot's motors"),
+                                               "capture": ("camera", "the robot's camera")})
+        self.segmenter = self.hood.wrap(self.segmenter, {
+            "find": ("see", "SAM 3.1"), "find_many": ("see", "SAM 3.1"), "track": ("see", "SAM 3.1 Object Multiplex"),
+            "embed": ("know", "DINOv2"), "action": ("notice", "V-JEPA 2")})
+        self.judge = self.hood.wrap(self.judge, _methods(self.judge, "check", "Muse Glimmer"))
+        self.device = self.hood.wrap(self.device, {"chat": ("think", "Muse Glimmer")})
+        self.cloud = self.hood.wrap(self.cloud, {"chat": ("think", "Muse Spark")})
+        self.screen.services, self._services_at = self._services, (0.0, [])
         self.mine = Mine(self.places.path.parent / "mine.json")  # things Andy knows by sight, as numbers
         self._alike: float | None = None  # how like the person's own the last checked thing was
         self._not_yours = False  # this find saw one, but someone else's
@@ -158,8 +172,33 @@ class Andy:
     def asr_language(self) -> str:
         return LANGUAGES[self.language].asr
 
+    @property
+    def depth(self):
+        return self.__dict__.get("_depth")
+
+    @depth.setter
+    def depth(self, value) -> None:  # MapAnything, timed as "how far" under the hood
+        self.__dict__["_depth"] = self.hood.wrap(value, _methods(value, "measure", "MapAnything")) if "hood" in self.__dict__ else value
+
+    @property
+    def guard(self):
+        return self.__dict__.get("_guard")
+
+    @guard.setter
+    def guard(self, value) -> None:  # Llama Guard 3, timed as the safety check
+        self.__dict__["_guard"] = self.hood.wrap(value, _methods(value, "safety", "Llama Guard 3")) if "hood" in self.__dict__ else value
+
     def hear(self, text: str) -> str:
+        """One turn: timed under the hood from the end of the person's words (screen/hood.py)."""
         self.interrupt_noticing()  # a turn comes first: before anything else, the head is the turn's
+        with self.lock:
+            self.hood.begin()
+            try:
+                return self._hear(text)
+            finally:
+                self.hood.end()
+
+    def _hear(self, text: str) -> str:
         with self.lock:
             self.screen.new_turn()
             # Before any other model sees the words (the translator too): the word list, then Llama Guard, both here
@@ -229,12 +268,14 @@ class Andy:
             text = self.translator.spoken(text, self.language, DISCLOSURE, CRISIS_REPLY)
         self.screen.said(text, self._source, self._reason)
         if soon:
+            self.hood.sound()
             getattr(self.body, "say_soon", self.body.say)(text)
             return
         before = (self.screen.state, self.screen.head)
         self.screen.doing("Speaking", before[1] if before[0] == "Pointing" else "Looking at you")
         try:
-            self.body.say(text)
+            with self.hood.span("speak", "SeamlessM4T v2"):
+                self.body.say(text)
         finally:
             if before[0] in ("Working", "Pointing"):
                 self.screen.doing(*before)
@@ -281,6 +322,7 @@ class Andy:
             if no:  # "No, where are my keys?": the rest is a request of its own
                 text = text[no.end():]
         i = parse(text, _now(self.clock))
+        self.hood.kind(i.kind)
         if self._asked and i.kind == "chat" and self.clock() - self._asked[1] <= ANSWER_WITHIN_S:
             i = parse(self._asked[0] + " " + text, _now(self.clock))  # the answer to Andy's question
         self._asked = None
@@ -317,6 +359,11 @@ class Andy:
             return self.follow(i.thing)
         if i.kind == "guide":
             return self.guide_hand(i.thing)
+        if i.kind == "hood":
+            self.screen.show_hood()
+            self._source, self._reason = "device", "every turn timed on this computer: numbers only"
+            return ("It's on the screen: what happens inside me, turn by turn, which of Meta's models does each step, and "
+                    "how long it takes. Only the numbers are kept, never your words.")
         if i.kind == "self_check":
             return self.check_myself()
         if i.kind == "tell":
@@ -525,6 +572,7 @@ class Andy:
         if c is None or not self.sounds or (self.quiet() and not even_when_quiet):
             return
         try:
+            self.hood.sound()
             c(name)
         except Exception:  # noqa: BLE001 - a sound is never worth a failed turn
             pass
@@ -573,7 +621,8 @@ class Andy:
             try:
                 if paid:
                     self.screen.sent("Muse Spark (plans the search)", request)
-                plan = plan_search(client, request, tools, model=model, budget=self.budget, paid=paid)
+                with self.hood.span("plan", "Muse Spark" if paid else "Muse Glimmer"):
+                    plan = plan_search(client, request, tools, model=model, budget=self.budget, paid=paid)
             except CLOUD_TROUBLE as e:
                 self.screen.step(f"{model} is unavailable ({type(e).__name__})")
                 continue
@@ -811,6 +860,29 @@ class Andy:
         self.screen.used("SAM 3.1", self.vision_where, frames[0])
         return {"stopped": "Okay, I've stopped.", "time": f"That's enough following for now. Your {thing} is "
                 f"{side(self.body.yaw)}.", "lost": f"I lost sight of your {thing}."}[why]
+
+    def _services(self) -> list[dict]:
+        """For /hood: each local service and whether it answers, at most every 5 s (the page asks every second)."""
+        from .companion.selfcheck import ping
+
+        at, last = self._services_at
+        if time.monotonic() - at < 5.0:
+            return last
+        out = []
+        for name, model, obj, path in (("Seeing", "SAM 3.1", self.segmenter, "/health"),
+                                       ("How far", "MapAnything", self.depth, "/health"),
+                                       ("Thinking", "Muse Glimmer", self.device, "/models"),
+                                       ("Hearing and speaking", "Omnilingual ASR · SeamlessM4T v2", self.voice, "/health"),
+                                       ("Safety", "Llama Guard 3", self.guard, "/health")):
+            endpoint = getattr(obj, "endpoint", None)
+            if not endpoint:
+                continue
+            try:
+                out.append({"name": name, "model": model, "ok": True, "ms": round(ping(endpoint + path, timeout=1.5))})
+            except Exception:  # noqa: BLE001 - not answering is what the page is for
+                out.append({"name": name, "model": model, "ok": False, "ms": None})
+        self._services_at = (time.monotonic(), out)
+        return out
 
     def check_myself(self) -> str:
         """"Are you OK?": each part Andy needs, checked and timed (companion/selfcheck.py); the TV lists them, and Andy
@@ -2026,6 +2098,11 @@ CLAUSES = re.compile(r"[,;.?!]+\s*(?:and\s+(?:then\s+)?|then\s+|also\s+)?|\s+and
 
 def _n(n: int, word: str) -> str:
     return f"{n} {word}{'s' * (n != 1)}"
+
+
+def _methods(obj, stage: str, model: str) -> dict:
+    """Every public method of obj, timed as this stage under the hood."""
+    return {} if obj is None else {n: (stage, model) for n in dir(obj) if not n.startswith("_") and callable(getattr(obj, n, None))}
 
 
 def _lives(thing: str) -> str:

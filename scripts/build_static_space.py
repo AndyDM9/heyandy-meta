@@ -55,6 +55,10 @@ def main() -> None:
     shutil.copy(ROOT / "docs" / "images" / "sample-drawing.webp", OUT / "drawing.webp")  # the "A picture" scene
     shutil.copy(ROOT / "docs" / "images" / "sample-web.jpg", OUT / "web.jpg")  # the "On the web" scene (Wikipedia)
     (OUT / "room.bin").write_bytes(sample_room()[0])  # the "room" scene: a made-up room's shape
+    # under the hood: the page, and a sample of turns timed on the robot (it says it's a sample)
+    (OUT / "hood.html").write_text(files("heyandy_meta.screen").joinpath("hood.html").read_text())
+    sample = json.loads(files("heyandy_meta.screen").joinpath("hood_sample.json").read_text())
+    (OUT / "hood.json").write_text(json.dumps({**sample, "sample": True}))
     for f in OUT.rglob("*"):
         if f.is_file() and f.suffix in (".html", ".json", ".md") and KEYS.search(f.read_text(errors="ignore")):
             raise SystemExit(f"something that looks like a key is in {f}; stopping")

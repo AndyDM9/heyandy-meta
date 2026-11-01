@@ -49,6 +49,16 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 <sub>Every picture above is the TV page itself, showing the demo's drawn scenes (`scripts/readme_shots.py` makes them
 again); never a home. The numbers in italics are from the robot, with their files under Proof.</sub>
 
+### Under the hood
+
+![Under the hood: a search on the robot laid out stage by stage, to scale: hearing (Omnilingual ASR) 0.16 s, the safety check (Llama Guard 3), the head and base moving three times, the camera, SAM 3.1 seeing at each look, Muse Glimmer checking the picture, MapAnything measuring, SeamlessM4T v2 speaking; 15.4 s in all, the first sound at 0.16 s](docs/images/hood.webp)
+
+The TV's gear (or "Hey Andy, how did you do that?") opens **Under the hood**: each turn timed live on the computer
+beside Andy, stage by stage, with which of Meta's models did each and where it runs, every local service's health,
+and what Andy has done since it started. Above, a search on the robot: Andy's first sound came 0.16 s after the
+words; most of the 15.4 s is the head moving and the answer being spoken, not the models. Only numbers and names are
+kept, in memory: never a word said or a picture (`screen/hood.py`, `screen/hood.html`).
+
 ## Why it's different
 
 - **It moves, and checks itself.** SAM 3.1's mask becomes the head's angle; after pointing, Andy's own camera measures

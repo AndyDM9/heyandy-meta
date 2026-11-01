@@ -105,7 +105,11 @@ class VoiceLoop:
             self.utterance_end = time.monotonic() - endpointer.end_silence_s
             try:
                 voice.language = getattr(self.andy, "asr_language", "eng_Latn")  # what Omnilingual ASR will hear
+                asr_started = time.monotonic()
                 text = voice.transcribe(utterance)
+                hood = getattr(self.andy, "hood", None)
+                if hood is not None:  # under the hood: the words ended then, and hearing them took this long
+                    hood.heard(self.utterance_end, time.monotonic() - asr_started)
             except Exception as e:  # noqa: BLE001 - one bad utterance must not leave Andy deaf
                 log.warning("hearing failed: %s: %s", type(e).__name__, e)
                 continue

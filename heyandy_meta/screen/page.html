@@ -245,6 +245,20 @@
   #help h3 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
   #help p { margin: 0 0 0.9rem; font-size: 1.75rem; }
 
+  /* Settings: a quiet gear, top right; its menu a solid panel (text never over glass) */
+  #gear { position: fixed; top: 1rem; right: 1.2rem; z-index: 9; width: 3rem; height: 3rem; border-radius: 50%; cursor: pointer;
+          border: 0.12rem solid color-mix(in srgb, var(--ink) 25%, transparent); background: color-mix(in srgb, var(--solid) 70%, transparent);
+          display: grid; place-items: center; opacity: 0.55; transition: opacity 0.2s; }
+  #gear:hover, #gear:focus-visible, #gear[aria-expanded="true"] { opacity: 1; }
+  #gear svg { width: 1.7rem; height: 1.7rem; fill: var(--ink); }
+  #menu { position: fixed; top: 4.6rem; right: 1.2rem; z-index: 9; width: 30rem; padding: 0.8rem; border-radius: 1.4rem;
+          background: var(--solid); box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3); display: grid; gap: 0.4rem; }
+  #menu button { text-align: left; font: inherit; color: var(--ink); background: none; border: 0; border-radius: 1rem;
+                 padding: 0.8rem 1rem; cursor: pointer; }
+  #menu button:hover, #menu button:focus-visible { background: color-mix(in srgb, var(--accent) 12%, transparent); outline: none; }
+  #menu b { display: block; font-size: 1.6rem; } #menu span { font-size: 1.2rem; color: var(--muted); }
+  #menu p { margin: 0.3rem 1rem 0.4rem; font-size: 1.2rem; color: var(--muted); } #menu p b { display: inline; font-size: inherit; color: var(--ink); }
+  body.exploring #gear, body.storying #gear, body.exploring #menu, body.storying #menu { display: none; }
   /* the public demo's band (ask Andy, the scenes): across the top like the story's, the TV scaled to sit below it */
   #demo { position: fixed; top: 0; left: 0; right: 0; z-index: 7; display: grid; gap: 0.55rem; padding: 0.9rem 5rem 1rem;
           background: #0b110f; color: #F5F3EF; font-size: 1.15rem; box-shadow: 0 0.4rem 1.6rem rgba(0, 0, 0, 0.25); }
@@ -507,6 +521,12 @@
   <div id="captions" aria-live="polite"></div>
 </div>
 <nav id="demo" hidden aria-label="Sample scenes"></nav>
+<button id="gear" type="button" aria-label="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><!-- the settings glyph from Google's Material Icons (Apache-2.0) --><path fill-rule="evenodd" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
+<div id="menu" hidden role="menu" aria-label="Settings">
+  <button type="button" role="menuitem" id="m-hood"><b>Under the hood</b><span>Each turn, step by step: which of Meta's models did what, and how long it took</span></button>
+  <button type="button" role="menuitem" id="m-help"><b>What can I ask?</b><span>Things to say to Andy</span></button>
+  <p>Say <b>“Hey Andy, are you OK?”</b> and Andy checks itself.</p>
+</div>
 <div id="ambient" aria-hidden="true"><div class="in">
   <svg class="face" viewBox="0 0 380 210"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
     <g class="eyes"><ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></g></svg>
@@ -538,7 +558,17 @@
   const TRY = ["“Hey Andy, where are my glasses?”", "“Hey Andy, keep an eye on my keys.”", "“Hey Andy, remind me at 3 pm to call Sam.”",
                "“Hey Andy, draw me a picture of a cat in a sunny garden.”", "“Hey Andy, what am I holding?”", "“Hey Andy, let's play the cup game.”", "“Hey Andy, this is my mug.”", "“Hey Andy, show me the weather radar on the TV.”",
                "“Hey Andy, the blue mug, next to the laptop.”", "“Hey Andy, what do you remember?”", "“Hey Andy, what did you send to the cloud today?”", "“Hey Andy, what can I ask?”"];
-  let lastCaption = "", captionAt = 0, pictureKey = "";
+  let lastCaption = "", captionAt = 0, pictureKey = "", helpUntil = 0;
+  // Settings: a gear, top right, for a mouse or a TV remote (Tab, Enter, Escape). Under the hood is its own page.
+  const hoodUrl = () => (window.HEYANDY_STATIC ? "hood.html" : "hood");
+  function menu(open) {
+    $("menu").hidden = !open; $("gear").setAttribute("aria-expanded", String(open));
+    if (open) $("m-hood").focus();
+  }
+  $("gear").onclick = () => menu($("menu").hidden);
+  $("m-hood").onclick = () => { location.href = hoodUrl(); };
+  $("m-help").onclick = () => { helpUntil = Date.now() + 60000; menu(false); $("help").hidden = false; };
+  addEventListener("keydown", e => { if (e.key === "Escape") { menu(false); helpUntil = 0; } });
   // The TV in Spanish, while Andy speaks it: every fixed label by hand (Andy's own words come translated, from Glimmer).
   let LANG = "en";
   const ES = {
@@ -714,6 +744,7 @@
   const ASK = [
     ["guide", /\b(?:help me (?:reach|grab|get to|pick up)|guide (?:my hand|me)|lead my hand)\b|gu[ií](?:e|a)(?:me| mi mano)/i],
     ["sound", /\b(?:ring|ringing|call|calling) (?:my |the |it|them)|\blisten (?:for|out)\b|\bby (?:its|the) (?:sound|ring)|\bfollow the (?:sound|ringing)|\bbeep/i],
+    ["hood", /\bunder the hood\b|\bhow (?:did|do) you (?:do|find) (?:that|it)\b|\bhow fast\b|\bwhich models?\b|\bhow does it work\b/i],
     ["checked", /\bare you (?:ok|okay|alright|all right|working|broken)\b|\b(?:check|test) yourself\b|\bself[- ]?(?:check|test)\b|\bis everything working\b/i],
     ["told", /\bpassport\b|\bspare key\b|\bwarranty\b|\bwhere did i (?:say|tell|put|leave)\b|\b(?:i'?m|i am|i) (?:putting|put|leaving|left|hid|hiding|keeping) (?:my|the)\b|\bremember (?:that )?(?:my|the)\b/i],
     ["home", /\b(?:live|lives|belong|belongs) (?:here|there)\b|\bis everything (?:home|in (?:its|it's) place|where it belongs)\b|\bwhere (?:do|does) (?:my|the) \w+ (?:live|belong)\b|\b(?:bedtime|home|tidy) check\b|\bstop losing\b/i],
@@ -744,6 +775,7 @@
     if (!text || !scenes) return;
     story = null; $("story")?.remove(); document.getElementById("end")?.remove(); document.body.classList.remove("storying");
     document.getElementById("reveal")?.remove();
+    if (route(text) === "hood") { location.href = hoodUrl(); return; }  // its own page, as from the gear
     const scene = route(text), run = ++asking;
     const thing = (text.match(/\b(?:my|the|our)\s+([a-z][a-z ]{1,24}?)(?=\s*(?:[?.!,]|$|\bplease\b|\bis\b|\bare\b|\bgo\b))/i) || [])[1] || "";
     const other = thing && !/\b(?:mug|cup)s?\b/i.test(thing) && ["find", "guide", "turned"].includes(scene);
@@ -1513,7 +1545,8 @@
     $("captions").textContent = s.caption;
     $("captions").classList.toggle("long", s.caption.length > 150);  // a long answer: smaller, and never over the cards  // Andy's words only, never the person's
     $("captions").classList.toggle("on", !!s.caption && Date.now() - captionAt < 12000);
-    $("help").hidden = !s.help;
+    $("help").hidden = !(s.help || Date.now() < helpUntil);
+    if (s.hood && !window.HEYANDY_STATIC) location.href = "hood?from=andy";  // "show me under the hood", by voice
     fitAll();
     ambient(s);
     if (s.demo && !scenes) {  // the public demo: the story first, unless a link asked for one scene
