@@ -85,7 +85,7 @@ this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's
 ## Measured
 
 *Search, simulated* (seeded rooms): with look-alikes described, the fixed sweep pointed at the wrong one 20 times in
-100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark 18 of 20, 1 wrong). Things behind the robot: **Glimmer 20 of 20
+100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark 18 of 20, 2 wrong). Things behind the robot: **Glimmer 20 of 20
 in 4.6 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12, Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture

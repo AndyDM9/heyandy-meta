@@ -53,9 +53,10 @@ def hood_json(state: ScreenState, sample: bool = False) -> dict:
 
 
 def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes: dict | None = None,
-          frame_ancestors: str = "'none'", any_host: bool = False) -> ThreadingHTTPServer:
+          frame_ancestors: str = "'none'", any_host: bool = False, listed: list | None = None) -> ThreadingHTTPServer:
     """The TV page and its state, read-only. scenes (the public demo only): name -> a snapshot made on request, so
-    each visitor picks a scene for themselves and nobody can change what anyone else sees."""
+    each visitor picks a scene for themselves and nobody can change what anyone else sees; listed: the ones the
+    demo's bar offers (default all; the others are played when asked for, as a find in each of Andy's languages)."""
     body = page().encode()
     hood_page = files(__package__).joinpath("hood.html").read_text().encode()
     # Only asked for by its own name: a page that tricks a browser into "andy.localhost" (DNS rebinding) gets nothing,
@@ -76,7 +77,7 @@ def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes:
                 pick = parse_qs(url.query).get("scene", [""])[0]
                 snap = scenes[pick]() if scenes and pick in scenes else state.snapshot()
                 if scenes:
-                    snap["demo"] = list(scenes)
+                    snap["demo"] = list(listed or scenes)
                 self._send(200, "application/json", json.dumps(snap).encode())
             elif url.path == "/hood":  # under the hood: each turn's stages and timings (screen/hood.py)
                 self._send(200, "text/html; charset=utf-8", hood_page)

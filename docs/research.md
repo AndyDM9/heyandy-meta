@@ -1153,8 +1153,11 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   ten that mean nothing alone ("away", "Morning", "Seen") go with a note of what they are ("away" had been "leave");
   and the reminder countdown was English ("in 25 minutes"), now the browser's own (25分钟后, через 25 минут). The demo's
   "Your language" chapter is now that scene ("It hears and speaks fifteen languages, from Spanish to Mandarin"),
-  and typing Chinese into Ask Andy plays it; Spanish stays a scene of its own. The words are Glimmer's, as recorded
-  (`scripts/demo_zh.json`), not corrected by hand: a Chinese reader will find one or two awkward.
+  and typing Chinese into Ask Andy plays it; Spanish stays a scene of its own. Later the same day, all thirteen: Ask
+  Andy recognises which of the fifteen it was typed in (the same rules and word lists as Andy's ears, section 57,
+  checked equal by a test) and plays the find in that language, its TV words recorded the same way; those scenes
+  aren't on the demo's bar. The words are Glimmer's, as recorded
+  (`scripts/demo_languages.json`, since for all thirteen), not corrected by hand: a Chinese reader will find one or two awkward.
 - **Not yet:** a person. Every spoken request here was Andy's own voice, which Omnilingual ASR hears worse than people
   in some languages (Korean) and better in others; and a native speaker should read each language's hand-written lines
   before a home relies on them. Llama Guard 3 was trained for seven of Andy's fifteen languages (English, Spanish,

@@ -35,7 +35,10 @@ SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
-SAMPLE_ZH = Path(__file__).resolve().parent / "demo_zh.json"  # the TV's words in Mandarin, from Andy's own translator
+# The TV's words in Andy's thirteen newer languages, recorded once from Andy's own translator (Muse Glimmer through
+# the TV's code, November 1): one scene each, not in the demo's list of scenes, played when Ask Andy is typed in one.
+SAMPLE_WORDS = Path(__file__).resolve().parent / "demo_languages.json"
+IN_LANGUAGE = {f"in-{code}": code for code in ("tl", "vi", "ko", "ru", "ar", "hi", "pt", "fr", "it", "pl", "de", "uk")}
 
 
 class Recorded:
@@ -43,7 +46,7 @@ class Recorded:
     TV's own code, recorded once on November 1): what the real TV shows, without a model in the demo."""
 
     def __init__(self, path: Path, language: str):
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))[language]
         self.done, self.language = {**data["chrome"], **data["scene"]}, language
 
     def __call__(self, text: str) -> str:  # as the TV's own words do: the hand-written things first ("mug": 马克杯)
@@ -152,6 +155,32 @@ def recorded_calls() -> list[dict]:
     sample = json.loads((Path(__file__).resolve().parents[1] / "heyandy_meta" / "screen" / "hood_sample.json").read_text())
     return [{"stage": st, "model": m or STAGES[st][1], "where": "on this computer", "s": round(b - a, 2)}
             for st, a, b, m in sample["latest"]["spans"] if st in META_STAGES]
+
+
+def in_language(state: ScreenState, code: str) -> None:
+    """A find, as the TV shows it while Andy speaks another of its languages: its words as recorded, its things by hand."""
+    words, lang, things = Recorded(SAMPLE_WORDS, code), LANGUAGES[code], THINGS[code]
+    jpeg, mask = sample_frame()
+    found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
+    said = words("I see your blue cup, a little to my right.")
+    state.language, state.lang, state.words = f"{lang.native} · {lang.here}", code, words
+    state.reminder_next(words("Call Sam"), time.time() + 25 * 60)
+    state.keeping([words("keys: seen 2 hours ago, to my left"), words("glasses: seen 10 minutes ago, a little to my right"),
+                   words("remote: seen 25 minutes ago, behind me on the left")],
+                  [{"label": things["keys"], "yaw": 48.0, "pitch": 20.0, "ago_s": 7300, "metres": 1.7},
+                   {"label": things["glasses"], "yaw": -22.0, "pitch": 14.0, "ago_s": 600, "metres": 0.9},
+                   {"label": things["remote"], "yaw": 125.0, "pitch": 26.0, "ago_s": 1500, "metres": 2.6}])
+    state.looking(things["cup"])
+    state.timer_start()
+    state.step(words("looked: a little to my left, a little to my right"))
+    state.timer_stop()
+    state._timer = (time.monotonic() - 8.1, time.monotonic())
+    state.found(found, said)
+    state.said(said, "device", words("search on this computer"))
+    state.doing("Pointing", words("Pointing at your cup"))
+    for name, times in ((f"Omnilingual ASR (hearing, {lang.name})", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
+                        (f"SeamlessM4T v2 (voice, {lang.name})", 1)):
+        state.used(name, "device", times)
 
 
 def show(state: ScreenState, scene: str) -> None:
@@ -268,29 +297,8 @@ def show(state: ScreenState, scene: str) -> None:
         for name, times in (("Omnilingual ASR (hearing, Spanish)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
                             ("SeamlessM4T v2 (voice, Spanish)", 1)):
             state.used(name, "device", times)
-    elif scene == "mandarin":
-        zh, lang, things = Recorded(SAMPLE_ZH, "zh"), LANGUAGES["zh"], THINGS["zh"]
-        jpeg, mask = sample_frame()
-        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
-        said = zh("I see your blue cup, a little to my right.")
-        state.language, state.lang, state.words = f"{lang.native} · {lang.here}", "zh", zh
-        state.reminder_next(zh("Call Sam"), time.time() + 25 * 60)
-        state.keeping([zh("keys: seen 2 hours ago, to my left"), zh("glasses: seen 10 minutes ago, a little to my right"),
-                       zh("remote: seen 25 minutes ago, behind me on the left")],
-                      [{"label": things["keys"], "yaw": 48.0, "pitch": 20.0, "ago_s": 7300, "metres": 1.7},
-                       {"label": things["glasses"], "yaw": -22.0, "pitch": 14.0, "ago_s": 600, "metres": 0.9},
-                       {"label": things["remote"], "yaw": 125.0, "pitch": 26.0, "ago_s": 1500, "metres": 2.6}])
-        state.looking(things["cup"])
-        state.timer_start()
-        state.step(zh("looked: a little to my left, a little to my right"))
-        state.timer_stop()
-        state._timer = (time.monotonic() - 8.1, time.monotonic())
-        state.found(found, said)
-        state.said(said, "device", zh("search on this computer"))
-        state.doing("Pointing", zh("Pointing at your cup"))
-        for name, times in (("Omnilingual ASR (hearing, Mandarin)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
-                            ("SeamlessM4T v2 (voice, Mandarin)", 1)):
-            state.used(name, "device", times)
+    elif scene == "mandarin" or scene in IN_LANGUAGE:
+        in_language(state, IN_LANGUAGE.get(scene, "zh"))
     elif scene == "web":
         state.web(SAMPLE_WEB.read_bytes(), "Show me what banana bread is", "Opening the page", (378, 273),
                   url="https://en.wikipedia.org/wiki/Banana_bread")
@@ -448,7 +456,7 @@ def show(state: ScreenState, scene: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("scene", nargs="?", default="found", choices=SCENES)
+    ap.add_argument("scene", nargs="?", default="found", choices=(*SCENES, *IN_LANGUAGE))
     ap.add_argument("--cycle", action="store_true")
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--host", default="127.0.0.1")
@@ -464,7 +472,7 @@ def main() -> None:
         show(state, "room")  # the room's shape is fetched separately (room.bin): kept for every visitor
         state._room["until"] = float("inf")
         serve(state, host=args.host, port=args.port, frame_ancestors="https://huggingface.co https://*.hf.space", any_host=True,
-              scenes={name: functools.partial(snapshot, name) for name in SCENES})
+              scenes={name: functools.partial(snapshot, name) for name in (*SCENES, *IN_LANGUAGE)}, listed=list(SCENES))
         print(f"public demo on http://{args.host}:{args.port}")
         while True:
             time.sleep(3600)

@@ -102,21 +102,51 @@ def test_every_demo_scene_draws_in_full(browser):
     """Each scene of the public demo, alone: the page draws it with no error, and the found scenes show their picture
     (the Mandarin scene once stopped at the list of things, and the TV stayed half empty)."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-    from demo_screen import SCENES, show
+    from demo_screen import IN_LANGUAGE, SCENES, show
 
     def snapshot(name):
         st = ScreenState()
         show(st, name)
         return st.snapshot()
 
-    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    every = (*SCENES, *IN_LANGUAGE)
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in every}, listed=list(SCENES))
     shown = {}
     try:
-        for name in SCENES:
+        for name in every:
             def look(page, name=name):
                 shown[name] = page.evaluate("() => document.querySelectorAll('#card img, #card canvas, #card svg').length")
             url = f"http://127.0.0.1:{server.server_address[1]}/?scene={name}"
             assert errors_on(browser, url, 1200, look) == [], name
-        assert shown["mandarin"] and shown["spanish"] and shown["found"]
+        assert shown["mandarin"] and shown["spanish"] and shown["found"] and all(shown[n] for n in IN_LANGUAGE)
     finally:
         server.shutdown()
+
+
+def test_asking_andy_in_any_of_its_languages_plays_that_languages_scene(browser):
+    """Typed in one of Andy's fifteen languages, Ask Andy plays the find in it, as Andy notices the language it's
+    called in; the page's everyday words are the same lists Andy's ears use (companion/language.py)."""
+    import json
+    import re
+
+    from heyandy_meta.companion.language import EVERYDAY
+    from heyandy_meta.screen.server import page
+
+    lists = json.loads(re.search(r"const EVERYDAY = (\{.*?\});", page()).group(1))
+    assert lists == EVERYDAY
+    server = serve(ScreenState(), port=0)
+    asked = ["我的眼镜在哪里？", "¿Dónde están mis gafas?", "Где мои очки?", "Де мої окуляри?", "내 안경 어디 있어?",
+             "Où sont mes lunettes ?", "Wo ist meine Brille?", "Kính của tôi đâu rồi?", "मेरा चश्मा कहाँ है?", "أين نظارتي؟",
+             "Nasaan ang salamin ko?", "Onde estão meus óculos?", "Dove sono i miei occhiali?", "Gdzie są moje okulary?",
+             "Where are my keys?", "help me reach it"]
+    got = {}
+
+    def routes(page_):
+        got["r"] = page_.evaluate("(qs) => qs.map(route)", asked)
+
+    try:
+        assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/", 1200, routes) == []
+    finally:
+        server.shutdown()
+    assert got["r"] == ["mandarin", "spanish", "in-ru", "in-uk", "in-ko", "in-fr", "in-de", "in-vi", "in-hi", "in-ar",
+                        "in-tl", "in-pt", "in-it", "in-pl", "find", "guide"]

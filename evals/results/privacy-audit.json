@@ -13,12 +13,12 @@
   "pieces_on_receipt": 40,
   "words_not_on_receipt": [],
   "crisis_words_to": [],
-  "when": "2026-10-30 20:16"
+  "when": "2026-11-01 12:24"
  },
  "rows": [
   {
    "said": "Good morning, Andy",
-   "seconds": 13.6,
+   "seconds": 8.9,
    "requests": 4,
    "to_cloud": 3,
    "may_use_cloud": true,
@@ -120,7 +120,7 @@
   },
   {
    "said": "Tell me something interesting about octopuses, and why they are so clever",
-   "seconds": 2.4,
+   "seconds": 1.7,
    "requests": 2,
    "to_cloud": 1,
    "may_use_cloud": true,
@@ -137,7 +137,7 @@
   },
   {
    "said": "And how long do they live?",
-   "seconds": 8.4,
+   "seconds": 1.2,
    "requests": 2,
    "to_cloud": 0,
    "may_use_cloud": true,
@@ -154,7 +154,7 @@
   },
   {
    "said": "What's the weather tomorrow?",
-   "seconds": 8.8,
+   "seconds": 3.2,
    "requests": 2,
    "to_cloud": 1,
    "may_use_cloud": true,
@@ -171,7 +171,7 @@
   },
   {
    "said": "Find the blue mug next to the laptop",
-   "seconds": 6.9,
+   "seconds": 2.5,
    "requests": 4,
    "to_cloud": 3,
    "may_use_cloud": true,
@@ -188,7 +188,7 @@
   },
   {
    "said": "Find my phone and remind me at 5 pm to charge it",
-   "seconds": 8.6,
+   "seconds": 3.0,
    "requests": 4,
    "to_cloud": 3,
    "may_use_cloud": true,
@@ -205,7 +205,7 @@
   },
   {
    "said": "Draw me a lighthouse at dawn",
-   "seconds": 8.5,
+   "seconds": 9.7,
    "requests": 2,
    "to_cloud": 1,
    "may_use_cloud": true,
@@ -222,7 +222,7 @@
   },
   {
    "said": "Draw me a map of my things",
-   "seconds": 9.7,
+   "seconds": 20.2,
    "requests": 2,
    "to_cloud": 1,
    "may_use_cloud": true,
@@ -239,7 +239,7 @@
   },
   {
    "said": "Show me the weather radar on the TV",
-   "seconds": 16.9,
+   "seconds": 11.2,
    "requests": 3,
    "to_cloud": 2,
    "may_use_cloud": true,
@@ -290,8 +290,8 @@
   },
   {
    "said": "\u00bfD\u00f3nde est\u00e1n mis gafas?",
-   "seconds": 1.5,
-   "requests": 8,
+   "seconds": 1.9,
+   "requests": 10,
    "to_cloud": 0,
    "may_use_cloud": false,
    "pieces": 0,
@@ -307,8 +307,8 @@
   },
   {
    "said": "\u00bfQu\u00e9 tiempo har\u00e1 ma\u00f1ana?",
-   "seconds": 6.6,
-   "requests": 28,
+   "seconds": 9.7,
+   "requests": 26,
    "to_cloud": 1,
    "may_use_cloud": true,
    "pieces": 2,
@@ -341,7 +341,7 @@
   },
   {
    "said": "I'm going out",
-   "seconds": 7.8,
+   "seconds": 6.1,
    "requests": 2,
    "to_cloud": 1,
    "may_use_cloud": true,

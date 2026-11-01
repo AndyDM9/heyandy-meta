@@ -40,8 +40,9 @@ and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.
 
 **Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
 ("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
-TV for that plays, a search starting as the real one does. The words are matched in the page and sent nowhere; a link
-can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
+TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои
+очки?", "내 안경 어디 있어?") and the TV answers in that language, as Andy does when it's called in one. The words are
+matched in the page and sent nowhere; a link can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
 
 **Andy speaks fifteen languages,** all on Meta's models in the house: "Andy, speak Russian", "talk to me in Mandarin",
 "Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,
@@ -51,7 +52,7 @@ languages: the right one 31 times in 42, a wrong one never, and English never sw
 [`hear-language-20261101-1217.json`](evals/results/hear-language-20261101-1217.json)). Of 104
 everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
 first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
-Chinese into the demo's Ask Andy and its TV answers in Mandarin.
+into the demo's Ask Andy in any of them and its TV answers in that language.
 
 <p align="center"><img src="docs/images/tv-mandarin.webp" width="860" alt="Andy's TV in Mandarin: the day and time, the next reminder counting down, the things it keeps an eye on on a little map, and the found mug with how long, how far off target and how far away, every label in Chinese; Andy's words below: 我看到您的蓝色杯子，在我右边一点。"></p>
 
@@ -467,16 +468,16 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 | Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
 |---|---|---|---|
 | The thing in front | 96 found, 0 wrong | **20**, 0 wrong | 19, 0 wrong |
-| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.6 looks | **18**, 0 wrong, 4.2 looks |
-| A picture of it on the TV too | 94, 0 wrong | **20**, 0 wrong | 19, 0 wrong |
+| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.6 looks | **20**, 0 wrong, 3.8 looks |
+| A picture of it on the TV too | 94, 0 wrong | **20**, 0 wrong | **20**, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
-| Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 1 wrong |
-| Planning time (model only; not counting "not there") | none | 9 to 12 s | **6 to 8 s** |
+| Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 2 wrong |
+| Planning time (model only; not counting "not there") | none | 9 to 12 s | **2 to 4 s** |
 
 Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Every
 column was rerun on October 30 on the final code, and Glimmer's again on October 31 after the search tools' colour
-fixes, with the same results, and Glimmer's once more on November 1 on the final code (20, 20, 20, 20 and 18: one
-more found in front and one more beside a TV than before; a look now counts the check after pointing; Glimmer runs without its
+fixes, with the same results, and both once more on November 1 on the final code (Glimmer 20, 20, 20, 20 and 18;
+Muse Spark 19, 20, 20, 20 and 18, one more look-alike wrong than before (2), planning about twice as fast; a look now counts the check after pointing; Glimmer runs without its
 drafter, so it plans more slowly; the October 28 runs are kept as `*-oct28.json`). Two rounds of fixes came from this scorecard, and the earlier runs are
 kept:
 - **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
@@ -562,7 +563,8 @@ turns pass:** none of the 24 camera pictures reached the cloud (rerun Oct 30 on 
 its receipt; every word from the home that was sent was on its turn's receipt (40 of 43 pieces word for word; the other
 3 are the person's words inside Andy's own instructions, for a picture and the web); the crisis words reached no model
 at all. 11 of the 21 turns sent nothing. With
-the network off, the same day sent nothing to the cloud, and Andy answered every turn (rerun November 1: 21 of 21).
+the network off, the same day sent nothing to the cloud, and Andy answered every turn. Both rerun on November 1 on the
+final code, with the same results.
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second
