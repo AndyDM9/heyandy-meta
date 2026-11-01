@@ -39,6 +39,12 @@ other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.js
 TV for that plays, a search starting as the real one does. The words are matched in the page and sent nowhere; a link
 can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
 
+**Andy speaks fifteen languages,** all on Meta's models in the house: "Andy, speak Russian", "talk to me in Mandarin",
+"Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,
+SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. Of 104
+everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
+first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)).
+
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
 who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).
@@ -223,11 +229,15 @@ found, "You're all set", in three sentences.
 18. **"Speak up", "speak more slowly", "say that again", "move less", "be quiet for an hour."** How Andy speaks and
    moves is set by voice and remembered; while it's quiet, Andy starts nothing of its own. Reminders can be daily
    ("every morning at 8").
-19. **"Oye Andy, habla español."** Andy hears and speaks Spanish: Meta's Omnilingual ASR is told to hear Spanish, Meta's
-   SeamlessM4T v2 speaks it, and Muse Glimmer translates in between, on the computer beside the robot (about 0.5 s
-   a sentence), so the abilities work in Spanish too (41 of 41 written requests reach the right one) and the person's words stay home. Saying it's an AI, the crisis reply (988 has
-   help in Spanish) and Andy's short phrases are written by hand, never machine-translated. "Speak English" switches
-   back; it's remembered.
+19. **"Oye Andy, habla español." "Andy, speak Russian."** Andy hears and speaks fifteen languages: English, Spanish,
+   Mandarin, Tagalog, Vietnamese, Korean, Russian, Arabic, Hindi, Portuguese, French, Italian, Polish, German and
+   Ukrainian. Meta's Omnilingual ASR is told which to hear, Meta's SeamlessM4T v2 speaks it, and Muse Glimmer translates
+   in between, on the computer beside the robot (about 0.5 s a sentence), so every ability works in each and the
+   person's words stay home (Spanish: 41 of 41 written requests reach the right ability; the other thirteen: 100 of 104
+   on the first run). Saying it's an AI, the crisis reply (988 has help in Spanish, and interpreters by phone for the
+   rest), Andy's short phrases and the TV's everyday words are written by hand, never machine-translated; the crisis
+   words are caught in each language before any model. The TV follows the language. "Speak English" switches back;
+   it's remembered.
 20. **Talk to it.** "Hey Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
@@ -281,7 +291,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
   goodbye; never during a search or a point.
 - **Meta's open weights on our own hardware:** SAM 3.1 served locally (several things per frame, and Object Multiplex
   tracking every cup at once), Muse Glimmer on llama.cpp (answering straight away for picture checks and translation),
-  Omnilingual ASR (English and Spanish), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
+  Omnilingual ASR (fifteen languages, told which), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
   found thing is, from one camera frame: metric depth, about 0.2 s; and the room in 3D from five looks, about 1 s), V-JEPA 2 (Meta's video world model: noticing a watched
   thing put down or picked up), SeamlessM4T v2 (Andy's voice), Llama Prompt Guard 2 (reading each web page before the
   cloud model sees it), Llama Guard 3 (a second crisis check); with
@@ -307,7 +317,8 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 - **New abilities:** the cup game (SAM 3.1 Object Multiplex), "this is my mug" (DINOv2 and a colour fingerprint, kept as
   numbers), "I'm going out" (pointing at what's still here, the weather looked up at the same time), "what's that?"
   (looking where the person points), the web on the TV (Muse Spark's computer use, every action reviewed in code), a
-  map of where things are (Muse Image, from words), Andy in Spanish (hearing, voice, TV and every ability), and an
+  map of where things are (Muse Image, from words), Andy in fifteen languages (hearing, voice, TV and every ability; the
+  safety lines written by hand in each), and an
   agent that plans requests with several parts over the everyday abilities (finding, following, looking, keeping an
   eye on, reminders, pictures, looking things up, the web).
 - **Muse Spark** for web answers with their sources (US units, only the final answer spoken) and harder conversation;
@@ -317,7 +328,8 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
   action is replaced); speech not for Andy is dropped; a hard cap on Model API spend.
 - **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
 - **Scorecards:** the search, simulated (fixed sweep, Glimmer and Spark planners, seeded rooms); the agent (12
-  multi-part requests); Spanish (41 requests, written and spoken); and a physical one, built and waiting to be run.
+  multi-part requests); Spanish (41 requests, written and spoken); thirteen more languages (104 requests, written and
+  spoken, and Andy's own answers heard back); and a physical one, built and waiting to be run.
 
 ## Run it
 ```bash
@@ -351,7 +363,7 @@ each "take one" gets a clap: two quick high notes, timed by Andy's own microphon
 ```
 heyandy_meta/app.py        one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
 heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol;
-                           the cup game, the web on the TV, Spanish, pictures, following
+                           the cup game, the web on the TV, Andy's fifteen languages, pictures, following
 heyandy_meta/finder/       the search, from a SAM 3.1 mask to where the head looks; Glimmer's picture checks; names
 heyandy_meta/agent/        the search tools and the planning loop (Muse Spark online, Muse Glimmer on this computer)
 heyandy_meta/memory/       where watched things were last seen, the idle glance, and the person's own things by sight
@@ -368,7 +380,8 @@ heyandy_meta/network.py    whether the cloud is reachable right now
 heyandy_meta/budget.py     the hard cap on Model API spend
 local/                     SAM 3.1 (finding, /track for the cup game), DINOv2 (/embed) and Prompt Guard 2 (/guard);
                            MapAnything (how far, depth_server.py); hearing and speaking; all served on 127.0.0.1 only
-evals/                     the scorecards (search simulated, agent, Spanish, the privacy audit; physical, to run) and
+evals/                     the scorecards (search simulated, agent, Spanish and thirteen more languages, the privacy
+                           audit, Andy's eyes; physical, to run) and
                            their results
 scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
 config/                    config.example.yaml (no secrets)
@@ -517,6 +530,15 @@ synthetic voice; 40 of 41 with the earlier non-Meta voice, before every model ha
 a question stays a question when speech-to-text drops the question marks): 38 and 37 before. Glimmer translates each in
 a median 0.49 s (at most 0.71), on the computer beside the robot.
 
+**Thirteen more languages** (`evals/languages.py`, `languages-20261101-1059`; eight everyday requests each, written by
+hand for the test): written, **100 of 104** reach the right ability (ten languages 8 of 8; Vietnamese and Italian 7,
+Russian 6); said by Andy's own voice and heard by Omnilingual ASR, **85 of 104** (Chinese, Tagalog, French, German 8 of
+8; Vietnamese 4, Korean 3: the hearing slips on the synthetic voice). Andy's own answers, translated, spoken and heard
+back, keep a median 0.95 of their letters in order (Korean 0.82 to Arabic 0.98). The written misses were English the
+rules didn't know as Glimmer put it ("Didn't you see my keys?", "Which time is it?") and curly apostrophes
+("Where’s my phone?" reached nothing); with the rules fixed, the same translations reach **104 of 104** and **89 of
+104**. Glimmer translates a request in a median 0.55 s. Not yet with a person (`docs/research.md`, section 54).
+
 **The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
 reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every
 HTTP request the program made was recorded on its way out, and the simulated camera took real pictures. **21 of 21
@@ -543,9 +565,11 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
   and held conversations; the scored runs come next
   (`docs/research.md` sections 8 to 11).
-- **English and Spanish** for now: Omnilingual ASR can hear far more languages; SeamlessM4T v2 speaks 35, and adding one
-  is a few hand-written phrases. While Andy speaks Spanish the TV is in Spanish too (labels by hand, Andy's
-  own words translated by Glimmer). Spanish is scored on written and synthesised speech; not yet with a person.
+- **Fifteen languages, scored on written requests and Andy's own synthetic voice, not yet with a person.** Hearing a
+  synthetic voice slips most in Korean and Vietnamese, and a mishearing becomes some other request (never one that
+  deletes or sends). The hand-written lines in each language should be read by a native speaker before a home relies on
+  them; Llama Guard 3 was trained for seven of the fifteen, so in the other eight the crisis word list is the check to
+  rely on. SeamlessM4T v2 speaks 36 languages and Omnilingual ASR hears far more: another is a few hand-written lines.
 
 ## Licence
 Apache-2.0, for this repository's own code. **The models keep their own licences:** Muse Glimmer, SAM 3.1, MapAnything,

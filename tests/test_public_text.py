@@ -1,6 +1,7 @@
 """This repository goes public and to the judges: none of it may name our other hackathon entry, and none of it may
-call the people Andy is for by the two age words we never use (sources cited by their web address are fine). An Oct 31 note named
-the other entry and nothing caught it; this does. The names are put together here so this file doesn't hold them."""
+call the people Andy is for by the two age words we never use (sources cited by their web address are fine). An Oct 31
+note named the other entry and nothing caught it; this does. The words are put together below so this file doesn't
+hold them."""
 import re
 import subprocess
 from pathlib import Path

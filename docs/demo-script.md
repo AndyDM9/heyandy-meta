@@ -110,7 +110,7 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    turn had been counted twice), the camera-checked aim is a median 4 to 5 degrees, under 9 at worst, across the table, out
    to about 50 degrees each side (`unattended-20261031-0924` and `-1106`). Keys: a bunch of keys, not a single key, and not touching
    a keyboard.
-3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking Spanish, "Hey Andy, speak English".
+3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking another language, "Hey Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
    each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/tv-take1.webm --room-is-staged`
    (once beforehand: `uv run --with playwright playwright install ffmpeg`). It writes `film/tv-take1.json` beside it:

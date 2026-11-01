@@ -1,0 +1,2458 @@
+{
+ "when": "2026-11-01 11:07",
+ "summary": {
+  "languages": 13,
+  "failed": [],
+  "requests": 104,
+  "written right": 100,
+  "spoken right": 85,
+  "Andy heard back, median": 0.95,
+  "translation into English, median s": 0.545
+ },
+ "languages": {
+  "zh": {
+   "name": "Chinese",
+   "written": [
+    {
+     "said": "我的眼镜在哪里？",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 1.73
+    },
+    {
+     "said": "你看到我的钥匙了吗？",
+     "english": "where are my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.93
+    },
+    {
+     "said": "我找不到我的手机",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.45
+    },
+    {
+     "said": "下午五点提醒我给女儿打电话",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.6
+    },
+    {
+     "said": "帮我看着我的钱包",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.49
+    },
+    {
+     "said": "我要出门了，东西都带齐了吗？",
+     "english": "Am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.46
+    },
+    {
+     "said": "现在几点了？",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.43
+    },
+    {
+     "said": "说英语",
+     "english": "Say English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.32
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "我的眼睛在哪里",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "你看到我的钥匙了吗",
+     "english": "where are my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "我讲不到我的手机",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "上午五点提醒我给女儿打电话",
+     "english": "remind me at 5 am to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "帮我看着我的钱包",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "我要出门了东西都带起了吗",
+     "english": "I'm going out, have I brought everything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "现在几点了",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "说英语",
+     "english": "Say English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "在那儿！ 在桌子上，在我左边，距离大约1.5米。",
+     "heard": "在那儿在桌子上在我左边距离大月亮飞米",
+     "heard_back": 0.88,
+     "translated_s": 0.58,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "我会在下午5点提醒您给您的女儿打电话。",
+     "heard": "我会在下午附点提醒您给您的女儿打电话",
+     "heard_back": 0.97,
+     "translated_s": 0.54,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "我正在看着您的钱包。",
+     "heard": "我正在看着您的钱包组",
+     "heard_back": 0.95,
+     "translated_s": 0.37,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 8,
+   "heard_back": 0.93
+  },
+  "tl": {
+   "name": "Tagalog",
+   "written": [
+    {
+     "said": "Nasaan ang salamin ko?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.54
+    },
+    {
+     "said": "Nakita mo ba ang mga susi ko?",
+     "english": "Did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 1.07
+    },
+    {
+     "said": "Hindi ko mahanap ang cellphone ko",
+     "english": "I can't find my cellphone",
+     "reached": [
+      "find",
+      "cellphone"
+     ],
+     "right": true,
+     "seconds": 0.45
+    },
+    {
+     "said": "Paalalahanan mo ako mamayang alas singko ng hapon na tawagan ang anak ko",
+     "english": "remind me at 5 pm to call my child",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.59
+    },
+    {
+     "said": "Bantayan mo ang pitaka ko",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.54
+    },
+    {
+     "said": "Aalis na ako, kumpleto na ba ang dala ko?",
+     "english": "Am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.48
+    },
+    {
+     "said": "Anong oras na?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.9
+    },
+    {
+     "said": "Mag-Ingles ka",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.84
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "nasaan ang salamin ko",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "nakita mo ba ang mga susi ko",
+     "english": "did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ndiku mahanap ang celephone ko",
+     "english": "can you find my cellphone?",
+     "reached": [
+      "find",
+      "cellphone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "paalalahanin mo ako mamayang alas singko ng hapon na tawagan ang anak ko",
+     "english": "remind me at 5 pm to call my child",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "mag-ingat ka sa wallet ko",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "alis na ako kumpleto na ba ang dala ko",
+     "english": "I'm leaving, is everything I brought complete?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "anong oras na",
+     "english": "what time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "mag-english ka",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Ayan na sila! Sa mesa, sa aking kaliwa, mga 1.5 metro ang layo.",
+     "heard": "ayan na sila sa mesa sa aking kaliwa mga 1,5 metro ang layo",
+     "heard_back": 1.0,
+     "translated_s": 0.73,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Ipapaalala ko po sa inyo nang alas singko ng hapon na tawagan ang anak ninyong babae.",
+     "heard": "ipaalala ko po sa inyo sa alas singko nang hapon na tawagan ang inyong anak na babae",
+     "heard_back": 0.86,
+     "translated_s": 1.29,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Binabantayan ko po ang inyong pitaka.",
+     "heard": "pinagbantay ko po ang inyong pitaka",
+     "heard_back": 0.92,
+     "translated_s": 0.96,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 8,
+   "heard_back": 0.93
+  },
+  "vi": {
+   "name": "Vietnamese",
+   "written": [
+    {
+     "said": "Kính của tôi đâu rồi?",
+     "english": "where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 1.01
+    },
+    {
+     "said": "Bạn có thấy chìa khóa của tôi không?",
+     "english": "Do you see my keys?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false,
+     "seconds": 1.04
+    },
+    {
+     "said": "Tôi không tìm thấy điện thoại",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.43
+    },
+    {
+     "said": "Nhắc tôi lúc năm giờ chiều gọi cho con gái",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.59
+    },
+    {
+     "said": "Trông chừng cái ví của tôi",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.48
+    },
+    {
+     "said": "Tôi đi ra ngoài đây, tôi có mang đủ đồ chưa?",
+     "english": "I'm going out, do I have everything I need?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.26
+    },
+    {
+     "said": "Mấy giờ rồi?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.87
+    },
+    {
+     "said": "Nói tiếng Anh đi",
+     "english": "Speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.4
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "tính của tôi đau rồi",
+     "english": "my stomach hurts",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "bạn có thấy chìa khóa của tôi không",
+     "english": "do you see my keys?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "tôi không tìm thấy điện thoại",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "nhớ tôi lúc năm giờ chịu gọi cho con gái",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "trong chừng cái ví của tôi",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "tôi đi ra đây tôi có mang đủ đổ chưa",
+     "english": "did I bring everything when I came out here?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "bài yêu rồi",
+     "english": "love song",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "nói tiếng anh đi",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Kia rồi! Trên bàn, bên trái tôi, cách khoảng 1,5 mét.",
+     "heard": "kia rồi tiến bạn biến trải tôi cách khoảng hoan phải mét",
+     "heard_back": 0.77,
+     "translated_s": 0.58,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Tôi sẽ nhắc bạn lúc 5 giờ chiều để gọi cho con gái của bạn.",
+     "heard": "tôi sẽ nhắc bản lúc phăm giờ chiều để gọi cho con gái của bạn",
+     "heard_back": 0.93,
+     "translated_s": 0.6,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Tôi đang để mắt đến ví của bạn.",
+     "heard": "tôi đang đệ mắt đến ví của bạn",
+     "heard_back": 0.96,
+     "translated_s": 0.4,
+     "by_hand": false
+    }
+   ],
+   "written_right": 7,
+   "spoken_right": 4,
+   "heard_back": 0.89
+  },
+  "ko": {
+   "name": "Korean",
+   "written": [
+    {
+     "said": "내 안경 어디 있어?",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.94
+    },
+    {
+     "said": "내 열쇠 봤어?",
+     "english": "where are my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.94
+    },
+    {
+     "said": "휴대폰을 못 찾겠어",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.42
+    },
+    {
+     "said": "오후 다섯 시에 딸에게 전화하라고 알려줘",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.57
+    },
+    {
+     "said": "내 지갑 좀 지켜봐 줘",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.46
+    },
+    {
+     "said": "나 나갈게, 다 챙겼나?",
+     "english": "I'm leaving, did I pack everything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.51
+    },
+    {
+     "said": "지금 몇 시야?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.47
+    },
+    {
+     "said": "영어로 말해 줘",
+     "english": "Say it in English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.47
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "내 안 요 뭐 있어",
+     "english": "what am I holding?",
+     "reached": [
+      "describe",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "4 대열 제 바스서",
+     "english": "4 대열 제 바스서",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "휴대폰을 못 찾겠어",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "오후 5시에 딸에게 전화 라고 알려지",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "내 지갑 좀 지켜봐 주",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "나갈게 다 제껴 나",
+     "english": "get out of the way",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "집은 몇이야",
+     "english": "what am I holding?",
+     "reached": [
+      "describe",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "병어로 말해 주",
+     "english": "speak more slowly",
+     "reached": [
+      "voice",
+      "slower"
+     ],
+     "right": false
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "저기 있어요! 테이블 위에, 제 왼쪽에, 약 1.5미터 떨어진 곳에 있습니다.",
+     "heard": "적이 있어요 테이블 위해 재왼쪽에 약 황 5m 떨어진 곳에 있습니다",
+     "heard_back": 0.77,
+     "translated_s": 0.7,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "오후 5시에 따님께 전화하시라고 알려 드릴게요.",
+     "heard": "오후 오시의 딸님께 전화하시라고 알려드릴게요",
+     "heard_back": 0.87,
+     "translated_s": 1.07,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "지갑을 잘 지켜보고 있어요.",
+     "heard": "직업을 잘 지켜보고 있어요",
+     "heard_back": 0.82,
+     "translated_s": 0.42,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 3,
+   "heard_back": 0.82
+  },
+  "ru": {
+   "name": "Russian",
+   "written": [
+    {
+     "said": "Где мои очки?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.56
+    },
+    {
+     "said": "Ты не видел мои ключи?",
+     "english": "Didn't you see my keys?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false,
+     "seconds": 0.94
+    },
+    {
+     "said": "Не могу найти телефон",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.42
+    },
+    {
+     "said": "Напомни мне в пять вечера позвонить дочери",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.58
+    },
+    {
+     "said": "Присмотри за моим кошельком",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.48
+    },
+    {
+     "said": "Я ухожу, я всё взял?",
+     "english": "Am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.02
+    },
+    {
+     "said": "Который час?",
+     "english": "Which time is it?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false,
+     "seconds": 0.44
+    },
+    {
+     "said": "Говори по-английски",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.89
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "где мой очки",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ты не видел мои ключи",
+     "english": "you haven't seen my keys",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "не могу найти телефон",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "напомни мне в пять вечера позвонить дочери",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "присмотри за моим кошельком",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "я ухожу я всё взял",
+     "english": "I’m leaving, I’ve got everything",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "какой час",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "говори по-английски",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Вон они! На столе, слева от меня, примерно в 1,5 метрах.",
+     "heard": "вон они на столе слева от меня примерно в амфиметрах",
+     "heard_back": 0.95,
+     "translated_s": 0.59,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Я напомню вам в 17:00 позвонить вашей дочери.",
+     "heard": "я напомню вам вся чит позвонить вашей дочери",
+     "heard_back": 0.93,
+     "translated_s": 0.53,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Я слежу за вашим кошельком.",
+     "heard": "я слежу за вашим кошельком",
+     "heard_back": 1.0,
+     "translated_s": 0.48,
+     "by_hand": false
+    }
+   ],
+   "written_right": 6,
+   "spoken_right": 6,
+   "heard_back": 0.96
+  },
+  "ar": {
+   "name": "Arabic",
+   "written": [
+    {
+     "said": "أين نظارتي؟",
+     "english": "where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.54
+    },
+    {
+     "said": "هل رأيت مفاتيحي؟",
+     "english": "did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.96
+    },
+    {
+     "said": "لا أجد هاتفي",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.42
+    },
+    {
+     "said": "ذكرني في الساعة الخامسة مساءً أن أتصل بابنتي",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.57
+    },
+    {
+     "said": "راقب محفظتي",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.48
+    },
+    {
+     "said": "أنا خارج، هل معي كل شيء؟",
+     "english": "I'm out, do I have everything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.1
+    },
+    {
+     "said": "كم الساعة الآن؟",
+     "english": "what time is it now?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.53
+    },
+    {
+     "said": "تكلم بالإنجليزية",
+     "english": "Speak in English.",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.43
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "أين نظارتي",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "هل رأيت مفاتيحي",
+     "english": "did you see my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "لا أجد هاتفي",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ذكرني في الساعة الخامسة مساء أن أتصل ببنتي",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "راقب محافظاتي",
+     "english": "keep an eye on my محافظاتي",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "أنا خارج هل معي كل شيء",
+     "english": "Am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "كم الساعة الآن",
+     "english": "What time is it now?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "تكلموا بالإنجليزية",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "هناك! على الطاولة، إلى يساري، على بُعد حوالي 1.5 متر.",
+     "heard": "هناك على الطاولة إلى يساري على بعد حوالي متر",
+     "heard_back": 1.0,
+     "translated_s": 0.69,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "سأذكّرك في الساعة 5 مساءً للاتصال بابنتك.",
+     "heard": "سأذكرك في الساعة حين مساء للاتصال بابنتك",
+     "heard_back": 0.95,
+     "translated_s": 0.72,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "أنا أراقب محفظتك.",
+     "heard": "أنا أراقب محفظتك",
+     "heard_back": 1.0,
+     "translated_s": 0.41,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 7,
+   "heard_back": 0.98
+  },
+  "hi": {
+   "name": "Hindi",
+   "written": [
+    {
+     "said": "मेरा चश्मा कहाँ है?",
+     "english": "where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 1.08
+    },
+    {
+     "said": "क्या तुमने मेरी चाबियाँ देखीं?",
+     "english": "did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 1.07
+    },
+    {
+     "said": "मुझे मेरा फ़ोन नहीं मिल रहा",
+     "english": "where are my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 1.04
+    },
+    {
+     "said": "मुझे शाम पाँच बजे बेटी को फ़ोन करने की याद दिलाना",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.58
+    },
+    {
+     "said": "मेरे बटुए पर नज़र रखना",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.5
+    },
+    {
+     "said": "मैं बाहर जा रहा हूँ, क्या मेरे पास सब कुछ है?",
+     "english": "I'm going out, do I have everything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.22
+    },
+    {
+     "said": "कितने बजे हैं?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.44
+    },
+    {
+     "said": "अंग्रेज़ी में बोलो",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.0
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "मेरा जिसमा कहा है",
+     "english": "where is my body",
+     "reached": [
+      "find",
+      "body"
+     ],
+     "right": false
+    },
+    {
+     "heard": "क्या तुमने मेरी चावियर देखी",
+     "english": "Did you see my chaviar?",
+     "reached": [
+      "find",
+      "chaviar"
+     ],
+     "right": false
+    },
+    {
+     "heard": "मुझे मेरा फोन नहीं मिल रहा",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "मुझे साम पाँच बजे बेटी को फोन करने की याद दिलाना",
+     "english": "remind me at 5 pm to call daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "मेरे बटुए पर नज़र रखना",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "मैं बाहर जा रहा हूँ क्या मेरे पास सबकुछ है",
+     "english": "am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "कितने बजे हैं",
+     "english": "what time is it",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "अंदरेजी में बोलो",
+     "english": "Speak in English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "वहाँ हैं! मेज़ पर, मेरे बाएँ, लगभग 1.5 मीटर दूर।",
+     "heard": "हैं वहाँ मेज़ पर मेरे बाए लगभग आम 5 मीटर दूर",
+     "heard_back": 0.9,
+     "translated_s": 0.66,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "मैं आपको शाम 5 बजे बेटी को कॉल करने की याद दिलाऊँगा।",
+     "heard": "मैं आपको शाम पैन बजे बेटी को कॉल करने की याद दिलाऊँगा",
+     "heard_back": 0.96,
+     "translated_s": 0.63,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "मैं आपकी जेब पर नज़र रख रहा हूँ।",
+     "heard": "मैं आपकी जेब पर नज़र रख रहा हूँ",
+     "heard_back": 1.0,
+     "translated_s": 0.5,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 6,
+   "heard_back": 0.95
+  },
+  "pt": {
+   "name": "Portuguese",
+   "written": [
+    {
+     "said": "Onde estão meus óculos?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.54
+    },
+    {
+     "said": "Você viu minhas chaves?",
+     "english": "Did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.98
+    },
+    {
+     "said": "Não acho meu celular",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.46
+    },
+    {
+     "said": "Me lembra às cinco da tarde de ligar para minha filha",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.31
+    },
+    {
+     "said": "Fica de olho na minha carteira",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.5
+    },
+    {
+     "said": "Vou sair, estou levando tudo?",
+     "english": "Am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.48
+    },
+    {
+     "said": "Que horas são?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.43
+    },
+    {
+     "said": "Fala em inglês",
+     "english": "Speak in English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.81
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "onde estão meus óculos",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "você viu-me as chaves",
+     "english": "did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "não ache o meu celular",
+     "english": "don't find my cell phone",
+     "reached": [
+      "find",
+      "cell phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "me lembra às cinco da tarde de ligar para minha filha",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "fica de óleo na minha carteira",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "vou sair estou levando tudo",
+     "english": "I'm leaving, I'm taking everything",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "que oração",
+     "english": "what prayer",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "pala em englês",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Ali estão! Na mesa, à minha esquerda, a cerca de 1,5 metros de distância.",
+     "heard": "ali estão na mesa à minha esquerda a cerca de 11 metros de distância",
+     "heard_back": 1.0,
+     "translated_s": 0.69,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Eu vou lembrá-lo às 17:00 para ligar para sua filha.",
+     "heard": "eu vou lembrá-lo a sentencente para ligar para sua filha",
+     "heard_back": 0.85,
+     "translated_s": 0.57,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Estou de olho na sua carteira.",
+     "heard": "estudiou-lhe na sua carteira",
+     "heard_back": 0.83,
+     "translated_s": 0.43,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 7,
+   "heard_back": 0.89
+  },
+  "fr": {
+   "name": "French",
+   "written": [
+    {
+     "said": "Où sont mes lunettes ?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.6
+    },
+    {
+     "said": "Tu as vu mes clés ?",
+     "english": "Did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.91
+    },
+    {
+     "said": "Je ne trouve pas mon téléphone",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.92
+    },
+    {
+     "said": "Rappelle-moi à cinq heures de l'après-midi d'appeler ma fille",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.58
+    },
+    {
+     "said": "Surveille mon portefeuille",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.52
+    },
+    {
+     "said": "Je sors, est-ce que j'ai tout ?",
+     "english": "I'm leaving, am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.13
+    },
+    {
+     "said": "Quelle heure est-il ?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.45
+    },
+    {
+     "said": "Parle anglais",
+     "english": "Speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.37
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "où sont mes lunettes",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "tu as vu mes clés",
+     "english": "have you seen my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "je ne trouve pas mon téléphone",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "rappelle-moi à cinq heures de l'après-midi d'appeler ma fille",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "surveille mon portefeuille",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "je sors est-ce que j'ai tout",
+     "english": "am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "quelle heure est-il",
+     "english": "what time is it",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "parle anglais",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Les voilà ! Sur la table, à ma gauche, à environ 1,5 mètres.",
+     "heard": "lui voilà sur la table à ma gauche à environ 100 mètres",
+     "heard_back": 0.95,
+     "translated_s": 0.62,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Je vous rappellerai à 17 h pour appeler votre fille.",
+     "heard": "je vous rappellerai à sang pour appeler votre fille",
+     "heard_back": 0.94,
+     "translated_s": 0.57,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Je surveille votre portefeuille.",
+     "heard": "je surveille votre portefeuille",
+     "heard_back": 1.0,
+     "translated_s": 0.39,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 8,
+   "heard_back": 0.96
+  },
+  "it": {
+   "name": "Italian",
+   "written": [
+    {
+     "said": "Dove sono i miei occhiali?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.53
+    },
+    {
+     "said": "Hai visto le mie chiavi?",
+     "english": "where are my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.9
+    },
+    {
+     "said": "Non trovo il telefono",
+     "english": "where are my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.89
+    },
+    {
+     "said": "Ricordami alle cinque del pomeriggio di chiamare mia figlia",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.58
+    },
+    {
+     "said": "Tieni d'occhio il mio portafoglio",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.52
+    },
+    {
+     "said": "Esco, ho preso tutto?",
+     "english": "Did I take everything?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false,
+     "seconds": 0.49
+    },
+    {
+     "said": "Che ore sono?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.45
+    },
+    {
+     "said": "Parla inglese",
+     "english": "Speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.36
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "dove sono i mirocchiali",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "hai visto le mie chiavi",
+     "english": "have you seen my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "non trovo il telefono",
+     "english": "I can't find the phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ricordami alle cinque del pomeriggio di chiamare mia figlia",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "tieni d'occhio il mio portafoglio",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "esco ho preso tutto",
+     "english": "I think you have taken everything",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "che ore sono",
+     "english": "what time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "parla englese",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Sono lì! Sulla tavola, alla mia sinistra, a circa 1,5 metri di distanza.",
+     "heard": "sono lì sulla tavola alla mia sinistra a circa 20 metri di distanza",
+     "heard_back": 1.0,
+     "translated_s": 0.7,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Ti ricorderò alle 17:00 di chiamare tua figlia.",
+     "heard": "ti ricorderò all'escevelento di chiamare tua figlia",
+     "heard_back": 0.87,
+     "translated_s": 0.59,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Ti sto tenendo d'occhio il portafoglio.",
+     "heard": "ti sto tenendo d'occhio il portafoglio",
+     "heard_back": 1.0,
+     "translated_s": 0.49,
+     "by_hand": false
+    }
+   ],
+   "written_right": 7,
+   "spoken_right": 7,
+   "heard_back": 0.96
+  },
+  "pl": {
+   "name": "Polish",
+   "written": [
+    {
+     "said": "Gdzie są moje okulary?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.56
+    },
+    {
+     "said": "Widziałeś moje klucze?",
+     "english": "Have you seen my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.45
+    },
+    {
+     "said": "Nie mogę znaleźć telefonu",
+     "english": "where are my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.86
+    },
+    {
+     "said": "Przypomnij mi o piątej po południu, żeby zadzwonić do córki",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.6
+    },
+    {
+     "said": "Pilnuj mojego portfela",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 1.06
+    },
+    {
+     "said": "Wychodzę, czy mam wszystko?",
+     "english": "Am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.46
+    },
+    {
+     "said": "Która godzina?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.47
+    },
+    {
+     "said": "Mów po angielsku",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.85
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "dzisą o jaku lare",
+     "english": "today about what?",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "widziałeś moje klucze",
+     "english": "did you see my keys",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "nie mogę znaleźć telefonu",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "przypomnij mi o piątej popołudniu żebym zadzwonił do córki",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "pilnuj mojego portfela",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "wychodzę czy mam wszystko",
+     "english": "am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "turagodzina",
+     "english": "turagodzina",
+     "reached": [
+      "chat",
+      ""
+     ],
+     "right": false
+    },
+    {
+     "heard": "mów po angielsku",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Tam są! Na stole, po mojej lewej stronie, około 1,5 metra dalej.",
+     "heard": "tam są na stole po mojej lewej stronie około pięk film metra dalej",
+     "heard_back": 0.92,
+     "translated_s": 0.65,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Przypomnę Ci o 17:00, żebyś zadzwonił do córki.",
+     "heard": "przypomnę ci o wszewnę cięć żebyś zadzwonił do córki",
+     "heard_back": 0.86,
+     "translated_s": 0.73,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Pilnuję Twojego portfela.",
+     "heard": "pilnuję twojego portfela",
+     "heard_back": 1.0,
+     "translated_s": 0.44,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 6,
+   "heard_back": 0.93
+  },
+  "de": {
+   "name": "German",
+   "written": [
+    {
+     "said": "Wo ist meine Brille?",
+     "english": "Where is my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.51
+    },
+    {
+     "said": "Hast du meine Schlüssel gesehen?",
+     "english": "Have you seen my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.43
+    },
+    {
+     "said": "Ich finde mein Handy nicht",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.85
+    },
+    {
+     "said": "Erinnere mich um fünf Uhr nachmittags daran, meine Tochter anzurufen",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.55
+    },
+    {
+     "said": "Behalte meine Geldbörse im Auge",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.46
+    },
+    {
+     "said": "Ich gehe raus, habe ich alles?",
+     "english": "I'm going out, am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.0
+    },
+    {
+     "said": "Wie spät ist es?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.45
+    },
+    {
+     "said": "Sprich Englisch",
+     "english": "Speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.37
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "wo ist meine brille",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "hast du meine schlüssel gesehen",
+     "english": "have you seen my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ich finde mein handy nicht",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "erinnere mich um fünf uhr nachmittags daran meine tochter anzurufen",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "behalte meine geldbörse im auge",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ich gehe raus habe ich alles",
+     "english": "I am going out, do I have everything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "wie spät ist es",
+     "english": "what time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "sprich englisch",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Da sind sie! Auf dem Tisch, zu meiner Linken, etwa 1,5 Meter entfernt.",
+     "heard": "da sind sie auf dem tisch zu meiner linken etwa ohne 5 meter entfernt",
+     "heard_back": 0.96,
+     "translated_s": 0.59,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Ich werde Sie um 17 Uhr daran erinnern, Ihre Tochter anzurufen.",
+     "heard": "ich werde sie um fein uhr daran erinnern ihre tochter zu rufen",
+     "heard_back": 0.94,
+     "translated_s": 0.54,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Ich beobachte Ihre Geldbörse.",
+     "heard": "ich beobachte ihre geldbörse",
+     "heard_back": 1.0,
+     "translated_s": 0.41,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 8,
+   "heard_back": 0.97
+  },
+  "uk": {
+   "name": "Ukrainian",
+   "written": [
+    {
+     "said": "Де мої окуляри?",
+     "english": "Where are my glasses?",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true,
+     "seconds": 0.51
+    },
+    {
+     "said": "Ти бачив мої ключі?",
+     "english": "Did you see my keys?",
+     "reached": [
+      "find",
+      "keys"
+     ],
+     "right": true,
+     "seconds": 0.91
+    },
+    {
+     "said": "Не можу знайти телефон",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true,
+     "seconds": 0.42
+    },
+    {
+     "said": "Нагадай мені о п'ятій вечора зателефонувати доньці",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.56
+    },
+    {
+     "said": "Наглядай за моїм гаманцем",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true,
+     "seconds": 0.47
+    },
+    {
+     "said": "Я йду, чи я все взяв?",
+     "english": "I'm leaving, did I take everything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true,
+     "seconds": 1.04
+    },
+    {
+     "said": "Котра година?",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true,
+     "seconds": 0.83
+    },
+    {
+     "said": "Говори англійською",
+     "english": "Speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true,
+     "seconds": 0.36
+    }
+   ],
+   "spoken": [
+    {
+     "heard": "де мої окуляри",
+     "english": "where are my glasses",
+     "reached": [
+      "find",
+      "glasses"
+     ],
+     "right": true
+    },
+    {
+     "heard": "ty baci v moji kluci",
+     "english": "keep an eye on my keys",
+     "reached": [
+      "watch",
+      "keys"
+     ],
+     "right": false
+    },
+    {
+     "heard": "не можу знайти телефон",
+     "english": "I can't find my phone",
+     "reached": [
+      "find",
+      "phone"
+     ],
+     "right": true
+    },
+    {
+     "heard": "нагадай мені о п'ятій вечора зателефонувати донці",
+     "english": "remind me at 5 pm to call my daughter",
+     "reached": [
+      "remind",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "наглядай за моїм гаманцем",
+     "english": "keep an eye on my wallet",
+     "reached": [
+      "watch",
+      "wallet"
+     ],
+     "right": true
+    },
+    {
+     "heard": "я йду чи я все взяв",
+     "english": "am I forgetting anything?",
+     "reached": [
+      "going_out",
+      ""
+     ],
+     "right": true
+    },
+    {
+     "heard": "котра година",
+     "english": "What time is it?",
+     "reached": [
+      "time",
+      "time"
+     ],
+     "right": true
+    },
+    {
+     "heard": "воворе англійською",
+     "english": "speak English",
+     "reached": [
+      "language",
+      ""
+     ],
+     "right": true
+    }
+   ],
+   "answers": [
+    {
+     "english": "There they are! On the table, to my left, about 1.5 meters away.",
+     "said": "Он вони! На столі, ліворуч від мене, приблизно за 1,5 метра.",
+     "heard": "он вони на столі ліворуч від мене приблизно за їм фівметра",
+     "heard_back": 0.95,
+     "translated_s": 0.66,
+     "by_hand": true
+    },
+    {
+     "english": "I'll remind you at 5 PM to call your daughter.",
+     "said": "Я нагадаю вам о 17:00 зателефонувати вашій доньці.",
+     "heard": "я нагадаю вам очевидцять зателефонувати вашій доньці",
+     "heard_back": 0.89,
+     "translated_s": 0.65,
+     "by_hand": false
+    },
+    {
+     "english": "I'm keeping an eye on your wallet.",
+     "said": "Я стежу за вашим гаманцем.",
+     "heard": "ясте ж у завашим гаманцем",
+     "heard_back": 1.0,
+     "translated_s": 0.4,
+     "by_hand": false
+    }
+   ],
+   "written_right": 8,
+   "spoken_right": 7,
+   "heard_back": 0.95
+  }
+ }
+}

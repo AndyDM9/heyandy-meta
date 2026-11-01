@@ -56,7 +56,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
   **the cup game** (SAM 3.1 Object Multiplex tracks every cup at once). Built and measured on photos and synthetic
   shuffles; not yet tried with a person in the room.
 - **The weather radar on the TV** (Muse Spark's computer use), **a map of my things** (Muse Image, from words only),
-  answers with sources, **Spanish**, the time and day from the clock, and several things at once through an agent with
+  answers with sources, **fifteen languages** ("Andy, speak Russian"), the time and day from the clock, and several things at once through an agent with
   Andy's abilities as tools (Muse Spark, or Glimmer offline).
 
 ## Meta's models, and where each one runs
@@ -64,10 +64,10 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | Model | Where | What it does |
 |---|---|---|
 | **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once |
-| **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Spanish |
+| **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Andy's fourteen other languages |
 | **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
 | **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
-| **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; English and Spanish |
+| **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; fifteen languages |
 | **DINOv2** (open weights) | GPU 1; and in the visitor's browser on the public demo | Knows the person's own things by sight |
 | **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | A second crisis check; reads each web page before Muse Spark does |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers; computer use |
@@ -111,6 +111,8 @@ fixes this scorecard showed were needed), **Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
 *Spanish:* **41 of 41** written requests reach the right ability; **34 of 41** said by Andy's voice and heard back.
+*Thirteen more languages* (Mandarin to Ukrainian, 104 requests): **100 written** and **85 spoken** reach the right ability on
+the first run; with the rules it showed were missing, 104 and 89.
 *On the robot, alone in the room:* **112 of 112** unattended searches over two days ended in a point; on the final
 code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. Typed to Andy on the robot: "the red
 cup" with only a blue one there, no point 4 of 4; the blue one, 2 of 2; a find from request to spoken answer, 13 to
@@ -120,11 +122,11 @@ Every result, failures included: `evals/results/` and `docs/research.md`.
 ## Safety and honesty
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
-It says it's an AI at the start of a conversation and every three hours. Crisis words, in English or Spanish, get the
-988 line from code and reach no other model, checked twice on this computer: a word list, then Llama Guard 3. It never
+It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages, get the
+988 line from code (written by hand in each: in thirteen, call and ask for an interpreter) and reach no other model, checked twice on this computer: a word list, then Llama Guard 3. It never
 asks for money or passwords. Speech that isn't for Andy is dropped, never shown or kept. Model API spend is capped.
 
 ## What's next
 
-Our own robot body (in design), the same software behind the same body interface; more languages; and the physical
+Our own robot body (in design), the same software behind the same body interface; each language tried with people who speak it; and the physical
 scorecard in more homes.

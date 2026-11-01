@@ -11,10 +11,10 @@ from ..agent.tools import COLOURS
 from ..finder.names import KNOWN, snap
 
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
-FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|did you see|have you noticed|can you see|look for|help me find|lost|misplaced|"
+FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|did you see|(?:didn't|did not|haven't|have not) you (?:see|seen)|you haven't seen|have you noticed|(?:do you see|did you notice|can you see)(?= (?:my|our|the|his|her|their|a|an|any) )|look for|help me find|lost|misplaced|"
                   r"(?:look|search|scan)(?: around)?(?: (?:the|this|my) (?:room|house|table|desk))? for)\s+"
                   + THING
-                  + r"(?:\s+(?:is|are|went|go|gone))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
+                  + r"(?:\s+(?:is|are|went|go|gone))?(?:\s+(?:anywhere|around))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
 DRAW = re.compile(r"\b(?:draw|paint|sketch|make|create)\s+(?:me\s+|us\s+)?(?:a\s+|an\s+)?"
                   r"(?:(?:picture|drawing|painting|sketch|image)\s+of\s+)?(?P<what>.{3,200}?)[.!?]*$", re.I)
 DRAW_START = re.compile(r"\b(?:draw|paint|sketch)\b|\b(?:make|create)\s+(?:me\s+|us\s+)?(?:a\s+)?"
@@ -134,7 +134,7 @@ ROOM = re.compile(r"\b(?:show|map|scan|measure)(?: me)? (?:the|my|this|your) (?:
                   r"\b(?:room|things|space) in 3 ?d\b|\b3 ?d (?:map|view|scan|picture) of\b|"
                   r"\bwhat does (?:the|my|this) room look like\b", re.I)
 # The time and the day, from the clock: the conversation's model isn't told them, and would guess.
-TIME = re.compile(r"\bwhat(?:'s|s| is) the time\b(?! in\b)|\bwhat time is it\b(?! in\b)|"
+TIME = re.compile(r"\bwhat(?:'s|s| is) the time\b(?! in\b)|\b(?:what|which) time is it\b(?! in\b)|"
                   r"\bwhat(?:'s|s| is) (?:the date|today'?s date|the day)(?: today)?\b|\bwhat day is (?:it|today)\b|"
                   r"\bwhat(?:'s|s| is) today\b(?!'s|s\b)(?!\s+\w)", re.I)  # not "today's weather", not "in Tokyo"
 REMIND = re.compile(r"\bremind me\b", re.I)
@@ -151,7 +151,7 @@ POINTING = re.compile(r"\bwhat(?:'s| is) that(?: thing| one)?(?: over there| the
 GOING_OUT = re.compile(r"\b(?:i'?m|i am|we'?re|we are) (?:just )?(?:going out|heading out|off out|popping out|leaving(?: now| "
                        r"the house)?(?=\s*(?:[,.!?]|$|for\b|to\b|in\b))|going to the (?:store|shops|supermarket|beach|bank|park|post office|mall)|off to the "
                        r"(?:store|shops|beach|park))\b|\bdo i have everything\b|\bam i forgetting anything\b|"
-                       r"\bhave i got everything\b|"
+                       r"\bhave i got everything\b|\b(?:did|have) i (?:got|brought|bring|packed|pack|taken|take) everything\b|"
                        # "did I forget anything?", "did I forget my keys?": checking what's still here, never "forget"
                        r"\b(?:did|have) i (?:forget|forgotten|left|leave)(?: (?:anything|something)\b| (?:my|the|our) )", re.I)
 MAP_OF_THINGS = re.compile(r"\b(?:draw|make|paint|show)(?: me| us)? (?:a |the )?(?:map|picture|postcard|drawing) of "
@@ -245,6 +245,7 @@ SPOKEN_AT = re.compile(r"\bat (" + "|".join(HOURS) + r")(?: (" + "|".join(MINUTE
 def normalise(text: str) -> str:
     """Speech-to-text output, made readable for the rules: "at three thirty p m" -> "at 3:30 pm"."""
     t = " ".join(text.strip().split())
+    t = t.replace("\u2019", "'").replace("\u2018", "'")  # Glimmer's translations use curly apostrophes: "Where’s my phone?"
     t = re.sub(r"\b([ap])\.? ?m\b\.?", r"\1m", t, flags=re.I)
     t = SPOKEN_AT.sub(lambda m: f"at {HOURS[m.group(1).lower()]}:{MINUTES.get((m.group(2) or 'oclock').lower(), 0):02d}", t)
     # Heard again and again for "where are my" (Omnilingual ASR, all sizes, 2026-10-27).

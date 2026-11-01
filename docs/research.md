@@ -1108,3 +1108,51 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **Not yet:** photos taken by people, at home, of their own things (the founder's phone is the first test). Cutting
   the museum objects out of their backdrops for a shelf picture mangled the white cup, so our example is four photos
   side by side, and says so.
+
+## 54. Andy in thirteen more languages (2026-10-31 and November 1)
+
+- **Why:** Spanish (section 23) showed the shape works: Omnilingual ASR hears a language when it's told which, Muse
+  Glimmer translates on this computer, SeamlessM4T v2 speaks. Many people who live at home speak another language
+  first, and a robot that finds things should understand "我的眼镜在哪里？" as well as "where are my glasses?". All three
+  models already cover far more than two languages; what Andy lacked was the parts that mustn't be machine-translated.
+- **Built:** `companion/languages.py` adds Mandarin Chinese, Tagalog, Vietnamese, Korean, Russian, Arabic, Hindi,
+  Portuguese, French, Italian, Polish, German and Ukrainian ("Andy, speak Russian", "talk to me in Mandarin", "in
+  Tagalog, please"; "speak English" switches back; it's remembered). Each has, **written by hand, never by a model at
+  runtime:** saying it's an AI; the crisis reply (988 has interpreters by phone in more than 240 languages, but its texts
+  and chat are English and Spanish only, so the reply says to call and ask for an interpreter in that language, then
+  911); Andy's twelve short lines ("Let me look.", "There they are!"), which a translator gets wrong without context and
+  which here avoid the thing's grammatical gender; twelve everyday things for the TV's labels; one worked example each
+  way. The crisis words are caught in each language before any model (`companion/safety.py`, normalised to NFC, no word
+  boundaries for Chinese and Korean); then Llama Guard 3 reads the person's own words, then the translation is checked in
+  English too (`docs/crisis-protocol.md`). Glimmer translates the rest; when its translation comes back unchanged (it
+  copied "Okay." back in Vietnamese, and one request in four in an early check) it's asked again with the worked example.
+  The voice server speaks all 36 of SeamlessM4T v2's speech languages; the TV's language line reads in the language
+  itself ("Русский · на этом компьютере"), its labels are translated in the background, and distances are in metres
+  outside English.
+- **Measured** (`evals/languages.py`, `evals/results/languages-20261101-1059.json`, paced: 20 s between languages): in
+  each language eight everyday requests, written by hand for this test (where are my glasses, have you seen my keys, I
+  can't find my phone, remind me at 5 pm to call my daughter, keep an eye on my wallet, I'm going out, what time is it,
+  speak English). **Written, 100 of 104 reach the right ability** (Chinese, Tagalog, Korean, Arabic, Hindi, Portuguese,
+  French, Polish, German and Ukrainian 8 of 8; Vietnamese and Italian 7; Russian 6). **Said by Andy's own voice and heard
+  by Omnilingual ASR, 85 of 104** (Chinese, Tagalog, French and German 8 of 8; Korean 3, Vietnamese 4). Andy's side,
+  three of its answers translated, spoken and heard back: a median 0.95 of the letters in order (Korean 0.82, Arabic
+  0.98). Glimmer translates a request in a median 0.55 s (at most 1.7), an answer in 0.59 s.
+- **What changed because of the measuring:** the four written misses were English the request rules didn't know, as
+  Glimmer put it: "Do you see my keys?", "Didn't you see my keys?", "Which time is it?", "Did I take everything?", and
+  **curly apostrophes**: "Where’s my phone?" with ’ reached nothing at all, in any language Glimmer wrote it so. The
+  rules now take all of these (and "do you see what I mean?" is still not a search). Sorted again by the new rules, the
+  same translations reach the right ability **104 of 104** written and **89 of 104** spoken. The spoken misses left are
+  hearing: Omnilingual ASR on a synthetic voice ("Mấy giờ rồi?" heard as "bài yêu rồi"), and then Glimmer turns the
+  garble into some other request ("what am I holding?"), never into anything that deletes or sends.
+- **Not yet:** a person. Every spoken request here was Andy's own voice, which Omnilingual ASR hears worse than people
+  in some languages (Korean) and better in others; and a native speaker should read each language's hand-written lines
+  before a home relies on them. Llama Guard 3 was trained for seven of Andy's fifteen languages (English, Spanish,
+  French, German, Hindi, Italian, Portuguese); in the other eight the word list is the check to rely on.
+
+## 55. At start-up, the language models waited for nothing (November 1)
+
+- **Found:** after a restart both llama.cpp servers (Glimmer and Llama Guard 3) started three seconds after the graphics
+  driver loaded, before CUDA was ready, and quietly ran **on the processor**: Glimmer at 2.3 tokens a second instead of
+  about 39. They still answered, so the preflight's "Glimmer answers" passed.
+- **Changed:** both units wait (up to 90 s) until llama.cpp lists the card (`deploy/heyandy-glimmer.service`,
+  `deploy/heyandy-guard.service`); the preflight checks that both servers hold memory on their GPUs.

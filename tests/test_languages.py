@@ -107,6 +107,13 @@ def test_the_crisis_reply_in_each_language_is_by_hand():
 @pytest.mark.parametrize("text,kind", [("did I forget my keys?", "going_out"), ("did I forget anything?", "going_out"),
                                        ("don't forget my umbrella", "chat"), ("forget my keys", "forget"),
                                        ("Did you see my keys?", "find"), ("Watch my wallet", "watch"),
-                                       ("Look after my wallet", "watch"), ("watch the news", "world"), ("mind the gap", "chat")])
+                                       ("Look after my wallet", "watch"), ("watch the news", "world"), ("mind the gap", "chat"),
+                                       # how Glimmer put Vietnamese (Nov 1), and what mustn't be taken for a search
+                                       ("Do you see my keys?", "find"), ("did I bring everything when I came out here?",
+                                                                         "going_out"),
+                                       ("do you see what I mean?", "chat"), ("can you see what I mean?", "chat"),
+                                       # Glimmer's curly apostrophes, and how it put Russian
+                                       ("Where’s my phone?", "find"), ("I’m leaving, I’ve got everything?", "going_out"),
+                                       ("Didn’t you see my keys?", "find"), ("Which time is it?", "time")])
 def test_what_translations_say_reaches_the_right_ability_and_never_deletes_by_mistake(text, kind):
     assert parse(text).kind == kind

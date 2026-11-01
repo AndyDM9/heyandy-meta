@@ -20,6 +20,19 @@ questions. It is not a health, medical or mental-health product, and it never co
 - **Not yet built:** messaging a family member the person has chosen. When it exists, it will be opt-in, set by the
   person.
 
+## In Andy's other languages
+Andy speaks fifteen languages: English, Spanish, Mandarin Chinese, Tagalog, Vietnamese, Korean, Russian, Arabic, Hindi,
+Portuguese, French, Italian, Polish, German and Ukrainian. In each of them:
+- The crisis words are caught **in that language**, by the word list in code, before any model sees them
+  (`companion/safety.py`). Then Llama Guard 3 reads the person's own words (it was trained for seven of them: English,
+  Spanish, French, German, Hindi, Italian and Portuguese; in the other eight the word list is the check to rely on).
+  Only then does Muse Glimmer translate the words into English, on this computer, and the English word list checks the translation too.
+- The reply is **written by hand** in that language, never translated by a model. 988 answers calls in more than 240
+  languages through interpreters, but its texts and chat are in English and Spanish only. So the Spanish reply says
+  988 has help in Spanish, and in the other thirteen it says to call 988 and ask for an interpreter in that language.
+  Every reply ends with 911 for danger right now.
+- A native speaker should read each language's hand-written lines before a home relies on them.
+
 ## What Andy never does
 - It never gives medical, medication or mental-health advice. Reminders repeat the person's own words.
 - It never claims to keep anyone safe or to monitor anyone.
