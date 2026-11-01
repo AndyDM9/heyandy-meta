@@ -750,7 +750,7 @@
     const proof = el("div", null, "proof");
     for (const [b, d] of [["On the robot", "Unattended searches ended in a point 112 times in 112; its own camera checks every point."],
                           ["Private by design", "The camera and microphone reach only Meta's open models on the computer beside it."],
-                          ["Eleven Meta models", "SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2, Omnilingual ASR, SeamlessM4T v2, Llama Guard 3, Prompt Guard 2, Muse Spark, Muse Image."]]) {
+                          ["Eleven Meta models", "SAM 3.1, Muse Glimmer, MapAnything, V‑JEPA 2, DINOv2, Omnilingual ASR, SeamlessM4T v2, Llama Guard 3, Prompt Guard 2, Muse Spark, Muse Image."]]) {
       const x = el("div", d); x.prepend(el("b", b)); proof.append(x);
     }
     inner.append(proof);
@@ -830,7 +830,7 @@
     ["find", /\b(?:where|find|lost|misplaced|seen|look for|can'?t find|missing|can you see|do you see)\b/i],
     ["answer", /^\W*(?:what|who|when|how|why|which|is|are|do|does|can|tell me)\b/i],
   ];
-  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "Where's my passport?", "Is everything home?", "Show me the room"];
+  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "安迪，我的眼镜在哪里？", "Show me the room", "What won't you do?"];
   // A health question typed, which matched no scene: what Andy says to it on the robot, its own words, never a model's
   // (companion/safety.py HEALTH_REPLY; on the robot the rule is wider, and tested)
   const HEALTH_TYPED = /\b(?:hurts?|aches?|aching|pain|sore|swollen|dizzy|fever|cough|rash|headaches?|migraines?|nause\w*|pills?|tablets?|medicines?|medications?|meds|doses?|tylenol|ibuprofen|aspirin|advil|statins?|insulin|antibiotics?|melatonin|vitamins?|blood (?:pressure|sugar)|cholesterol|diabet\w*|dementia|symptoms?|diagnos\w*|side effects?|depress\w*|anxious|anxiety)\b/i;
