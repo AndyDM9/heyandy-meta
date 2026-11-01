@@ -1,0 +1,23 @@
+{
+ "when": "2026-11-01 17:55",
+ "shots": [
+  {
+   "shot": "its promises",
+   "said": "Hey Andy, what won't you do?",
+   "heard": "hey andy what won't you do",
+   "andy said": [
+    "I never send a camera picture of your home to the cloud, I never give health advice, and I always say I'm an AI. And no camera picture has left this house today. It's on the screen, with the receipts."
+   ],
+   "seconds": 14.7,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": true
+}

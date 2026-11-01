@@ -12,6 +12,7 @@ were out). Only words and numbers are kept, never a picture or a sound.
     systemctl --user stop heyandy-app
     set -a; . ~/.config/heyandy-meta/env; set +a          # the cloud shots: Muse Image and Muse Spark
     GST_PLUGIN_PATH=~/.local/gst-plugins-rs/lib/x86_64-linux-gnu/gstreamer-1.0 uv run python -m evals.rehearsal
+    ... -m evals.rehearsal --only promises       # one shot (any part of its name)
     systemctl --user start heyandy-app
 """
 import argparse
@@ -38,6 +39,7 @@ SHOTS = [
     ("the weather radar on the TV", "en", "Hey Andy, show me the weather radar on the TV.", "cloud"),
     ("in Mandarin, nothing said in English first", "zh", "安迪，我的眼镜在哪里？", "point zh"),
     ("back to English", "en", "Andy, speak English.", "en"),
+    ("its promises", "en", "Hey Andy, what won't you do?", "promises"),
     ("an emergency said (if it's in the video)", "en", "Hey Andy, I fell and I can't get up.", "point"),
 ]
 NOT_HERE = ["\"What am I holding?\": needs someone holding something up to the robot.",
@@ -100,6 +102,8 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
         problems.append(FIX["cloud"])
     if "zh" in needs and andy.language != "zh":
         problems.append(FIX["zh"])
+    if needs == "promises" and "never give health advice" not in reply:
+        problems.append("Andy didn't say its promises: it heard " + repr(heard))
     if needs == "en" and andy.language != "en":
         problems.append(FIX["en"])
     return {"shot": name, "said": line, "heard": heard, "andy said": said, "seconds": round(took, 1), "pointed": pointed,
@@ -107,10 +111,15 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--only", default="", help="rehearse only the shots whose name has this in it ('promises')")
+    only = ap.parse_args().only
     andy = build()
     loop = VoiceLoop(andy)
     rows = []
     for name, code, line, needs in SHOTS:
+        if only not in name:
+            continue
         r = shot(andy, loop, name, code, line, needs)
         rows.append(r)
         print(f"{'OK  ' if r['ok'] else 'FIX '} {name}: {r['seconds']} s{', pointed' if r['pointed'] else ''}"
@@ -121,10 +130,12 @@ def main() -> None:
     andy.body.look(0, 0)
     for n in NOT_HERE:
         print(f"NOT REHEARSED: {n}")
-    out = Path("evals/results") / f"rehearsal-{time.strftime('%Y%m%d-%H%M')}.json"
+    out = Path("evals/results") / f"rehearsal{'-only' if only else ''}-{time.strftime('%Y%m%d-%H%M')}.json"  # one shot: not the rehearsal
     out.write_text(json.dumps({"when": time.strftime("%Y-%m-%d %H:%M"), "shots": rows, "not rehearsed": NOT_HERE,
                                "ready": all(r["ok"] for r in rows)}, indent=1, ensure_ascii=False))
-    print(f"\n{'READY TO FILM' if all(r['ok'] for r in rows) else 'FIX THE SHOTS ABOVE, THEN RUN THIS AGAIN'} ({out})")
+    verdict = ("THESE SHOTS WORK (the whole rehearsal says READY TO FILM)" if only else "READY TO FILM") if all(
+        r["ok"] for r in rows) else "FIX THE SHOTS ABOVE, THEN RUN THIS AGAIN"
+    print(f"\n{verdict} ({out})")
 
 
 if __name__ == "__main__":
