@@ -7,6 +7,7 @@ service), and nothing is uploaded. Takes and what's made from them go in film/ (
     uv run python scripts/make_film.py captions film/take1.mp4        # -> film/take1.srt: read it, fix any word
     uv run python scripts/make_film.py burn film/take1.mp4 --tv film/tv-take1.webm --tv-offset 0.8 --out film/find.mp4
     uv run python scripts/make_film.py burn film/take1.mp4 --start 12 --end 42 --shape square --out film/x-clip.mp4
+    uv run python scripts/make_film.py cut film/cut.json --out film/andy.mp4   # the pieces and cards, one video, <= 3:00
 
 One take in, one piece out, so the badge ("autonomous · uncut · 1× speed") is true by construction. A piece across a
 time cut (the reminder, two minutes later) says so: --badge "autonomous · 1× speed · two minutes later".
@@ -208,6 +209,54 @@ def burn_command(take: Path, out: Path, tv: Path | None, tv_offset: float, start
     return cmd + [str(out)]
 
 
+def probe(path: Path) -> dict:
+    """A file's length in seconds and whether it has sound."""
+    out = subprocess.run([FFMPEG.replace("ffmpeg", "ffprobe"), "-v", "error", "-show_entries", "format=duration:stream=codec_type",
+                          "-of", "json", str(path)], capture_output=True, text=True, check=True).stdout
+    info = json.loads(out)
+    return {"seconds": float(info["format"]["duration"]),
+            "sound": any(s_.get("codec_type") == "audio" for s_ in info.get("streams", []))}
+
+
+def cut_command(pieces: list[dict], out: Path, size=(1920, 1080), fps: int = 30) -> list[str]:
+    """One video from the pieces, in order: each scaled into 1920x1080 on the TV's ground, 30 frames a second, its sound
+    (silence for a card, which has none) at 48 kHz stereo, trimmed if asked; then the whole one's loudness evened out to
+    -16 LUFS, as video sites expect, so a quiet robot and a loud card don't jump."""
+    w, h = size
+    cmd, parts = [FFMPEG, "-v", "error", "-y"], []
+    for i, p in enumerate(pieces):
+        cmd += ["-i", str(p["path"])]
+        start, end = p.get("start", 0.0), p.get("end") or p["seconds"]
+        parts.append(f"[{i}:v]trim={start}:{end},setpts=PTS-STARTPTS,scale={w}:{h}:force_original_aspect_ratio=decrease,"
+                     f"pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=0x0b110f,fps={fps},format=yuv420p,setsar=1[v{i}]")
+        if p["sound"]:
+            parts.append(f"[{i}:a]atrim={start}:{end},asetpts=PTS-STARTPTS,aresample=48000,"
+                         f"aformat=sample_fmts=fltp:channel_layouts=stereo[a{i}]")
+        else:
+            parts.append(f"anullsrc=r=48000:cl=stereo,atrim=0:{end - start},aformat=sample_fmts=fltp[a{i}]")
+    joined = "".join(f"[v{i}][a{i}]" for i in range(len(pieces)))
+    parts.append(f"{joined}concat=n={len(pieces)}:v=1:a=1[v][a0]")
+    parts.append("[a0]loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000[a]")
+    return cmd + ["-filter_complex", ";".join(parts), "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-crf", "18",
+                  "-preset", "medium", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(out)]
+
+
+def plan(path: Path) -> list[dict]:
+    """film/cut.json: [{"path": "film/card-title.mp4", "label": "title"}, {"path": "film/find.mp4", "start": 0.4}, ...]
+    (paths from the repository's top), each probed for its length and sound."""
+    root = Path(__file__).resolve().parents[1]
+    pieces = []
+    for item in json.loads(path.read_text()):
+        item = {"path": item} if isinstance(item, str) else dict(item)
+        item["path"] = Path(item["path"]) if Path(item["path"]).is_absolute() else root / item["path"]
+        if not item["path"].exists():
+            raise SystemExit(f"no such piece: {item['path']}")
+        item.update(probe(item["path"]))
+        item.setdefault("label", item["path"].stem)
+        pieces.append(item)
+    return pieces
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="do", required=True)
@@ -230,7 +279,26 @@ def main() -> None:
     b.add_argument("--shape", choices=SHAPES, default="wide", help="square or vertical for X")
     b.add_argument("--srt", type=Path, help="default: the take's own .srt, if there is one")
     b.add_argument("--badge", default=BADGE, help="'' for none")
+    k = sub.add_parser("cut", help="the pieces and cards in order, one video: same size, sound evened out, <= 3:00")
+    k.add_argument("plan", type=Path, help="film/cut.json: the pieces in order (see plan())")
+    k.add_argument("--out", type=Path, required=True)
+    k.add_argument("--limit", type=float, default=180.0, help="the rules' 3 minutes; it stops if the cut is longer")
     args = ap.parse_args()
+
+    if args.do == "cut":
+        pieces, at = plan(args.plan), 0.0
+        for p in pieces:
+            length = (p.get("end") or p["seconds"]) - p.get("start", 0.0)
+            print(f"{int(at // 60)}:{at % 60:05.2f}  {p['label']:24} {length:5.1f} s{'' if p['sound'] else '  (silent: a card)'}")
+            at += length
+        print(f"{int(at // 60)}:{at % 60:05.2f}  the end")
+        if at > args.limit:
+            raise SystemExit(f"{at:.1f} s is over the {args.limit:.0f} s limit: trim a piece (\"end\" in the plan) first")
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(cut_command(pieces, args.out), check=True)
+        made = probe(args.out)
+        print(f"made {args.out}: {made['seconds']:.1f} s, 1920x1080, sound evened out to -16 LUFS")
+        return
 
     if args.do == "sync":
         started = json.loads(args.tv.with_suffix(".json").read_text())["started"]

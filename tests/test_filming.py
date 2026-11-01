@@ -1,6 +1,8 @@
 import json
+from pathlib import Path
 
 import numpy as np
+import pytest
 
 from heyandy_meta.companion.intents import parse
 from heyandy_meta.voice.earcons import NOTE, RATE, SOUNDS, find, sound
@@ -144,3 +146,40 @@ def test_the_robot_keeps_its_last_seconds_of_sound_even_while_speaking_and_times
         b._raw_n += 1600
         b._raw.append((1000.0 + j * 0.1 + (0.01 if j == 17 else 0.05 + 0.15 * (j % 3) / 2), b._raw_n, np.zeros(1600)))
     assert abs(b.heard_lately()[1] - 1000.01) < 1e-6
+
+
+@pytest.mark.skipif(not Path("/usr/bin/ffmpeg").exists(), reason="needs ffmpeg")
+def test_the_cut_joins_takes_and_cards_into_one_video_and_refuses_to_run_over(tmp_path):
+    """make_film.py cut: a take with sound, a silent card and a vertical clip trimmed to two seconds, one 1920x1080
+    video with sound throughout; and a cut longer than the limit isn't made."""
+    import json
+    import subprocess
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    import make_film
+
+    def clip(name, w, h, seconds, sound):
+        out = tmp_path / name
+        cmd = ["/usr/bin/ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"testsrc=size={w}x{h}:rate=25:duration={seconds}"]
+        if sound:
+            cmd += ["-f", "lavfi", "-i", f"sine=frequency=440:duration={seconds}", "-shortest"]
+        subprocess.run(cmd + ["-pix_fmt", "yuv420p", str(out)], check=True)
+        return out
+
+    take, card, tall = clip("take.mp4", 1280, 720, 4, True), clip("card.mp4", 1920, 1080, 3, False), clip("tall.mp4", 1080, 1920, 5, True)
+    plan = tmp_path / "cut.json"
+    plan.write_text(json.dumps([{"path": str(card), "label": "title"}, str(take), {"path": str(tall), "start": 1, "end": 3}]))
+    pieces = make_film.plan(plan)
+    assert [p["sound"] for p in pieces] == [False, True, True]
+    out = tmp_path / "andy.mp4"
+    subprocess.run(make_film.cut_command(pieces, out), check=True)
+    info = json.loads(subprocess.run(["/usr/bin/ffprobe", "-v", "error", "-show_entries",
+                                      "format=duration:stream=codec_type,width,height", "-of", "json", str(out)],
+                                     capture_output=True, text=True, check=True).stdout)
+    video = next(s for s in info["streams"] if s["codec_type"] == "video")
+    assert (video["width"], video["height"]) == (1920, 1080) and any(s["codec_type"] == "audio" for s in info["streams"])
+    assert abs(float(info["format"]["duration"]) - 9.0) < 0.3  # 3 + 4 + 2
+    over = subprocess.run([sys.executable, str(Path(make_film.__file__)), "cut", str(plan), "--out", str(tmp_path / "x.mp4"),
+                           "--limit", "8"], capture_output=True, text=True)
+    assert over.returncode != 0 and "over the 8 s limit" in over.stderr and not (tmp_path / "x.mp4").exists()

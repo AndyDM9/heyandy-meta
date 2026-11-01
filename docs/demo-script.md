@@ -140,6 +140,20 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    the burn command with `--tv-offset` (the TV recording's second at the take's first frame) and a `--start` just after
    the clap and the flash, so the piece starts clean. It also checks the TV's own flash is where it should be in its
    recording. A piece across a time cut gets its own badge: `--badge "autonomous · 1× speed · two minutes later"`.
+9. **The cut** (a few minutes): the pieces and the cards in the storyboard's order, in `film/cut.json`, then one
+   command makes the video for the form: every piece made 1920x1080 at 30 frames a second on the TV's ground, the cards
+   given silence, the whole one's loudness evened out (-16 LUFS), and each chapter's start printed to check against the
+   storyboard. It stops, making nothing, if the cut runs over 3:00: trim a piece with `"end"` (or `"start"`).
+   ```json
+   [{"path": "film/card-title.mp4", "label": "title"}, {"path": "film/problem.mp4", "label": "the problem"},
+    {"path": "film/find.mp4", "label": "the uncut find"}, {"path": "film/follow.mp4", "label": "follow the mug"},
+    {"path": "film/several.mp4", "label": "several things"}, {"path": "film/offline.mp4", "label": "unplugged"},
+    {"path": "film/cuts.mp4", "label": "quick cuts", "end": 18}, {"path": "film/reminder.mp4", "label": "the reminder"},
+    {"path": "film/card-numbers.mp4", "label": "numbers and models"}, {"path": "film/card-end.mp4", "label": "the end"}]
+   ```
+   ```bash
+   uv run python scripts/make_film.py cut film/cut.json --out film/andy.mp4    # prints 0:00.00 title ... and the length
+   ```
 
 **Rules for filming:** no Meta logos; no music we don't own; subtitles burned in; no condition names and no health,
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never
