@@ -243,3 +243,15 @@ def test_an_emergency_said_during_a_turn_is_answered_after_it():
     import inspect
     src = inspect.getsource(VoiceLoop.run)
     assert "crisis(text) or emergency(text)" in src  # held back, like crisis words, never dropped
+
+
+def test_the_promises_card_follows_the_language(tmp_path):
+    """The TV follows the language: the card's title and rows in it (translated on this computer), the counts Andy's."""
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.translator = Glimmer({"你不会做什么？": "What won't you do?", "What I never do": "我从不做的事"})
+    a.voice = SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
+    a.language = "zh"
+    a.hear("你不会做什么？")
+    a.screen.new_turn()
+    assert a.screen.privacy["title"] == "我从不做的事" and a.screen.privacy["promises"] is True
+    assert ("What I never do", False) in a.translator.asked or ("What I never do", True) in a.translator.asked

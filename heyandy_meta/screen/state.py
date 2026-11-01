@@ -413,14 +413,14 @@ class ScreenState:
             self._glimpse = None  # the last frame of a search that found nothing goes too
             self._room = self._timeline = self._guide = self._sound = self._homes = self._told = self._checked = None
 
-    def privacy_day(self, title: str, rows: list[tuple[str, str]]) -> None:
+    def privacy_day(self, title: str, rows: list[tuple[str, str]], promises: bool = False) -> None:
         """The answer to "what did you send today?" as a card, each row marked ✓ (stayed), → (went) or ! (camera
         pictures). Whatever is shown next takes its place."""
         with self._lock:
             self._room = self._timeline = None
             self._picture, self._drawing, self._web, self._game, self.memory, self.sources = None, None, None, None, None, []
             self.checklist = None
-            self.privacy = {"title": title, "rows": [{"mark": m, "text": t} for m, t in rows]}
+            self.privacy = {"title": title, "rows": [{"mark": m, "text": t} for m, t in rows], "promises": promises}
 
     def answered(self, text: str, sources: list[tuple[str, str]], source: str = "cloud", reason: str = "") -> None:
         with self._lock:

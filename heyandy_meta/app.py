@@ -624,11 +624,11 @@ class Andy:
             rows.append(("!", f"{_n(d.pictures, 'camera picture')} of the staged scene, to SAM 3.1"))
         rows.append(("✓", "No sound left the house" if d.pictures else "No camera pictures and no sound left the house"))
         if not d.went:
-            self.screen.privacy_day("Nothing has left this house", rows)
+            self._privacy_card("Nothing has left this house", rows)
             if d.turns > 1:
                 return f"{when}, nothing has left this house: all {d.turns} of your requests were answered on this computer."
             return f"{when}, nothing has left this house."
-        self.screen.privacy_day(f"{stayed} of {d.turns} requests stayed in this house", rows)
+        self._privacy_card(f"{stayed} of {d.turns} requests stayed in this house", rows)
         names = to[0] if len(to) == 1 else ", ".join(to[:-1]) + " and " + to[-1]
         went = (f"{when}, {stayed} of your {d.turns} requests stayed in this house. For the other {d.went}" if stayed
                 else f"{when}, each of your {d.turns} requests needed the cloud. For them")
@@ -636,6 +636,14 @@ class Andy:
         pictures = (f" {_n(d.pictures, 'camera picture')} of the staged scene went to SAM 3.1; no sound did."
                     if d.pictures else " No camera pictures and no sound left the house.")
         return f"{went}, I sent {_n(d.words, 'word')} to {names}{shots}.{pictures}" + (" It's on the screen." * on_screen)
+
+    def _privacy_card(self, title: str, rows: list[tuple[str, str]], promises: bool = False) -> None:
+        """The day's receipts, or Andy's promises, on the TV in the person's language (the TV follows the language;
+        Glimmer on this computer, each line cached): the counts are Andy's own, only the words are translated."""
+        if self.language != "en" and self.translator is not None:
+            say = lambda t: self.translator.spoken(t, self.language, DISCLOSURE, CRISIS_REPLY)  # noqa: E731
+            title, rows = say(title), [(mark, say(text)) for mark, text in rows]
+        self.screen.privacy_day(title, rows, promises)
 
     def promises(self) -> str:
         """"What won't you do?": what Andy never does, each with today's receipts, said and shown on the TV. Counted
@@ -652,7 +660,7 @@ class Andy:
                 ("✓", f"Every word sent to the cloud is on its receipt: {_n(d.words, 'word')} today" if d.words else
                       "Nothing I was told has gone to the cloud today"),
                 ("✓", "I say I'm an AI at the start of every conversation")]
-        self.screen.privacy_day("What I never do", rows)
+        self._privacy_card("What I never do", rows, promises=True)
         today = ("no camera picture has left this house today" if not d.pictures else "no sound has left this house today")
         return ("I never send a camera picture of your home to the cloud, I never give health advice, and I always say "
                 f"I'm an AI. And {today}. It's on the screen, with the receipts.")

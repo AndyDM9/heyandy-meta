@@ -456,7 +456,7 @@ def show(state: ScreenState, scene: str) -> None:
                            ("✓", "Llama Guard 3 read 41 sentences of the models' answers before I said them"),
                            ("✓", "Crisis words get the 988 line from my code, before any model"),
                            ("✓", "Every word sent to the cloud is on its receipt: 68 words today"),
-                           ("✓", "I say I'm an AI at the start of every conversation")])
+                           ("✓", "I say I'm an AI at the start of every conversation")], promises=True)
         state.said("I never send a camera picture of your home to the cloud, I never give health advice, and I always "
                    "say I'm an AI. And no camera picture has left this house today. It's on the screen, with the receipts.",
                    "device", "Andy's promises, with today's receipts, counted on this computer")

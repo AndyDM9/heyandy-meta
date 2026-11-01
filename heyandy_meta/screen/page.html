@@ -611,7 +611,7 @@
     "“Hey Andy, remind me at 3 pm to call Sam.”": "“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”",
     "Nothing yet. “Hey Andy, keep an eye on my keys.”": "Nada todavía. “Oye Andy, vigila mis llaves.”",
     "Found": "Encontrado", "A picture for you": "Un dibujo para usted", "The cup game": "El juego de los vasos",
-    "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "Have you got everything?": "¿Lleva todo?",
+    "What I found": "Lo que encontré", "Going out": "Antes de salir", "Today's privacy": "Su privacidad hoy", "My promises, with today's receipts": "Mis promesas, con los recibos de hoy", "Have you got everything?": "¿Lleva todo?",
     "Connect your phone": "Conecte su teléfono", "It turned up · Andy kept looking": "Apareció · Andy siguió buscando",
     "Put your hand out toward it": "Extienda la mano hacia allí", "from your hand": "de su mano",
     "Your way, from where you are": "Su camino, desde donde está", "Waiting for your hand": "Esperando su mano",
@@ -1614,7 +1614,7 @@
         for (const x of s.sources) src.append(el("div", x.title + " · " + new URL(x.url).hostname.replace(/^www\./, "")));
         body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
       } else if (s.privacy) {  // "what did you send today?": the day's receipts, counted
-        kicker = T(s.privacy.title === "What I never do" ? "My promises, with today's receipts" : "Today's privacy"); title = s.privacy.title;
+        kicker = T(s.privacy.promises ? "My promises, with today's receipts" : "Today's privacy"); title = s.privacy.title;
         const box = el("div", null, "check");
         for (const r of s.privacy.rows) {
           const row = el("div", null, "row " + (r.mark === "✓" ? "gone" : r.mark === "!" ? "here" : "unknown"));
