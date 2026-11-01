@@ -89,8 +89,10 @@ def test_since_andy_started_when_it_started_today():
     from heyandy_meta.app import Andy
 
     started = dt.datetime(2026, 11, 3, 9, 12).timestamp()
-    a = NS(screen=ScreenState(now=lambda: started), _source="", _reason="")
+    screen = ScreenState(now=lambda: started)
+    a = NS(screen=screen, _source="", _reason="", _privacy_card=lambda t, rows, promises=False: screen.privacy_day(t, rows))
     assert Andy.privacy_today(a) == "Since I started at 9:12, nothing has left this house."
+    assert screen.privacy["title"] == "Nothing has left this house"
 
 
 def test_the_rest_of_a_combined_request_is_answered_too(tmp_path):
