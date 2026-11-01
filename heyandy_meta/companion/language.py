@@ -241,6 +241,9 @@ LABEL_CONTEXT = {
     "person picked it up", "Room scan": "how the robot saw a thing: in a scan of the room",
     **{t: "a time of day beside a clock, not a greeting" for t in ("Morning", "Afternoon", "Evening", "Night")},
     "Next": "a heading: the next reminder",
+    "Looking for": "a heading before the thing's name, as in 'Looking for: keys'", "Looked for": "a heading before "
+    "the thing's name, as in 'Looked for: keys' (the search is over)", "From where you are": "a heading over a small "
+    "map of the way to the thing, from the person's side", "steps": "after a number, as in '3 steps' away: paces a person walks, not the steps of a procedure",
 }
 
 

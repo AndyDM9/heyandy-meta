@@ -650,7 +650,7 @@
   const WORDS = ["Found · SAM 3.1, on this computer", "off target, checked by its camera", "away", "away (MapAnything)",
                  "What I see now · SAM 3.1, on this computer", "Meta's models, live · on this computer",
                  "Every model Andy runs is Meta's. On this computer:", "In the cloud, never camera pictures:",
-                 "Say “Hey Andy” anytime.", "front", "you", "here"];
+                 "Say “Hey Andy” anytime.", "front", "you", "here", "Looking for", "Looked for", "From where you are", "steps"];
   let CHROME = {};
   const T = (s) => (LANG === "es" && ES[s]) || CHROME[s] || s;
   const LOCALE = () => (LANG === "en" ? "en-US" : LANG === "es" ? "es-US" : ({ zh: "zh-CN", tl: "fil" })[LANG] || LANG);
@@ -1151,8 +1151,9 @@
     add("text", { x: tx + (tx >= 0 ? 15 : -15), y: ty + 4, "text-anchor": tx >= 0 ? "start" : "end" }, label);
     const steps_ = Math.max(1, Math.round(fy.metres / 0.7));
     add("text", { x: tx / 2 + (tx >= 0 ? -10 : 10), y: ty / 2, "text-anchor": tx >= 0 ? "end" : "start", class: "far" },
-        LANG === "es" ? `${steps_} pasos` : `${steps_} step${steps_ === 1 ? "" : "s"}`);
-    box.append(el("small", LANG === "es" ? "Desde donde está usted" : `From where you are · your ${fy.clock} o'clock`), svg);
+        LANG === "es" ? `${steps_} pasos` : LANG === "en" ? `${steps_} step${steps_ === 1 ? "" : "s"}` : `${steps_} ${T("steps")}`);
+    box.append(el("small", LANG === "es" ? "Desde donde está usted" : LANG === "en" ? `From where you are · your ${fy.clock} o'clock`
+                                                                     : T("From where you are")), svg);
     return box;
   }
   // Turning to a ringing (companion/sound.py), seen from above, front up: each turn of the head as a line, a mark on
@@ -1406,12 +1407,14 @@
         body.replaceChildren(w);
       } else if (s.looking_for && s.running) {
         kicker = s.looking_for === "room" ? T("Measuring the room in 3D")
-               : LANG === "es" ? `Buscando: ${s.looking_for}` : `Finding your ${s.looking_for}`; title = s.head || T("Looking around the room");
+               : LANG === "es" ? `Buscando: ${s.looking_for}` : LANG === "en" ? `Finding your ${s.looking_for}`
+               : `${T("Looking for").replace(/\s*[:：]\s*$/, "")}: ${s.looking_for}`; title = s.head || T("Looking around the room");
         if (s.glimpse) {  // the live view, beside the plan as it happens
           const split = el("div", null, "split"); split.append(glimpse(s.glimpse), steps(s.steps.slice(-6))); body.replaceChildren(split);
         } else body.replaceChildren(s.steps.length ? steps(s.steps) : el("div", T("If I can't find it, I'll say so."), "when"));
       } else if (s.looking_for && s.seconds !== null) {
-        kicker = LANG === "es" ? `Busqué: ${s.looking_for}` : `Looked for your ${s.looking_for}`; title = s.caption;
+        kicker = LANG === "es" ? `Busqué: ${s.looking_for}` : LANG === "en" ? `Looked for your ${s.looking_for}`
+               : `${T("Looked for").replace(/\s*[:：]\s*$/, "")}: ${s.looking_for}`; title = s.caption;
         body.replaceChildren(steps(s.steps));
       } else if (s.sources.length) {
         kicker = T("What I found");

@@ -81,7 +81,11 @@
   "Say “Hey Andy” anytime.": "您随时说“Hey Andy”。",
   "front": "前",
   "you": "您",
-  "here": "这里"
+  "here": "这里",
+  "Looking for": "寻找",
+  "Looked for": "查找：",
+  "From where you are": "您所在的位置",
+  "steps": "步骤"
  },
  "scene": {
   "keys: seen 2 hours ago, to my left": "钥匙：两小时前见过，在我左边",
