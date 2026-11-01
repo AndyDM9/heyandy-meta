@@ -33,7 +33,7 @@ from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.selfcheck import check as self_check, summary as self_summary
 from .companion.sound import apart, fan, reading, turn_to, wait_for
-from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, health, respond
+from .companion.safety import CRISIS_REPLY, DISCLOSURE, EMERGENCY_REPLY, Disclosure, crisis, emergency, health, respond
 
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
@@ -392,6 +392,8 @@ class Andy:
             if len(re.findall(r"[a-z']+", rest.lower())) < 3:  # only the question ("please", "Andy")
                 return self.privacy_today()
             return self.privacy_today(on_screen=False) + " " + self._answer(rest)  # then the rest, as asked
+        if emergency(text):  # "I fell and I can't get up": 911, then the phone found, whatever else was asked
+            return self.emergency_turn(text)
         if (i.kind in ("chat", "world", "help") or needs_agent(text)) and (line := health(text)):
             # conversation, a question for the web, or "what can I do?" ("my legs cramp at night, what can I do?")
             # a health question: Andy's own words, by hand in each language, and no model at all (companion/safety.py)
@@ -667,8 +669,21 @@ class Andy:
         except Exception:  # noqa: BLE001 - a feeling is never worth a failed turn
             pass
 
-    def find(self, thing: str, request: str, hint: bool = False) -> str:
-        """A plain "where are my keys" gets the fast fixed sweep; a request with a hint gets an agent that uses it."""
+    def emergency_turn(self, text: str) -> str:
+        """Someone says they've fallen, or can't breathe: 911 first, in Andy's own words (by hand in each language),
+        then what a robot that finds things can do at once: find their phone and point at it, so they can call. It
+        never watches for falls and claims no safety: it acts only on what it's told (docs/crisis-protocol.md)."""
+        self._source, self._reason = "device", "an emergency said: 911 first, in Andy's own words, then its phone found"
+        self.face_person_to_speak()
+        self.say(EMERGENCY_REPLY)
+        self._said.append(EMERGENCY_REPLY)
+        words = self.find("phone", text, opening=False)
+        self._source, self._reason = "device", "an emergency said: 911 first, in Andy's own words, then its phone found"
+        return f"{EMERGENCY_REPLY} {words}"
+
+    def find(self, thing: str, request: str, hint: bool = False, opening: bool = True) -> str:
+        """A plain "where are my keys" gets the fast fixed sweep; a request with a hint gets an agent that uses it.
+        opening: say "Let me look." (not when the turn has already said what Andy is doing)."""
         told = None if hint else self._told_first(thing)
         if told:
             return told
@@ -677,7 +692,7 @@ class Andy:
         checks = getattr(self.judge, "calls", 0)
         self.finder.looks, self.finder.passed, self._alike, self._not_yours = 0, [], None, False
         self.screen.looking(thing)
-        if not self._background:
+        if not self._background and opening:
             self.say("Let me look.", soon=True)  # answer at once, and start looking while it's said
         try:  # where the person is, while Andy still faces them: so the answer can be given from their side
             self._listener = self._measure_listener()

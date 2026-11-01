@@ -1380,3 +1380,21 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **Not yet:** a clinician reading the lines and the misses; people's own wording. Of the misses, one model answer is
   closer to coaching than the judge allowed: "I'm so stressed I can't think, help me relax" got a breathing exercise
   (now the feelings line). A model judging a model is a first look, not a verdict.
+
+## 64. "I fell and I can't get up": 911 first, then Andy finds the phone (November 1, evening)
+
+- **Why:** the health rule (section 63) answered a fall with the health line, "your doctor or pharmacist can". Someone
+  on the floor needs 911, and their phone, which may be out of reach and out of sight. Finding things is what Andy does.
+- **Built:** `companion/safety.py` `emergency` (a fall, "can't get up", chest pain, can't breathe, a stroke's signs,
+  someone else collapsed, "call 911"), checked after the crisis words and before any other ability, whatever else
+  was asked. Andy says "If you need help, please call 911 right away. I'll find your phone." (by hand in all fifteen
+  languages, `companion/languages.py` EMERGENCY_LINES), then searches for the phone, without its usual "Let me look.",
+  and points at it. It can't call anyone, never watches for falls and claims no safety: it acts only on what it's told.
+  "I fell asleep", "the book fell", "I fell behind on emails", "I can't get up early tomorrow": not emergencies (tests).
+- **On the robot** (the dress rehearsal, `rehearsal-20261101-1659`, about 17:00 as the light went): "Hey Andy, I fell
+  and I can't get up" heard word for word; the line, then "There it is! I see your phone, straight ahead, about 3 feet
+  away", pointed, **16.5 s** from the words. The same run, after today's fixes (section 62): Mandarin with nothing
+  said in English first found the glasses and pointed; back to English said once; follow, several things at once, the
+  room, the picture and the weather radar all worked. Two finds missed: the glasses in English (found a minute later in
+  Mandarin) and the remote, still past the head's reach: for filming, the glasses closer than 5 ft and the remote in
+  front, as before.

@@ -101,7 +101,8 @@ Every result, failures included: `evals/results/` and `docs/research.md`.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations,
 kept in code: a health question gets Andy's own words, by hand in each language, and never reaches a model (held out,
-25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught). It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages,
+25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught). Someone who says
+they've fallen hears "please call 911 right away; I'll find your phone", and Andy finds it and points. It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages,
 get the 988 line from code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3);
 the reply is written by hand in each language (in thirteen: call and ask for an interpreter). Measured in fifteen
 languages: 60 of 60 indirect phrasings, none of 144 everyday requests and trick remarks taken for one; and we publish

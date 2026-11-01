@@ -44,8 +44,10 @@ Built on Meta's models for people who live at home, starting with older adults, 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. That's kept in code, not asked
 of a model: a health question, in any of its fifteen languages, gets Andy's own words, written by hand ("your doctor or
-pharmacist can; I can remind you to call them"), and never reaches a model. It says it's an AI, and anyone who
-mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).
+pharmacist can; I can remind you to call them"), and never reaches a model. Someone who says they've fallen hears
+"please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 s from the
+words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
+([docs/crisis-protocol.md](docs/crisis-protocol.md)).
 
 ## What Andy does
 

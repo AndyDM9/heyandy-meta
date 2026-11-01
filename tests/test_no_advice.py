@@ -92,3 +92,49 @@ def test_every_language_has_both_lines_by_hand_and_says_them_untranslated(tmp_pa
     a.language = "zh"
     a.hear("我胃疼。")
     assert said(body)[-1] == PHRASES["zh"][HEALTH_REPLY] and a.translator.asked == [("我胃疼。", False)]
+
+
+EMERGENCIES = ["I fell in the bathroom", "I fell and I can't get up", "I've fallen", "My chest hurts", "I can't breathe",
+               "My husband collapsed", "Call 911!", "I cannot get up off the floor", "my face is drooping"]
+NOT_EMERGENCIES = ["I fell asleep on the couch", "The book fell off the shelf", "I fell behind on my emails",
+                   "I fell in love with this song", "I can't get up early tomorrow", "My knee hurts", "Where are my keys?"]
+
+
+@pytest.mark.parametrize("text", EMERGENCIES)
+def test_an_emergency_said_is_one(text):
+    from heyandy_meta.companion.safety import emergency
+
+    assert emergency(text)
+
+
+@pytest.mark.parametrize("text", NOT_EMERGENCIES)
+def test_everyday_words_with_fell_in_them_are_not(text):
+    from heyandy_meta.companion.safety import emergency
+
+    assert not emergency(text)
+
+
+def test_a_fall_gets_911_first_then_andy_finds_the_phone_and_points(tmp_path):
+    from heyandy_meta.companion.safety import EMERGENCY_REPLY
+
+    a, body, _ = andy(Thing("phone", 25.0, 15.0), tmp_path=tmp_path)
+    reply = a.hear("I fell and I can't get up")
+    words = said(body)
+    assert words[0].endswith(EMERGENCY_REPLY) or words[1] == EMERGENCY_REPLY  # after the AI disclosure, if it's due
+    assert "Let me look." not in words  # it already said what it's doing
+    assert "phone" in reply.split(EMERGENCY_REPLY, 1)[1] and a._pointed and a.device.prompts == []
+    assert a.screen.reason.startswith("an emergency said")
+
+
+def test_the_emergency_line_is_by_hand_in_every_language(tmp_path):
+    from heyandy_meta.companion.safety import EMERGENCY_REPLY
+
+    for code in LANGUAGES:
+        if code != "en":
+            assert "911" in PHRASES[code][EMERGENCY_REPLY], code
+    a, body, _ = andy(Thing("phone", 25.0, 15.0), tmp_path=tmp_path)
+    a.translator = Glimmer({"我摔倒了，起不来": "I fell and I can't get up"})
+    a.voice = SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
+    a.language = "zh"
+    a.hear("我摔倒了，起不来")
+    assert PHRASES["zh"][EMERGENCY_REPLY] in said(body)

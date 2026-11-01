@@ -154,6 +154,21 @@ MORE = {
 # Andy's answer to a health question, and to how someone feels (companion/safety.py HEALTH_REPLY and FEELINGS_REPLY),
 # by hand: never a model's words, so never machine-translated either. 988 has help by text and in Spanish; in the
 # others, by phone with an interpreter, as the crisis reply says.
+EMERGENCY_LINES = {  # "If you need help, please call 911 right away. I'll find your phone." (safety.py EMERGENCY_REPLY)
+    "zh": "如果您需要帮助，请马上拨打 911。我来帮您找手机。",
+    "tl": "Kung kailangan mo ng tulong, tumawag ka agad sa 911. Hahanapin ko ang cellphone mo.",
+    "vi": "Nếu quý vị cần giúp đỡ, xin hãy gọi 911 ngay. Tôi sẽ tìm điện thoại cho quý vị.",
+    "ko": "도움이 필요하시면 지금 바로 911에 전화하세요. 제가 휴대폰을 찾아 드릴게요.",
+    "ru": "Если вам нужна помощь, сразу звоните 911. Я найду ваш телефон.",
+    "ar": "إذا كنت بحاجة إلى مساعدة، فاتصل بالرقم 911 فورًا. سأبحث عن هاتفك.",
+    "hi": "अगर आपको मदद चाहिए, तो तुरंत 911 पर कॉल करें। मैं आपका फ़ोन ढूँढता हूँ।",
+    "pt": "Se precisar de ajuda, ligue para o 911 agora mesmo. Vou procurar o seu celular.",
+    "fr": "Si vous avez besoin d'aide, appelez le 911 tout de suite. Je vais chercher votre téléphone.",
+    "it": "Se ha bisogno di aiuto, chiami subito il 911. Cerco il suo telefono.",
+    "pl": "Jeśli potrzebna jest pomoc, proszę od razu zadzwonić pod numer 911. Poszukam telefonu.",
+    "de": "Wenn Sie Hilfe brauchen, rufen Sie sofort die 911 an. Ich suche Ihr Telefon.",
+    "uk": "Якщо вам потрібна допомога, одразу телефонуйте 911. Я знайду ваш телефон.",
+}
 HEALTH_LINES = {
     "zh": ("我是机器人，不能给您健康方面的建议，您的医生或药剂师可以。我可以提醒您给他们打电话。如果是紧急情况，请拨打 911。",
            "很抱歉您现在不好受。我是机器人，不能就您的感受给建议，但您的医生可以。您可以随时拨打 988，白天晚上都可以，并说您需要中文口译员。"),
@@ -215,4 +230,4 @@ HEALTH_LINES = {
 }
 
 for _code, _row in MORE.items():  # every language has every line and thing, in order
-    assert len(_row) == 12 and len(_row[8]) == len(LINES) and len(_row[9]) == len(THINGS) and _code in HEALTH_LINES, _code
+    assert len(_row) == 12 and len(_row[8]) == len(LINES) and len(_row[9]) == len(THINGS) and _code in HEALTH_LINES and _code in EMERGENCY_LINES, _code

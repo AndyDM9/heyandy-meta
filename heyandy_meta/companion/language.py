@@ -20,9 +20,9 @@ from functools import lru_cache
 from ..models import glimmer_fast
 from ..models.common import is_local
 from .guide import ES as GUIDE_ES
-from .languages import FROM_EN, HEALTH_LINES, LINES, MORE, TO_EN
+from .languages import EMERGENCY_LINES, FROM_EN, HEALTH_LINES, LINES, MORE, TO_EN
 from .languages import THINGS as THING_NAMES
-from .safety import FEELINGS_REPLY, HEALTH_REPLY
+from .safety import EMERGENCY_REPLY, FEELINGS_REPLY, HEALTH_REPLY
 
 
 @dataclass(frozen=True)
@@ -99,10 +99,12 @@ PHRASES["es"].update({  # a health question, and how someone feels (companion/sa
                   "recordarle que los llame. Si es una emergencia, por favor llame al 911.",
     FEELINGS_REPLY: "Siento que esté pasando un momento difícil. Soy un robot, así que no puedo darle consejos sobre cómo "
                     "se siente, pero su médico sí. Puede llamar o enviar un mensaje de texto al 988 a cualquier hora, de "
-                    "día o de noche; tienen ayuda en español."})
+                    "día o de noche; tienen ayuda en español.",
+    EMERGENCY_REPLY: "Si necesita ayuda, llame al 911 ahora mismo. Voy a buscar su teléfono."})
 for _code, _row in MORE.items():  # the other languages' short lines, and "Okay, I'll speak it now.", by hand
     PHRASES[_code] = {**dict(zip(LINES, _row[8])), f"Okay, I'll speak {_row[0]} now.": _row[5],
-                      HEALTH_REPLY: HEALTH_LINES[_code][0], FEELINGS_REPLY: HEALTH_LINES[_code][1]}
+                      HEALTH_REPLY: HEALTH_LINES[_code][0], FEELINGS_REPLY: HEALTH_LINES[_code][1],
+                      EMERGENCY_REPLY: EMERGENCY_LINES[_code]}
 # Everyday things, by hand: one word is too little for a translator to go on ("keys" came back "keys").
 THINGS = {"es": {
     "keys": "llaves", "key": "llave", "wallet": "billetera", "purse": "monedero", "glasses": "gafas",

@@ -95,6 +95,30 @@ HEALTH_REPLY = ("I'm a robot, so I can't give health advice: your doctor or phar
                 "them. If it's an emergency, please call 911.")
 FEELINGS_REPLY = ("I'm sorry it's hard right now. I'm a robot, so I can't give advice about how you feel, but your "
                   "doctor can. You can call or text 988 any time, day or night.")
+# An emergency said ("I fell and I can't get up", "my chest hurts", "my husband collapsed"): 911 first, in Andy's own
+# words, then the one thing a robot that finds things can do at once: find the phone, and point at it. Andy never
+# watches for falls and claims no safety; it acts only on what it's told. Before (November 1) a fall got the health
+# line, "your doctor or pharmacist can".
+EMERGENCY_REPLY = "If you need help, please call 911 right away. I'll find your phone."
+EMERGENCY = re.compile(
+    r"\bi(?:'ve| have| just| 'm| am)?\s*(?:just\s+)?(?:fell|fallen|had a fall|tripped and fell)\b"
+    r"(?!\s+(?:asleep|for|in love|behind|apart|through|short|silent|ill|off the wagon|out with|into (?:a|the) habit))"
+    r"|\bi(?:'m| am) on the floor\b|\b(?:can'?t|cannot) (?:get up|stand up|get off the floor)\b"
+    r"(?!\s+(?:early|that early|so early|in the morning|tomorrow|at \d|before|for|on time|anymore for))"
+    r"|\b(?:he|she|my (?:husband|wife|mom|mum|dad|mother|father|son|daughter|partner|friend|neighbou?r))\s+(?:just\s+)?"
+    r"(?:fell|has fallen|collapsed|passed out|fainted|isn'?t breathing|can'?t breathe)\b"
+    r"|\bchest (?:pains?|hurts|is hurting|feels tight|is tight)\b|\btight chest\b|\bpain in my chest\b"
+    r"|\b(?:can'?t|cannot) breathe\b|\b(?:struggling|trouble) breathing\b"
+    r"|\b(?:face|mouth) (?:is )?droop\w*|\bslurr(?:ed|ing) (?:speech|my words)\b|\bcan'?t (?:feel|move) my (?:arm|leg|face)\b"
+    r"|\b(?:bleeding (?:a lot|badly|heavily)|won'?t stop bleeding)\b|\bi (?:just )?(?:passed out|blacked out|fainted)\b"
+    r"|\b(?:call|get) (?:911|an ambulance|the paramedics)\b", re.I)
+
+
+def emergency(text: str) -> bool:
+    """"I fell in the bathroom", "my chest hurts", "call 911": yes; "I fell asleep on the couch", "the book fell": no."""
+    return bool(EMERGENCY.search((text or "").replace("\u2019", "'")))
+
+
 _BODY = r"(?:\w+\s+){0,2}"  # "my (left) knee", "my lower back"
 SYMPTOM = re.compile(
     r"\b(?:my|his|her)\s+" + _BODY + r"(?:hurts?|is hurting|are hurting|aches?|is aching|are aching|is sore|are sore|"

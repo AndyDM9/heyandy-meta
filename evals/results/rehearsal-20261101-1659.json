@@ -1,0 +1,151 @@
+{
+ "when": "2026-11-01 16:59",
+ "shots": [
+  {
+   "shot": "the uncut find",
+   "said": "Hey Andy, where are my glasses?",
+   "heard": "hey andy where are my glasses",
+   "andy said": [
+    "Hmm, I couldn't find your glasses from here. I'll keep looking, and tell you when I see them. Where did you last have them?"
+   ],
+   "seconds": 31.8,
+   "pointed": false,
+   "language after": "en",
+   "ok": false,
+   "fix": [
+    "Andy didn't point: put the glasses where the robot can see it, on the table in front, away from screens (it skips pictures on a TV, and its own TV may be showing the last thing it found)."
+   ]
+  },
+  {
+   "shot": "follow the mug",
+   "said": "Hey Andy, follow the mug.",
+   "heard": "hey andy follow the mug",
+   "andy said": [
+    "There it is! I see your mug, straight ahead, about 3 feet away.",
+    "Following your mug. Say stop when you're done.",
+    "That's enough following for now. Your mug is straight ahead."
+   ],
+   "seconds": 49.6,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "several things at once",
+   "said": "Hey Andy, find the cup and remind me in two minutes to call Sam.",
+   "heard": "hey andy find the cup and remind me in two minutes to call sam",
+   "andy said": [
+    "Found it! I see your cup, straight ahead, about 3 feet away.",
+    "I see your cup straight ahead about three feet away and you're all set to call Sam at 4:58!"
+   ],
+   "seconds": 27.3,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "the network unplugged",
+   "said": "Hey Andy, where's the remote?",
+   "heard": "hey andy was the remote",
+   "andy said": [
+    "Hmm, I couldn't find your remote from here. If it has a tracker that beeps, say: listen for my remote. I'll keep looking, and tell you when I see it. Where did you last have it?"
+   ],
+   "seconds": 31.2,
+   "pointed": false,
+   "language after": "en",
+   "ok": false,
+   "fix": [
+    "Andy didn't point: put the remote where the robot can see it, on the table in front, away from screens (it skips pictures on a TV, and its own TV may be showing the last thing it found)."
+   ]
+  },
+  {
+   "shot": "the room in 3D",
+   "said": "Hey Andy, show me the room.",
+   "heard": "hey andy show me the room",
+   "andy said": [
+    "Here's the room as I measured it, on the screen: your keyboard a little to my right, about 2 feet away; your watch a little to my right, about 3 feet away; your phone straight ahead, about 3 feet away. Its shape only, never a picture."
+   ],
+   "seconds": 30.3,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "a picture",
+   "said": "Hey Andy, draw me a lighthouse at dawn.",
+   "heard": "hey andy draw me a lighthouse at dawn",
+   "andy said": [
+    "Let me draw that. It takes a little while.",
+    "Here's your picture, on the screen. I've saved it in your Pictures folder. You can ask me to change it."
+   ],
+   "seconds": 17.7,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "the weather radar on the TV",
+   "said": "Hey Andy, show me the weather radar on the TV.",
+   "heard": "hey andy show me the weather radar on the tv",
+   "andy said": [
+    "Let me find that for you.",
+    "The TV is showing the National Weather Service radar map with precipitation moving across the US. You can say scroll down, or go back."
+   ],
+   "seconds": 20.6,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "in Mandarin, nothing said in English first",
+   "said": "安迪，我的眼镜在哪里？",
+   "heard": "安迪我的眼睛在哪里",
+   "andy said": [
+    "好的，现在我说中文。",
+    "啊，在那儿！ 我看到您的眼镜，在我左边一点。"
+   ],
+   "seconds": 25.6,
+   "pointed": true,
+   "language after": "zh",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "back to English",
+   "said": "Andy, speak English.",
+   "heard": "——andy——speak english",
+   "andy said": [
+    "Okay, I'll speak English now."
+   ],
+   "seconds": 4.0,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  },
+  {
+   "shot": "an emergency said (if it's in the video)",
+   "said": "Hey Andy, I fell and I can't get up.",
+   "heard": "hey andy i fell and i can't get up",
+   "andy said": [
+    "If you need help, please call 911 right away. I'll find your phone.",
+    "There it is! I see your phone, straight ahead, about 3 feet away."
+   ],
+   "seconds": 16.5,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": []
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": false
+}

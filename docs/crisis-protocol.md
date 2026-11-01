@@ -76,6 +76,17 @@ Measured with questions written after the rule (`evals/no_advice.py`): see the R
 section 63. It is a word rule: a health question said in a way it doesn't know reaches the conversation model, which
 is told never to give medical advice (and, judged, almost never did).
 
+## If someone says they've fallen, or can't breathe
+"I fell and I can't get up", "my chest hurts", "my husband collapsed", "call 911": 911 first, in Andy's own words (by
+hand in each of its fifteen languages), then the one thing a robot that finds things can do at once, find the phone:
+
+  > "If you need help, please call 911 right away. I'll find your phone." ... "There it is! I see your phone, straight
+  > ahead, about 3 feet away."
+
+and it points at it. Andy can't call anyone, never watches for falls and claims no safety: it acts only on what it's
+told. "I fell asleep on the couch" or "the book fell" isn't an emergency. On the robot (November 1, the dress
+rehearsal): said, then the phone found and pointed at, 16.5 s from the words.
+
 ## What Andy never does
 - It never gives medical, medication or mental-health advice. Reminders repeat the person's own words.
 - It never claims to keep anyone safe or to monitor anyone.

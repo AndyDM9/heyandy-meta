@@ -38,10 +38,13 @@ SHOTS = [
     ("the weather radar on the TV", "en", "Hey Andy, show me the weather radar on the TV.", "cloud"),
     ("in Mandarin, nothing said in English first", "zh", "安迪，我的眼镜在哪里？", "point zh"),
     ("back to English", "en", "Andy, speak English.", "en"),
+    ("an emergency said (if it's in the video)", "en", "Hey Andy, I fell and I can't get up.", "point"),
 ]
 NOT_HERE = ["\"What am I holding?\": needs someone holding something up to the robot.",
             "The reminder two minutes later: needs the wait, and a person for Andy to turn to."]
-THING = {"zh": "glasses"}  # the rules read English; the Mandarin line asks for the glasses
+# what each shot looks for, where the rules can't read it from the line: the Mandarin line asks for the glasses, and
+# the emergency is answered with 911 and the phone found
+THING = {"in Mandarin, nothing said in English first": "glasses", "an emergency said (if it's in the video)": "phone"}
 FIX = {
     "point": "Andy didn't point: put {thing} where the robot can see it, on the table in front, away from screens "
              "(it skips pictures on a TV, and its own TV may be showing the last thing it found).",
@@ -89,7 +92,7 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
     pointed = bool(getattr(andy, "_pointed", False))
     problems = []
     if "point" in needs and not pointed:
-        thing = THING.get(code) or parse(line.split(",", 1)[-1]).thing
+        thing = THING.get(name) or parse(line.split(",", 1)[-1]).thing
         problems.append(FIX["point"].format(thing=f"the {thing}" if thing else "it"))
     if "follow" in needs and not any("follow" in s_.lower() or "watching" in s_.lower() for s_ in said + [reply]):
         problems.append(FIX["follow"])
