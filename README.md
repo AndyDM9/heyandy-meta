@@ -98,6 +98,8 @@ names are kept, in memory: never a word said or a picture (`screen/hood.py`, `sc
   where the point landed and corrects it. Andy even measured its own lens to do that well.
 - **It knows where things are, not just what they are.** MapAnything gives every find a distance and the room a
   shape; V-JEPA 2, Meta's video world model, notices a watched thing being put down.
+- **It speaks your language.** Fifteen of them, from Spanish to Mandarin, all on Meta's models in the house; called
+  in one, it notices and answers in it. Saying it's an AI and the crisis reply are written by hand in each.
 - **Private by design.** The camera and microphone reach only Meta's open models on the computer beside the robot;
   every word that goes to the cloud is shown on the TV's receipt. Unplug the network and Andy carries on.
 - **Every model it runs is Meta's** (eleven): SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2, Omnilingual ASR,
@@ -117,6 +119,8 @@ names are kept, in memory: never a word said or a picture (`screen/hood.py`, `sc
 | Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (the third: the search missed, and said so) | [`home-*`](evals/results) |
 | How soon it answers | the same search, profiled: the answer started **15.5 s** after the words; now **5.8 to 6.0 s**, said while pointing; the turn **20.5 s → 10.7 to 11.0 s** | [research §50](docs/research.md#50-andy-answers-while-it-points-2026-10-31), [`hood-20261031-2036.json`](evals/results/hood-20261031-2036.json) |
 | Andy's eyes, in the browser | your thing among three others: **found 20 of 24, never a wrong one** (the closest place 24 of 24); without it, **never "found" in 24**; its twin in other colours, **never "found"** for things in strong colours (the white cup's twin, only its flowers recoloured, 4 of 6); 2.7 s on a laptop's CPU | [`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json) |
+| Andy's eyes, live | sweeping a camera (a video of one) over our cup and its look-alikes: **found both times, at 15 and 34 s**; over the look-alikes alone, **never "found" in 90 frames** | [`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json) |
+| Fifteen languages | in the thirteen newest, everyday requests reach the right ability **100 of 104** written, **85 of 104** spoken (104 and 89 with the rules that showed were missing); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json), [`hear-language-*`](evals/results/hear-language-20261101-1217.json) |
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
@@ -572,6 +576,8 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   identical cups crossing fast can still swap), "this is my mug" (measured on the robot's camera with things seen from
   other angles, not with two mugs), "what's that?" (Glimmer measured on public photos: 4 of 6), and "I'm going out"
   (the robot simulated). Each has a founder's test written down.
+- **Andy's eyes, live, hasn't met a real phone in a real room yet:** it's measured with a video standing in for the
+  camera, on a laptop's CPU (about a frame a second); a phone's processor is slower, its graphics chip faster.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
 - **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
