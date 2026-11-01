@@ -20,6 +20,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   <!-- On November 4, the video: <a href="VIDEO_URL"><img alt="Watch the 3-minute video" src="https://img.shields.io/badge/%E2%96%B6%20Watch-the%203--minute%20video-ffcf5c?style=for-the-badge&labelColor=12241d"></a> -->
   <a href="#try-it-in-your-browser-and-in-fifteen-languages"><img alt="Andy speaks fifteen languages" src="https://img.shields.io/badge/Speaks-15%20languages-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
+  <a href="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml"><img alt="Tests: every push, the TV page in a real browser too" src="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml/badge.svg"></a>
   <a href="evals/results"><img alt="112 of 112 unattended searches on the robot ended in a point" src="https://img.shields.io/badge/On%20the%20robot-112%20of%20112%20pointed-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
 </p>
 
@@ -665,3 +666,7 @@ Community Licenses (**Built with Llama**); SeamlessM4T v2 and MMS-TTS, Andy's vo
 non-commercial demonstration and a product would need a voice licensed for commercial use. The web page in
 `docs/images/sample-web.jpg` is Wikipedia's "Banana bread" (CC BY-SA 4.0). The HeyAndy name and logo (the face and the HeyAndy lettering on the TV page) are HeyAndy, Inc.'s
 marks (HEYANDY™, a pending US trademark application) and aren't licensed under Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
+**In the public demo**, Meta's wav2vec 2.0 (`facebook/wav2vec2-base-960h`, Apache-2.0, in Xenova's ONNX form) and
+DINOv2 run in the visitor's browser with transformers.js (Apache-2.0); the phone code is qrcode-generator (MIT); the
+fonts are Atkinson Hyperlegible (SIL Open Font License, `fonts/OFL.txt`); the cups are The Met's Open Access photos (CC0,
+`eyes/CREDITS.txt`).

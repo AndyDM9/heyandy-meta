@@ -47,3 +47,9 @@ Nothing you do here reaches anyone else.
 In a real home, pictures and voice never leave the house: SAM 3.1, Muse Glimmer and the speech models run on the
 computer beside the robot, and Muse Spark only ever gets words (and, when you ask Andy to show something on the TV,
 screenshots of that web page).
+
+**Licences:** this page's code is Apache-2.0 (HeyAndy, Inc.; the HeyAndy name and face are its marks). In your browser:
+Meta's DINOv2 and wav2vec 2.0 (Apache-2.0), with transformers.js (Apache-2.0); fonts: Atkinson Hyperlegible (SIL OFL,
+`fonts/OFL.txt`); the cups: The Met's Open Access (CC0, `eyes/CREDITS.txt`); the web page: Wikipedia (CC BY-SA 4.0). On
+the robot, Andy also runs Llama Guard 3 and Llama Prompt Guard 2: **Built with Llama**. The models keep their own
+licences (github.com/AndyDM9/heyandy-meta, "Licence").
