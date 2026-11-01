@@ -280,6 +280,12 @@
   #demo .asked { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; align-items: baseline; font-size: 1.15rem; }
   #demo .asked em { font-style: normal; font-weight: 700; color: var(--outline); }
   #demo .asked small { flex-basis: 100%; color: rgba(245, 243, 239, 0.7); }
+  /* Andy's eyes (eyes.html): DINOv2 in the visitor's browser, on their own photos */
+  #demo .row.top { flex-wrap: wrap; }
+  #demo .row.top form.ask { flex: 1 1 16rem; }  /* on a phone the link takes a line of its own, below the box */
+  #demo a.eyes, #demo .asked a { color: var(--outline); font-weight: 700; text-decoration: none; white-space: nowrap;
+                                  padding: 0.5rem 1rem; border: 1px solid rgba(255, 209, 102, 0.55); border-radius: 99rem; }
+  #demo a.eyes:hover, #demo .asked a:hover { background: rgba(255, 209, 102, 0.12); }
   /* Ask Andy (the public demo): a box to type in, and things to try */
   form.ask { display: flex; gap: 0.5rem; flex: 1; min-width: 0; }
   form.ask input { flex: 1; min-width: 8rem; font: inherit; font-size: 1.25rem; padding: 0.55rem 1rem; border-radius: 99rem;
@@ -719,7 +725,8 @@
     inner.append(el("h2", "Now ask Andy yourself"), askForm(true), tries(true));
     const go_ = el("div", null, "go"), link = (label, href, main) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; if (main) a.className = "main"; go_.append(a); };
     if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO, true);
-    link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", !window.HEYANDY_VIDEO);
+    link("Try Andy's eyes on your own things", "eyes.html", !window.HEYANDY_VIDEO);  // Meta's DINOv2, in the browser
+    link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", false);
     const again = el("button", "Replay the story"); again.onclick = startStory;
     const all = el("button", "Explore every screen"); all.onclick = exploreAll;
     go_.append(again, all); inner.append(go_);
@@ -734,10 +741,15 @@
     const nav = $("demo"); nav.hidden = false; nav.replaceChildren();
     document.body.classList.add("exploring");
     if (document.body.firstElementChild !== nav) document.body.prepend(nav);  // first: on a phone it leads
-    const top = el("div", null, "row"); top.append(el("b", "Ask Andy"), askForm(true)); nav.append(top);
+    const top = el("div", null, "row top"), eyes = el("a", "Try it on your own things →");
+    eyes.href = "eyes.html"; eyes.className = "eyes"; eyes.title = "Andy's eyes: Meta's DINOv2 finds your thing in your photo, in this browser";
+    top.append(el("b", "Ask Andy"), askForm(true), eyes); nav.append(top);
     if (asked) {  // what was asked, what it matched, and what a recorded scene can't show
       const a = el("div", null, "asked"); a.append(el("span", `You asked “${asked.text}”`), el("em", "→ " + (NAMES[asked.scene] || asked.scene)));
       if (asked.note) a.append(el("small", asked.note));
+      if (["found", "mine", "guide", "turned"].includes(asked.scene)) {  // a recorded scene; this, the visitor's own thing
+        const x = el("a", "Find yours in your own photo, in this browser →"); x.href = "eyes.html"; a.append(x);
+      }
       nav.append(a);
     } else nav.append(tries(true));
     const row = el("div", null, "row scenes"); row.append(el("b", "Sample data · scenes:"));

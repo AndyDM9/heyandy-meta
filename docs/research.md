@@ -1073,3 +1073,38 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   (the page asks every 0.4 s). In synthetic rooms (noise, a voice, every other earcon, an echo), the clap is found to
   within 20 ms down to quieter than the room (match ≥ 0.82, next best ≤ 0.39).
 - **Not yet:** a real camera's take, which is for filming day.
+
+## 53. Andy's eyes, on the visitor's own things, in their browser (2026-10-31)
+
+- **Why:** what the judges get of the product is the public demo, and until now it only replayed scenes recorded from
+  Andy's TV: nothing in it ran one of Meta's models, and nothing in it was the visitor's. Andy's "this is my mug"
+  (section 19) is the part of Andy that fits in a browser: DINOv2 small with registers is 24 MB at 8 bits, and
+  transformers.js runs it on WebGPU or the CPU.
+- **Built:** `screen/eyes.html` and `screen/eyes-core.js`, in the Space beside the TV (`build_static_space.py`), linked
+  from the Ask Andy bar, a find's "You asked" line and the story's end card. Show it your thing (a photo, the camera,
+  or our cup), drag a box round it, name it; then a photo of where it might be. DINOv2's 14-pixel squares of the photo
+  are matched with the thing's own (the squares least like the box's edge; each square's three best matches,
+  smoothed); the three best places are cut out at three sizes each and looked at again whole, and the place whose
+  whole view (the CLS token) is closest wins. As on the robot, half of "is it mine?" is colour, because DINOv2 learned
+  to overlook it: a fingerprint of 12 hues by 3 strengths and 4 greys over the thing's own squares, the same as
+  `local/sam_server.py`. "There's your cup" at 0.82 alike and 0.75 in colour; between 0.62 and that, or alike in
+  another colour, "is it?" with Yes / No (No: the next place); below, "I don't see it". The TV's spotlight Reveal,
+  "Show what Andy saw" (the likeness of every square, in gold), and a "Meta, live · in this browser" strip with each of
+  DINOv2's looks timed. Nothing is uploaded: the page fetches the library from a CDN and the model from Hugging Face.
+- **Measured** (`evals/eyes.py`, `evals/results/eyes-20261031-2154.json`): two photos each of eight museum objects (The
+  Met's Open Access, CC0), one shown, the other on a made-up table among three others (two look-alike cups always
+  beside the cup), in headless Chromium on the CPU. With it: the closest place **24 of 24**, "found" **20**, never a
+  wrong one (the other 4: a pocket watch shown shut and found open, or the other way round, where Andy said it didn't
+  see it, twice; the cup from its handle side, where it asked, twice).
+  Without it, **never "found" in 24** (asked 7 times, mostly the look-alike floral cup, 0.80 at most). Its twin in
+  other colours (hues turned half round): **never "found" for the jug, the pot and the bugle** (colour 0.66 at most,
+  the right ones 0.82 at least); the white cup's twin, only its painted flowers recoloured, **4 of 6** (it's still
+  mostly white). 2.7 s a search on a laptop's CPU.
+- **What changed because of the measuring:** the first version grew each place from the likeness alone; in a picture
+  of four museum photos (alike grey backdrops) the place grew over the whole picture, and "is it?" pointed at
+  everything. Trying three sizes per place and keeping the one that looks most like the thing fixed it and raised
+  "found" from 16 of 24 to 20. "Found" was at 0.80 until a look-alike cup came to 0.79 with the real one absent; it's
+  0.82, with no right one lost. Colour came in when the twins showed DINOv2 calling a recoloured jug 0.93 alike.
+- **Not yet:** photos taken by people, at home, of their own things (the founder's phone is the first test). Cutting
+  the museum objects out of their backdrops for a shelf picture mangled the white cup, so our example is four photos
+  side by side, and says so.

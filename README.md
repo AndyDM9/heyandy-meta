@@ -24,6 +24,16 @@ Built on Meta's models for people who live at home, starting with older adults, 
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
+**Andy's eyes, on your own things, in your browser.** Show it something of yours once (your mug, your keys), then a
+photo of where it might be, and Meta's DINOv2 finds it: yours, not just one like it, **running in the browser**, so the
+photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html), "Try it on your own things" on the demo). It says
+"There's your mug" only when it's alike *and* the same colour (DINOv2 overlooks colour, so a red twin of your blue mug
+would pass), asks "is it?" when it's close, and says plainly when it doesn't see it. Measured on museum photos (CC0):
+**the right thing found 20 times in 24, never a wrong one; never "found" in 24 tables without it, nor of its twin in
+other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)).
+
+<p align="center"><img src="docs/images/eyes.webp" width="860" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
+
 **Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
 ("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
 TV for that plays, a search starting as the real one does. The words are matched in the page and sent nowhere; a link
@@ -42,9 +52,9 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 | **It doesn't give up** | **Where things live** | **What you tell it** |
 | ![It turned up: "Good news: your mug turned up!", and a wallet it's still looking for](docs/images/tv-turned.webp) | ![Is everything home? Two things home, the keys away, where they are and where they live](docs/images/tv-home.webp) | ![You told me: "I put my passport in the top drawer of the desk"](docs/images/tv-told.webp) |
 | A miss becomes "I'll keep looking", and when the thing turns up, Andy points and says so, unprompted. *On the robot: a "lost" watch found later, 4.1 degrees off, said out loud.* | **"My keys live here." "Is everything home?"** It checks each home, points at what's away, then at where it lives; every evening at 9. *On the robot: the keys found away, pointed at, then their home.* | **"I'm putting my passport in the top drawer."** What no camera sees, it keeps in your words and answers at once: "You told me on Tuesday at 3:12". *On the robot: answered without a single look.* |
-| **Your room in 3D** | **Ask Andy in your browser** | **Andy Finder, for every Reachy Mini** |
-| ![The room in 3D: its shape from MapAnything, your things pinned with their distances](docs/images/tv-room.webp) | ![The public demo: "You asked: Where are my keys?", then the find](docs/images/demo-ask.webp) | ![Andy Finder: "Lost your phone? Ring it", and the turns to the ringing from above](docs/images/finder-ring.webp) |
-| **"Show me the room."** Five looks become your room in 3D (MapAnything), your things pinned: its shape only, never a picture. *Scan to scan within 1 degree and 8 cm.* | Type what you'd say, and the scene recorded from Andy's TV for it plays, a search as the real one runs. [Try it](https://huggingface.co/spaces/heyandy-ai/andy); nothing typed is sent anywhere. | In the Reachy Mini app store: "Ring it" with nothing to set up (no key, no GPU, no internet), and anything else found with SAM 3.1 ([`apps/andy_finder`](apps/andy_finder)). |
+| **Your room in 3D** | **Andy's eyes, in your browser** | **Andy Finder, for every Reachy Mini** |
+| ![The room in 3D: its shape from MapAnything, your things pinned with their distances](docs/images/tv-room.webp) | ![Andy's eyes in the browser: the cup shown once, then the spotlight on it among look-alike cups, "There's your cup"](docs/images/eyes.webp) | ![Andy Finder: "Lost your phone? Ring it", and the turns to the ringing from above](docs/images/finder-ring.webp) |
+| **"Show me the room."** Five looks become your room in 3D (MapAnything), your things pinned: its shape only, never a picture. *Scan to scan within 1 degree and 8 cm.* | Show it your mug once, then a photo, and Meta's DINOv2 finds yours, **in your browser**: alike and the same colour, or it asks. *Never "found" in 24 museum tables without it.* Or type what you'd say to Andy and its TV's scene plays. [Try it](https://huggingface.co/spaces/heyandy-ai/andy). | In the Reachy Mini app store: "Ring it" with nothing to set up (no key, no GPU, no internet), and anything else found with SAM 3.1 ([`apps/andy_finder`](apps/andy_finder)). |
 
 <sub>Every picture above is the TV page itself, showing the demo's drawn scenes (`scripts/readme_shots.py` makes them
 again); never a home. The numbers in italics are from the robot, with their files under Proof.</sub>
@@ -90,6 +100,7 @@ names are kept, in memory: never a word said or a picture (`screen/hood.py`, `sc
 | By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder 4 of 4 | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
 | Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (the third: the search missed, and said so) | [`home-*`](evals/results) |
 | How soon it answers | the same search, profiled: the answer started **15.5 s** after the words; now **5.8 to 6.0 s**, said while pointing; the turn **20.5 s → 10.7 to 11.0 s** | [research §50](docs/research.md#50-andy-answers-while-it-points-2026-10-31), [`hood-20261031-2036.json`](evals/results/hood-20261031-2036.json) |
+| Andy's eyes, in the browser | your thing among three others: **found 20 of 24, never a wrong one** (the closest place 24 of 24); without it, **never "found" in 24**; its twin in other colours, **never "found"** for things in strong colours (the white cup's twin, only its flowers recoloured, 4 of 6); 2.7 s on a laptop's CPU | [`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json) |
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 

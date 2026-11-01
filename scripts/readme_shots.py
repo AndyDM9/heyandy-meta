@@ -7,6 +7,7 @@ docs/images, so the README shows what the TV shows today.
 
     uv run python scripts/readme_shots.py                 # every picture
     uv run python scripts/readme_shots.py guide sound     # some
+    uv run python scripts/readme_shots.py eyes            # Andy's eyes, finding our cup (downloads DINOv2 once)
 """
 import io
 import subprocess
@@ -84,11 +85,40 @@ def demo(question: str = "Where are my keys?") -> None:
         server.terminate()
 
 
+def eyes() -> None:
+    """Andy's eyes (eyes.html) finding our cup among look-alikes, DINOv2 running in the browser: the page as a visitor
+    sees it, from its Reveal."""
+    from playwright.sync_api import sync_playwright
+
+    import socket
+
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "build_static_space.py")], check=True, capture_output=True)
+    with socket.socket() as sock:  # a port nothing else here is using
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
+    server = subprocess.Popen([sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1"],
+                              cwd=ROOT / "dist" / "space-static", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        time.sleep(1.0)
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            page = browser.new_page(viewport={"width": 1600, "height": 1000})
+            page.goto(f"http://127.0.0.1:{port}/eyes.html?try")
+            page.wait_for_function("(document.getElementById('said').textContent || '').startsWith('There')", timeout=300000)
+            page.wait_for_timeout(1500)  # the spotlight settles
+            print(save(page.screenshot(), "eyes", width=1400))
+            browser.close()
+    finally:
+        server.terminate()
+
+
 def main() -> None:
-    wanted = sys.argv[1:] or [*SCENES, "demo"]
+    wanted = sys.argv[1:] or [*SCENES, "demo", "eyes"]
     tv([n for n in wanted if n in SCENES])
     if "demo" in wanted:
         demo()
+    if "eyes" in wanted:
+        eyes()
 
 
 if __name__ == "__main__":

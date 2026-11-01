@@ -59,8 +59,14 @@ def main() -> None:
     (OUT / "hood.html").write_text(files("heyandy_meta.screen").joinpath("hood.html").read_text())
     sample = json.loads(files("heyandy_meta.screen").joinpath("hood_sample.json").read_text())
     (OUT / "hood.json").write_text(json.dumps({**sample, "sample": True}))
+    # Andy's eyes, on the visitor's own things: DINOv2 in the browser, and our cups for anyone without a photo
+    (OUT / "eyes.html").write_text(files("heyandy_meta.screen").joinpath("eyes.html").read_text())
+    (OUT / "eyes-core.js").write_text(files("heyandy_meta.screen").joinpath("eyes-core.js").read_text())
+    (OUT / "eyes").mkdir()
+    for name in ("cup.webp", "cups.webp", "cups-without.webp", "CREDITS.txt"):
+        (OUT / "eyes" / name).write_bytes(files("heyandy_meta.screen").joinpath("eyes", name).read_bytes())
     for f in OUT.rglob("*"):
-        if f.is_file() and f.suffix in (".html", ".json", ".md") and KEYS.search(f.read_text(errors="ignore")):
+        if f.is_file() and f.suffix in (".html", ".json", ".md", ".js") and KEYS.search(f.read_text(errors="ignore")):
             raise SystemExit(f"something that looks like a key is in {f}; stopping")
     size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
     print(f"built {OUT} ({size // 1024} KB): index.html, {len(SCENES)} scenes, fonts")

@@ -7,7 +7,7 @@
 
 **Andy: a tabletop robot that finds what you've lost, points at it, and keeps your private life private.**
 
-HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link] · Live screen: huggingface.co/spaces/heyandy-ai/andy · Code: github.com/AndyDM9/heyandy-meta
+HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link] · Live screen: huggingface.co/spaces/heyandy-ai/andy (and Andy's eyes, live in your browser: …/eyes.html) · Code: github.com/AndyDM9/heyandy-meta
 
 **Before this week:** a Reachy Mini Lite robot, and our own earlier object-finding prototype (none of its code is in
 this repository). **Everything below was built this week, on Meta's models. Every model Andy runs is Meta's.**
@@ -24,6 +24,10 @@ table, looks around the room for you, points at the thing, and keeps what it see
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
+- **Andy's eyes, on your own things, in your browser.** The public demo runs one of Meta's models live for the
+  visitor: show it your mug once, then a photo of where it might be, and DINOv2 finds *yours*, in the browser (the
+  photos go nowhere); "found" only when it's alike and the same colour, otherwise it asks. On museum photos: found 20
+  of 24, never a wrong one; never "found" in 24 tables without it, nor of a twin in strong other colours.
 - **Meta's models, live.** While Andy works, the TV shows each Meta model call as it happens, timed, and where it
   runs (SAM 3.1, Muse Glimmer, MapAnything, SeamlessM4T v2, Llama Guard 3, Omnilingual ASR).
 - **Under the hood.** The TV's gear, or "how did you do that?", lays out each turn live, stage by stage, with which of
@@ -64,7 +68,7 @@ table, looks around the room for you, points at the thing, and keeps what it see
 | **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
 | **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
 | **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; English and Spanish |
-| **DINOv2** (open weights) | GPU 1 | Knows the person's own things by sight |
+| **DINOv2** (open weights) | GPU 1; and in the visitor's browser on the public demo | Knows the person's own things by sight |
 | **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | A second crisis check; reads each web page before Muse Spark does |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |

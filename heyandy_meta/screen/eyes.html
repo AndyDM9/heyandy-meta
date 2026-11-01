@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andy's eyes · on your things</title>
+<meta name="description" content="Show Andy something of yours, then a photo of where it might be: Meta's DINOv2 finds it, in your browser. Nothing is uploaded.">
+<link rel="icon" href="data:,">
+<style>
+  /* Atkinson Hyperlegible, served with the page. The same ground and gold as Andy's "Under the hood". */
+  @font-face { font-family: "Atkinson Next"; src: url("fonts/AtkinsonHyperlegibleNext.ttf"); font-weight: 200 800; }
+  @font-face { font-family: "Atkinson Mono"; src: url("fonts/AtkinsonHyperlegibleMono.ttf"); font-weight: 200 800; }
+  :root { --ground: #0b110f; --panel: #142019; --panel2: #1b2a22; --ink: #f5f3ef; --soft: rgba(245, 243, 239, 0.68);
+          --rule: rgba(245, 243, 239, 0.14); --gold: #ffcf5c; --outline: #ffd166; --green: #7fc4a8; --know: #6fb3e0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: radial-gradient(ellipse at 80% -10%, #1d2a24, var(--ground) 60%); background-color: var(--ground);
+         color: var(--ink); min-height: 100vh; font: 400 clamp(16px, 1.15vw, 20px)/1.45 "Atkinson Next", sans-serif;
+         padding: 3vh max(16px, 4vw) 5vh; }
+  a { color: inherit; text-underline-offset: 0.2em; }
+  .num { font-family: "Atkinson Mono", monospace; font-variant-numeric: tabular-nums; }
+  header { max-width: 78rem; }
+  .back { font-size: 0.92em; color: var(--soft); margin: 0 0 1.4vh; }
+  h1 { font-size: clamp(34px, 4vw, 66px); margin: 0; line-height: 1.02; letter-spacing: -0.02em; }
+  h1 em { font-style: normal; color: var(--gold); }
+  .lede { color: var(--soft); font-size: clamp(17px, 1.35vw, 24px); margin: 1.4vh 0 0; max-width: 64ch; }
+  .lede b { color: var(--ink); font-weight: 650; }
+
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 2.4vh 2.4vw; margin-top: 3.4vh; align-items: start; }
+  @media (max-aspect-ratio: 6/5), (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } }
+  .step { background: var(--panel); border: 1px solid var(--rule); border-radius: 18px; padding: clamp(14px, 1.6vw, 26px); }
+  .step[aria-disabled="true"] { opacity: 0.5; }
+  .step[aria-disabled="true"] .picks { pointer-events: none; }
+  h2 { display: flex; align-items: center; gap: 0.6em; font-size: clamp(20px, 1.6vw, 28px); margin: 0 0 1.4vh; letter-spacing: -0.01em; }
+  h2 .n { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--gold);
+          color: #12241d; font-size: 0.8em; font-weight: 800; flex: none; }
+  .picks { display: flex; flex-wrap: wrap; gap: 0.6em; margin-bottom: 1.4vh; }
+  button, .button { font: 650 0.95em/1 "Atkinson Next", sans-serif; color: var(--ink); background: var(--panel2);
+                    border: 1px solid var(--rule); border-radius: 99em; padding: 0.75em 1.15em; cursor: pointer; }
+  button:hover { background: #24372d; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  button.main { background: var(--gold); color: #12241d; border-color: var(--gold); }
+  button.main:hover { background: #ffd97f; }
+  button[disabled] { opacity: 0.5; cursor: default; }
+
+  /* a photo, with what's drawn over it: the box around your thing, or the spotlight on where it is */
+  .stage { position: relative; border-radius: 12px; overflow: hidden; background: #070b0a; min-height: 32vh;
+           display: grid; place-items: center; user-select: none; }
+  #stage1 { touch-action: none; }  /* dragging the box mustn't scroll the page */
+  .stage.empty { border: 2px dashed var(--rule); background: transparent; color: var(--soft); text-align: center; padding: 2em; cursor: pointer; }
+  .stage.empty.over { border-color: var(--gold); color: var(--ink); }
+  .stage .photo { position: relative; line-height: 0; }
+  .stage canvas.pic { display: block; max-width: 100%; max-height: 54vh; width: auto; height: auto; }
+  .stage video { display: block; max-width: 100%; max-height: 62vh; }
+  .box { position: absolute; border: 3px solid var(--outline); border-radius: 10px; box-shadow: 0 0 0 200vmax rgba(5, 8, 7, 0.55); }
+  .box::after { content: attr(data-label); position: absolute; left: -3px; top: -2.2em; font: 700 15px/1 "Atkinson Next", sans-serif;
+                background: var(--outline); color: #12241d; padding: 0.35em 0.6em; border-radius: 6px; white-space: nowrap; }
+  .heat { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+  .heat.on { opacity: 0.85; }
+  .spot { position: absolute; border-radius: 22px; box-shadow: 0 0 0 200vmax rgba(3, 5, 4, 0.78); border: 4px solid var(--outline);
+          transition: all 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .spot.wide { border-color: transparent; }
+  .spot.maybe { border-style: dashed; }
+  .spot::after { content: attr(data-label); position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(100% + 10px);
+                 font: 750 clamp(15px, 1.2vw, 20px)/1 "Atkinson Next", sans-serif; background: var(--outline); color: #12241d;
+                 padding: 0.4em 0.75em; border-radius: 99em; white-space: nowrap; }
+  .spot.low::after { top: calc(100% + 10px); bottom: auto; }
+  .scan { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 207, 92, 0.22) 50%, transparent 70%);
+          background-size: 250% 100%; animation: scan 1.3s linear infinite; pointer-events: none; }
+  @keyframes scan { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+  @media (prefers-reduced-motion: reduce) { .scan { animation: none; } .spot { transition: none; } }
+  .cam { display: flex; gap: 0.6em; justify-content: center; padding: 0.8em; line-height: 1.2; }
+
+  .hint { color: var(--soft); margin: 1.2vh 0 0; font-size: 0.95em; }
+  form.name { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6em; margin-top: 1.4vh; }
+  form.name label { font-weight: 650; }
+  form.name input { font: 600 1em "Atkinson Next", sans-serif; color: var(--ink); background: #0d1512; border: 1px solid var(--rule);
+                    border-radius: 99em; padding: 0.6em 1em; width: 11em; }
+  .known { display: flex; align-items: center; gap: 1em; margin-top: 1.4vh; }
+  .known canvas { width: 76px; height: 76px; object-fit: cover; border-radius: 12px; border: 2px solid var(--outline); background: #000; }
+  .known p { margin: 0; }
+  .said { font-size: clamp(22px, 2vw, 36px); font-weight: 700; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
+  .said:empty { display: none; }
+  .why { color: var(--soft); margin: 0.4vh 0 1.2vh; font-size: 0.9em; }
+  .why:empty { display: none; }
+  .answer { display: flex; flex-wrap: wrap; gap: 0.6em; margin-bottom: 1.2vh; }
+  .tools { display: flex; flex-wrap: wrap; gap: 0.6em; align-items: center; margin-top: 1.2vh; }
+  .tools label { display: inline-flex; align-items: center; gap: 0.45em; color: var(--soft); cursor: pointer; }
+  .tools input { accent-color: var(--gold); width: 1.1em; height: 1.1em; }
+
+  /* Meta, live: each of DINOv2's looks, timed, as the TV shows each model's calls */
+  .live { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em 0.8em; padding: 1.2vh 1.2vw;
+          border-top: 2px solid var(--rule); border-bottom: 2px solid var(--rule); min-height: 3.4em; }
+  .live > b { color: var(--soft); font-weight: 650; letter-spacing: 0.02em; margin-right: 0.4em; }
+  .live .call { display: inline-flex; align-items: center; gap: 0.45em; background: var(--panel); border: 1px solid var(--rule);
+                border-radius: 99em; padding: 0.35em 0.8em; font-size: 0.92em; }
+  .live .call i { width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--know); flex: none; }
+  .live .call.on { border-color: var(--gold); }
+  .live .call.on i { background: var(--gold); animation: pulse 0.9s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: scale(1.6); opacity: 0.5; } }
+  .live .call em { font-style: normal; color: var(--soft); }
+  .live .meter { flex: 1 1 12rem; height: 6px; background: var(--rule); border-radius: 99em; overflow: hidden; max-width: 20rem; }
+  .live .meter i { display: block; height: 100%; background: var(--gold); width: 0; transition: width 0.2s; }
+
+  footer { margin-top: 3vh; color: var(--soft); font-size: 0.9em; max-width: 78rem; display: grid; gap: 0.8em; }
+  footer p { margin: 0; }
+  footer b { color: var(--ink); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <p class="back"><a href="./">← Andy's TV: the one-minute story</a></p>
+  <h1>Andy's eyes, on <em>your</em> things</h1>
+  <p class="lede">Show Andy something of yours, once. Then a photo of where it might be, and Andy finds it: <b>yours,
+    not just one like it.</b> Meta's DINOv2 does the looking, <b>here in your browser</b>: your photos never leave this device.</p>
+</header>
+<main>
+  <section class="step" id="s1" aria-labelledby="h1s">
+    <h2 id="h1s"><span class="n">1</span> Show Andy your thing</h2>
+    <div class="picks">
+      <button type="button" class="main" data-pick="1">Take or choose a photo</button>
+      <button type="button" data-cam="1">Use the camera</button>
+      <button type="button" id="ours1">No photo to hand? Use our cup</button>
+    </div>
+    <div class="stage empty" id="stage1" tabindex="0">Drop a photo of it here: your keys, your glasses, your mug.</div>
+    <p class="hint" id="hint1" hidden>Drag a box around it (or tap it).</p>
+    <form class="name" id="name1" hidden>
+      <label for="thing">It's my</label><input id="thing" maxlength="28" placeholder="mug" autocomplete="off">
+      <button class="main" type="submit">Remember it</button>
+    </form>
+    <div class="known" id="known" hidden><canvas width="76" height="76" aria-hidden="true"></canvas>
+      <div><p><b id="knownName"></b>: Andy knows it by sight now.</p><p class="why">As numbers, in this page: DINOv2's view of it, 384 of them.</p></div></div>
+  </section>
+  <section class="step" id="s2" aria-labelledby="h2s" aria-disabled="true">
+    <h2 id="h2s"><span class="n">2</span> Where might it be?</h2>
+    <div class="picks">
+      <button type="button" class="main" data-pick="2">Take or choose a photo</button>
+      <button type="button" data-cam="2">Use the camera</button>
+      <button type="button" id="ours2" hidden>Our four cups</button>
+      <button type="button" id="ours3" hidden>Four, without it</button>
+    </div>
+    <p class="said" id="said" aria-live="polite"></p>
+    <p class="why num" id="why"></p>
+    <div class="answer" id="answer" hidden><button type="button" class="main" id="yes">Yes, that's it</button><button type="button" id="no">No</button></div>
+    <div class="stage empty" id="stage2" tabindex="0">First, show Andy your thing. Then a photo of the table, the shelf, the room.</div>
+    <div class="tools" id="tools" hidden><label><input type="checkbox" id="showHeat"> Show what Andy saw</label></div>
+  </section>
+  <div class="live" id="live" aria-live="off"><b>Meta, live · in this browser</b><span class="call"><i></i>DINOv2 <em>ready when you are</em></span></div>
+</main>
+<footer>
+  <p><b>How it works.</b> DINOv2 (Meta's open image model; the small one with registers, Apache-2.0) turns each 14-pixel
+    square of a photo into 384 numbers. The squares that look most like your thing say where it might be; the few best
+    places are cut out and looked at again whole, and the closest to your thing is the answer, if it's close enough
+    and its colour matches too (DINOv2 learned to overlook colour, so a red mug shaped like your blue one would
+    otherwise pass). Too close to call, and Andy asks. The same idea as Andy's "this is my mug" on the robot, where DINOv2 runs on the
+    computer beside it.</p>
+  <p><b>Private.</b> The page downloads DINOv2 once (24 MB, from Hugging Face) and the library that runs it (from a
+    public CDN); your photos are read here and sent nowhere. Close the page and they're gone.</p>
+  <p>Our cups: The Metropolitan Museum of Art, Open Access (CC0), objects 2109, 191578, 207670, 385 and 240140. Built by
+    HeyAndy, Inc. for Meta's Global AI Developer Hackathon. <a href="https://github.com/AndyDM9/heyandy-meta">How it's built</a>.</p>
+</footer>
+<input type="file" id="file" accept="image/*" hidden>
+<script type="module">
+  import * as E from "./eyes-core.js";
+  const LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  let T = null, eyes = null, loading = null, thing = null, name = "thing", pick = 1;
+  const pics = { 1: null, 2: null };  // the photo in each step, as a canvas (at most 1600 pixels across)
+  let box = null, result = null, shown = 0;
+
+  // ---- Meta, live: each look, with its seconds ----
+  const calls = [];
+  function call(what) {
+    const c = { what, t0: performance.now(), s: null };
+    calls.push(c); if (calls.length > 6) calls.shift(); drawCalls();
+    return () => { c.s = (performance.now() - c.t0) / 1000; drawCalls(); };
+  }
+  function drawCalls(meter) {
+    const live = $("live"); live.replaceChildren(el("b", `Meta, live · in this browser${eyes ? ` · ${eyes.device === "webgpu" ? "on its GPU" : "on its CPU"}` : ""}`));
+    if (meter) { const m = el("span", null, "meter"), i = el("i"); i.style.width = meter + "%"; m.append(i); live.append(el("span", "Getting DINOv2 ready, once:"), m); }
+    for (const c of calls) {
+      const x = el("span", null, "call" + (c.s == null ? " on" : "")); x.append(el("i"), "DINOv2 ", el("em", c.what));
+      if (c.s != null) x.append(el("span", `${c.s.toFixed(2)} s`, "num"));
+      live.append(x);
+    }
+  }
+
+  // ---- the model, loaded on first use ----
+  function ready() {
+    if (eyes) return Promise.resolve(eyes);
+    loading ??= (async () => {
+      T = await import(LIB);
+      const files = {};
+      eyes = await E.load(T, (p) => {
+        if (p.status === "progress" && p.total) {
+          files[p.file] = [p.loaded, p.total];
+          const [a, b] = Object.values(files).reduce(([x, y], [l, t]) => [x + l, y + t], [0, 0]);
+          drawCalls(Math.round(100 * a / b));
+        }
+      });
+      drawCalls();
+      return eyes;
+    })().catch((e) => { loading = null; throw e; });
+    return loading;
+  }
+
+  // ---- photos in: a file, a drop, the camera, or ours ----
+  async function toCanvas(src, w, h) {
+    const s = Math.min(1, 1600 / Math.max(w, h)), c = el("canvas"); c.className = "pic";
+    c.width = Math.round(w * s); c.height = Math.round(h * s);
+    c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
+    return c;
+  }
+  async function fromFile(file) {
+    const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
+    return toCanvas(bmp, bmp.width, bmp.height);
+  }
+  async function fromUrl(url) {
+    const img = new Image(); img.src = url; await img.decode();
+    return toCanvas(img, img.naturalWidth, img.naturalHeight);
+  }
+  function camera(step) {
+    const stage = $("stage" + step), video = el("video"), bar = el("div", null, "cam");
+    const take = el("button", "Take it"), cancel = el("button", "Cancel"); take.className = "main"; bar.append(take, cancel);
+    video.playsInline = video.muted = true;
+    navigator.mediaDevices?.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 } }, audio: false }).then((stream) => {
+      stage.className = "stage"; stage.replaceChildren(video, bar); video.srcObject = stream; video.play();
+      const stop = () => stream.getTracks().forEach((t) => t.stop());
+      take.onclick = async () => { const c = await toCanvas(video, video.videoWidth, video.videoHeight); stop(); use(step, c); };
+      cancel.onclick = () => { stop(); empty(step); };
+    }).catch(() => { $("said").textContent = ""; stage.className = "stage empty"; stage.textContent = "The camera isn't available here: take or choose a photo instead."; });
+  }
+  function empty(step) {
+    const stage = $("stage" + step); stage.className = "stage empty";
+    stage.textContent = step === 1 ? "Drop a photo of it here: your keys, your glasses, your mug." : "Drop a photo of where it might be here.";
+  }
+  for (const b of document.querySelectorAll("[data-pick]")) b.onclick = () => { pick = +b.dataset.pick; $("file").click(); ready().catch(() => {}); };
+  for (const b of document.querySelectorAll("[data-cam]")) b.onclick = () => { camera(+b.dataset.cam); ready().catch(() => {}); };
+  $("file").onchange = async (e) => { const f = e.target.files[0]; e.target.value = ""; if (f) use(pick, await fromFile(f)); };
+  for (const step of [1, 2]) {
+    const stage = $("stage" + step);
+    stage.addEventListener("click", () => { if (stage.classList.contains("empty") && (step === 1 || thing)) { pick = step; $("file").click(); ready().catch(() => {}); } });
+    stage.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && stage.classList.contains("empty")) { e.preventDefault(); stage.click(); } });
+    stage.addEventListener("dragover", (e) => { e.preventDefault(); stage.classList.add("over"); });
+    stage.addEventListener("dragleave", () => stage.classList.remove("over"));
+    stage.addEventListener("drop", async (e) => {
+      e.preventDefault(); stage.classList.remove("over");
+      const f = [...e.dataTransfer.files].find((x) => x.type.startsWith("image/"));
+      if (f && (step === 1 || thing)) { ready().catch(() => {}); use(step, await fromFile(f)); }
+    });
+  }
+  $("ours1").onclick = async () => {
+    ready().catch(() => {});
+    const c = await fromUrl("eyes/cup.webp"); c.dataset.ours = "1";
+    use(1, c);
+    $("thing").value = "cup"; drawBox();
+    return remember();
+  };
+  $("ours2").onclick = async () => use(2, await fromUrl("eyes/cups.webp"));
+  $("ours3").onclick = async () => use(2, await fromUrl("eyes/cups-without.webp"));
+
+  function use(step, canvas) {
+    pics[step] = canvas;
+    const stage = $("stage" + step), photo = el("div", null, "photo"); photo.append(canvas);
+    stage.className = "stage"; stage.replaceChildren(photo);
+    if (step === 1) {
+      box = { x: canvas.width * 0.15, y: canvas.height * 0.15, w: canvas.width * 0.7, h: canvas.height * 0.7 };
+      drawBox(); dragBox(photo, canvas);
+      $("hint1").hidden = $("name1").hidden = false; $("known").hidden = true;
+      $("thing").focus({ preventScroll: true });
+    } else search();
+  }
+
+  // ---- step 1: the box around your thing ----
+  function drawBox() {
+    const photo = $("stage1").querySelector(".photo"), c = pics[1];
+    let b = photo.querySelector(".box"); if (!b) { b = el("div", null, "box"); photo.append(b); }
+    Object.assign(b.style, { left: `${100 * box.x / c.width}%`, top: `${100 * box.y / c.height}%`, width: `${100 * box.w / c.width}%`, height: `${100 * box.h / c.height}%` });
+    b.dataset.label = `my ${named()}`;
+  }
+  function dragBox(photo, c) {
+    let from = null;
+    const at = (e) => { const r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) * c.width / r.width, y: (e.clientY - r.top) * c.height / r.height }; };
+    photo.onpointerdown = (e) => { from = at(e); photo.setPointerCapture(e.pointerId); };
+    photo.onpointermove = (e) => {
+      if (!from) return;
+      const p = at(e);
+      if (Math.abs(p.x - from.x) + Math.abs(p.y - from.y) < 12) return;
+      box = { x: Math.max(0, Math.min(from.x, p.x)), y: Math.max(0, Math.min(from.y, p.y)), w: Math.abs(p.x - from.x), h: Math.abs(p.y - from.y) };
+      box.w = Math.min(box.w, c.width - box.x); box.h = Math.min(box.h, c.height - box.y); drawBox();
+    };
+    photo.onpointerup = (e) => {
+      const p = at(e);
+      if (from && Math.abs(p.x - from.x) + Math.abs(p.y - from.y) < 12) {  // a tap: a box around where it was tapped
+        const s = Math.min(c.width, c.height) * 0.4;
+        box = { x: Math.max(0, Math.min(c.width - s, p.x - s / 2)), y: Math.max(0, Math.min(c.height - s, p.y - s / 2)), w: s, h: s }; drawBox();
+      }
+      from = null;
+    };
+  }
+  const named = () => $("thing").value.trim().replace(/^(?:my|the|a|an|our)\s+/i, "") || "thing";  // "my keys": keys
+  $("thing").oninput = () => pics[1] && drawBox();
+  $("name1").onsubmit = (e) => { e.preventDefault(); remember(); };
+  async function remember() {
+    if (!pics[1] || box.w < 20 || box.h < 20) return;
+    name = named();
+    const btn = $("name1").querySelector("button"); btn.disabled = true; btn.textContent = "Looking at it…";
+    try {
+      await ready();
+      const done = call(`looking at your ${name}`);
+      thing = await E.look(eyes, T, pics[1], box, 224);
+      done();
+    } catch (err) {
+      btn.disabled = false; btn.textContent = "Remember it";
+      $("hint1").hidden = false; $("hint1").textContent = "Andy's eyes couldn't start in this browser (" + (err.message || err) + "). A recent Chrome, Edge, Safari or Firefox will do.";
+      return;
+    }
+    btn.disabled = false; btn.textContent = "Remember it";
+    const k = $("known").querySelector("canvas"), g = k.getContext("2d"), s = Math.max(box.w, box.h);
+    g.fillStyle = "#000"; g.fillRect(0, 0, 76, 76);
+    g.drawImage(pics[1], box.x + box.w / 2 - s / 2, box.y + box.h / 2 - s / 2, s, s, 0, 0, 76, 76);
+    $("knownName").textContent = `Your ${name}`; $("known").hidden = false; $("name1").hidden = $("hint1").hidden = true;
+    $("s2").setAttribute("aria-disabled", "false");
+    $("ours2").hidden = $("ours3").hidden = name !== "cup" || !pics[1].dataset.ours;
+    if (!pics[2]) { const st = $("stage2"); st.className = "stage empty"; st.textContent = `Now a photo of where your ${name} might be: the table, a shelf, the room.`; }
+    else search();
+    $("s2").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // ---- step 2: the search, and the Reveal ----
+  async function search() {
+    if (!thing || !pics[2]) return;
+    const stage = $("stage2"), photo = stage.querySelector(".photo"), c = pics[2];
+    photo.querySelectorAll(".spot, .heat, .scan").forEach((x) => x.remove());
+    $("answer").hidden = $("tools").hidden = true; $("why").textContent = "";
+    $("said").textContent = "Let me look…";
+    photo.append(el("div", null, "scan"));
+    await ready();
+    result = await E.find(eyes, T, thing, c, { x: 0, y: 0, w: c.width, h: c.height }, 448, (what) => call(`looking at ${what}`));
+    photo.querySelector(".scan")?.remove();
+    heat(photo, c);
+    shown = 0; reveal();
+  }
+  function heat(photo, c) {  // what Andy saw: how like your thing each square looked, gold where most
+    const h = el("canvas", null, "heat"), { gw, gh, map } = result; h.width = gw; h.height = gh;
+    const g = h.getContext("2d"), img = g.createImageData(gw, gh);
+    let lo = Infinity, hi = -Infinity; for (const v of map) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    map.forEach((v, i) => { const t = Math.pow((v - lo) / (hi - lo || 1), 2.2); img.data.set([255 * t, 207 * t, 92 * t, 255], 4 * i); });
+    g.putImageData(img, 0, 0); h.classList.toggle("on", $("showHeat").checked); photo.append(h);
+  }
+  $("showHeat").onchange = () => $("stage2").querySelector(".heat")?.classList.toggle("on", $("showHeat").checked);
+  function reveal() {
+    const photo = $("stage2").querySelector(".photo"), c = pics[2], cand = result.candidates[shown];
+    photo.querySelector(".spot")?.remove();
+    $("tools").hidden = false; $("answer").hidden = true;
+    const verdict = E.verdict(cand);
+    if (verdict === "none") {
+      $("said").textContent = shown ? `Then I don't see your ${name} here.` : `I don't see your ${name} here.`;
+      $("why").textContent = cand ? `The closest thing looked ${Math.round(100 * cand.whole)}% like it; Andy says "found" at ${Math.round(100 * E.SURE)}%. Try a photo from closer, or another side.` : "";
+      return;
+    }
+    const spot = el("div", null, "spot wide" + (verdict === "maybe" ? " maybe" : "")), b = cand.box;
+    spot.dataset.label = verdict === "found" ? `your ${name}` : "this one?";
+    if (b.y < c.height * 0.12) spot.classList.add("low");
+    Object.assign(spot.style, { left: "-20%", top: "-20%", width: "140%", height: "140%" });
+    photo.append(spot);
+    void spot.offsetWidth;  // laid out wide first, so the change below is a transition: the spotlight closes in
+    spot.classList.remove("wide");
+    Object.assign(spot.style, { left: `${100 * b.x / c.width}%`, top: `${100 * b.y / c.height}%`, width: `${100 * b.w / c.width}%`, height: `${100 * b.h / c.height}%` });
+    const pct = Math.round(100 * cand.whole), col = Math.round(100 * cand.colour);
+    const rule = `Andy says "found" from ${Math.round(100 * E.SURE)}% alike and ${Math.round(100 * E.SAME_COLOUR)}% in colour`;
+    if (verdict === "found") {
+      $("said").textContent = `There's your ${name}.`;
+      $("why").textContent = `${pct}% like the one you showed me, ${col}% in colour (${rule}).`;
+    } else {
+      const otherColour = cand.whole >= E.SURE;  // alike in every way but its colour: a twin, perhaps someone else's
+      $("said").textContent = shown ? "How about this one?" : otherColour
+        ? `That's shaped like your ${name}, but its colour looks different. Is it yours?` : `That looks like your ${name}. Is it?`;
+      $("why").textContent = otherColour ? `${pct}% alike, but only ${col}% in colour (${rule}).`
+        : `${pct}% like it: close, but things can look alike, so Andy asks.`;
+      $("answer").hidden = false;
+    }
+  }
+  $("yes").onclick = () => { $("answer").hidden = true; $("said").textContent = `Good: your ${name}.`; $("stage2").querySelector(".spot")?.classList.remove("maybe"); };
+  $("no").onclick = () => { shown += 1; reveal(); };
+
+  // ?try: the whole example at once (our cup, then our four cups), for a link that shows it working
+  if (new URLSearchParams(location.search).has("try")) {
+    (async () => { await $("ours1").onclick(); if (thing) await $("ours2").onclick(); })();
+  }
+  window.EYES_READY = true;
+</script>
+</body>
+</html>

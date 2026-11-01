@@ -1,0 +1,2 @@
+Photos: The Metropolitan Museum of Art, Open Access (CC0, public domain), object numbers 2109, 191578, 207670, 385, 240140 (metmuseum.org/art/collection/search/<number>).
+Put side by side by scripts/eyes_samples.py.

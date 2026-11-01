@@ -25,8 +25,14 @@ advice.**
 Reveal; your room in 3D; identical cups told apart; before you go; Spanish; nothing leaves the house), then where to
 go next. Pause, skip with the arrow keys, or "Explore every screen".
 
-This page is the robot's TV, the same page and rendering code as on the robot with each scene saved in advance, **on sample data**: no robot, camera,
-models or keys are here, and the picture is drawn, not taken in a home. Pick a scene at the top: what Andy shows while
+**Andy's eyes, on your own things** (`eyes.html`: "Try it on your own things" at the top, or the story's end): show
+it something of yours once, then a photo of where it might be, and DINOv2, Meta's open image model, finds it, **running
+in your browser**: your photos are read there and sent nowhere. It says "There's your mug" only when it's alike and the
+same colour, asks "is it?" when it's close, and says when it doesn't see it. No photo to hand? Use our cup (The Met's
+Open Access, CC0).
+
+The TV itself is the robot's, the same page and rendering code as on the robot with each scene saved in advance, **on sample data**: no robot, camera
+or keys are here (the one model that runs here is DINOv2, in Andy's eyes, in your browser), and the picture is drawn, not taken in a home. Pick a scene at the top: what Andy shows while
 it searches (what its camera sees, every candidate outlined by SAM 3.1), what it found (how long it took, how far off
 target its point landed, and how far away it is), your own mug told from another, the cup game (every cup's path
 through the shuffle), going out, Andy in Spanish, a web page Andy opened, an answer with sources, a picture, what it remembers, the day's privacy
