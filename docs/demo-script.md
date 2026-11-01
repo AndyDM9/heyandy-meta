@@ -171,6 +171,11 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never
 shown beyond a silhouette.
 
+**The robot in the public demo.** From the best take, about 10 seconds of the robot turning, looking and pointing
+(muted, 720p): `uv run python scripts/make_film.py burn film/take1.mp4 --start <s> --end <s+10> --badge "" --out
+film/robot.mp4`, then build the Space with it, and the one-minute story opens on the robot itself, its TV beneath:
+`uv run python scripts/build_static_space.py --clip film/robot.mp4 --video <the video's URL>` (under 15 MB, or it stops).
+
 **The YouTube upload** (youtube.com/@heyandyai; public, so judges can watch signed out). The video's own title and
 description, to paste:
 > **Andy finds what you've lost: a tabletop robot on Meta's models (Meta AI Developer Hackathon)**

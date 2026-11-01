@@ -31,7 +31,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta) and check a fresh clone passes its tests. First check
        GitHub Support has purged the old commits (the founder's ticket of November 1; the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
-       (`uv run python scripts/build_static_space.py --video <the video's URL>`, then
+       (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the story opens on
+       about 10 s of the robot itself, `docs/demo-script.md`; then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
        one-minute story should play, end on the card, and "Watch the 3-minute video" should open the video;

@@ -1305,3 +1305,11 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   it stops after a second of quiet (seven at most, or a second tap); the "You asked" line says "Heard by Meta's wav2vec
   2.0, here in your browser (0.8 s, as "whirl my keith"): nothing you said left it."
 - **Not yet:** people's voices (only Meta's synthetic ones here), noisy rooms, accents; English only.
+
+## 61. The robot itself in the public demo (November 1, ready for the footage)
+
+- **Why:** the demo's one-minute story is all TV; judges who open it should first see the robot that the TV belongs to.
+- **Built:** `build_static_space.py --clip film/robot.mp4` (about 10 s, muted, under 15 MB or the build stops): the story
+  gains a first chapter, "Andy, on the table", the clip full screen under the story's band with "Filmed on the robot ·
+  uncut · 1× speed", a quiet TV beneath it (the find's Reveal would have drawn over the robot: found with a test
+  pattern standing in); then the TV's chapters as before. Without --clip, nothing changes. A test checks both.

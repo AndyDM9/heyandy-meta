@@ -393,6 +393,11 @@
   @keyframes flash { 0%, 55% { opacity: 1; } 100% { opacity: 0; } }
 
   /* Story mode (the public demo only): a one-minute guided film of Andy's TV, chapter by chapter, then a call to act */
+  /* the robot itself, filmed: the story's first chapter when the Space is built with --clip */
+  #clip { position: fixed; inset: 0; z-index: 6; background: #000; display: grid; place-items: center; }
+  #clip video { width: 100%; height: 100%; object-fit: contain; }
+  #clip .badge { position: absolute; left: 1.2rem; bottom: 1.2rem; padding: 0.35rem 0.8rem; border-radius: 99rem;
+                 background: rgba(0, 0, 0, 0.6); color: #F5F3EF; font-size: 1rem; letter-spacing: 0.02em; }
   #story { position: fixed; top: 0; left: 0; right: 0; z-index: 7; padding: 1.3rem 5rem 1.4rem; color: #F5F3EF;
            background: linear-gradient(to bottom, rgba(7, 10, 9, 0.94), rgba(7, 10, 9, 0.86)); backdrop-filter: blur(0.8rem); }
   #story .bars { display: flex; gap: 0.5rem; margin-bottom: 1.1rem; }
@@ -682,6 +687,9 @@
     ["mandarin", 7, "Your language", "It hears and speaks fifteen languages, from Spanish to Mandarin; Muse Glimmer translates on the computer beside the robot."],
     ["privacy", 8, "Nothing leaves the house", "Pictures and voice stay home. Every word sent to the cloud is on a receipt."],
   ];
+  if (window.HEYANDY_CLIP)  // built with --clip: the robot itself first, filmed, its TV beneath it
+    STORY.unshift(["idle", window.HEYANDY_CLIP_SECONDS || 10, "Andy, on the table",  // a quiet TV under it: no Reveal over the robot
+                   "The robot: it turns to your voice, looks around the room, and points. Then its TV, chapter by chapter.", true]);
   let story = null;  // {at, since, paused}
   function startStory() {
     $("demo").hidden = true; document.body.classList.remove("exploring");
@@ -699,11 +707,21 @@
     row.append(el("div", null, "ch"), text, nav); band.append(bars, row); document.body.prepend(band);  // first: on a phone it leads
     go(0); requestAnimationFrame(storyTick);
   }
+  function clip(on) {  // the robot, filmed (--clip): over the TV for its chapter, gone after
+    document.getElementById("clip")?.remove();
+    if (!on || !window.HEYANDY_CLIP) return;
+    const box = el("div"); box.id = "clip";
+    const v = el("video"); v.src = window.HEYANDY_CLIP; v.muted = v.autoplay = v.playsInline = true; v.loop = true;
+    v.setAttribute("aria-label", "Andy on the table, filmed");
+    box.append(v, el("div", window.HEYANDY_CLIP_CAPTION || "Filmed on the robot · uncut · 1× speed", "badge"));
+    document.body.append(box); v.play().catch(() => {});
+  }
   function go(i) {
     if (!story) return;
-    if (i >= STORY.length) return endCard();
+    if (i >= STORY.length) { clip(false); return endCard(); }
     story.at = Math.max(0, i); story.since = Date.now(); story.left = 0;
     document.getElementById("reveal")?.remove();  // each chapter starts clean
+    clip(!!STORY[story.at][4]);
     const [name, , title, line] = STORY[story.at], band = $("story");
     chosen = name; pictureKey = "";
     band.querySelector(".ch").textContent = `${String(story.at + 1).padStart(2, "0")} / ${String(STORY.length).padStart(2, "0")}`;
@@ -719,6 +737,7 @@
     if (story) requestAnimationFrame(storyTick);
   }
   function exploreAll() {
+    clip(false);
     story = null; $("story")?.remove(); document.getElementById("end")?.remove(); document.body.classList.remove("storying");
     chosen = null; pictureKey = ""; demoBar();
   }

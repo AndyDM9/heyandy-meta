@@ -184,3 +184,33 @@ def test_say_it_has_a_microphone_scores_phrases_by_ctc_and_snaps_near_misses(bro
         server.shutdown()
     assert got["mics"] >= 1 and got["hi"] < got["ho"]
     assert got["room"] == "show me the room" and "passport" in got["pass"]
+
+
+def test_the_story_opens_on_the_robot_when_the_space_has_a_clip(browser):
+    """build_static_space.py --clip: the robot itself, filmed, is the story's first chapter, over the TV, and gone after
+    it; with no clip, the story is as it was."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    url = f"http://127.0.0.1:{server.server_address[1]}/"
+    seen = {}
+    try:
+        for with_clip in (True, False):
+            page = browser.new_page(viewport={"width": 1600, "height": 900})
+            if with_clip:
+                page.add_init_script("window.HEYANDY_CLIP = 'robot.mp4'; window.HEYANDY_CLIP_SECONDS = 6;")
+            page.goto(url)
+            page.wait_for_function("document.body.classList.contains('storying')", timeout=10000)
+            seen[with_clip] = page.evaluate("""() => { const first = [STORY.length, STORY[0][2], !!document.getElementById('clip')];
+                                                      go(1); return [...first, !!document.getElementById('clip')]; }""")
+            page.close()
+    finally:
+        server.shutdown()
+    assert seen[True][1:] == ["Andy, on the table", True, False] and seen[True][0] == seen[False][0] + 1
+    assert seen[False][2] is False and seen[False][1] == "Meet Andy"

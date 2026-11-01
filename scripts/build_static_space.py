@@ -8,6 +8,7 @@ the same demo scenes (scripts/demo_screen.py). No keys, robot code or home pictu
 import json
 import re
 import shutil
+import subprocess
 import sys
 import time
 from importlib.resources import files
@@ -30,11 +31,22 @@ def main() -> None:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--video", default="", help="the 3-minute video's link, for the story's end card")
-    video = ap.parse_args().video
+    ap.add_argument("--clip", type=Path, help="a short clip of the robot (MP4, muted, about 10 s): the story's first chapter")
+    ap.add_argument("--clip-caption", default="Filmed on the robot · uncut · 1× speed")
+    args = ap.parse_args()
+    video = args.video
     shutil.rmtree(OUT, ignore_errors=True)
     (OUT / "scenes").mkdir(parents=True)
     (OUT / "fonts").mkdir()
     flags = "window.HEYANDY_STATIC = true;" + (f" window.HEYANDY_VIDEO = {json.dumps(video)};" if video else "")
+    if args.clip:  # the robot itself, filmed: kept small, for a page anyone opens
+        size = args.clip.stat().st_size
+        if size > 15_000_000:
+            raise SystemExit(f"{args.clip} is {size / 1e6:.0f} MB: cut it to about 10 s at 720p (make_film.py burn --shape wide)")
+        seconds = float(subprocess.run(["/usr/bin/ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
+                                        str(args.clip)], capture_output=True, text=True).stdout.strip() or 10)
+        flags += (f" window.HEYANDY_CLIP = 'robot.mp4'; window.HEYANDY_CLIP_SECONDS = {min(20.0, round(seconds, 1))};"
+                  f" window.HEYANDY_CLIP_CAPTION = {json.dumps(args.clip_caption)};")
     html = page().replace("<script>", f"<script>{flags}</script>\n<script>", 1)
     (OUT / "index.html").write_text(html)
     for name in FONTS:
@@ -52,6 +64,8 @@ def main() -> None:
     readme = readme.replace("sdk: docker\napp_port: 7860\n", "sdk: static\napp_file: index.html\n")
     (OUT / "README.md").write_text(readme)
     shutil.copy(ROOT / "LICENSE", OUT / "LICENSE")
+    if args.clip:
+        shutil.copy(args.clip, OUT / "robot.mp4")
     shutil.copy(ROOT / "docs" / "images" / "sample-drawing.webp", OUT / "drawing.webp")  # the "A picture" scene
     shutil.copy(ROOT / "docs" / "images" / "sample-web.jpg", OUT / "web.jpg")  # the "On the web" scene (Wikipedia)
     (OUT / "room.bin").write_bytes(sample_room()[0])  # the "room" scene: a made-up room's shape
