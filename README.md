@@ -136,6 +136,10 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
   in one, it notices and answers in it. Saying it's an AI and the crisis reply are written by hand in each.
 - **Private by design.** The camera and microphone reach only Meta's open models on the computer beside the robot;
   every word that goes to the cloud is shown on the TV's receipt. Unplug the network and Andy carries on.
+- **It keeps its promises in code, with Meta's guard on both sides.** A health question gets Andy's own words in
+  fifteen languages, never a model's answer; Llama Guard 3 reads what's said for crisis words and each sentence a
+  model writes for health advice; "I fell" gets 911 and the phone found. Ask it "what won't you do?" and it shows the
+  day's receipts.
 - **Every model it runs is Meta's** (eleven): SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2, Omnilingual ASR,
   SeamlessM4T v2, Llama Guard 3 and Prompt Guard 2 on our hardware; Muse Spark and Muse Image through the Meta Model API.
 
@@ -421,7 +425,8 @@ each "take one" gets a clap: two quick high notes, timed by Andy's own microphon
 ## Layout
 ```
 heyandy_meta/app.py        one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
-heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol;
+heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol,
+                           no health advice and the fall (safety.py), Llama Guard 3 on both sides (safety_model.py);
                            the cup game, the web on the TV, Andy's fifteen languages, pictures, following
 heyandy_meta/finder/       the search, from a SAM 3.1 mask to where the head looks; Glimmer's picture checks; names
 heyandy_meta/agent/        the search tools and the planning loop (Muse Spark online, Muse Glimmer on this computer)
@@ -431,7 +436,7 @@ heyandy_meta/robot/        the body interface, the Reachy Mini adapter (Pollen's
                            and a simulated room for tests
 heyandy_meta/screen/       the TV page
 heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimmer (and its straight-to-the-answer call),
-                           SAM 3.1 (both on this computer)
+                           SAM 3.1 and MapAnything (on this computer)
 heyandy_meta/router.py     who answers a turn: the device or the cloud
 apps/andy_finder/          a slim Reachy Mini app for everyone: find and point, from the dashboard
                            (SAM 3.1 on the computer if it's there, else through the Model API: then camera pictures go)
@@ -439,9 +444,10 @@ heyandy_meta/network.py    whether the cloud is reachable right now
 heyandy_meta/budget.py     the hard cap on Model API spend
 local/                     SAM 3.1 (finding, /track for the cup game), DINOv2 (/embed) and Prompt Guard 2 (/guard);
                            MapAnything (how far, depth_server.py); hearing and speaking; all served on 127.0.0.1 only
-evals/                     the scorecards (search simulated, agent, Spanish and thirteen more languages, the privacy
-                           audit, Andy's eyes; physical, to run) and
-                           their results
+evals/                     the scorecards (on the robot: unattended searches, the dress rehearsal, homes, lost, the ring,
+                           the room, its lens; simulated search and the agents; the privacy audit; Spanish and thirteen
+                           more languages; the crisis check and no health advice in fifteen; Llama Guard reading answers;
+                           Andy's eyes; physical, to run) and their results, each listed in evals/results/README.md
 scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
 config/                    config.example.yaml (no secrets)
 docs/                      the hackathon's rules, research, the video plan, open weights

@@ -149,7 +149,9 @@ PRIVACY = re.compile(r"\bwhat (?:did|have) you (?:send|sent|shared?)\b|\bwhat(?:
                      r"(?:the|this|my) (?:house|home)\b|\bwhat (?:went|goes|has gone) (?:to|up to|out to) the "
                      r"(?:cloud|internet)\b|\bprivacy (?:report|summary|receipt)s?\b|\bwhat do you send\b", re.I)
 # "What won't you do?": Andy's promises, each with today's receipts (app.py promises)
-PROMISES = re.compile(r"\bwhat (?:won'?t|will you not|would you never|do you never|will you never) (?:you )?do\b|"
+PROMISES = re.compile(r"\bwhat (?:won'?t|wouldn'?t|will you not|would you never|do you never|will you never) (?:you )?(?:ever )?do\b|"
+                      r"\bwhat\b[^.?!]{0,20}\byou (?:would|will|'d) (?:\w+ )?never do\b|\bwhat do you refuse to do\b|"
+                      r"\bwhat (?:would|will) you (?:\w+ )?never do\b|"
                       r"\bwhat are your (?:rules|promises)\b|\bcan i trust you\b|\bwhat do you promise\b|"
                       r"\bwhat (?:are|aren'?t) you (?:not )?allowed to do\b", re.I)
 MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now))", re.I),

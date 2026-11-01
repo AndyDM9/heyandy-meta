@@ -116,3 +116,15 @@ def test_i_keep_getting_something_at_night_is_not_where_a_thing_is_kept():
     assert parse("I keep getting heartburn at night, what helps?").kind == "chat"
     assert parse("I keep my passport in the top drawer").kind == "tell"
     assert parse("I keep my wedding ring in the blue box").thing == "wedding ring"
+
+
+@pytest.mark.parametrize("said", ["What won't you do?", "Can I trust you?", "What are your rules?", "What wouldn't you do?",
+                                  "Hey Andy, what is it that you would never do?",  # Glimmer's Spanish, Nov 1
+                                  "Andy, what would you absolutely never do?",  # Glimmer's Mandarin
+                                  "Andy, what will you never do?"])  # Glimmer's Russian
+def test_asking_andy_what_it_wont_do(said):
+    assert parse(said).kind == "promises"
+
+
+def test_saying_you_would_never_do_something_is_conversation():
+    assert parse("I would never do that").kind == "chat" and parse("I won't do it").kind == "chat"

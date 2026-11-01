@@ -1,9 +1,12 @@
 """Andy, one turn at a time: from what the person said to what the robot does in the room and says.
 
-Every turn goes through the safety layer first (the crisis protocol, saying it's an AI). Then the request is sorted
-in code (companion/intents.py) and takes a fixed path: finding things moves the body; reminders are kept and
+Every turn goes through the safety layer first (the crisis protocol: word lists, Llama Guard 3, and for conversation
+Glimmer's narrow look; saying it's an AI). An emergency said ("I fell") gets 911 in Andy's own words and the phone
+found; a health question gets Andy's own words, never a model's answer (companion/safety.py). Then the request is
+sorted in code (companion/intents.py) and takes a fixed path: finding things moves the body; reminders are kept and
 delivered in person; questions about the world use Muse Spark's web search; anything else is conversation, on
-Glimmer unless it needs more thought. When the cloud is refused or unreachable, the device answers instead.
+Glimmer unless it needs more thought, each sentence read by Llama Guard 3 for health advice before it's said. When the
+cloud is refused or unreachable, the device answers instead.
 
 Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer); Muse Spark gets words.
 """
@@ -535,8 +538,8 @@ class Andy:
             return self.draw(text, refine=True)
         if i.kind == "help":
             self.screen.show_help()
-            return ("I can find things and point at them, keep an eye on things, remind you, look things up, and play "
-                    "the cup game. "
+            return ("I can find things and point at them, keep an eye on things, remind you, look things up, play "
+                    "the cup game, and speak fifteen languages. "
                     "There are some ideas on the screen. Start with my name.")
         if i.kind == "world":
             return self.look_up(text)
