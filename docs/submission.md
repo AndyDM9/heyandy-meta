@@ -1,7 +1,7 @@
 # Submission text (for the form on November 4)
 
-*About 1,450 words with the table. Fill in the [brackets] on the day; check every number against `evals/results/` first
-(the scorecards were rerun on October 30 and 31 on the final code).*
+*About 1,270 words, and 200 more in the table (trimmed on November 1; the longer version is in this file's history). Fill in the
+[brackets] on the day; check every number against `evals/results/` first.*
 
 ---
 
@@ -14,9 +14,10 @@ this repository). **Everything below was built this week, on Meta's models. Ever
 
 ## The problem
 
-People who live at home lose the same few things every day: glasses, keys, the phone, the remote. A phone app can't look
-for them, and a camera that streams the living room to the cloud is a camera most people won't have. Andy sits on the
-table, looks around the room for you, points at the thing, and keeps what it sees and hears in the house.
+People who live at home lose the same few things every day: glasses, keys, the phone, the remote, and many of them
+speak another language first. A phone app can't look for them, and a camera that streams the living room to the cloud
+is a camera most people won't have. Andy sits on the table, looks around the room for you, points at the thing, and
+keeps what it sees and hears in the house.
 
 ## What it does
 
@@ -24,40 +25,27 @@ table, looks around the room for you, points at the thing, and keeps what it see
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
-- **Andy's eyes, on your own things, in your browser.** The public demo runs one of Meta's models live for the
-  visitor: show it your mug once, then a photo of where it might be, and DINOv2 finds *yours*, in the browser (the
-  photos go nowhere); "found" only when it's alike and the same colour, otherwise it asks. On museum photos: found 20
-  of 24, never a wrong one; never "found" in 24 tables without it, nor of a twin in strong other colours.
-- **Meta's models, live.** While Andy works, the TV shows each Meta model call as it happens, timed, and where it
-  runs (SAM 3.1, Muse Glimmer, MapAnything, SeamlessM4T v2, Llama Guard 3, Omnilingual ASR).
-- **Under the hood.** The TV's gear, or "how did you do that?", lays out each turn live, stage by stage, with which of
-  Meta's models did each and where. It showed the answer waited for the point and its checks; now Andy answers while
-  pointing, and the answer comes about 9.6 s sooner (15.5 s to 6 s after the words, on the robot).
-- **"I'm putting my passport in the top drawer."** What it's told, it remembers in your words, for the places no
-  camera sees, and answers at once: "You told me on Tuesday at 3:12: in the top drawer of the desk."
-- **Homes, so things stop getting lost.** "My keys live here", then "is everything home?" (and every evening at 9):
-  Andy points at what's away, then at where it lives.
-- **It doesn't give up.** A search that misses becomes a promise: Andy keeps looking every few minutes for two hours
-  and, when the thing turns up, points and says "Good news: your watch turned up!" (on the robot, unprompted).
-- **"I'm ringing my phone."** Andy turns to the ringing until its microphones hear it straight ahead, looks there
-  with SAM 3.1 and points; if it's under a cushion, it points where the sound is.
-- **"Help me reach it."** For someone who can't see well, Andy then watches their hand and talks it onto the thing
-  from their side ("Toward you, and right"), with notes that rise as the hand nears, like a parking sensor: SAM 3.1
-  finds the hand and the thing in each frame, on the computer beside the robot.
-- **"Hey Andy, show me the room."** Five looks, SAM 3.1 marking your things in each, joined by MapAnything into the room's
-  shape in 3D on the TV: dots, never a picture, your things as pins with their distances. Gone in two minutes.
-- **"Keep an eye on my keys."** Andy remembers where your chosen things were last seen, in words ("on the desk, behind
-  the keyboard") and how far. While it watches and you're in view, **V-JEPA 2** notices a watched thing put down and
-  updates its place.
-- **"Remind me at 3 pm to call Sam."** At the time, Andy finds you with its camera, turns to you, and says it.
-- **"Hey Andy, I'm going out."** Andy points at what's still here ("Don't forget your keys") while Muse Spark checks
-  whether you'll need an umbrella.
-- **"This is my mug"** (learned by sight, as numbers), **"what's that?"** (Andy looks where you point and points too),
-  **the cup game** (SAM 3.1 Object Multiplex tracks every cup at once). Built and measured on photos and synthetic
-  shuffles; not yet tried with a person in the room.
-- **The weather radar on the TV** (Muse Spark's computer use), **a map of my things** (Muse Image, from words only),
-  answers with sources, **fifteen languages** ("Andy, speak Russian"), the time and day from the clock, and several things at once through an agent with
-  Andy's abilities as tools (Muse Spark, or Glimmer offline).
+- **In fifteen languages.** "Andy, speak Mandarin": Omnilingual ASR hears it, Muse Glimmer translates on the computer
+  beside the robot, SeamlessM4T v2 speaks it, and every ability works. Saying it's an AI, the crisis reply and Andy's
+  short lines are written by hand in each, never machine-translated.
+- **Andy's eyes, on your own things, in your browser.** The public demo runs one of Meta's models for the visitor: show
+  it your mug once, then a photo of where it might be, and DINOv2 finds *yours*, in the browser (the photos go
+  nowhere); "found" only when it's alike and the same colour, otherwise it asks.
+- **Meta's models, live, and under the hood.** The TV shows each Meta model call as it happens, timed, and where it
+  runs, and lays out each turn stage by stage; that showed the answer waiting for the point, so now Andy answers while
+  pointing, 9.6 s sooner.
+- **It remembers, and doesn't give up.** "I'm putting my passport in the top drawer" is kept in your words; "is
+  everything home?" points at what's away, then where it lives; a missed search becomes a promise, and when the thing
+  turns up Andy points and says so, unprompted. **V-JEPA 2** notices a watched thing put down.
+- **"I'm ringing my phone"** turns Andy until its microphones hear the ringing straight ahead; it looks there and
+  points. **"Help me reach it"**, for someone who can't see well: Andy watches their hand and talks it onto the thing
+  ("Toward you, and right"), SAM 3.1 finding the hand and the thing in each frame.
+- **"Show me the room."** Five looks, joined by MapAnything into the room's shape in 3D on the TV: dots, never a
+  picture, your things pinned with their distances.
+- **And:** reminders delivered in person; "I'm going out" (it points at what's still here; Muse Spark checks for
+  rain); "this is my mug", "what's that?" and the cup game (SAM 3.1 Object Multiplex; not yet tried with a person); the
+  weather radar on the TV (Muse Spark's computer use); a map of my things (Muse Image); several requests at once
+  through an agent with Andy's abilities as tools.
 
 ## Meta's models, and where each one runs
 
@@ -80,53 +68,44 @@ this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's
 
 ## Technical depth (what was hard)
 
-- **A point checked by its own camera.** Andy's camera showed the head sagging after its pointing nod, so the command
-  is corrected by what the frame shows. The same check found that the robot takes the head's direction in the room,
-  the base's turn already in it: Andy had added the base again and, past 30 degrees, never faced as far round as it
-  thought. Fixed: the worst point went from 13.7 degrees off the middle of the view to under 9.
-- **A robot that measured its own lens.** Andy centred a watch, a cup and glasses, then saw each from 27 head angles:
-  the published focal length put things up to 4.7 degrees out at the edges; two runs measured 1054 and 1049 px.
-- **The room in 3D.** Joined by MapAnything alone, five looks came out 1.3 times too wide; with MapAnything's depth,
-  Andy's own rays and the head's measured angles, looks agree to a median 0.9 degrees, and scan to scan within 1.
-- **Noticing, built to fail safe.** V-JEPA 2 is asked only where something moved while the head held still, and a
-  verdict costs one SAM 3.1 glance; on the empty table, 10 clips, nothing noticed.
+- **A point checked by its own camera.** The camera showed the head sagging after its pointing nod, and that the base's
+  turn was being added twice; the command is now corrected by what the frame shows (worst point 13.7 degrees off the
+  middle of the view before, under 9 after).
+- **The room in 3D.** MapAnything alone made five looks 1.3 times too wide; with its depth, Andy's own rays and the
+  head's measured angles, looks agree to a median 0.9 degrees, and scan to scan within 1.
 - **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2 (9% of words
   misheard by a speech recogniser, against 23 to 28% for MMS-TTS), tuned by ear on the robot's small speaker.
-- **Agents that can't move the robot by themselves:** named views and numbered places, never motor values; every
-  argument checked in code; Andy's words built from what the tools did; the colour you asked for checked on the
-  picture, alone, before any point.
+- **Agents that can't move the robot by themselves:** named views and numbered places, never motor values, every
+  argument checked in code, and Andy's words built from what the tools did. Web pages: Prompt Guard 2 reads each first.
 - **Telling my mug from yours.** DINOv2 ignores colour (a blue and a red mug of one shape: 0.94 alike), so half the
-  likeness is a colour fingerprint of the mug's own pixels.
-- **Computer use with a reviewer.** Every action is reviewed in code: nothing personal is typed, sign-in and payment
-  pages end the run, the browser can't reach the home network, and Prompt Guard 2 stops a page that tries to instruct
-  Andy.
+  likeness is a colour fingerprint of the mug's own pixels, on the robot and in the browser.
 
 ## Measured
 
-*Search, simulated* (the robot's camera model, seeded rooms): with look-alikes described, the fixed sweep pointed at
-the wrong one 20 times in 100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark 18 of 20, 1 wrong). Things behind the
-robot: **Glimmer 20 of 20 in 4.0 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
-*The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12** (6 of 12 before the
-fixes this scorecard showed were needed), **Glimmer offline 12 of 12**.
+*Search, simulated* (seeded rooms): with look-alikes described, the fixed sweep pointed at the wrong one 20 times in
+100; **Glimmer's plan 18 of 20, 2 wrong** (Muse Spark 18 of 20, 1 wrong). Things behind the robot: **Glimmer 20 of 20
+in 4.0 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
+*The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12, Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
-*Spanish:* **41 of 41** written requests reach the right ability; **34 of 41** said by Andy's voice and heard back.
-*Thirteen more languages* (Mandarin to Ukrainian, 104 requests): **100 written** and **85 spoken** reach the right ability on
-the first run; with the rules it showed were missing, 104 and 89.
+*Languages:* Spanish **41 of 41** written requests reach the right ability, **34 of 41** said aloud and heard back;
+thirteen more (Mandarin to Ukrainian, 104 requests) **100 and 85** on the first run, 104 and 89 with the rules it showed
+were missing.
+*Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables).
 *On the robot, alone in the room:* **112 of 112** unattended searches over two days ended in a point; on the final
-code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. Typed to Andy on the robot: "the red
-cup" with only a blue one there, no point 4 of 4; the blue one, 2 of 2; a find from request to spoken answer, 13 to
-19 s. [The physical scorecard, judged by a person: N of M.]
+code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. A find from request to spoken answer, 13
+to 19 s. [The physical scorecard, judged by a person: N of M.]
 Every result, failures included: `evals/results/` and `docs/research.md`.
 
 ## Safety and honesty
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
-It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages, get the
-988 line from code (written by hand in each: in thirteen, call and ask for an interpreter) and reach no other model, checked twice on this computer: a word list, then Llama Guard 3. It never
-asks for money or passwords. Speech that isn't for Andy is dropped, never shown or kept. Model API spend is capped.
+It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages,
+get the 988 line from code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3);
+the reply is written by hand in each language (in thirteen: call and ask for an interpreter). It never asks for money
+or passwords. Speech that isn't for Andy is dropped, never shown or kept. Model API spend is capped.
 
 ## What's next
 
-Our own robot body (in design), the same software behind the same body interface; each language tried with people who speak it; and the physical
-scorecard in more homes.
+Our own robot body (in design), the same software behind the same body interface; each language tried with people who
+speak it; and the physical scorecard in more homes.
