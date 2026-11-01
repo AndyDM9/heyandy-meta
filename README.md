@@ -139,7 +139,9 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
-Failures are kept too: every scorecard, and what changed because of it, is in `evals/results/` and `docs/research.md`.
+Failures are kept too. Every scorecard on one page, with what it measures, its latest result read from the file,
+its earlier runs and how to rerun it: [`evals/results`](evals/results/README.md); what changed because of each, in
+`docs/research.md`.
 
 ## The details: what it does
 

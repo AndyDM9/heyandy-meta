@@ -1,0 +1,62 @@
+# The scorecards' results
+
+Every number in the README and the submission is read from a file here. Failures are kept: an earlier run
+stays beside the latest under its own name (`-before-fixes`, `-oct28`, a date), and `docs/research.md` says what
+changed because of it. This page is made from the files (`scripts/results_index.py`); a test checks it's current.
+Pictures and sounds are never kept: only words, numbers and timings.
+
+## On the robot
+
+| Scorecard | Latest result | File | Earlier runs |
+|---|---|---|---|
+| **Unattended searches**<br><sub>the real robot searching again and again for things always in the room: points, aim, time · `uv run python -m evals.unattended`</sub> | **112 of 112** searches ended in a point over 11 runs since the aim fix; the latest run: median 2.7° off the middle of the view, 14.2 s | [`unattended-20261031-1213.json`](unattended-20261031-1213.json) | [`unattended-20261030-1714`](unattended-20261030-1714.json), [`unattended-20261030-1723`](unattended-20261030-1723.json), [`unattended-20261030-1731`](unattended-20261030-1731.json), [`unattended-20261030-1935`](unattended-20261030-1935.json), [`unattended-20261030-1938`](unattended-20261030-1938.json), [`unattended-20261031-0900`](unattended-20261031-0900.json), [`unattended-20261031-0916`](unattended-20261031-0916.json), [`unattended-20261031-0919`](unattended-20261031-0919.json), [`unattended-20261031-0924`](unattended-20261031-0924.json), [`unattended-20261031-1106`](unattended-20261031-1106.json), [`unattended-20261031-1212`](unattended-20261031-1212.json) |
+| **Dress rehearsal**<br><sub>each line of the video's storyboard as a whole spoken turn on the robot · `uv run python -m evals.rehearsal`</sub> | **8 of 9** storyboard shots worked; to fix: in Mandarin, nothing said in English first | [`rehearsal-20261101-1358.json`](rehearsal-20261101-1358.json) | [`rehearsal-20261101-1353`](rehearsal-20261101-1353.json) |
+| **What it's told**<br><sub>"I'm putting my passport in the top drawer", then "where's my passport?" · `uv run python -m evals.told`</sub> | 3 turns; asked first, answered with **0 looks** | [`told-20261031-1811.json`](told-20261031-1811.json) |  |
+| **Homes**<br><sub>"my keys live here", then "is everything home?" with one thing away · `uv run python -m evals.home`</sub> | "Your watch and your cup are home. Your keys aren't home: they are a little to my right, about 2 feet away. The...", 46.5 s | [`home-20261031-1804.json`](home-20261031-1804.json) | [`home-20261031-1802`](home-20261031-1802.json) |
+| **It doesn't give up**<br><sub>a miss becomes a promise: found later, pointed at and said, unprompted · `uv run python -m evals.lost`</sub> | said, unprompted: "Good news: your phone turned up! It's to my left, about 4 feet away. I..."; pointed 3.0° off | [`lost-20261031-1654.json`](lost-20261031-1654.json) | [`lost-20261031-1653`](lost-20261031-1653.json) |
+| **By its ring**<br><sub>"I'm ringing my phone": Andy turns to a ringtone, never to a voice · `uv run python -m evals.sound`</sub> | **6 of 6** ringings turned to, within 20°; a voice taken for one: never | [`sound-20261031-1856.json`](sound-20261031-1856.json) | [`sound-20261031-1711`](sound-20261031-1711.json), [`sound-20261031-1713`](sound-20261031-1713.json), [`sound-app-20261031-1720`](sound-app-20261031-1720.json) |
+| **Help me reach it**<br><sub>the hand-guiding on an empty table: never a hand made up · `uv run python -m evals.guide`</sub> | 34 frames of an empty table, a hand made up in **0**; 1.67 frames a second | [`guide-20261031-1623.json`](guide-20261031-1623.json) |  |
+| **Are you OK?**<br><sub>Andy's check of itself, once with a service stopped on purpose · `uv run python -m evals.selfcheck`</sub> | all running: " I'm fine, thanks for asking! I can see, recognise things, tell how ..." / heyandy-depth stopped: "ng isn't working. Telling how far (MapAnything): I can still find th..." | [`selfcheck-20261031-1954.json`](selfcheck-20261031-1954.json) |  |
+| **Under the hood**<br><sub>real turns timed stage by stage · `uv run python -m evals.hood`</sub> | a search: **12.77 s** in all, the first sound at 0.13 s | [`hood-20261031-2036.json`](hood-20261031-2036.json) | [`hood-20261031-2007`](hood-20261031-2007.json) |
+| **The room in 3D**<br><sub>five looks joined by MapAnything, scan to scan · `uv run python -m evals.room`</sub> | scan to scan within **1.0°** and **8 cm** | [`room-20261031-1129.json`](room-20261031-1129.json) |  |
+| **Its own lens**<br><sub>the focal length Andy measured with its own camera · `uv run python -m evals.lens`</sub> | measured focal length **1048.9 px**: 2.95° RMS, against 3.41° for the published 1116 px (78 sightings) | [`lens-20261031-1128.json`](lens-20261031-1128.json) |  |
+| **Noticing**<br><sub>V-JEPA 2 on clips of an empty table: nothing noticed · `uv run python -m evals.notice`</sub> | 10 clips of an empty table: **0** false alarms | [`notice-empty-20261031-1130.json`](notice-empty-20261031-1130.json) |  |
+| **Filming mode**<br><sub>"take one": the clap heard in the robot's own sound · `uv run python -m evals.filming`</sub> | **8 of 8** claps heard on the robot | [`filming-20261031-2112.json`](filming-20261031-2112.json) |  |
+
+| **Andy Finder**<br><sub>the Reachy Mini app's "Ring it", on the robot · a one-off run, research.md section 47</sub> | 4 runs of "Ring it" on the robot (Andy Finder on the robot; a two-tone ringtone through the mo...) | [`finder-ring-20261031-1854.json`](finder-ring-20261031-1854.json) |  |
+| **Meta's models, live**<br><sub>the TV's strip of model calls, read during a search on the robot · a one-off run, research.md section 51</sub> | 10 moments of the TV's "Meta, live" strip during a search on the robot | [`live-calls-20261031-2056.json`](live-calls-20261031-2056.json) |  |
+| **The voice, picked by ear**<br><sub>five versions of Andy's voice played on the robot's speaker · a one-off run, research.md section 32</sub> | SeamlessM4T v2, speaker 51, slowed 8%, highpass 120 Hz, +6 dB at 3 kHz, peak-normalised: option 2 of 5 played on the robot's speaker, picked by the founder | [`voice-clarity-20261030.json`](voice-clarity-20261030.json) |  |
+| **The Model API**<br><sub>the first calls through Meta's Model API · `uv run python scripts/smoke_model_api.py`</sub> | 4 calls through the Model API, $0.02 | [`smoke-model-api-20261027-1912.json`](smoke-model-api-20261027-1912.json) | [`smoke-model-api-20261027-1910`](smoke-model-api-20261027-1910.json) |
+## Simulated, and the agents
+
+| Scorecard | Latest result | File | Earlier runs |
+|---|---|---|---|
+| **Search, fixed sweep**<br><sub>seeded rooms, the robot's camera model: in front / behind / beside a TV / absent / look-alikes · `uv run python -m evals.sim`</sub> | front 96/100 · behind 92/100 · screen 94/100 · absent 100/100 · described 80/100 (20 wrong) | [`sim-fixed.json`](sim-fixed.json) | [`sim-fixed-oct28`](sim-fixed-oct28.json) |
+| **Search, Glimmer plans**<br><sub>the same rooms, Muse Glimmer planning on this computer · `uv run python -m evals.sim --policy glimmer`</sub> | front 20/20 · behind 20/20 · screen 20/20 · absent 20/20 · described 18/20 (2 wrong) | [`sim-glimmer.json`](sim-glimmer.json) | [`sim-glimmer-before-colour-fix`](sim-glimmer-before-colour-fix.json), [`sim-glimmer-before-tool-fixes`](sim-glimmer-before-tool-fixes.json), [`sim-glimmer-oct28`](sim-glimmer-oct28.json), [`sim-glimmer-uncapped`](sim-glimmer-uncapped.json) |
+| **Search, Muse Spark plans**<br><sub>the same rooms, Muse Spark planning through the Model API · `uv run python -m evals.sim --policy spark`</sub> | front 19/20 · behind 20/20 · screen 20/20 · absent 20/20 · described 18/20 (2 wrong) | [`sim-spark.json`](sim-spark.json) | [`sim-spark-before-colour-fix`](sim-spark-before-colour-fix.json), [`sim-spark-before-tool-fixes`](sim-spark-before-tool-fixes.json), [`sim-spark-oct28`](sim-spark-oct28.json) |
+| **Agent, Muse Spark**<br><sub>12 requests with several parts, scored on what the robot did · `uv run python -m evals.agent --brain spark`</sub> | **12 of 12** multi-part requests done right, median 4.6 s | [`agent-spark.json`](agent-spark.json) | [`agent-spark-before-fixes`](agent-spark-before-fixes.json), [`agent-spark-oct28`](agent-spark-oct28.json) |
+| **Agent, Glimmer offline**<br><sub>the same, on this computer · `uv run python -m evals.agent --brain glimmer`</sub> | **12 of 12** multi-part requests done right, median 8.2 s | [`agent-glimmer.json`](agent-glimmer.json) | [`agent-glimmer-oct28`](agent-glimmer-oct28.json) |
+
+## Privacy and safety
+
+| Scorecard | Latest result | File | Earlier runs |
+|---|---|---|---|
+| **Privacy audit**<br><sub>a day of 21 requests, every outgoing request recorded · `uv run python -m evals.privacy`</sub> | **21 of 21** turns pass; camera pictures to the cloud **0** of 24; 11 turns sent nothing | [`privacy-audit.json`](privacy-audit.json) | [`privacy-audit-oct28`](privacy-audit-oct28.json) |
+| **Privacy audit, offline**<br><sub>the same day with the network off · `uv run python -m evals.privacy --offline`</sub> | **21 of 21** turns pass; camera pictures to the cloud **0** of 24; 21 turns sent nothing | [`privacy-audit-offline.json`](privacy-audit-offline.json) | [`privacy-audit-offline-oct28`](privacy-audit-offline-oct28.json) |
+| **Crisis check, 15 languages**<br><sub>indirect phrasings, held-out warning signs, everyday remarks that must never count · `uv run python -m evals.crisis_languages`</sub> | indirect phrasings **60 of 60**; first held-out set (then used for the 988 warning signs): 43/45; second held-out set (used for nothing): 16/45; everyday taken for a crisis, before / now: 0 / 0; everyday remarks built to trick it, taken for a crisis (now): 0/40 | [`crisis-languages-20261101-1338.json`](crisis-languages-20261101-1338.json) | [`crisis-languages-20261101-1309`](crisis-languages-20261101-1309.json), [`crisis-languages-20261101-1317`](crisis-languages-20261101-1317.json), [`crisis-languages-20261101-1323`](crisis-languages-20261101-1323.json) |
+
+## Languages
+
+| Scorecard | Latest result | File | Earlier runs |
+|---|---|---|---|
+| **Spanish, written**<br><sub>41 requests, several ways of asking for each ability · `uv run python -m evals.spanish`</sub> | **41 of 41** reach the right ability (written) | [`spanish-written.json`](spanish-written.json) | [`spanish-written-before-fixes`](spanish-written-before-fixes.json) |
+| **Spanish, spoken**<br><sub>the same, said by Andy's voice and heard by Omnilingual ASR · `uv run python -m evals.spanish --spoken`</sub> | **36 of 41** reach the right ability (spoken and heard) | [`spanish-spoken.json`](spanish-spoken.json) | [`spanish-spoken-before-meta-voice`](spanish-spoken-before-meta-voice.json), [`spanish-spoken-before-translation-rules`](spanish-spoken-before-translation-rules.json) |
+| **Thirteen more languages**<br><sub>eight everyday requests in each, written and spoken · `uv run python -m evals.languages`</sub> | 13 languages: **100 of 104** written, **85** spoken; Andy's answers heard back, median 0.95 | [`languages-20261101-1059.json`](languages-20261101-1059.json) |  |
+| **Noticing the language**<br><sub>called in one of fourteen languages, does Andy switch to it? · `uv run python -m evals.hear_language`</sub> | switched to the right language **31 of 42**, a wrong one 0; English switched 0 of 12 | [`hear-language-20261101-1217.json`](hear-language-20261101-1217.json) | [`hear-language-20261101-1215`](hear-language-20261101-1215.json) |
+
+## In the browser
+
+| Scorecard | Latest result | File | Earlier runs |
+|---|---|---|---|
+| **Andy's eyes**<br><sub>DINOv2 in the browser, museum photos: yours among look-alikes, and not there at all · `uv run python -m evals.eyes`</sub> | found **20 of 24**, wrong 0; "found" without it 0 of 24 | [`eyes-20261031-2154.json`](eyes-20261031-2154.json) |  |
+| **Andy's eyes, live**<br><sub>sweeping a camera (a video of one) over our cup and its look-alikes · `uv run python -m evals.eyes_live`</sub> | found in **2 of 2** sweeps ([14.9, 34.4] s); "found" without it 0, in 129 frames, 1.04 s a frame | [`eyes-live-20261101-1153.json`](eyes-live-20261101-1153.json) |  |
