@@ -28,7 +28,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
        (`git log -p | grep -E "MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}"` finds nothing). Never rewrite the history: its
        dates show the work was done during the event.
-4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta) and check a fresh clone passes its tests. First check
+4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics) and
+       check a fresh clone passes its tests. First check
        GitHub Support has purged the old commits (the founder's ticket of November 1; the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
        (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the story opens on
@@ -37,7 +38,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
        the story (about 75 seconds) should play, end on the card, and "Watch the 3-minute video" should open the video;
        type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find; tap 🎙 and say it (wav2vec 2.0
-       downloads once, 95 MB): the same scene, and Chrome asks for the microphone only then. Then "Try it on your own
+       downloads once, 95 MB): the same scene, and Chrome asks for the microphone only then; type "what won't you do?" (the
+       promises card) and "I fell and I can't get up" (the note: 911 first, then the phone). Then "Try it on your own
        things": "No photo to hand? Use our cup", then "Our four cups" should end "There's your cup." (DINOv2 downloads
        once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too; then "Sweep the room, live" on the
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
