@@ -113,3 +113,45 @@ def test_warning_signs_said_another_way_and_everyday_words_that_arent(said, sign
     from heyandy_meta.companion.safety import crisis
 
     assert crisis(said) is sign
+
+
+def test_a_third_look_at_conversation_only_catches_what_no_list_has(tmp_path):
+    """GlimmerCheck (evals/crisis_languages.py): conversation that may be a warning sign gets the crisis reply; a
+    request never goes to it; and if it can't be asked, the turn goes on as before."""
+    sign, chat = "I won't be around much longer.", "How are you today?"
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.guard, a.second_look = Guard(), Guard([sign])
+    assert a.hear(sign) == CRISIS_REPLY
+    assert "Hello there." in a.hear(chat)
+    a.hear("where are my glasses?")
+    assert a.second_look.asked == [sign, chat]  # the request wasn't looked at: requests are never a crisis by themselves
+
+
+def test_glimmer_check_answers_yes_or_no_and_no_when_it_cant_be_asked(monkeypatch):
+    from heyandy_meta.companion import safety_model
+    from heyandy_meta.models import glimmer_fast
+
+    check = safety_model.GlimmerCheck()
+    monkeypatch.setattr(glimmer_fast, "answer", lambda *a, **k: "Yes")
+    assert check.self_harm("I won't be around much longer.")
+    monkeypatch.setattr(glimmer_fast, "answer", lambda *a, **k: "no")
+    assert not check.self_harm("I'd kill for a cup of coffee.")
+
+    def down(*a, **k):
+        raise glimmer_fast.FastUnavailable("down")
+    monkeypatch.setattr(glimmer_fast, "answer", down)
+    assert not check.self_harm("anything")
+    with pytest.raises(ValueError):
+        safety_model.GlimmerCheck("https://example.com")
+
+
+def test_asking_for_a_language_is_never_looked_at_as_conversation(tmp_path):
+    """"Speak English" isn't a request to the request rules (the language switch handles it) and Glimmer said yes to
+    it 6 times in 104 (Nov 1): it must never get the crisis reply."""
+    class Yes(Guard):
+        def self_harm(self, text):
+            self.asked.append(text)
+            return True
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.guard, a.second_look = Guard(), Yes()
+    assert a.hear("speak English") != CRISIS_REPLY and a.second_look.asked == []

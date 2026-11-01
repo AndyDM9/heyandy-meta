@@ -106,8 +106,8 @@ Every result, failures included: `evals/results/` and `docs/research.md`.
 It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages,
 get the 988 line from code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3);
 the reply is written by hand in each language (in thirteen: call and ask for an interpreter). Measured in fifteen
-languages: 60 of 60 indirect phrasings and no everyday request taken for one; we also publish the limit (warning signs
-said in ways no list has: 0 of 45). It never asks for money
+languages: 60 of 60 indirect phrasings, none of 144 everyday requests and trick remarks taken for one; and we publish
+the limit: warning signs said in ways no list has, 16 of 45, all by Muse Glimmer's narrow third look. It never asks for money
 or passwords. Speech that isn't for Andy is dropped, never shown or kept. Model API spend is capped.
 
 ## What's next

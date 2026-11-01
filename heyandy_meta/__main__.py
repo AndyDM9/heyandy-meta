@@ -76,9 +76,10 @@ def build(args) -> Andy:
 
         andy.translator = Translator(args.glimmer)
     if args.robot:  # the second crisis check, on this computer (deploy/heyandy-guard.service); the word list if it's down
-        from .companion.safety_model import LlamaGuard
+        from .companion.safety_model import GlimmerCheck, LlamaGuard
 
         andy.guard = LlamaGuard(args.guard)
+        andy.second_look = GlimmerCheck(args.glimmer)  # a third look at conversation, for what no list has
         from .models.depth_local import LocalDepth
 
         andy.depth = LocalDepth(args.depth)  # how far away a found thing is (deploy/heyandy-depth.service)

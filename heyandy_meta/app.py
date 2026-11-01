@@ -146,6 +146,7 @@ class Andy:
         self.language = "en"  # "es": Andy hears and speaks Spanish (companion/language.py)
         self.translator = None  # Muse Glimmer on this computer, translating; set where Glimmer runs
         self.guard = None  # Llama Guard 3 on this computer: the second crisis check (companion/safety_model.py)
+        self.second_look = None  # Muse Glimmer, a third look, for conversation only (companion/safety_model.py GlimmerCheck)
         self._browser = None  # a clean browser on this computer, made when first asked to use the web
         self._web: tuple[str, str, float] | None = None  # (the request, the last run's response id, when)
         self._drawing = None  # the last picture Muse Image made, to refine
@@ -227,6 +228,12 @@ class Andy:
                     flagged = True
                 elif self.guard is not None and not crisis(text) and self.guard.self_harm(text):
                     flagged = True  # Llama Guard 3 knows English best: the translation is read too, before any answer
+            if (not flagged and self.second_look is not None and not crisis(text) and parse(text).kind == "chat"
+                    and asked_for(text) is None):  # "speak English" isn't conversation (Glimmer said yes to it)
+                # conversation only, never a request: Glimmer, asked one narrow question, catches warning signs said in
+                # ways no list has and Llama Guard 3 misses ("I won't be around much longer"); 0.2 s
+                self.screen.used("Muse Glimmer (safety check)", "device")
+                flagged = self.second_look.self_harm(text)
             if self.clock() - self._last_turn > HISTORY_FORGET_S:
                 self.history = []  # a new conversation
             self._last_turn = self.clock()

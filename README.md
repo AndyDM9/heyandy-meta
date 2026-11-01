@@ -586,9 +586,10 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   and held conversations; the scored runs come next
   (`docs/research.md` sections 8 to 11).
 - **The crisis check catches what it was written for, not every way of saying it.** Measured in fifteen languages:
-  60 of 60 indirect phrasings and the 988 Lifeline's warning signs it lists, no everyday request ever taken for one;
-  but three other warning signs, said in ways no list has, 0 of 45, Llama Guard 3 included (`docs/crisis-protocol.md`,
-  `docs/research.md` section 58). Andy never counsels and isn't a safety device.
+  60 of 60 indirect phrasings and 43 of 45 of the 988 Lifeline's warning signs it lists, with no everyday request or
+  trick remark (0 of 144) taken for one; but three other warning signs, said in ways no list has: the lists and Llama
+  Guard 3, 0 of 45; Muse Glimmer's narrow look at conversation, 16 (`docs/crisis-protocol.md`, `docs/research.md`
+  section 58). Andy never counsels and isn't a safety device.
 - **Fifteen languages, scored on written requests and Andy's own synthetic voice, not yet with a person.** Hearing a
   synthetic voice slips most in Korean and Vietnamese, and a mishearing becomes some other request (never one that
   deletes or sends). The hand-written lines in each language should be read by a native speaker before a home relies on
