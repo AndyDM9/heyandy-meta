@@ -18,43 +18,23 @@ Built on Meta's models for people who live at home, starting with older adults, 
 <p align="center">
   <a href="https://huggingface.co/spaces/heyandy-ai/andy"><img alt="Try the 1-minute story in your browser" src="https://img.shields.io/badge/%E2%96%B6%20Try%20it-the%201--minute%20story-ffcf5c?style=for-the-badge&labelColor=12241d"></a>
   <!-- On November 4, the video: <a href="VIDEO_URL"><img alt="Watch the 3-minute video" src="https://img.shields.io/badge/%E2%96%B6%20Watch-the%203--minute%20video-ffcf5c?style=for-the-badge&labelColor=12241d"></a> -->
+  <a href="#try-it-in-your-browser-and-in-fifteen-languages"><img alt="Andy speaks fifteen languages" src="https://img.shields.io/badge/Speaks-15%20languages-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="evals/results"><img alt="112 of 112 unattended searches on the robot ended in a point" src="https://img.shields.io/badge/On%20the%20robot-112%20of%20112%20pointed-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
 </p>
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
-**Andy's eyes, on your own things, in your browser, live.** Show it something of yours once (your mug, your keys),
-then **sweep your phone's camera around the room**: Meta's DINOv2 looks at every moment of it **in the browser**, a tone
-rises and quickens as you get warmer, and when a view looks like yours Andy looks closer, as the robot does, and
-spotlights it with the robot's own "found" sound. Or show it a photo. Yours, not just one like it, and the camera
-and photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html), "Try it on your own things" on the demo). It says
-"There's your mug" only when it's alike *and* the same colour (DINOv2 overlooks colour, so a red twin of your blue mug
-would pass), asks "is it?" when it's close, and says plainly when it doesn't see it. Measured on museum photos (CC0):
-**the right thing found 20 times in 24, never a wrong one; never "found" in 24 tables without it, nor of its twin in
-other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)). Sweeping live, with a camera that's
-a video of a sweep over the same cups, on a laptop's CPU (about a frame a second): **our cup found in both sweeps, at 15
-and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.74** ([`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json)).
-
-<p align="center"><img src="docs/images/eyes-live.webp" width="49%" alt="Andy's eyes sweeping live: on the left, my cup shown once; on the right, the camera's view of four cups with a red Live dot, DINOv2's view glowing gold over one cup, a solid box on it and the warmer meter almost full: &quot;That looks like it. Let me look closer…&quot;"> <img src="docs/images/eyes.webp" width="49%" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
-
-**Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
-("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
-TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои
-очки?", "내 안경 어디 있어?") and the TV answers in that language, as Andy does when it's called in one. The words are
-matched in the page and sent nowhere; a link can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
-
-**Andy speaks fifteen languages,** all on Meta's models in the house: "Andy, speak Russian", "talk to me in Mandarin",
-"Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,
-SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. **Or just
-speak your language:** called in one of them, Andy notices, says so in it and answers (Andy's own voice in fourteen
-languages: the right one 31 times in 42, a wrong one never, and English never switched;
-[`hear-language-20261101-1217.json`](evals/results/hear-language-20261101-1217.json)). Of 104
-everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
-first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
-into the demo's Ask Andy in any of them and its TV answers in that language.
-
-<p align="center"><img src="docs/images/tv-mandarin.webp" width="860" alt="Andy's TV in Mandarin: the day and time, the next reminder counting down, the things it keeps an eye on on a little map, and the found mug with how long, how far off target and how far away, every label in Chinese; Andy's words below: 我看到您的蓝色杯子，在我右边一点。"></p>
+**In 30 seconds:**
+- **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
+  its camera, and says where, from where you stand. *112 of 112 unattended searches on the robot ended in a point.*
+- **It speaks your language.** Fifteen of them, and it notices which one it's called in: "安迪，我的眼镜在哪里？" gets
+  its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
+- **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
+  the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
+- **Try it now, no robot needed:** [the one-minute story](https://huggingface.co/spaces/heyandy-ai/andy), then *Ask
+  Andy* anything in any of its fifteen languages; or **Andy's eyes, live**: show it your mug, sweep your phone round
+  the room, and Meta's DINOv2 finds yours, in your browser.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
@@ -92,6 +72,40 @@ changed Andy: **it now answers the moment a find is confirmed, while its head tu
 as a person points and speaks at once. Measured on the robot, the same search: the answer used to start 15.5 s after
 the words and now starts at **5.8 to 6.0 s**; the whole turn went from 20.5 s to **10.7 to 11.0 s**. Only numbers and
 names are kept, in memory: never a word said or a picture (`screen/hood.py`, `screen/hood.html`).
+
+## Try it in your browser, and in fifteen languages
+
+**Andy's eyes, on your own things, in your browser, live.** Show it something of yours once (your mug, your keys),
+then **sweep your phone's camera around the room**: Meta's DINOv2 looks at every moment of it **in the browser**, a tone
+rises and quickens as you get warmer, and when a view looks like yours Andy looks closer, as the robot does, and
+spotlights it with the robot's own "found" sound. Or show it a photo. Yours, not just one like it, and the camera
+and photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html), "Try it on your own things" on the demo). It says
+"There's your mug" only when it's alike *and* the same colour (DINOv2 overlooks colour, so a red twin of your blue mug
+would pass), asks "is it?" when it's close, and says plainly when it doesn't see it. Measured on museum photos (CC0):
+**the right thing found 20 times in 24, never a wrong one; never "found" in 24 tables without it, nor of its twin in
+other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)). Sweeping live, with a camera that's
+a video of a sweep over the same cups, on a laptop's CPU (about a frame a second): **our cup found in both sweeps, at 15
+and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.74** ([`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json)).
+
+<p align="center"><img src="docs/images/eyes-live.webp" width="49%" alt="Andy's eyes sweeping live: on the left, my cup shown once; on the right, the camera's view of four cups with a red Live dot, DINOv2's view glowing gold over one cup, a solid box on it and the warmer meter almost full: &quot;That looks like it. Let me look closer…&quot;"> <img src="docs/images/eyes.webp" width="49%" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
+
+**Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
+("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
+TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои
+очки?", "내 안경 어디 있어?") and the TV answers in that language, as Andy does when it's called in one. The words are
+matched in the page and sent nowhere; a link can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
+
+**Andy speaks fifteen languages,** all on Meta's models in the house: "Andy, speak Russian", "talk to me in Mandarin",
+"Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,
+SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. **Or just
+speak your language:** called in one of them, Andy notices, says so in it and answers (Andy's own voice in fourteen
+languages: the right one 31 times in 42, a wrong one never, and English never switched;
+[`hear-language-20261101-1217.json`](evals/results/hear-language-20261101-1217.json)). Of 104
+everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
+first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
+into the demo's Ask Andy in any of them and its TV answers in that language.
+
+<p align="center"><img src="docs/images/tv-mandarin.webp" width="860" alt="Andy's TV in Mandarin: the day and time, the next reminder counting down, the things it keeps an eye on on a little map, and the found mug with how long, how far off target and how far away, every label in Chinese; Andy's words below: 我看到您的蓝色杯子，在我右边一点。"></p>
 
 ## Why it's different
 
