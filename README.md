@@ -46,6 +46,8 @@ everyday requests in the thirteen newest, **100 reached the right ability writte
 first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
 Chinese into the demo's Ask Andy and its TV answers in Mandarin.
 
+<p align="center"><img src="docs/images/tv-mandarin.webp" width="860" alt="Andy's TV in Mandarin: the day and time, the next reminder counting down, the things it keeps an eye on on a little map, and the found mug with how long, how far off target and how far away, every label in Chinese; Andy's words below: 我看到您的蓝色杯子，在我右边一点。"></p>
+
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
 who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](docs/crisis-protocol.md)).

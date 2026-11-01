@@ -27,7 +27,9 @@ from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
 OUT = ROOT / "docs" / "images"
-SCENES = {"found": 8.5, "guide": 2.5, "turned": 8.5, "sound": 3.0, "home": 2.5, "told": 2.5, "room": 6.0}  # settle, s
+SCENES = {"found": 8.5, "guide": 2.5, "turned": 8.5, "sound": 3.0, "home": 2.5, "told": 2.5, "room": 6.0,
+          "mandarin": 9.0}  # settle, s
+WHOLE = {"mandarin"}  # the whole TV, not just its card: every label on it is in the language
 SIZE = (1920, 1080)
 CARD = (590, 240, 1850, 852)  # the TV's main card: what a scene is about, legible small (the captions run the full width)
 
@@ -52,11 +54,12 @@ def tv(names: list[str]) -> None:
         with sync_playwright() as p:
             browser = p.chromium.launch()
             for name in names:
+                state.lang, state.language, state.words = "en", "", None  # a scene in another language changes them
                 show(state, name)
                 page = browser.new_page(viewport={"width": SIZE[0], "height": SIZE[1]})
                 page.goto(url)
                 page.wait_for_timeout(SCENES[name] * 1000)
-                print(save(page.screenshot(), f"tv-{name}", crop=CARD))
+                print(save(page.screenshot(), f"tv-{name}", crop=None if name in WHOLE else CARD))
                 page.close()
             browser.close()
     finally:
