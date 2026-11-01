@@ -123,6 +123,21 @@ def main() -> None:
                                "then run this again")
         return "GPU 0 (Glimmer) and GPU 1 (SAM 3.1, voice, guards)"
 
+    @check("Glimmer and Llama Guard on their GPUs, not the processor")
+    def _():
+        # At boot on Nov 1 both started before CUDA was ready and ran on the processor without a word: they still
+        # answered, at 2 tokens a second instead of 22. The units wait for CUDA now; this catches it if it happens anyway.
+        out = subprocess.run(["nvidia-smi", "--query-compute-apps=process_name,used_memory,gpu_bus_id",
+                              "--format=csv,noheader,nounits"], capture_output=True, text=True).stdout
+        on = {bus.strip()[-7:]: int(mem) for name, mem, bus in (line.split(",") for line in out.splitlines())
+              if "llama-server" in name}
+        where = {"01:00.0": "Glimmer (GPU 0)", "08:00.0": "Llama Guard (GPU 1)"}
+        missing = [who for bus, who in where.items() if bus not in on]
+        if missing:
+            raise RuntimeError(f"{' and '.join(missing)} not on the card (CUDA wasn't ready when it started): "
+                               "systemctl --user restart heyandy-glimmer heyandy-guard")
+        return ", ".join(f"{who} {on[bus] / 1024:.1f} GB" for bus, who in where.items())
+
     @check("MapAnything says how far (a drawn mug)")
     def _():
         from heyandy_meta.finder.geometry import LITE
@@ -154,10 +169,11 @@ def main() -> None:
     def _():
         out = subprocess.run(["nvidia-smi", "--query-gpu=index,power.limit", "--format=csv,noheader,nounits"],
                              capture_output=True, text=True).stdout
+        # both at 300 W (GPU 0 since it left the case, Nov 1; it was 220 W)
         high = [f"GPU {i.strip()} at {float(w):.0f} W" for i, w in (r.split(",") for r in out.strip().splitlines())
                 if float(w) > 300]
         if high:  # the desktop's display server puts the factory limits back when it starts
-            raise RuntimeError(", ".join(high) + ": run `sudo nvidia-smi -pl 300`, then this again")
+            raise RuntimeError(", ".join(high) + ": sudo systemctl start heyandy-gpu-cap-again, then this again")
         return "both at 300 W or less"
 
     @check("GPU memory for the cup game")

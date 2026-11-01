@@ -4,6 +4,10 @@ Description=HeyAndy: Muse Glimmer 30B on GPU 0 (llama.cpp server, this computer 
 [Service]
 Environment=CUDA_VISIBLE_DEVICES=0
 Environment=LD_LIBRARY_PATH=%h/opt/llama.cpp-b11936/cudart-llama-b11936-bin-ubuntu-cuda-13.4-x64:%h/opt/llama.cpp-b11936/llama-b11936
+# At boot this can start a few seconds before CUDA is ready, and llama.cpp then runs on the processor without a word
+# (2026-11-01: 2 tokens/s instead of 22). So wait, up to 90 s, until llama.cpp sees the card.
+ExecStartPre=/bin/sh -c 'for i in $$(seq 90); do %h/opt/llama.cpp-b11936/llama-b11936/llama-server --list-devices 2>&1 | grep -q CUDA0 && exit 0; sleep 1; done; echo "no CUDA after 90 s"; exit 1'
+TimeoutStartSec=150
 ExecStart=%h/opt/llama.cpp-b11936/llama-b11936/llama-server \
   -m %h/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf \
   --mmproj %h/models/muse-glimmer/mmproj-Muse-Glimmer-30B-Q4_K_M.gguf \

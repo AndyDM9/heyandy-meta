@@ -4,6 +4,10 @@ Description=HeyAndy: Llama Guard 3 8B on GPU 1, the second crisis check (llama.c
 [Service]
 Environment=CUDA_VISIBLE_DEVICES=1
 Environment=LD_LIBRARY_PATH=%h/opt/llama.cpp-b11936/cudart-llama-b11936-bin-ubuntu-cuda-13.4-x64:%h/opt/llama.cpp-b11936/llama-b11936
+# At boot this can start a few seconds before CUDA is ready, and llama.cpp then runs on the processor without a word
+# (2026-11-01: 2 tokens/s instead of 22). So wait, up to 90 s, until llama.cpp sees the card.
+ExecStartPre=/bin/sh -c 'for i in $$(seq 90); do %h/opt/llama.cpp-b11936/llama-b11936/llama-server --list-devices 2>&1 | grep -q CUDA0 && exit 0; sleep 1; done; echo "no CUDA after 90 s"; exit 1'
+TimeoutStartSec=150
 ExecStart=%h/opt/llama.cpp-b11936/llama-b11936/llama-server \
   -m %h/models/llama-guard-3-8b/Llama-Guard-3-8B-Q4_K_M.gguf \
   -a llama-guard-3-8b -ngl 99 -c 4096 -np 1 --host 127.0.0.1 --port 8094 --jinja --no-webui
