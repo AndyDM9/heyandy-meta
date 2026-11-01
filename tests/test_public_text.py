@@ -34,3 +34,13 @@ def test_no_file_uses_the_age_words_outside_a_cited_address():
     hits = [f"{p}:{n}" for p, text in texts() for n, line in enumerate(text.splitlines(), 1)
             if WORDS.search(URL.sub("", line))]
     assert not hits, hits
+
+
+def test_no_file_names_the_other_hackathons_sponsor_except_in_a_commands_name():
+    """The founder's rule (Oct 28): the entries are kept apart, so the hardware is "GPUs with CUDA", "RTX 3090s"; the
+    driver's own commands (nvidia-smi, nvidia-ml-py) keep their names."""
+    brand = re.compile("nvi" + "dia", re.I)
+    command = re.compile("nvi" + r"dia[-_](?:smi|ml)|pynvml", re.I)
+    hits = [f"{p}:{n}" for p, text in texts() for n, line in enumerate(text.splitlines(), 1)
+            if brand.search(command.sub("", line))]
+    assert not hits, hits

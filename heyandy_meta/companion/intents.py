@@ -15,6 +15,7 @@ FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|did you see
                   r"(?:look|search|scan)(?: around)?(?: (?:the|this|my) (?:room|house|table|desk))? for)\s+"
                   + THING
                   + r"(?:\s+(?:is|are|went|go|gone))?(?:\s+(?:anywhere|around))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
+SEEING_ASKED = re.compile(r"\W*(?:do you see|did you notice|can you see)\b", re.I)  # in FIND: only for a known thing
 DRAW = re.compile(r"\b(?:draw|paint|sketch|make|create)\s+(?:me\s+|us\s+)?(?:a\s+|an\s+)?"
                   r"(?:(?:picture|drawing|painting|sketch|image)\s+of\s+)?(?P<what>.{3,200}?)[.!?]*$", re.I)
 DRAW_START = re.compile(r"\b(?:draw|paint|sketch)\b|\b(?:make|create)\s+(?:me\s+|us\s+)?(?:a\s+)?"
@@ -358,6 +359,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         m = rx.search(t)
         if m and m.groupdict().get("thing2") and _thing(m).split()[-1] not in KNOWN:
             m = None  # "watch the news": a command to watch only names a thing Andy knows
+        if m and kind == "find" and SEEING_ASKED.match(m.group(0)) and snap(_thing(m).strip()).split()[-1] not in KNOWN:
+            m = None  # "do you see my keys?" is a search; "do you see any point in living?" is not, nor "a future for me"
         if m:
             thing, place = (PLACE.split(_thing(m), maxsplit=1) + [""])[:2]  # "keys in the kitchen": thing, hint
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())

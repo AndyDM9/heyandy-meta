@@ -1,0 +1,595 @@
+{
+ "when": "2026-11-01 16:05",
+ "summary": {
+  "requests in other languages": 42,
+  "switched to the right language": 31,
+  "and reached the right ability": 26,
+  "switched to a wrong language": 0,
+  "english said": 12,
+  "english switched (must be 0)": 0,
+  "by language": {
+   "es": "2/3",
+   "zh": "2/3",
+   "tl": "2/3",
+   "vi": "2/3",
+   "ko": "1/3",
+   "ru": "1/3",
+   "ar": "2/3",
+   "hi": "1/3",
+   "pt": "3/3",
+   "fr": "3/3",
+   "it": "1/3",
+   "pl": "2/3",
+   "de": "3/3",
+   "uk": "1/3"
+  }
+ },
+ "requests": [
+  {
+   "language": "es",
+   "said": "Andy, ¿Dónde están mis gafas?",
+   "heard as English": "andy donderstand miss governs",
+   "heard told nothing": "andi dondestan mis gafas",
+   "switched to": "es",
+   "heard again": "andy donde están mis gafas",
+   "english": "Where are my glasses?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.38
+  },
+  {
+   "language": "es",
+   "said": "Andy, ¿Has visto mis llaves?",
+   "heard as English": "andy has visto mis diaves",
+   "heard told nothing": "andy has visto mis diaves",
+   "switched to": "es",
+   "heard again": "andy has visto mis diabes",
+   "english": "andy has seen my diaries",
+   "right language": true,
+   "right ability": false,
+   "seconds": 0.39
+  },
+  {
+   "language": "es",
+   "said": "Andy, No encuentro mi teléfono",
+   "heard as English": "andy no encuentro mi telephono",
+   "heard told nothing": "andy no encuentro mi teléfono",
+   "switched to": "es",
+   "heard again": "andy no encuentro mi teléfono",
+   "english": "And I can't find my phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.43
+  },
+  {
+   "language": "zh",
+   "said": "安迪，我的眼镜在哪里？",
+   "heard as English": "安迪我的眼睛在哪里",
+   "heard told nothing": "安迪我的眼睛在哪里",
+   "switched to": "zh",
+   "heard again": "安迪我的眼睛在哪里",
+   "english": "where are my glasses",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.25
+  },
+  {
+   "language": "zh",
+   "said": "安迪，你看到我的钥匙了吗？",
+   "heard as English": "安迪你看到我的钥匙了吗",
+   "heard told nothing": "安迪你看到我的钥匙了吗",
+   "switched to": "zh",
+   "heard again": "安迪你看到我的钥匙了吗",
+   "english": "Andy, have you seen my keys?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.28
+  },
+  {
+   "language": "zh",
+   "said": "安迪，我找不到我的手机",
+   "heard as English": "安迪我脚不到我的手机",
+   "heard told nothing": "安迪我找不到我的手机",
+   "switched to": "zh",
+   "heard again": "安迪我脚不到我的手机",
+   "english": "Andy, I can't reach my phone",
+   "right language": true,
+   "right ability": false,
+   "seconds": 0.26
+  },
+  {
+   "language": "tl",
+   "said": "Andy, Nasaan ang salamin ko?",
+   "heard as English": "andi nasaan ang salamin ko",
+   "heard told nothing": "andi na saan ang salamin ko",
+   "switched to": "tl",
+   "heard again": "andi nasaan ang salamin ko",
+   "english": "andi where are my glasses",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.45
+  },
+  {
+   "language": "tl",
+   "said": "Andy, Nakita mo ba ang mga susi ko?",
+   "heard as English": "andi nakita mo ba ang mga susi ko",
+   "heard told nothing": "andi nakita mo ba ang mga susi ko",
+   "switched to": "tl",
+   "heard again": "andi nakita mo ba ang mga susi ko",
+   "english": "did you see my keys?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.53
+  },
+  {
+   "language": "tl",
+   "said": "Andy, Hindi ko mahanap ang cellphone ko",
+   "heard as English": "and di he di go mahanap and celephone ko",
+   "heard told nothing": null,
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.0
+  },
+  {
+   "language": "vi",
+   "said": "Andy, Kính của tôi đâu rồi?",
+   "heard as English": "andy kin của tôi đau rồi",
+   "heard told nothing": "anh đi kim của tôi đau rồi",
+   "switched to": "vi",
+   "heard again": "ảnh đi kinh của tôi đau rồi",
+   "english": "my period photo is hurting now",
+   "right language": true,
+   "right ability": false,
+   "seconds": 0.4
+  },
+  {
+   "language": "vi",
+   "said": "Andy, Bạn có thấy chìa khóa của tôi không?",
+   "heard as English": "andy bạn có thấy chìa khóa của tôi không",
+   "heard told nothing": "andy bạn có thấy chìa khóa của tôi không",
+   "switched to": "vi",
+   "heard again": "andy bạn có thấy chìa khóa của tôi không",
+   "english": "andy do you see my keys",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.56
+  },
+  {
+   "language": "vi",
+   "said": "Andy, Tôi không tìm thấy điện thoại",
+   "heard as English": "andy too không tìm thầy điện thoại",
+   "heard told nothing": "andy tôi không tìm thầy điện thoại",
+   "switched to": "vi",
+   "heard again": "andy tôi không tìm thầy điện thoại",
+   "english": "andy I can't find my phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.49
+  },
+  {
+   "language": "ko",
+   "said": "앤디, 내 안경 어디 있어?",
+   "heard as English": "and die the angel of this so",
+   "heard told nothing": null,
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.0
+  },
+  {
+   "language": "ko",
+   "said": "앤디, 내 열쇠 봤어?",
+   "heard as English": "andy ne yell the bus so",
+   "heard told nothing": "엔디 내 열제 봤어",
+   "switched to": "ko",
+   "heard again": "엔디 내 열제 봤어",
+   "english": "엔디 내 열제 봤어",
+   "right language": true,
+   "right ability": false,
+   "seconds": 0.21
+  },
+  {
+   "language": "ko",
+   "said": "앤디, 휴대폰을 못 찾겠어",
+   "heard as English": "andy dendphone let me just at the south of the point for the point",
+   "heard told nothing": "엔디 델드폰을 못 찾겠어",
+   "switched to": "ko",
+   "heard again": "엔디 델드폰을 못 찾겠어",
+   "english": "I can't find my phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.29
+  },
+  {
+   "language": "ru",
+   "said": "Энди, Где мои очки?",
+   "heard as English": "andy gde may ochki",
+   "heard told nothing": "энди где май очки",
+   "switched to": "ru",
+   "heard again": "энди где мой очки",
+   "english": "Andy, where are my glasses?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.29
+  },
+  {
+   "language": "ru",
+   "said": "Энди, Ты не видел мои ключи?",
+   "heard as English": "indie the new videl moi clutcher",
+   "heard told nothing": null,
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.0
+  },
+  {
+   "language": "ru",
+   "said": "Энди, Не могу найти телефон",
+   "heard as English": "andy ne mogu native telephone",
+   "heard told nothing": "энди не могу найти телефон",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.2
+  },
+  {
+   "language": "ar",
+   "said": "آندي, أين نظارتي؟",
+   "heard as English": "andy i no novality",
+   "heard told nothing": "andy ai nanaval ati",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.15
+  },
+  {
+   "language": "ar",
+   "said": "آندي, هل رأيت مفاتيحي؟",
+   "heard as English": "andy hell reit mefatihi",
+   "heard told nothing": "آندي هل رأيت مفاتيحي",
+   "switched to": "ar",
+   "heard again": "آندي هل رأيت مفاتيحي",
+   "english": "Andi, have you seen my keys?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.32
+  },
+  {
+   "language": "ar",
+   "said": "آندي, لا أجد هاتفي",
+   "heard as English": "andy la ajid hatify",
+   "heard told nothing": "آندي لا أجد هاتفي",
+   "switched to": "ar",
+   "heard again": "آندي لا أجد هاتفي",
+   "english": "Andi, I can't find my phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.29
+  },
+  {
+   "language": "hi",
+   "said": "एंडी, मेरा चश्मा कहाँ है?",
+   "heard as English": "and he made a third more care here",
+   "heard told nothing": "यदि मैं राज्यस्मा कहा है",
+   "switched to": "hi",
+   "heard again": "यांदी मैं राज्यस्मा कहा है",
+   "english": "where is my state?",
+   "right language": true,
+   "right ability": false,
+   "seconds": 0.38
+  },
+  {
+   "language": "hi",
+   "said": "एंडी, क्या तुमने मेरी चाबियाँ देखीं?",
+   "heard as English": "andy kia to need mary javier deak he",
+   "heard told nothing": "ऐण्डी क्या तूने मेरी जागया देखी",
+   "switched to": "hi",
+   "heard again": "ऐंडी क्या तूने मेरी चागियाँ देखी",
+   "english": "Andy, have you seen my keys?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.51
+  },
+  {
+   "language": "hi",
+   "said": "एंडी, मुझे मेरा फ़ोन नहीं मिल रहा",
+   "heard as English": "andy would it make for on the himilar",
+   "heard told nothing": "hendi mudime rafona him indo ha",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.25
+  },
+  {
+   "language": "pt",
+   "said": "Andy, Onde estão meus óculos?",
+   "heard as English": "andy onde estão meus óculos",
+   "heard told nothing": "andy onde estão meus óculos",
+   "switched to": "pt",
+   "heard again": "andy onde estão meus óculos",
+   "english": "andy where are my glasses",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.4
+  },
+  {
+   "language": "pt",
+   "said": "Andy, Você viu minhas chaves?",
+   "heard as English": "andy você viu minhas chaves",
+   "heard told nothing": "andy você viu minhas chaves",
+   "switched to": "pt",
+   "heard again": "andy você viu minhas chaves",
+   "english": "andy did you see my keys",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.41
+  },
+  {
+   "language": "pt",
+   "said": "Andy, Não acho meu celular",
+   "heard as English": "andy não acho meu celular",
+   "heard told nothing": "andy não acho meu celular",
+   "switched to": "pt",
+   "heard again": "andy não acho meu celular",
+   "english": "andy I can't find my cell phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.39
+  },
+  {
+   "language": "fr",
+   "said": "Andy, Où sont mes lunettes ?",
+   "heard as English": "andy où sont mes lunettes",
+   "heard told nothing": "andy où sont mes lunettes",
+   "switched to": "fr",
+   "heard again": "andy où sont mes lunettes",
+   "english": "where are my glasses",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.37
+  },
+  {
+   "language": "fr",
+   "said": "Andy, Tu as vu mes clés ?",
+   "heard as English": "andy tu as vu mes clefs",
+   "heard told nothing": "andy tu as vu mes clefs",
+   "switched to": "fr",
+   "heard again": "andy tu as vu mes clefs",
+   "english": "andy have you seen my keys",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.35
+  },
+  {
+   "language": "fr",
+   "said": "Andy, Je ne trouve pas mon téléphone",
+   "heard as English": "andy je ne trouve pas mon téléphone",
+   "heard told nothing": "andy je ne trouve pas mon téléphone",
+   "switched to": "fr",
+   "heard again": "andy je ne trouve pas mon téléphone",
+   "english": "andy I can't find my phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.5
+  },
+  {
+   "language": "it",
+   "said": "Andy, Dove sono i miei occhiali?",
+   "heard as English": "andy do the sony me all kiali",
+   "heard told nothing": "ãndi duvi sõni mi o kiani",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.19
+  },
+  {
+   "language": "it",
+   "said": "Andy, Hai visto le mie chiavi?",
+   "heard as English": "andy hi wish tolemic yard",
+   "heard told nothing": "ඇඳි හයි වීස්තු ඔල්ලොමේ කියාවේ",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.21
+  },
+  {
+   "language": "it",
+   "said": "Andy, Non trovo il telefono",
+   "heard as English": "andy non trovo il telefono",
+   "heard told nothing": "andy non trovo il telefono",
+   "switched to": "it",
+   "heard again": "andy non trovo il telefono",
+   "english": "andy I can't find the phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.39
+  },
+  {
+   "language": "pl",
+   "said": "Andy, Gdzie są moje okulary?",
+   "heard as English": "and they just somewhere okulare",
+   "heard told nothing": "ande ndi ci somboi oku laire",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.24
+  },
+  {
+   "language": "pl",
+   "said": "Andy, Widziałeś moje klucze?",
+   "heard as English": "andy videalish moje kluche",
+   "heard told nothing": "andy widziałeś moje klucze",
+   "switched to": "pl",
+   "heard again": "andy widziałeś moje klucze",
+   "english": "Andy, have you seen my keys?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.4
+  },
+  {
+   "language": "pl",
+   "said": "Andy, Nie mogę znaleźć telefonu",
+   "heard as English": "andy nie mogę znaleść telefonu",
+   "heard told nothing": "andy nie mogę znaleźć telefonu",
+   "switched to": "pl",
+   "heard again": "andy nie mogę znaleźć telefonu",
+   "english": "andy I can't find my phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.49
+  },
+  {
+   "language": "de",
+   "said": "Andy, Wo ist meine Brille?",
+   "heard as English": "handy wo ist meine brille",
+   "heard told nothing": "handy wo ist meine brille",
+   "switched to": "de",
+   "heard again": "handy wo ist meine brille",
+   "english": "handy where are my glasses",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.39
+  },
+  {
+   "language": "de",
+   "said": "Andy, Hast du meine Schlüssel gesehen?",
+   "heard as English": "andy hast du meine schlüssel gesehen",
+   "heard told nothing": "andy hast du meine schlüssel gesehen",
+   "switched to": "de",
+   "heard again": "andy hast du meine schlüssel gesehen",
+   "english": "andy have you seen my keys",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.57
+  },
+  {
+   "language": "de",
+   "said": "Andy, Ich finde mein Handy nicht",
+   "heard as English": "handy ich finde mein handy nicht",
+   "heard told nothing": "handy ich finde mein handy nicht",
+   "switched to": "de",
+   "heard again": "handy ich finde mein handy nicht",
+   "english": "where are my phone?",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.47
+  },
+  {
+   "language": "uk",
+   "said": "Енді, Де мої окуляри?",
+   "heard as English": "andy they muy your couleur",
+   "heard told nothing": "andy bemon yokulare",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.16
+  },
+  {
+   "language": "uk",
+   "said": "Енді, Ти бачив мої ключі?",
+   "heard as English": "andy they bachive moje kluche",
+   "heard told nothing": "andy ty bačił moje kluči",
+   "switched to": null,
+   "heard again": null,
+   "english": null,
+   "right language": false,
+   "right ability": false,
+   "seconds": 0.21
+  },
+  {
+   "language": "uk",
+   "said": "Енді, Не можу знайти телефон",
+   "heard as English": "andy ne more us not the telephone",
+   "heard told nothing": "анді не можу знайди телефон",
+   "switched to": "uk",
+   "heard again": "енді не можу знайти телефон",
+   "english": "Andy can't find the phone",
+   "right language": true,
+   "right ability": true,
+   "seconds": 0.46
+  }
+ ],
+ "english": [
+  {
+   "said": "Andy, Where are my glasses?",
+   "heard": "andy where are my glasses",
+   "switched to": null
+  },
+  {
+   "said": "Andy, Have you seen my keys?",
+   "heard": "andy have you seen my keys",
+   "switched to": null
+  },
+  {
+   "said": "Andy, I can't find my phone",
+   "heard": "andy i can't find my phone",
+   "switched to": null
+  },
+  {
+   "said": "Andy, Remind me at 5 pm to call my daughter",
+   "heard": "andy remind me at 5pm to call my daughter",
+   "switched to": null
+  },
+  {
+   "said": "Andy, Keep an eye on my wallet",
+   "heard": "andy keep an eye on my wallet",
+   "switched to": null
+  },
+  {
+   "said": "Andy, I'm going out, do I have everything?",
+   "heard": "andy i'm going out do i have everything",
+   "switched to": null
+  },
+  {
+   "said": "Andy, What time is it?",
+   "heard": "andy what time is it",
+   "switched to": null
+  },
+  {
+   "said": "Andy, Find the remote",
+   "heard": "andy find the remote",
+   "switched to": null
+  },
+  {
+   "said": "Andy, How are you today?",
+   "heard": "andy how are you today",
+   "switched to": null
+  },
+  {
+   "said": "Andy, Tell me something nice",
+   "heard": "andy tell me something nice",
+   "switched to": null
+  },
+  {
+   "said": "Andy, Thank you so much",
+   "heard": "annie thank you so much",
+   "switched to": null
+  },
+  {
+   "said": "Andy, What a lovely morning",
+   "heard": "andy with a lovely morning",
+   "switched to": null
+  }
+ ]
+}

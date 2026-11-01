@@ -155,3 +155,13 @@ def test_asking_for_a_language_is_never_looked_at_as_conversation(tmp_path):
     a, body, _ = andy(tmp_path=tmp_path)
     a.guard, a.second_look = Guard(), Yes()
     assert a.hear("speak English") != CRISIS_REPLY and a.second_look.asked == []
+
+
+def test_a_translators_refusal_is_its_own_wording_never_a_persons():
+    from heyandy_meta.app import REFUSED
+
+    for refused in ("I can't translate that.", "I can't provide a response to that.",
+                    "I can't provide a translation for that.", "I'm sorry, but I can't help with that."):
+        assert REFUSED.search(refused), refused
+    for said in ("I can't do anything with this remote.", "I can't help it.", "I can't find my phone."):
+        assert not REFUSED.search(said), said

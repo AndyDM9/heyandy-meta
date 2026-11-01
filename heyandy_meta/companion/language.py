@@ -258,7 +258,7 @@ def heard_in(text: str) -> str | None:
         if len(re.findall(rx, text)) >= 2:
             return code
     low = text.casefold()
-    words = re.findall(r"[^\W\d_]+", low)
+    words = set(re.findall(r"[^\W\d_]+", low))  # each word once: "no, no, not that one" is one Spanish word, not two
     if sum(bool(re.match(r"[а-яёіїєґ]", w)) for w in words) >= 2:  # Cyrillic
         if any(ch in UK_ONLY for ch in low):
             return "uk"

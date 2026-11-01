@@ -1,7 +1,7 @@
 # Meta open-weight models in Andy, served on our own hardware
 
 For the "Best Build on Meta Open Weight Models" verification: everything here runs on one desktop beside the robot (two
-NVIDIA RTX 3090s, 24 GB each), with no inference provider.
+RTX 3090s, 24 GB each), with no inference provider.
 
 | Model | Where | What it does in Andy |
 |---|---|---|

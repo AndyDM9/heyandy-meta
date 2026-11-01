@@ -78,6 +78,7 @@
     <p class="lede" id="lede">Each turn, timed live on the computer beside Andy: which of Meta's models did what, and when.
       Only numbers and names are kept, in memory: never your words, never a picture.</p>
   </header>
+  <main>
   <section class="latest" aria-live="polite">
     <div><p class="big num" id="total">–</p><p class="what" id="what">Waiting for a turn: say “Hey Andy, where are my keys?”</p>
       <p class="first" id="first"></p></div>
@@ -88,6 +89,7 @@
     <div><h2>Since Andy started</h2><ul class="since" id="since"></ul></div>
   </section>
   <section class="earlier"><h2>Recent turns, newest first</h2><ol class="turns" id="turns"></ol><div class="legend" id="legend"></div></section>
+  </main>
 <script>
   // Polls hood.json (numbers and models' names only) every second: the latest turn as a waterfall, the recent turns
   // as bars to one scale. Opened by voice ("show me under the hood"), it goes back to Andy's screen after.

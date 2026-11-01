@@ -62,16 +62,19 @@ REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten 
 # A chat model saying Andy can't see, move or find things: untrue of a robot that does exactly that (offline, Glimmer
 # answered "where's the remote?", misheard, with "I can't see or move around to find things", Nov 1 rehearsal).
 CANT = re.compile(r"\bI(?: can'?t| cannot| am not able to|'m not able to| am unable to|'m unable to) (?:physically )?"
-                  r"(?:see(?! (?:the future|why|how|what|that|it happening|myself))\b|move(?: around)?\b|look around\b|"
-                  r"(?:find|search for|look for) (?:things|objects|items|it|them|your)\b|point\b)"
+                  r"(?:see(?! (?:the future|why|how|what|that|it happening|myself|any reason|a reason|why not|a problem|any problem|"
+                  r"anything wrong))\b|move(?: around)?\b|look around\b|"
+                  r"(?:find|search for|look for) (?:things|objects|items|it|them|your)\b|point\b(?! (?:to|out) (?:one|a single|just one)\b))"
                   r"|\bI don'?t have (?:eyes|a body|a camera|hands)\b", re.I)
 SEEING = "I can look around the room and point at things. Say: Hey Andy, where are my keys?"
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
                     r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
 # The translator declining to translate, as Glimmer puts it in English ("I can't translate that."): crisis words only
+# ("I can't provide a response to that."), never a person's own "I can't do anything with this remote" or "I can't help it"
 REFUSED = re.compile(r"^\W*(?:I'?m sorry,?\s*(?:but\s*)?)?I\s+(?:can'?t|cannot|won'?t|am unable to|'m unable to)\s+"
-                     r"(?:translate|help|assist|provide|do)\b", re.IGNORECASE)
+                     r"(?:translate\b|provide (?:a |an |any )?(?:response|translation|answer|help|assistance)\b|"
+                     r"(?:help|assist)(?: you)? with (?:that|this)\b)", re.IGNORECASE)
 AGAIN = re.compile(r"^\W*(?:yes|yeah|yep|sure|ok(?:ay)?|again|one more|let'?s go|go on|why not)"
                    r"(?:\W+(?:please|again|one more|let'?s go|let'?s play|why not|sure|yes|go))*\W*$", re.I)  # not "okay thanks"
 HISTORY_TURNS, HISTORY_FORGET_S = 4, 30 * 60  # a conversation: its last few exchanges, forgotten after 30 quiet minutes
@@ -869,8 +872,10 @@ class Andy:
         if self.voice is not None:
             self._own_voice  # noqa: B018 - the voice it was started with, remembered before the first switch
         if to == self.language:
+            if self.clock() - getattr(self, "_switched_at", float("-inf")) <= 15:
+                return ""  # "安迪，说中文": the voice loop noticed it and said so; the words themselves ask it again
             return "Okay." if to == "en" else f"I'm already speaking {LANGUAGES[to].name}."
-        self.language = to
+        self.language, self._switched_at = to, self.clock()
         if self.voice is not None:
             self.voice.voice = LANGUAGES[to].voice if to != "en" else self._own_voice
         self.screen.notice(LANGUAGES[to].native or "English")

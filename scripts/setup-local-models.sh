@@ -4,7 +4,7 @@
 #   GPU 1: SAM 3.1 from the open weights (facebook/sam3.1, gated: request access first) and DINOv2 (knowing the
 #          person's own things by sight) via local/sam_server.py,
 #          and hearing and speaking (Meta's Omnilingual ASR and MMS-TTS) via local/voice_server.py
-# Needs: an NVIDIA driver for CUDA 13, uv, gh (or curl), and `hf auth login` for SAM 3.1.
+# Needs: a GPU driver with CUDA 13, uv, gh (or curl), and `hf auth login` for SAM 3.1.
 set -euo pipefail
 OPT=${OPT:-$HOME/opt}
 MODELS=${MODELS:-$HOME/models}

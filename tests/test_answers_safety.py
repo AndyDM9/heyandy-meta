@@ -118,3 +118,10 @@ def test_a_chat_reply_saying_andy_cant_see_or_find_things_is_replaced_and_ordina
     for said in ["I can't find a good recipe for that.", "I cannot see the future.", "I can't wait to see you",
                  "I can't see why not!", "I can't remember that day."]:
         assert not CANT.search(said), said
+
+
+def test_cant_is_only_about_seeing_and_moving():
+    from heyandy_meta.app import CANT
+
+    assert CANT.search("I can't see or move around to find things.") and CANT.search("I can't point.")
+    assert not CANT.search("I can't see any reason not to!") and not CANT.search("I can't point to one answer.")

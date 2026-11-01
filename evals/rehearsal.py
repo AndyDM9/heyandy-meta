@@ -41,6 +41,7 @@ SHOTS = [
 ]
 NOT_HERE = ["\"What am I holding?\": needs someone holding something up to the robot.",
             "The reminder two minutes later: needs the wait, and a person for Andy to turn to."]
+THING = {"zh": "glasses"}  # the rules read English; the Mandarin line asks for the glasses
 FIX = {
     "point": "Andy didn't point: put {thing} where the robot can see it, on the table in front, away from screens "
              "(it skips pictures on a TV, and its own TV may be showing the last thing it found).",
@@ -88,8 +89,8 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
     pointed = bool(getattr(andy, "_pointed", False))
     problems = []
     if "point" in needs and not pointed:
-        thing = parse(line.split(",", 1)[-1]).thing or "it"
-        problems.append(FIX["point"].format(thing=f"the {thing}" if thing != "it" else "it"))
+        thing = THING.get(code) or parse(line.split(",", 1)[-1]).thing
+        problems.append(FIX["point"].format(thing=f"the {thing}" if thing else "it"))
     if "follow" in needs and not any("follow" in s_.lower() or "watching" in s_.lower() for s_ in said + [reply]):
         problems.append(FIX["follow"])
     if "cloud" in needs and any(w in reply.lower() for w in ("not connected", "can't look", "can't draw", "can't show", "offline")):

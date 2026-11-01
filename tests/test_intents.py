@@ -102,3 +102,11 @@ def test_where_heard_as_was_is_a_search_only_for_a_thing_andy_knows():
     assert parse("was the remote").kind == "find" and parse("was the remote").thing == "remote"
     assert parse("was my glasses?").kind == "find"
     assert parse("was the door locked?").kind != "find" and parse("was my daughter here").kind != "find"
+
+
+def test_do_you_see_is_a_search_only_for_a_thing_andy_knows():
+    """Found by review (Nov 1): "do you see" made searches of warning signs, which then skipped the third look at
+    conversation (app.py): never "Let me look." for these."""
+    for said in ("Do you see any point in living?", "Do you see a future for me?", "Do you see any hope for me?"):
+        assert parse(said).kind == "chat", said
+    assert parse("Do you see my keys?").thing == "keys" and parse("Can you see the remote?").kind == "find"

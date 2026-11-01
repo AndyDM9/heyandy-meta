@@ -29,7 +29,6 @@ HEY_WAKE = re.compile(r"^\W*" + HEY + r"(?:" + NAME + r"|and he|and they)\b[\s,.
 HEY_LATER = re.compile(r"\b" + HEY + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
 
 
-OWN_SCRIPT = ("zh", "ko", "ar", "hi", "ru", "uk")  # languages told apart by their script: a safe switch from any other
 
 
 class VoiceLoop:
@@ -144,12 +143,14 @@ class VoiceLoop:
         says so (by hand, in it), and hears the words again in it. A request Andy understood is never asked again, and
         speech that isn't for Andy, in any language, is still dropped (it's only ever heard, never kept)."""
         from ..companion.intents import parse
-        from ..companion.language import LANGUAGES, asked_for, heard_in
+        from ..companion.language import ANDY, LANGUAGES, asked_for, heard_in
 
         andy = self.andy
         if not hasattr(andy, "notice_language"):
             return text
-        called = WAKE.match(text) or next(reversed(list(LATER.finditer(text))), None)
+        hey_only = getattr(andy, "hey_only", False)  # "Answer only to Hey Andy": a plain "Andy" may be a person
+        wake, later = (HEY_WAKE, HEY_LATER) if hey_only else (WAKE, LATER)
+        called = wake.match(text) or next(reversed(list(later.finditer(text))), None)
         if not called and self._clock() > self.awake_until:
             return text  # not for Andy
         current = getattr(andy, "language", "en")
@@ -157,14 +158,26 @@ class VoiceLoop:
         if current == "en" and parse(rest).kind not in ("chat", "world"):
             return text  # understood: English it is
         other = voice.transcribe(utterance, language="auto")
+        if crisis(other) and not crisis(text):
+            # crisis words heard only when listened to again ("앤디, 죽고 싶어요" while in English): nothing comes before
+            # the crisis reply, so no "Okay, I'll speak Korean now": the language changes quietly, for the reply's sake
+            code = heard_in(other)
+            if code in LANGUAGES and code != current and hasattr(andy, "set_language"):
+                andy.set_language(code)
+            return other
         code = heard_in(other)
         if code is None or code == current or code not in LANGUAGES:
             return text
+        if current == "en" and not called and not ANDY.search(other):
+            return text  # away from English only when Andy was called by name ("no, no, not that one" after a find)
         back = LATER.sub("", other, count=1)
         if code == "en" and parse(back).kind in ("chat", "world") and asked_for(back) != "en":
             return text  # back to English only for a request it understands in English ("speak English" is one)
-        if current != "en" and code not in ("en", *OWN_SCRIPT):
-            return text  # from one Latin-letter language to another (Spanish, Portuguese, Italian) is too easy to get wrong
+        if current != "en" and code != "en":
+            # from one of Andy's other languages only back to English: Omnilingual ASR, told nothing, wrote Ukrainian as
+            # Russian and could write Hindi in Urdu's letters (Arabic's), and a Latin-letter guess (Spanish for
+            # Portuguese) is too easy to get wrong; "Andy, speak Korean" still switches, asked
+            return text
         self.awake_until = self._clock() + self.follow_up_s  # it was called: what follows the name counts
         if asked_for(back) == code:  # "Andy, speak English" itself: the turn switches and says so, once (not twice)
             voice.language = LANGUAGES[code].asr

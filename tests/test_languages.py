@@ -210,7 +210,7 @@ def test_a_request_understood_in_english_is_never_asked_again_and_background_tal
     assert ears.asked == [] and andy.switched == []
 
 
-def test_from_spanish_only_to_english_or_a_language_with_its_own_script():
+def test_from_another_language_only_back_to_english():
     from heyandy_meta.voice.loop import VoiceLoop
 
     andy = Listening("es")
@@ -264,3 +264,60 @@ def test_in_mandarin_andy_speak_english_said_in_english_brings_english_back():
     text = VoiceLoop(andy)._which_language("安迪 斯皮克 英格利", None, ears)
     assert text == "andy speak english" and ears.asked[-1] == "eng_Latn"  # heard again in English, for the turn
     assert andy.switched == []  # the turn's own "speak English" switches, and says so once (on the robot: said twice)
+
+
+def test_after_a_find_an_english_no_no_never_switches_language():
+    """Found by review (Nov 1): "no, no, not that one" in the follow-up after a find was heard as Spanish (two "no"s),
+    and "as far as I know, yes" as French. Each word counts once now, and English is left only when Andy was called."""
+    from heyandy_meta.companion.language import heard_in
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    assert heard_in("No, no, not that one.") is None and heard_in("As far as I know, yes.") is None
+    andy, ears = Listening(), Ears("no no not that one", "no, no, not that one")
+    loop = VoiceLoop(andy)
+    loop.awake_until = float("inf")  # just answered: what follows counts without the name
+    assert loop._which_language("no no not that one", None, ears) == "no no not that one" and andy.switched == []
+    ears.out["auto"] = "dónde están mis gafas"  # real Spanish, but not called: English stays
+    assert loop._which_language("donde estan mis gafas", None, ears) == "donde estan mis gafas" and andy.switched == []
+
+
+def test_crisis_words_heard_only_when_listened_to_again_come_first_and_nothing_before_them():
+    from heyandy_meta.companion.safety import crisis
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy, ears = Listening(), Ears("and he juke ship of", "앤디, 죽고 싶어요")  # Korean: "Andy, I want to die"
+    andy.set_language = lambda to: setattr(andy, "language", to) or ""
+    text = VoiceLoop(andy)._which_language("and he juke ship of", None, ears)
+    assert crisis(text) and andy.switched == [] and andy.language == "ko"  # no "Okay, I'll speak Korean now" first
+    andy, ears = Listening(), Ears("andy kiero morir", "Andy, quiero morir")  # too short to name a language
+    assert VoiceLoop(andy)._which_language("andy kiero morir", None, ears) == "Andy, quiero morir"
+
+
+def test_in_ukrainian_a_second_listening_written_as_russian_never_switches_to_russian():
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy = Listening("uk")
+    ears = Ears("", "энди где мои очки")  # told nothing, Omnilingual ASR wrote Ukrainian speech as Russian
+    ears.out[LANGUAGES["uk"].asr] = "енді де мої окуляри"
+    ears.language = LANGUAGES["uk"].asr
+    VoiceLoop(andy)._which_language("енді де мої окуляри", None, ears)
+    assert andy.switched == [] and andy.language == "uk"
+
+
+def test_answer_only_to_hey_andy_holds_for_other_languages_too():
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy, ears = Listening(), Ears("andy wo de yan jing zai na li", "安迪我的眼镜在哪里")
+    andy.hey_only = True  # a plain "Andy" may be a person in the house
+    assert VoiceLoop(andy)._which_language("andy wo de yan jing zai na li", None, ears) == "andy wo de yan jing zai na li"
+    assert ears.asked == [] and andy.switched == []
+
+
+def test_speak_chinese_said_in_chinese_is_answered_once(tmp_path):
+    a, body, _ = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    a.translator, a.voice = Glimmer({"安迪，说中文": "Speak Chinese."}), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
+    a.notice_language("zh")  # the voice loop noticed it, and said so
+    a.hear("安迪，说中文")  # then the words themselves ask for it
+    said = [e[1] for e in body.log if e[0] == "say"]
+    # the switch, then only the AI disclosure that starts a conversation: not "I'm already speaking Chinese" after it
+    assert said == [PHRASES["zh"]["Okay, I'll speak Chinese now."], LANGUAGES["zh"].disclosure]

@@ -88,11 +88,11 @@ in 4.6 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
 *Languages:* Spanish **41 of 41** written requests reach the right ability, **36 of 41** said aloud and heard back;
-thirteen more (Mandarin to Ukrainian, 104 requests) **100 and 85** on the first run, 104 and 89 with the rules it showed
+thirteen more (Mandarin to Ukrainian, 104 requests) **104 of 104** and **89**, run again with the rules the first run (100, 85) showed
 were missing; called in one of the fourteen, Andy switched to it 31 times in 42, never to a wrong one.
 *Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables);
 sweeping live (a video as the camera, on a CPU): found in both sweeps, at 15 and 34 s; never in 90 frames without it.
-*On the robot, alone in the room:* **112 of 112** unattended searches over two days ended in a point; on the final
+*On the robot, alone in the room:* **112 of 112** unattended searches since the aim fix ended in a point; on the final
 code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. A find from request to spoken answer, 13
 to 19 s. [The physical scorecard, judged by a person: N of M.]
 Every result, failures included: `evals/results/` and `docs/research.md`.

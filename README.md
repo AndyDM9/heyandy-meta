@@ -112,7 +112,7 @@ speak your language:** called in one of them, Andy notices, says so in it and an
 languages: the right one 31 times in 42, a wrong one never, and English never switched;
 [`hear-language-20261101-1217.json`](evals/results/hear-language-20261101-1217.json)). Of 104
 everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
-first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
+first run; with the rules that run showed were missing, run again: **104 and 89** ([`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json)). Type
 into the demo's Ask Andy in any of them and its TV answers in that language.
 
 <p align="center"><img src="docs/images/tv-mandarin.webp" width="860" alt="Andy's TV in Mandarin: the day and time, the next reminder counting down, the things it keeps an eye on on a little map, and the found mug with how long, how far off target and how far away, every label in Chinese; Andy's words below: 我看到您的蓝色杯子，在我右边一点。"></p>
@@ -134,7 +134,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 
 | | Measured | |
 |---|---|---|
-| On the robot, alone in the room | **112 of 112** unattended searches ended in a point; a median **5.2°** off the middle of the view on the final code | [`unattended-*`](evals/results) |
+| On the robot, alone in the room | **112 of 112** unattended searches ended in a point, every run since the aim fix (the one run before it: 3 of 4); a median **5.2°** off the middle of the view on the final code | [`unattended-*`](evals/results) |
 | Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 80 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
 | Several things at once | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
 | Privacy, a day of 21 requests | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |
@@ -145,7 +145,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 | How soon it answers | the same search, profiled: the answer started **15.5 s** after the words; now **5.8 to 6.0 s**, said while pointing; the turn **20.5 s → 10.7 to 11.0 s** | [research §50](docs/research.md#50-andy-answers-while-it-points-2026-10-31), [`hood-20261031-2036.json`](evals/results/hood-20261031-2036.json) |
 | Andy's eyes, in the browser | your thing among three others: **found 20 of 24, never a wrong one** (the closest place 24 of 24); without it, **never "found" in 24**; its twin in other colours, **never "found"** for things in strong colours (the white cup's twin, only its flowers recoloured, 4 of 6); 2.7 s on a laptop's CPU | [`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json) |
 | Andy's eyes, live | sweeping a camera (a video of one) over our cup and its look-alikes: **found both times, at 15 and 34 s**; over the look-alikes alone, **never "found" in 90 frames** | [`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json) |
-| Fifteen languages | in the thirteen newest, everyday requests reach the right ability **100 of 104** written, **85 of 104** spoken (104 and 89 with the rules that showed were missing); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json), [`hear-language-*`](evals/results/hear-language-20261101-1217.json) |
+| Fifteen languages | in the thirteen newest, everyday requests reach the right ability **104 of 104** written, **89 of 104** spoken (the first run, before the rules it showed were missing: 100 and 85); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json), [`hear-language-*`](evals/results/hear-language-20261101-1217.json) |
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
@@ -274,8 +274,8 @@ found, "You're all set", in three sentences.
    Mandarin, Tagalog, Vietnamese, Korean, Russian, Arabic, Hindi, Portuguese, French, Italian, Polish, German and
    Ukrainian. Meta's Omnilingual ASR is told which to hear, Meta's SeamlessM4T v2 speaks it, and Muse Glimmer translates
    in between, on the computer beside the robot (about 0.5 s a sentence), so every ability works in each and the
-   person's words stay home (Spanish: 41 of 41 written requests reach the right ability; the other thirteen: 100 of 104
-   on the first run). Saying it's an AI, the crisis reply (988 has help in Spanish, and interpreters by phone for the
+   person's words stay home (Spanish: 41 of 41 written requests reach the right ability; the other thirteen: 104 of 104,
+   89 spoken). Saying it's an AI, the crisis reply (988 has help in Spanish, and interpreters by phone for the
    rest), Andy's short phrases and the TV's everyday words are written by hand, never machine-translated; the crisis
    words are caught in each language before any model. The TV follows the language. Called in one of them, Andy
    notices on its own: when it didn't understand, it listens again without a language, and switches if it was another
@@ -378,7 +378,7 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
 uv sync --extra dev && uv run pytest -q   # no network calls: the model clients are tested against stand-ins
 uv run python -m heyandy_meta             # talk to Andy by keyboard, in a pretend living room; TV at 127.0.0.1:8765
 ```
-**On the robot computer, everything comes from this repository** (Ubuntu, two 24 GB NVIDIA GPUs, the Reachy Mini Lite
+**On the robot computer, everything comes from this repository** (Ubuntu, two 24 GB GPUs with CUDA, the Reachy Mini Lite
 on USB; the steps download Meta's open weights from their public pages, so accept the gated ones on Hugging Face first:
 SAM 3.1, Llama Guard 3, Llama Prompt Guard 2):
 ```bash
@@ -573,14 +573,14 @@ synthetic voice; 40 of 41 with the earlier non-Meta voice, before every model ha
 a question stays a question when speech-to-text drops the question marks): 38 and 37 before. Glimmer translates each in
 a median 0.46 s (at most 0.65), on the computer beside the robot.
 
-**Thirteen more languages** (`evals/languages.py`, `languages-20261101-1059`; eight everyday requests each, written by
+**Thirteen more languages** (`evals/languages.py`, `languages-20261101-1059` first; eight everyday requests each, written by
 hand for the test): written, **100 of 104** reach the right ability (ten languages 8 of 8; Vietnamese and Italian 7,
 Russian 6); said by Andy's own voice and heard by Omnilingual ASR, **85 of 104** (Chinese, Tagalog, French, German 8 of
 8; Vietnamese 4, Korean 3: the hearing slips on the synthetic voice). Andy's own answers, translated, spoken and heard
 back, keep a median 0.95 of their letters in order (Korean 0.82 to Arabic 0.98). The written misses were English the
 rules didn't know as Glimmer put it ("Didn't you see my keys?", "Which time is it?") and curly apostrophes
-("Where’s my phone?" reached nothing); with the rules fixed, the same translations reach **104 of 104** and **89 of
-104**. Glimmer translates a request in a median 0.55 s. Not yet with a person (`docs/research.md`, section 54).
+("Where’s my phone?" reached nothing); with the rules fixed, run again (`languages-20261101-1548`): **104 of 104** written (every language 8 of 8) and **89 of
+104** spoken. Glimmer translates a request in a median 0.55 s. Not yet with a person (`docs/research.md`, section 54).
 
 **The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
 reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every

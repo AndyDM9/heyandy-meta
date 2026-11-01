@@ -36,7 +36,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
        one-minute story should play, end on the card, and "Watch the 3-minute video" should open the video;
-       type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find. Then "Try it on your own
+       type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find; tap 🎙 and say it (wav2vec 2.0
+       downloads once, 95 MB): the same scene, and Chrome asks for the microphone only then. Then "Try it on your own
        things": "No photo to hand? Use our cup", then "Our four cups" should end "There's your cup." (DINOv2 downloads
        once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too; then "Sweep the room, live" on the
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.

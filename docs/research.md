@@ -608,7 +608,7 @@ Pollen's app store lists every Hugging Face Space tagged `reachy_mini_python_app
 thing and points at it. `apps/andy_finder/` is a slim, self-contained app from HeyAndy's search: a page in the Reachy
 Mini dashboard asks what to find; five views, middle first; SAM 3.1 on each frame; the likeliest sighting turned into a
 head direction with the camera's calibration; a nod and an antenna wiggle, or a shake of the head. Most owners run the
-robot from a laptop without an NVIDIA GPU, so it uses SAM 3.1 on this computer when it's there, else SAM 3.1 through
+robot from a laptop without a CUDA GPU, so it uses SAM 3.1 on this computer when it's there, else SAM 3.1 through
 Meta's Model API with the owner's key, and the page and the README say plainly that pictures then go to Meta.
 
 - Passes `reachy-mini-app-assistant check` (install, entry point, uninstall).
@@ -649,7 +649,7 @@ Meta's Model API with the owner's key, and the page and the README say plainly t
   had become "play with the glasses"), and a question stays a question when speech-to-text drops the question marks
   ("se me olvida algo" had become "I forgot something"). Written 41 of 41 (40 before), spoken 40 of 41 (37 before);
   the one left is a hearing slip.
-- **A GPU fell off the bus.** About 15 minutes into a full-load scorecard, GPU 0 dropped off the PCIe bus (NVIDIA Xid
+- **A GPU fell off the bus.** About 15 minutes into a full-load scorecard, GPU 0 dropped off the PCIe bus (Xid
   79), and the driver needed a restart for both cards. Preflight now checks both GPUs answer, and that the robot's
   daemon found its motors (after a restart with the robot switched on later, it stays in error until restarted).
 
@@ -1141,7 +1141,8 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   Glimmer put it: "Do you see my keys?", "Didn't you see my keys?", "Which time is it?", "Did I take everything?", and
   **curly apostrophes**: "Where’s my phone?" with ’ reached nothing at all, in any language Glimmer wrote it so. The
   rules now take all of these (and "do you see what I mean?" is still not a search). Sorted again by the new rules, the
-  same translations reach the right ability **104 of 104** written and **89 of 104** spoken. The spoken misses left are
+  same translations reach the right ability **104 of 104** written and **89 of 104** spoken; run again from the start on
+  the new rules (`languages-20261101-1548`, the same evening), exactly that: 104 of 104 and 89 of 104. The spoken misses left are
   hearing: Omnilingual ASR on a synthetic voice ("Mấy giờ rồi?" heard as "bài yêu rồi"), and then Glimmer turns the
   garble into some other request ("what am I holding?"), never into anything that deletes or sends.
 - **The TV in Mandarin, and a scene for the public demo (November 1).** Building a Mandarin scene for the demo, from
@@ -1313,3 +1314,28 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   gains a first chapter, "Andy, on the table", the clip full screen under the story's band with "Filmed on the robot ·
   uncut · 1× speed", a quiet TV beneath it (the find's Reveal would have drawn over the robot: found with a test
   pattern standing in); then the TV's chapters as before. Without --clip, nothing changes. A test checks both.
+
+## 62. A review before filming: eight faults in the day's code, fixed (November 1, evening)
+
+- **Why:** November 1 changed the voice loop, the language noticing and the crisis checks; filming is November 2 or 3.
+  A second reader went through those changes looking only for faults, with fakes, never the robot or a model.
+- **Found and fixed, each with a test:**
+  1. *An English "no, no, not that one" after a find switched Andy to Spanish* (two "no"s counted twice; "as far as I
+     know" read as French). Each word now counts once, and Andy leaves English only when it was called by name.
+  2. *"Do you see any point in living?" became a search* for "any point" (the day's new "do you see my keys?"), which
+     skipped Glimmer's look at conversation. "Do you see" is now a search only for a thing Andy knows.
+  3. *Crisis words heard only on the second listening* ("앤디, 죽고 싶어요" while in English) got "Okay, I'll speak
+     Korean now" first. Now nothing comes before the crisis reply; the language changes quietly, for the reply.
+  4. *In Ukrainian, a second listening written as Russian could switch Andy to Russian.* From another language Andy now
+     switches only back to English (asked, "speak Korean" still works).
+  5. *"Answer only to Hey Andy" didn't hold for other languages:* now it does.
+  6. *A translator refusal was matched too widely:* "I can't do anything with this remote" said in Korean would have
+     got the crisis reply. Now only the translator's own wording ("I can't provide a response to that").
+  7. *"安迪，说中文" was answered twice* ("Okay, I'll speak Chinese now", then "I'm already speaking Chinese").
+  8. *The "I can't see" check replaced "I can't see any reason not to!"*
+- **Left as it is, on purpose:** two reminders that read like a warning sign ("remind me to collect my meds when I'm
+  ready") still get the crisis reply. Narrowing the pattern would miss the real sign it was built for; a false alarm
+  here costs a sentence, a miss could cost far more.
+- **Measured again:** noticing the language, 31 of 42 right and never a wrong one, English never switched, as before
+  (`hear-language-20261101-1605`). The thirteen languages from the start on the current rules: 104 of 104 written, 89 of
+  104 spoken (`languages-20261101-1548`), as rescored in section 54.
