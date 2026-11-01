@@ -171,6 +171,21 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
 safety or loneliness claims; the people Andy is for are "people who live at home"; our own robot design is never
 shown beyond a silhouette.
 
+**The YouTube upload** (youtube.com/@heyandyai; public, so judges can watch signed out). The video's own title and
+description, to paste:
+> **Andy finds what you've lost: a tabletop robot on Meta's models (Meta AI Developer Hackathon)**
+>
+> Andy is a tabletop robot that finds what you've lost, points at it, and keeps your home's pictures in your home. It
+> speaks fifteen languages. Every model it runs is Meta's: SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2,
+> Omnilingual ASR, SeamlessM4T v2, Llama Guard 3 and Llama Prompt Guard 2 on the computer beside the robot; Muse Spark
+> and Muse Image in the cloud, for words only.
+>
+> Before this week: a Reachy Mini robot and our own earlier object-finding prototype (none of its code is in the
+> repository). Everything in this video was built during Meta's Global AI Developer Hackathon by HeyAndy, Inc.
+> Andy gives no health advice.
+>
+> Code: https://github.com/AndyDM9/heyandy-meta · Try it in your browser: https://huggingface.co/spaces/heyandy-ai/andy
+
 **For X (Most Viral):** the uncut find (or the cup game, if it's in) cut to 30 seconds, captions burned in, the same badge. Posted as soon as there's a good take: the prize counts engagement through November 8, and the post's link goes into the submission (`docs/rules.md`).
 
 **The made pieces:** `uv run python scripts/film_cards.py` renders the title, the numbers and the models, and the end
