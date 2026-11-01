@@ -44,6 +44,7 @@ def test_the_page_runs_and_waits_for_your_thing_before_looking(page):
     assert page.errors == []
     assert page.get_attribute("#s2", "aria-disabled") == "true"
     assert "your browser" in page.text_content(".lede") and "never leave this device" in page.text_content(".lede")
+    assert page.is_hidden("#phone")  # the code to carry it to a phone: only over https (or ?qr), and only if it loads
 
 
 def test_without_the_model_it_says_so_plainly(page):
