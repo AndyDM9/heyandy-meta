@@ -44,6 +44,7 @@ SHOTS = [
 ]
 NOT_HERE = ["\"What am I holding?\": needs someone holding something up to the robot.",
             "The reminder two minutes later: needs the wait, and a person for Andy to turn to."]
+OPTIONAL = "(if it's in the video)"  # a shot the storyboard marks optional
 # what each shot looks for, where the rules can't read it from the line: the Mandarin line asks for the glasses, and
 # the emergency is answered with 911 and the phone found
 THING = {"in Mandarin, nothing said in English first": "glasses", "an emergency said (if it's in the video)": "phone"}
@@ -121,8 +122,9 @@ def main() -> None:
         if only not in name:
             continue
         r = shot(andy, loop, name, code, line, needs)
+        r["optional"] = OPTIONAL in name  # only if it's in the video: reported, never holding up READY TO FILM
         rows.append(r)
-        print(f"{'OK  ' if r['ok'] else 'FIX '} {name}: {r['seconds']} s{', pointed' if r['pointed'] else ''}"
+        print(f"{'OK  ' if r['ok'] else 'OPT ' if r['optional'] else 'FIX '} {name}: {r['seconds']} s{', pointed' if r['pointed'] else ''}"
               f" | {' / '.join(s_[:70] for s_ in r['andy said'][:2])}", flush=True)
         for f in r["fix"]:
             print(f"      -> {f}", flush=True)
@@ -132,9 +134,9 @@ def main() -> None:
         print(f"NOT REHEARSED: {n}")
     out = Path("evals/results") / f"rehearsal{'-only' if only else ''}-{time.strftime('%Y%m%d-%H%M')}.json"  # one shot: not the rehearsal
     out.write_text(json.dumps({"when": time.strftime("%Y-%m-%d %H:%M"), "shots": rows, "not rehearsed": NOT_HERE,
-                               "ready": all(r["ok"] for r in rows)}, indent=1, ensure_ascii=False))
+                               "ready": all(r["ok"] or r["optional"] for r in rows)}, indent=1, ensure_ascii=False))
     verdict = ("THESE SHOTS WORK (the whole rehearsal says READY TO FILM)" if only else "READY TO FILM") if all(
-        r["ok"] for r in rows) else "FIX THE SHOTS ABOVE, THEN RUN THIS AGAIN"
+        r["ok"] or r["optional"] for r in rows) else "FIX THE SHOTS ABOVE, THEN RUN THIS AGAIN"
     print(f"\n{verdict} ({out})")
 
 

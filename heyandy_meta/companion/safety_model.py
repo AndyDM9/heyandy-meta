@@ -1,10 +1,13 @@
-"""A second crisis check, on this computer: Llama Guard 3 (Meta's open weights) reads what the person said.
+"""Llama Guard 3 (Meta's open weights, on this computer) reads both sides: what the person said, and Andy's answers.
 
-The word list in safety.py catches the ways people usually say it, in English and Spanish, instantly. People also say
-it in ways no list has ("everyone would be better off without me"). Llama Guard's self-harm category (S11) is trained
-for that, so it reads every turn too, before any other model sees the words, the translator included. Only S11
-matters here: it turns the reply into the crisis reply (988), the same as the word list. Llama Guard's other
-categories aren't Andy's to act on.
+What the person said: a second crisis check. The word lists in safety.py catch the ways people usually say it, in each
+of Andy's languages, instantly. People also say it in ways no list has ("everyone would be better off without me").
+Llama Guard's self-harm category (S11) is trained for that, so it reads every turn too, before any other model sees the
+words, the translator included; S11 turns the reply into the crisis reply (988), the same as the word list.
+
+Andy's answers (LlamaGuard.advice, since November 1): each sentence a model writes, read before Andy says it, with the
+Specialized Advice category (S6) spelled out as Andy's no-health-advice policy; one it calls advice becomes Andy's own
+health line. Llama Guard's other categories aren't Andy's to act on.
 
 It runs in its own llama-server on GPU 1 (deploy/heyandy-guard.service), on 127.0.0.1 only; if it's down, the word
 list still stands (and the turn says nothing about it).

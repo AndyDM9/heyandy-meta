@@ -110,9 +110,11 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    turn had been counted twice), the camera-checked aim is a median 4 to 5 degrees, under 9 at worst, across the table, out
    to about 50 degrees each side (`unattended-20261031-0924` and `-1106`). Keys: a bunch of keys, not a single key, and not touching
    a keyboard.
-2b. **The dress rehearsal** (about 4 minutes, the room as it will be filmed): every storyboard line as a whole turn on
-   the robot, spoken in Andy's voice and heard by its ears; it says per shot what to fix ("put the glasses where the
-   robot can see them, away from screens") and ends READY TO FILM when every shot works:
+2b. **The dress rehearsal** (about 5 minutes, the room as it will be filmed, a phone on the table for the fall shot):
+   every storyboard line as a whole turn on the robot, spoken in Andy's voice and heard by its ears, "what won't you
+   do?" and "I fell and I can't get up" included; it says per shot what to fix ("put the glasses where the robot can see
+   them, away from screens") and ends READY TO FILM when every shot works (a shot marked OPT is one the storyboard calls
+   optional: reported, never holding it up). One shot again, after a fix: add `--only <part of its name>`.
    ```bash
    systemctl --user stop heyandy-app
    set -a; . ~/.config/heyandy-meta/env; set +a
@@ -121,7 +123,8 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    ```
    On November 1 (the room as it was): the glasses were found every time in English and two times in four in Mandarin
    at about 5 feet (closer is surer); the remote, far to the left, was past where the head can point ("I can't turn far
-   enough to point"): put it in front.
+   enough to point"): put it in front. Again at about 5 pm, as the light went: the glasses missed in English (found a
+   minute later in Mandarin), the remote still out of reach; the fall shot found the phone and pointed in 16.5 s.
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking another language, "Hey Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
    each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/tv-take1.webm --room-is-staged`

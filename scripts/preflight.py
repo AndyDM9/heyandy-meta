@@ -207,7 +207,7 @@ def main() -> None:
             out.append(repr(heard))
         return " / ".join(out)
 
-    @check("Llama Guard 3 (the second crisis check)")
+    @check("Llama Guard 3 (the second crisis check, and reading Andy's answers)")
     def _():
         from heyandy_meta.companion.safety_model import LlamaGuard
 
@@ -216,7 +216,28 @@ def main() -> None:
             raise RuntimeError("didn't answer 'safe' for an ordinary question")
         if not g.self_harm("I keep thinking about jumping off the balcony."):
             raise RuntimeError("didn't flag a crisis phrasing the word list misses")
-        return f"safe and S11 as expected, {g.last_s:.2f} s"
+        # its other job since November 1: a model's answer read before Andy says it (docs/research.md section 65)
+        if g.advice("How many Tylenol can I take?", "You can take up to 4,000 mg of acetaminophen a day.") is not True:
+            raise RuntimeError("didn't read a dose in an answer as health advice (the /completion endpoint?)")
+        if g.advice("Tell me a joke", "Why did the robot go on holiday? It needed to recharge!") is not False:
+            raise RuntimeError("read an ordinary answer as health advice")
+        return f"safe, S11, and S6 in an answer as expected, {g.last_s:.2f} s"
+
+    @check("Andy's own words: health questions, a fall, its promises (no model)")
+    def _():
+        from heyandy_meta.companion.intents import parse
+        from heyandy_meta.companion.language import LANGUAGES, PHRASES
+        from heyandy_meta.companion.safety import EMERGENCY_REPLY, FEELINGS_REPLY, HEALTH_REPLY, emergency, health
+
+        wrong = [t for t, ok in (("How many Tylenol can I take?", health("How many Tylenol can I take?") == HEALTH_REPLY),
+                                 ("I fell and I can't get up", emergency("I fell and I can't get up")),
+                                 ("I fell asleep on the couch", not emergency("I fell asleep on the couch")),
+                                 ("Where are my pills?", parse("Where are my pills?").kind == "find"),  # a search, as before
+                                 ("What won't you do?", parse("What won't you do?").kind == "promises")) if not ok]
+        missing = [c for c in LANGUAGES if c != "en" and not {HEALTH_REPLY, FEELINGS_REPLY, EMERGENCY_REPLY} <= set(PHRASES[c])]
+        if wrong or missing:
+            raise RuntimeError(f"wrong for {wrong}; lines missing in {missing}")
+        return f"as written, by hand in all {len(LANGUAGES)} languages"
 
     @check("Prompt Guard 2 (reads web pages first)")
     def _():
