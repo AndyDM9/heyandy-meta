@@ -19,7 +19,7 @@ founder's: the key is never shown to anyone else or put in the repository.
 
 What the cloud does: plans hinted searches and requests with several parts (Glimmer does when offline); web answers
 with their sources; the morning briefing's and going out's weather; harder conversation (never a health question:
-those get Andy's own words, and no model sees them); Muse Spark's computer use for
+those get Andy's own words, and no model answers them); Muse Spark's computer use for
 "show me ... on the TV" (needs the `browse` extra and `playwright install --only-shell chromium`); Muse Image for
 pictures and the map of your things. The cloud gets words, and, for the web on the TV, screenshots of web pages only.
 Every turn the TV's privacy receipt shows exactly what went. Spend is logged in `logs/spend.jsonl` and refused past $140.

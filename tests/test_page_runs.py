@@ -99,7 +99,7 @@ def test_a_health_question_typed_into_the_demo_shows_andys_own_words(browser):
         assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/", 2500, typed) == []
     finally:
         server.shutdown()
-    assert got["said"] == HEALTH_REPLY and HEALTH_REPLY in got["health"] and "never reaches a model" in got["health"]
+    assert got["said"] == HEALTH_REPLY and HEALTH_REPLY in got["health"] and "no model answers a health question" in got["health"]
     assert got["other"].startswith("Nothing matched that")
     from heyandy_meta.companion.safety import EMERGENCY_REPLY
 

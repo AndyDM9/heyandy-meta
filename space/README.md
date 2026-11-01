@@ -20,10 +20,10 @@ Frontier*), on Meta's models, and **every model it runs is Meta's**: Muse Glimme
 far), V-JEPA 2, DINOv2, Omnilingual ASR, SeamlessM4T v2 (its voice), Llama Guard 3 and Llama Prompt Guard 2 from their
 open weights on the computer beside the robot, and Muse Spark and Muse Image through the Meta Model API. **Andy gives no
 health advice**, and that's kept in code: a health question gets Andy's own words in each of its fifteen languages and
-never reaches a model, and Llama Guard 3 reads each sentence a model writes before Andy says it. Someone who says
+no model answers it, and Llama Guard 3 reads each sentence a model writes before Andy says it. Someone who says
 they've fallen hears "please call 911 right away. I'll find your phone", and Andy finds it and points at it.
 
-**It opens as a one-minute story:** ten chapters of the TV, each a real scene (meet Andy; you ask; it finds it, with
+**It opens as a 75-second story:** ten chapters of the TV, each a real scene (meet Andy; you ask; it finds it, with
 the Reveal; it doesn't give up; it guides your hand; your room in 3D; identical cups told apart; before you go; your
 language, in Mandarin; what it never does), then where to go next. Pause, skip with the arrow keys, or "Explore every screen".
 

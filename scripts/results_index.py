@@ -272,8 +272,9 @@ def build() -> str:
              "Pictures and sounds are never kept: only words, numbers and timings.",
              ""]
     for title, what, module, stem, head in CARDS:
-        if what is None:
-            lines += [f"## {title}", "", "| Scorecard | Latest result | File | Earlier runs |", "|---|---|---|---|"]
+        if what is None:  # a new section: a blank line ends the table before it (never one inside a table)
+            lines += ([""] if lines[-1] else []) + [f"## {title}", "", "| Scorecard | Latest result | File | Earlier runs |",
+                                                    "|---|---|---|---|"]
             continue
         names = files_for(stem)
         if not names:
@@ -288,10 +289,6 @@ def build() -> str:
                else f"`uv run python -m {module}`")
         lines.append(f"| **{title}**<br><sub>{what} · {how}</sub> | {text} | [`{main}`]({main}) | "
                      + (", ".join(f"[`{n.removesuffix('.json')}`]({n})" for n in earlier) or "") + " |")
-        if title == "Filming mode":
-            lines.append("")
-        if title in ("Agent, Glimmer offline", "Crisis check, 15 languages", "Noticing the language"):
-            lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 

@@ -1352,7 +1352,7 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   robot, so I can't give health advice: your doctor or pharmacist can. I can remind you to call them. If it's an
   emergency, please call 911." How someone feels gets "I'm sorry it's hard right now... your doctor can. You can call
   or text 988 any time." Both written by hand in all fifteen languages (`companion/languages.py` HEALTH_LINES; in
-  thirteen, call 988 and ask for an interpreter), never a model's, never translated; no model sees the question, here
+  thirteen, call 988 and ask for an interpreter), never a model's, never translated; no model answers the question, here
   or in the cloud. The crisis checks run first. A request that names a medicine does what it asks ("where are my
   pills?" is a search). In other languages it reads Glimmer's English, and Glimmer declining to translate a health
   question ("I can't provide medical advice", Hindi) counts as one. The public demo's Ask Andy shows the line too.

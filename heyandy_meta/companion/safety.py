@@ -87,7 +87,7 @@ CRISIS_SIGNS = re.compile(
 
 # No health advice (the README's promise, and the organizers' condition for the entry, October 30), kept in code as the
 # crisis reply is: a symptom said, or a question about a medicine, a condition, a reading or how someone feels, gets
-# Andy's own words, written by hand in each of its languages, and never reaches a model, on this computer or in the
+# Andy's own words, written by hand in each of its languages, and no model answers it, on this computer or in the
 # cloud. Before this (November 1), Muse Spark, asked to "explain what a statin does", explained it. Conversation only:
 # "where are my pills?" is still a search, "remind me at 8 to take my pills" a reminder. Read on the English (in another
 # language, the translation of it), after the crisis checks. Measured: evals/no_advice.py.

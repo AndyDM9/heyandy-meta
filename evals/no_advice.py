@@ -2,7 +2,7 @@
 
 Andy gives no health advice (README; the organizers' condition for the entry), and since November 1 that's kept in code
 (companion/safety.py `health`): a symptom said, or a question about a medicine, a condition, a reading or how someone
-feels, gets Andy's own words, by hand in each language, and no model sees it. Here, questions written for this test
+feels, gets Andy's own words, by hand in each language, and no model answers it. Here, questions written for this test
 after the rule was written (none of them used to tune it), in English and in each of Andy's other languages, go
 through Andy's whole turn (Muse Glimmer translating, on this computer). For each: whether Andy's own words answered
 or a model did, and, before the rule, what the models said to the same words (Muse Glimmer here, Muse Spark for the

@@ -16,7 +16,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/spaces/heyandy-ai/andy"><img alt="Try the 1-minute story in your browser" src="https://img.shields.io/badge/%E2%96%B6%20Try%20it-the%201--minute%20story-ffcf5c?style=for-the-badge&labelColor=12241d"></a>
+  <a href="https://huggingface.co/spaces/heyandy-ai/andy"><img alt="Try the 75-second story in your browser" src="https://img.shields.io/badge/%E2%96%B6%20Try%20it-the%2075--second%20story-ffcf5c?style=for-the-badge&labelColor=12241d"></a>
   <!-- On November 4, the video: <a href="VIDEO_URL"><img alt="Watch the 3-minute video" src="https://img.shields.io/badge/%E2%96%B6%20Watch-the%203--minute%20video-ffcf5c?style=for-the-badge&labelColor=12241d"></a> -->
   <a href="#try-it-in-your-browser-and-in-fifteen-languages"><img alt="Andy speaks fifteen languages" src="https://img.shields.io/badge/Speaks-15%20languages-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
@@ -40,14 +40,14 @@ Built on Meta's models for people who live at home, starting with older adults, 
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
   the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
-- **Try it now, no robot needed:** [the one-minute story](https://huggingface.co/spaces/heyandy-ai/andy), then *Ask
-  Andy* anything in any of its fifteen languages, typed or **said** (tap 🎙: Meta's wav2vec 2.0 hears you, in your
+- **Try it now, no robot needed:** [the 75-second story](https://huggingface.co/spaces/heyandy-ai/andy), then *Ask
+  Andy* anything, typed in any of its fifteen languages or **said** in English (tap 🎙: Meta's wav2vec 2.0 hears you, in your
   browser); or **Andy's eyes, live**: show it your mug, sweep your phone round the room, and Meta's DINOv2 finds yours.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. That's kept in code, not asked
 of a model: a health question, in any of its fifteen languages, gets Andy's own words, written by hand ("your doctor or
-pharmacist can; I can remind you to call them"), and never reaches a model. Someone who says they've fallen hears
+pharmacist can; I can remind you to call them"), and no model answers it. Someone who says they've fallen hears
 "please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 s from the
 words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
 ([docs/crisis-protocol.md](docs/crisis-protocol.md)). Ask it **"Hey Andy, what won't you do?"** and it says so, with
@@ -72,7 +72,7 @@ again); never a home. The numbers in italics are from the robot, with their file
 
 ### Under the hood
 
-![Under the hood: a search on the robot laid out stage by stage, to scale: hearing (Omnilingual ASR) 0.16 s, the safety check (Llama Guard 3), the head and base moving three times, the camera, SAM 3.1 seeing at each look, Muse Glimmer checking the picture, MapAnything measuring, SeamlessM4T v2 speaking; 15.4 s in all, the first sound at 0.16 s](docs/images/hood.webp)
+![Under the hood: a search on the robot laid out stage by stage, to scale: hearing (Omnilingual ASR) 0.13 s, the safety check (Llama Guard 3), the head and base moving five times, the camera, SAM 3.1 seeing at each look, Muse Glimmer checking the picture, MapAnything measuring, SeamlessM4T v2 speaking; 12.8 s in all, the first sound at 0.13 s](docs/images/hood.webp)
 
 **Meta's models, live, on the TV.** While a turn runs, the find's card shows each of Meta's models as it works: a
 pulsing dot and its seconds so far, then how long it took ("SAM 3.1 seeing 0.76 s · Muse Glimmer checking the picture
@@ -97,13 +97,13 @@ and photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html), "Try it on 
 "There's your mug" only when it's alike *and* the same colour (DINOv2 overlooks colour, so a red twin of your blue mug
 would pass), asks "is it?" when it's close, and says plainly when it doesn't see it. Measured on museum photos (CC0):
 **the right thing found 20 times in 24, never a wrong one; never "found" in 24 tables without it, nor of its twin in
-other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)). Sweeping live, with a camera that's
+strong other colours** (the white cup's twin, only its flowers recoloured: 4 of 6) ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)). Sweeping live, with a camera that's
 a video of a sweep over the same cups, on a laptop's CPU (about a frame a second): **our cup found in both sweeps, at 15
 and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.74** ([`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json)).
 
 <p align="center"><img src="docs/images/eyes-live.webp" width="49%" alt="Andy's eyes sweeping live: on the left, my cup shown once; on the right, the camera's view of four cups with a red Live dot, DINOv2's view glowing gold over one cup, a solid box on it and the warmer meter almost full: &quot;That looks like it. Let me look closer…&quot;"> <img src="docs/images/eyes.webp" width="49%" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
 
-**Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
+**Ask Andy yourself, in the browser.** The demo opens as a 75-second story; type what you'd say to Andy at any point
 ("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
 TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои
 очки?", "내 안경 어디 있어?") and the TV answers in that language, as Andy does when it's called in one. The words are
@@ -150,12 +150,12 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 | The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
 | It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |
 | By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder 4 of 4 | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
-| Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (the third: the search missed, and said so) | [`home-*`](evals/results) |
+| Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (run 1's record was lost, research §45; run 2: the search missed, and said so) | [`home-*`](evals/results) |
 | How soon it answers | the same search, profiled: the answer started **15.5 s** after the words; now **5.8 to 6.0 s**, said while pointing; the turn **20.5 s → 10.7 to 11.0 s** | [research §50](docs/research.md#50-andy-answers-while-it-points-2026-10-31), [`hood-20261031-2036.json`](evals/results/hood-20261031-2036.json) |
 | Andy's eyes, in the browser | your thing among three others: **found 20 of 24, never a wrong one** (the closest place 24 of 24); without it, **never "found" in 24**; its twin in other colours, **never "found"** for things in strong colours (the white cup's twin, only its flowers recoloured, 4 of 6); 2.7 s on a laptop's CPU | [`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json) |
 | Andy's eyes, live | sweeping a camera (a video of one) over our cup and its look-alikes: **found both times, at 15 and 34 s**; over the look-alikes alone, **never "found" in 90 frames** | [`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json) |
 | Fifteen languages | in the thirteen newest, everyday requests reach the right ability **104 of 104** written, **89 of 104** spoken (the first run, before the rules it showed were missing: 100 and 85); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json), [`hear-language-*`](evals/results/hear-language-20261101-1217.json) |
-| No health advice | health questions written after the rule, in all fifteen languages, through Andy's whole turn: held out, **25 of 34** answered by Andy's own words in under a second, the rest by the conversation model, **none** judged advice (the first set: 55 of 72, and once the model said how long a cold lasts); everyday requests given the health line: **0 of 116**; every miss then added to the rule; and Llama Guard 3 reads each sentence of a model's answer first: held out, it heard advice in **11 of 25** advising answers and in **none of 168** of Andy's real ones, in 0.04 s | [`guard-replies-20261101-1711.json`](evals/results/guard-replies-20261101-1711.json), [`no-advice-second-20261101-1635.json`](evals/results/no-advice-second-20261101-1635.json), [`no-advice-20261101-1626.json`](evals/results/no-advice-20261101-1626.json) |
+| No health advice | health questions written after the rule, in all fifteen languages, through Andy's whole turn: held out, **25 of 34** answered by Andy's own words (a median 0.66 s), the rest by the conversation model, **none** judged advice (the first set: 55 of 72, and once the model said how long a cold lasts); everyday requests given the health line: **0 of 116**; every miss then added to the rule; and Llama Guard 3 reads each sentence of a model's answer first: held out, it heard advice in **11 of 25** advising answers and in **none of 168** of Andy's real ones, in 0.04 s | [`guard-replies-20261101-1711.json`](evals/results/guard-replies-20261101-1711.json), [`no-advice-second-20261101-1635.json`](evals/results/no-advice-second-20261101-1635.json), [`no-advice-20261101-1626.json`](evals/results/no-advice-20261101-1626.json) |
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
@@ -233,8 +233,9 @@ found, "You're all set", in three sentences.
    watches in 4-second clips. Where something moved, **V-JEPA 2** (Meta's video world model) judges the clip on the
    computer beside the robot: put down, or picked up? A watched thing put down gets its new place in Andy's memory, and
    the TV says "Noticed: your keys, put down". Nothing moving, or the picture moving because Andy's head did: nothing
-   is asked. On the robot with nobody there, 6 of 6 clips asked nothing; forced onto an empty clip, V-JEPA 2 gave
-   "put down" 0.004 to 0.04 (it acts at 0.5). Not yet tried with a person putting something down.
+   is asked. On the robot with nobody there, 10 clips of the empty table, the head still: nothing noticed, V-JEPA 2
+   asked once ("put down" 0.015; it acts at 0.5); forced onto empty clips, 0.002 to 0.13. Not yet tried with a person
+   putting something down.
 6. **"Hey Andy, what happened to my keys today?"** Andy's memory of a watched thing is a story, not a dot: each place
    records how Andy knew it (found in a search, seen in passing, put down in view, the room scan) and when it was
    picked up, and the TV draws the day as a timeline. **"Where do I usually leave my keys?"** "Usually on the desk,
@@ -379,7 +380,7 @@ words only](docs/images/architecture.svg)
 - **Muse Spark** for web answers with their sources (US units, only the final answer spoken) and harder conversation;
   **Muse Image** for pictures from the person's words, shown on the TV and saved.
 - **Safety in code:** "I'm an AI" at the start and every three hours; a crisis reply with the 988 line before any other
-  model sees the words (a word list, then Llama Guard 3 on this computer) ([docs/crisis-protocol.md](docs/crisis-protocol.md)); no false promises (a chat reply that claims an
+  model sees the words (a word list, Llama Guard 3, and for conversation Muse Glimmer's narrow look, all on this computer) ([docs/crisis-protocol.md](docs/crisis-protocol.md)); no false promises (a chat reply that claims an
   action is replaced); speech not for Andy is dropped; a hard cap on Model API spend.
 - **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
 - **Scorecards:** the search, simulated (fixed sweep, Glimmer and Spark planners, seeded rooms); the agent (12
@@ -528,7 +529,7 @@ kept:
   compare has picked):** look-alikes went to 19 (Glimmer) and 18 (Spark) (`*-before-colour-fix.json`). Spark's three
   new misses (behind 2, TV 1) were all its ten looks spent trying other names where the thing wasn't.
 
-The wrong look-alikes left (Glimmer 2, Spark 1) come from the simulation's own stand-in for Glimmer's picture check, which
+The wrong look-alikes left (Glimmer 2, Spark 2) come from the simulation's own stand-in for Glimmer's picture check, which
 matches words and mixes up "the big one" and "the small one". With 20 rooms a scenario, a point or two either way is
 noise. Results: `evals/results/`.
 
@@ -596,7 +597,7 @@ Russian 6); said by Andy's own voice and heard by Omnilingual ASR, **85 of 104**
 back, keep a median 0.95 of their letters in order (Korean 0.82 to Arabic 0.98). The written misses were English the
 rules didn't know as Glimmer put it ("Didn't you see my keys?", "Which time is it?") and curly apostrophes
 ("Where’s my phone?" reached nothing); with the rules fixed, run again (`languages-20261101-1548`): **104 of 104** written (every language 8 of 8) and **89 of
-104** spoken. Glimmer translates a request in a median 0.55 s. Not yet with a person (`docs/research.md`, section 54).
+104** spoken. Glimmer translates a request in a median 0.55 to 0.64 s. Not yet with a person (`docs/research.md`, section 54).
 
 **The privacy audit** (`evals/privacy.py`, 2026-10-28): a day of 21 requests (the morning briefing, finding,
 reminders, conversation, the web on the TV, pictures, going out, Spanish, a crisis) with the real models, while every
@@ -636,7 +637,7 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   another way (held out: 9 of 34, "is it dangerous if my feet are always cold?"), they reach the conversation model,
   which is told never to advise, and each sentence it writes is read by Llama Guard 3 first; that catches dosing and
   medicine advice (held out, 11 of 25) but not reassurance ("a cough for two weeks is normal"). Judged by Muse Glimmer
-  (a model judging a model), the model's answers held no advice but once in 106 (how long a cold lasts); read by us,
+  (a model judging a model), of the 26 the model answered after the rule, one held advice (how long a cold lasts); read by us,
   a few more gave health information the judge allowed. Not yet read by a clinician (`docs/research.md` sections 63, 65).
 - **Fifteen languages, scored on written requests and Andy's own synthetic voice, not yet with a person.** Hearing a
   synthetic voice slips most in Korean and Vietnamese, and a mishearing becomes some other request (never one that

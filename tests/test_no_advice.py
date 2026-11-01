@@ -1,5 +1,5 @@
 """No health advice, kept in code (companion/safety.py health): a health question gets Andy's own words, written by hand
-in each language, and never reaches a model; the requests that name a medicine still do what they did."""
+in each language, and no model answers it; the requests that name a medicine still do what they did."""
 from types import SimpleNamespace
 
 import pytest

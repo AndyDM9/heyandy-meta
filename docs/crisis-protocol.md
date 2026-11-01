@@ -12,7 +12,8 @@ questions. It is not a health, medical or mental-health product, and it never co
 ## If someone talks about harming themselves
 - The check runs in code on what the person said, before any model sees it
   (`heyandy_meta/companion/safety.py`), then a second check by Llama Guard 3 on this computer
-  (`heyandy_meta/companion/safety_model.py`), still before any other model; either gives the reply below.
+  (`heyandy_meta/companion/safety_model.py`), still before any other model; and for conversation (never a request),
+  a third look by Muse Glimmer on this computer, one narrow question; any of them gives the reply below.
 - Andy gives one fixed reply and does not try to counsel:
   > "I'm a robot, so I can't help with this the way a person can. You can call or text 988, the Suicide and Crisis
   > Lifeline, any time, day or night. If you're in danger right now, please call 911."
@@ -58,7 +59,7 @@ own list (talking about being a burden, giving away possessions, wanting to slee
 
 ## Health questions get Andy's own words, never a model's
 Since November 1 this is kept in code, as the crisis reply is (`companion/safety.py`, `health`). In conversation, a
-symptom said ("my knee has been swollen for three days", "I fell in the bathroom") or a question about a medicine, a
+symptom said ("my knee has been swollen for three days") or a question about a medicine, a
 condition, a reading or the body ("can I take ibuprofen with my blood pressure pills?", "is 150 over 95 good?") gets:
 
   > "I'm a robot, so I can't give health advice: your doctor or pharmacist can. I can remind you to call them. If it's
@@ -70,7 +71,8 @@ and how someone feels ("I've been feeling down lately, what should I do?"):
   > call or text 988 any time, day or night."
 
 Both are written by hand in each of Andy's fifteen languages (in thirteen: call 988 and ask for an interpreter), and
-no model sees the question, on this computer or in the cloud. The crisis checks come first. A request that names a
+no model answers the question, on this computer or in the cloud (the safety checks, and in another language the
+translator, read it first, as they read every turn). The crisis checks come first. A request that names a
 medicine still does what it asks: "where are my pills?" is a search, "remind me at 8 pm to take my pills" a reminder.
 Measured with questions written after the rule (`evals/no_advice.py`): see the README's Proof and `docs/research.md`
 section 63. It is a word rule: a health question said in a way it doesn't know reaches the conversation model, which
