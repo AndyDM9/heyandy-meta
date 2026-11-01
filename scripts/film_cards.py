@@ -44,6 +44,7 @@ def figures() -> list[dict]:
     spark, glimmer = _load("agent-spark.json")["summary"], _load("agent-glimmer.json")["summary"]
     room = _load("room-20261031-1129.json")["summary"]["across_scans"]
     lost = _load("lost-20261031-1653.json")
+    langs, spanish = _load("languages-20261101-1548.json")["summary"], _load("spanish-written.json")["summary"]
     sound = _load("sound-20261031-1856.json")
     out = [
         {"big": f"{pointed} of {trials}", "line": "unattended searches on the robot ended in a point",
@@ -53,6 +54,10 @@ def figures() -> list[dict]:
         {"big": f"{privacy['camera_pictures_to_cloud']} of {privacy['camera_pictures_taken']}",
          "line": f"camera pictures reached the cloud, in a day of {privacy['turns']} requests", "from": "privacy-audit",
          "ok": privacy["camera_pictures_to_cloud"] == 0},
+        {"big": f"{langs['written right'] + spanish['right']} of {langs['requests'] + spanish['requests']}",
+         "line": f"everyday requests, written in {langs['languages'] + 1} languages besides English, reached the right ability",
+         "from": "languages-20261101-1548, spanish-written",
+         "ok": langs["written right"] == langs["requests"] and spanish["right"] == spanish["requests"]},
         {"big": f"{glimmer['right']} of {glimmer['requests']}",
          "line": "requests with several steps, done offline (Muse Glimmer); "
                  f"{spark['right']} of {spark['requests']} with Muse Spark", "from": "agent-glimmer, agent-spark",
@@ -155,7 +160,7 @@ def numbers(figs: list[dict]) -> tuple[str, float]:
                  for i, (n, w) in enumerate(MODELS))
     up = "".join(f'<div class="pop" style="animation-delay: {shown + 1.3 + (len(MODELS) + i) * 0.35:.2f}s"><b>{n}</b><span>{w}</span></div>'
                  for i, (n, w) in enumerate(CLOUD))
-    body = (f'<div class="card out" style="animation-delay: {shown - 0.6:.2f}s"><p class="kick in">Measured on the robot</p>'
+    body = (f'<div class="card out" style="animation-delay: {shown - 0.6:.2f}s"><p class="kick in">Measured: every figure from evals/results</p>'
             f'<div class="figs">{tiles}</div></div>'
             f'<div class="card"><p class="kick in" style="animation-delay: {shown:.2f}s">Every model Andy runs is Meta\'s</p>'
             f'<h2 class="in" style="animation-delay: {shown + 0.3:.2f}s">Eleven, and the camera reaches only the ones at home.</h2>'

@@ -91,8 +91,9 @@ def test_a_health_question_typed_into_the_demo_shows_andys_own_words(browser):
     got = {}
 
     def typed(page_):
-        got.update(page_.evaluate("() => { ask('How many Tylenol can I take?'); const h = asked; "
-                                  "ask('Sing me a song'); return {health: h.note, other: asked.note, said: HEALTH_SAID}; }"))
+        got.update(page_.evaluate("() => { ask('How many Tylenol can I take?'); const h = asked; ask('I fell and I can\\'t get up');"
+                                  " const e = asked; ask('Sing me a song'); return {health: h.note, other: asked.note, said: HEALTH_SAID,"
+                                  " fell: e.note, fellScene: e.scene, emergency: EMERGENCY_SAID, asleep: route('I fell asleep on the sofa')}; }"))
 
     try:
         assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/", 2500, typed) == []
@@ -100,6 +101,10 @@ def test_a_health_question_typed_into_the_demo_shows_andys_own_words(browser):
         server.shutdown()
     assert got["said"] == HEALTH_REPLY and HEALTH_REPLY in got["health"] and "never reaches a model" in got["health"]
     assert got["other"].startswith("Nothing matched that")
+    from heyandy_meta.companion.safety import EMERGENCY_REPLY
+
+    assert got["emergency"] == EMERGENCY_REPLY and EMERGENCY_REPLY in got["fell"] and got["fellScene"] == "found"
+    assert got["asleep"] != "find"
 
 
 def test_the_settings_gear_opens_its_menu_and_under_the_hood_runs(browser):

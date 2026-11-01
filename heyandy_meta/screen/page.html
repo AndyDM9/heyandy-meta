@@ -833,6 +833,8 @@
   // A health question typed, which matched no scene: what Andy says to it on the robot, its own words, never a model's
   // (companion/safety.py HEALTH_REPLY; on the robot the rule is wider, and tested)
   const HEALTH_TYPED = /\b(?:hurts?|aches?|aching|pain|sore|swollen|dizzy|fever|cough|rash|headaches?|migraines?|nause\w*|pills?|tablets?|medicines?|medications?|meds|doses?|tylenol|ibuprofen|aspirin|advil|statins?|insulin|antibiotics?|melatonin|vitamins?|blood (?:pressure|sugar)|cholesterol|diabet\w*|dementia|symptoms?|diagnos\w*|side effects?|depress\w*|anxious|anxiety)\b/i;
+  const EMERGENCY_TYPED = /\bi(?:'ve| have| just)?\s*(?:just\s+)?(?:fell|fallen|had a fall)\b(?!\s+(?:asleep|for|in love|behind|apart))|\b(?:can'?t|cannot) (?:get up|breathe)\b(?!\s+(?:early|tomorrow|in the morning))|\bchest (?:pains?|hurts)\b|\bcollapsed\b|\bcall 911\b/i;
+  const EMERGENCY_SAID = "If you need help, please call 911 right away. I'll find your phone.";
   const HEALTH_SAID = "I'm a robot, so I can't give health advice: your doctor or pharmacist can. I can remind you to call them. If it's an emergency, please call 911.";
   let asked = null, asking = 0;
   // Typed in another of Andy's fifteen languages: that language's scene, as Andy notices the language it's called in
@@ -870,6 +872,7 @@
   function route(text) {
     const t = text.replace(/^\W*(?:hey |oye )?andy\W*/i, ""), lang = typedIn(text);
     if (lang && lang !== "en") return lang === "zh" ? "mandarin" : lang === "es" ? "spanish" : "in-" + lang;
+    if (EMERGENCY_TYPED.test(t)) return "find";  // 911 first, then the phone found: the search scene
     const hit = (ASK.find(([, rx]) => rx.test(t)) || ["help"])[0];
     return (hit === "answer" || hit === "help") && HEALTH_TYPED.test(t) ? "help" : hit;  // never an answer, on the robot either
   }
@@ -881,10 +884,11 @@
     if (route(text) === "hood") { location.href = hoodUrl(); return; }  // its own page, as from the gear
     const scene = route(text), run = ++asking;
     const thing = (text.match(/\b(?:my|the|our)\s+([a-z][a-z ]{1,24}?)(?=\s*(?:[?.!,]|$|\bplease\b|\bis\b|\bare\b|\bgo\b))/i) || [])[1] || "";
-    const other = thing && !/\b(?:mug|cup)s?\b/i.test(thing) && ["find", "guide", "turned"].includes(scene);
+    const other = thing && !/\b(?:mug|cup)s?\b/i.test(thing) && ["find", "guide", "turned"].includes(scene) && !EMERGENCY_TYPED.test(text);
     asked = { text, scene: scene === "find" ? "found" : scene,
               note: /^in-|^mandarin$|^spanish$/.test(scene) ? "On the robot, Andy notices the language it's asked in and answers in it. This scene was recorded finding a mug."
                   : other ? `This scene was recorded finding a mug; on the robot, Andy looks for your ${thing.toLowerCase()} the same way.`
+                  : EMERGENCY_TYPED.test(text) ? `On the robot, Andy says first: "${EMERGENCY_SAID}" Then it finds your phone and points at it (16.5 s on the robot). This scene was recorded finding a mug.`
                   : scene === "help" && HEALTH_TYPED.test(text) ? `On the robot, Andy says: "${HEALTH_SAID}" Its own words, written in code in each of its fifteen languages: a health question never reaches a model.`
                   : scene === "help" ? "Nothing matched that, so here's what Andy can do. On the robot, Andy also just talks." : "" };
     chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar();
