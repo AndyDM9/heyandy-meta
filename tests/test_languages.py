@@ -117,3 +117,24 @@ def test_the_crisis_reply_in_each_language_is_by_hand():
                                        ("Didn’t you see my keys?", "find"), ("Which time is it?", "time")])
 def test_what_translations_say_reaches_the_right_ability_and_never_deletes_by_mistake(text, kind):
     assert parse(text).kind == kind
+
+
+def test_the_tvs_labels_keep_the_things_hand_written_name_and_are_tried_again_when_copied_back():
+    from heyandy_meta.companion.language import TVWords
+
+    class Labels(Translator):
+        def __init__(self):
+            super().__init__()
+            self.systems = []
+
+        def _translate(self, system, text, examples=()):
+            self.systems.append(system)
+            if text == "Next" and not examples:
+                return "Next"  # copied back, as Glimmer did with six of the TV's labels in Mandarin (Nov 1)
+            return {"Next": "下一条提醒", "seen 25 minutes ago": "25分钟前见过", "away": "距离"}.get(text, text)
+
+    g = Labels()
+    tv = TVWords(g, "zh")
+    assert tv.label("remote: seen 25 minutes ago") == "遥控器：25分钟前见过"  # Glimmer alone said 远程 ("remote access")
+    assert tv.label("Next") == "下一条提醒"
+    assert tv.label("away") == "距离" and "how far a thing is" in g.systems[-1]  # told what the one word means

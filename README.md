@@ -43,7 +43,8 @@ can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
 "Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,
 SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. Of 104
 everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
-first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)).
+first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
+Chinese into the demo's Ask Andy and its TV answers in Mandarin.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone

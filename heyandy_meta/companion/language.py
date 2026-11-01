@@ -228,6 +228,22 @@ def asked_for(text: str) -> str | None:
     return "es" if word.startswith("esp") else "en" if word.startswith("ingl") else NAMES[word]
 
 
+# The TV's one-word labels mean nothing alone, and Glimmer guessed wrong without this ("away" as "leave", "Morning" as
+# "good morning"): what each is, for the translation only.
+LABEL_CONTEXT = {
+    "away": "after a distance, as in '1.5 m away': how far a thing is", "away (MapAnything)": "after a distance, as "
+    "in '1.5 m away': how far a thing is, measured by MapAnything (a model's name, kept as it is)", "from your hand": "after a distance, as in "
+    "'15 cm from your hand'", "now": "a reminder's time: due now", "front": "the robot's front, on a small map seen "
+    "from above", "you": "the person, on a small map", "here": "where a thing lives, on a small map",
+    "Found": "how the robot saw a thing, in a list of sightings: it found it", "Seen": "how the robot saw a thing, "
+    "in a list of sightings", "In passing": "how the robot saw a thing: in passing, while doing something else",
+    "Put down": "how the robot saw a thing: the person put it down", "Picked up": "how the robot saw a thing: the "
+    "person picked it up", "Room scan": "how the robot saw a thing: in a scan of the room",
+    **{t: "a time of day beside a clock, not a greeting" for t in ("Morning", "Afternoon", "Evening", "Night")},
+    "Next": "a heading: the next reminder",
+}
+
+
 class TVWords:
     """Andy's own words on the TV ("looking a little to my right", "keys: seen 2 hours ago"), in the person's language.
     The TV asks often and must never wait: a word not translated yet is shown as it is, and Glimmer translates it in the
@@ -255,13 +271,29 @@ class TVWords:
                 self._todo.put(text)
         return text
 
+    def label(self, text: str) -> str | None:
+        """One label, translated now (None while Glimmer is away)."""
+        things = THINGS.get(self.language, {})
+        known = PHRASES.get(self.language, {}).get(text) or things.get(text.lower())
+        if known:
+            return known
+        thing, sep, rest = text.partition(": ")
+        if sep and rest and thing.lower() in things:  # "remote: seen 25 minutes ago": the thing by hand (Glimmer: 远程)
+            tail = self.label(rest)
+            return tail and things[thing.lower()] + ("：" if self.language == "zh" else ": ") + tail
+        system = FROM_ENGLISH.format(name=LANGUAGES[self.language].name) + (
+            " It is a short label on a TV screen: keep it short; the robot's own 'my' and 'me' stay the robot's.")
+        if text in LABEL_CONTEXT:
+            system += f" What it is: {LABEL_CONTEXT[text]}. Give only the label."
+        out = self.translator._translate(system, text)
+        if out is not None and unchanged(text, out) and self.language in RETRY_FROM_EN:
+            out = self.translator._translate(system, text, RETRY_FROM_EN[self.language]) or out  # "Next" came back "Next"
+        return out
+
     def _work(self) -> None:
         while True:
             text = self._todo.get()
-            out = PHRASES.get(self.language, {}).get(text) or THINGS.get(self.language, {}).get(text.lower()) or \
-                self.translator._translate(
-                FROM_ENGLISH.format(name=LANGUAGES[self.language].name) + " It is a short label on a TV screen: keep it "
-                "short; the robot's own 'my' and 'me' stay the robot's.", text)
+            out = self.label(text)
             with self._lock:
                 if out:
                     self._done[text] = out

@@ -31,6 +31,8 @@ def errors_on(browser, url: str, wait_ms: int = 1500, act=None) -> list[str]:
     page = browser.new_page(viewport={"width": 1920, "height": 1080})
     errors: list[str] = []
     page.on("pageerror", lambda e: errors.append(str(e)))
+    # the page's own catch logs what stopped a render (a Chinese "：" did, Nov 1, with nothing thrown)
+    page.on("console", lambda m: errors.append(m.text) if m.type == "error" and "Failed to load resource" not in m.text else None)
     page.goto(url)
     page.wait_for_timeout(wait_ms)
     if act:
@@ -92,5 +94,29 @@ def test_the_settings_gear_opens_its_menu_and_under_the_hood_runs(browser):
     try:
         assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/", 1200, gear) == []
         assert seen["menu"] and seen["url"].endswith("/hood") and seen["title"] == "Under the hood"
+    finally:
+        server.shutdown()
+
+
+def test_every_demo_scene_draws_in_full(browser):
+    """Each scene of the public demo, alone: the page draws it with no error, and the found scenes show their picture
+    (the Mandarin scene once stopped at the list of things, and the TV stayed half empty)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    shown = {}
+    try:
+        for name in SCENES:
+            def look(page, name=name):
+                shown[name] = page.evaluate("() => document.querySelectorAll('#card img, #card canvas, #card svg').length")
+            url = f"http://127.0.0.1:{server.server_address[1]}/?scene={name}"
+            assert errors_on(browser, url, 1200, look) == [], name
+        assert shown["mandarin"] and shown["spanish"] and shown["found"]
     finally:
         server.shutdown()

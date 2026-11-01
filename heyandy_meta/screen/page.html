@@ -660,7 +660,7 @@
                   "“Oye Andy, esta es mi taza.”", "“Oye Andy, muéstrame el radar del tiempo en la tele.”", "“Oye Andy, me voy, ¿llevo todo?”",
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
-  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", home: "Everything home?", told: "You told me", checked: "Are you OK?", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español",
+  const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", home: "Everything home?", told: "You told me", checked: "Are you OK?", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español", mandarin: "说中文",
                   web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
@@ -674,7 +674,7 @@
     ["room", 9, "It knows your room", "Five looks become your room in 3D, things pinned. Its shape only, never a picture."],
     ["cups", 6, "Identical cups, told apart", "SAM 3.1 Object Multiplex follows every cup at once through the shuffle."],
     ["out", 7, "Before you go", "It points at what you'd leave behind, and Muse Spark checks whether you'll need an umbrella."],
-    ["spanish", 6, "Your language", "It hears and speaks Spanish; Muse Glimmer translates on the computer beside the robot."],
+    ["mandarin", 7, "Your language", "It hears and speaks fifteen languages, from Spanish to Mandarin; Muse Glimmer translates on the computer beside the robot."],
     ["privacy", 8, "Nothing leaves the house", "Pictures and voice stay home. Every word sent to the cloud is on a receipt."],
   ];
   let story = null;  // {at, since, paused}
@@ -793,6 +793,7 @@
     ["cups", /\b(?:cup game|shell game|shuffle|which cup|under (?:the|a|which) cup|the ball)\b/i],
     ["out", /\b(?:going out|leaving|heading out|go out|umbrella|need a coat)\b/i],
     ["mine", /\bthis is my\b|\bis (?:this|that) mine\b|\bmy own\b/i],
+    ["mandarin", /[\u3400-\u9fff]|\b(?:mandarin|chinese)\b/i],  // typed in Chinese: the scene in Mandarin
     ["spanish", /[¿¡ñ]|\b(?:d[oó]nde|llaves|taza|gafas|hola|espa[ñn]ol|spanish|oye)\b/i],
     ["privacy", /\b(?:send|sent|cloud|privacy|private|receipt|record(?:ed|ing)?|spy|camera)\b/i],
     ["story", /\bwhat happened\b|\bstory of\b|\busually (?:leave|put|are|is)\b|\bwhere do i usually\b|\btoday\b/i],
@@ -853,6 +854,9 @@
     const m = Math.round((at * 1000 - Date.now()) / 60000);
     if (m <= 0) return T("now");
     if (LANG === "es") return m < 60 ? `en ${m} minuto${m === 1 ? "" : "s"}` : `en unas ${Math.round(m / 60)} hora${Math.round(m / 60) === 1 ? "" : "s"}`;
+    if (LANG !== "en") {  // Andy's other thirteen languages: the browser says it ("15分钟后", "через 15 минут")
+      try { const rt = new Intl.RelativeTimeFormat(LOCALE(), { numeric: "auto" }); return m < 60 ? rt.format(m, "minute") : rt.format(Math.round(m / 60), "hour"); } catch (e) { /* an old browser: English below */ }
+    }
     if (m < 60) return `in ${m} minute${m === 1 ? "" : "s"}`;
     const h = Math.round(m / 60); return `in about ${h} hour${h === 1 ? "" : "s"}`;
   }
@@ -866,9 +870,10 @@
     const seen = (s.map || []).some(p => p.yaw !== undefined);
     const list = el("ul", null, seen ? "compact" : "");
     for (const line of s.watching || []) {  // beside the map, only when; the map shows where
-      const [what, where] = line.split(": ");
+      // "keys: seen 2 hours ago, to my left"; in Chinese "钥匙：两小时前见过，在我左边" (a ":" split stopped the whole TV)
+      const m = line.match(/^(.*?)\s*[:：]\s*(.*)$/), what = m ? m[1] : line, where = m ? m[2] : "";
       const li = el("li", what[0].toUpperCase() + what.slice(1));
-      li.append(el("span", seen ? " · " + where.split(",")[0] : where)); list.append(li);
+      li.append(el("span", seen ? (where ? " · " + where.split(/[,，、،]/)[0] : "") : where)); list.append(li);
     }
     // what a search missed, and Andy keeps looking for (memory/lost.py): first, with when it was asked and the looks since
     const lost = el("ul", null, "lost");
@@ -959,7 +964,7 @@
     svg.append(defs, img, dim, edge);
     const words = el("div", null, "words");
     words.append(el("div", LANG === "es" ? "Encontrado · SAM 3.1 en esta computadora" : T("Found · SAM 3.1, on this computer"), "kick"),
-                 el("h1", (LANG === "es" ? "" : "Your ") + p.label, p.label.length > 11 ? "long" : null));
+                 el("h1", (LANG === "en" ? "Your " : "") + p.label, p.label.length > 11 ? "long" : null));
     const nums = el("div", null, "nums"), count = [];
     const num = (value, fmt, label) => { const d = el("div"), v = el("b", fmt(0)); d.append(v, el("span", label)); nums.append(d); count.push([v, value, fmt]); };
     if (seconds != null) num(seconds, x => x.toFixed(1) + " s", T("to find it"));
@@ -1654,7 +1659,7 @@
   async function tick() {
     // A static copy (the public Space) reads saved sample scenes; the robot's TV asks its own server.
     const url = window.HEYANDY_STATIC ? `scenes/${scene() || "idle"}.json` : "/state.json" + (scenes ? "?scene=" + scene() : "");
-    try { render(await (await fetch(url, { cache: "no-store" })).json()); } catch (e) {}
+    try { render(await (await fetch(url, { cache: "no-store" })).json()); } catch (e) { console.error(e); }  // seen, not hidden
     setTimeout(tick, 400);
   }
   clock(); setInterval(clock, 1000); tick();

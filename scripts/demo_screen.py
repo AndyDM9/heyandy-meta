@@ -5,11 +5,13 @@
     python scripts/demo_screen.py --public --host 0.0.0.0 --port 7860   # the Hugging Face Space: each visitor picks
                                                                          # a scene; nothing they do reaches anyone else
 
-Scenes: start, idle, finding, found, mine, cups, out, spanish, web, answer, drawing, memory, room, story, privacy, help.
+Scenes: start, idle, finding, found, mine, cups, out, spanish, mandarin, web, answer, drawing, memory, room, story,
+privacy, help.
 """
 import argparse
 import functools
 import io
+import json
 import math
 import sys
 import time
@@ -19,6 +21,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from heyandy_meta.companion.language import LANGUAGES, THINGS  # noqa: E402
 from heyandy_meta.companion.guide import height_above, instruction, on_surface, their_way  # noqa: E402
 from heyandy_meta.finder.geometry import pixel_to_angles  # noqa: E402
 from heyandy_meta.finder.perspective import from_them, on_plan  # noqa: E402
@@ -28,10 +31,23 @@ from heyandy_meta.robot.body import Frame  # noqa: E402
 from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
-SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "told", "checked", "mine", "cups", "out", "spanish", "web", "answer", "drawing", "memory", "room",
+SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "told", "checked", "mine", "cups", "out", "spanish", "mandarin", "web", "answer", "drawing", "memory", "room",
           "story", "privacy", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
+SAMPLE_ZH = Path(__file__).resolve().parent / "demo_zh.json"  # the TV's words in Mandarin, from Andy's own translator
+
+
+class Recorded:
+    """The TV's words in another language as Andy's translator gave them on this computer (Muse Glimmer, through the
+    TV's own code, recorded once on November 1): what the real TV shows, without a model in the demo."""
+
+    def __init__(self, path: Path, language: str):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.done, self.language = {**data["chrome"], **data["scene"]}, language
+
+    def __call__(self, text: str) -> str:  # as the TV's own words do: the hand-written things first ("mug": 马克杯)
+        return THINGS.get(self.language, {}).get(text.lower()) or self.done.get(text, text)
 
 
 @functools.lru_cache(maxsize=1)
@@ -234,6 +250,7 @@ def show(state: ScreenState, scene: str) -> None:
         jpeg, mask = sample_frame()
         found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
         state.language, state.lang = "Español · en esta computadora", "es"
+        state.words = lambda text: THINGS["es"].get(text.lower(), text)  # the thing's name, by hand, as on the robot
         state.reminder_next("Llamar a Sam", time.time() + 25 * 60)
         state.keeping(["llaves: vistas hace 2 horas, a mi izquierda", "gafas: vistas hace 10 minutos, un poco a mi derecha",
                        "control remoto: visto hace 25 minutos, detrás de mí a la izquierda"],
@@ -250,6 +267,29 @@ def show(state: ScreenState, scene: str) -> None:
         state.doing("Pointing", "Señalando su taza")
         for name, times in (("Omnilingual ASR (hearing, Spanish)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
                             ("SeamlessM4T v2 (voice, Spanish)", 1)):
+            state.used(name, "device", times)
+    elif scene == "mandarin":
+        zh, lang, things = Recorded(SAMPLE_ZH, "zh"), LANGUAGES["zh"], THINGS["zh"]
+        jpeg, mask = sample_frame()
+        found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=3, aim_deg=1.0, metres=1.2)
+        said = zh("I see your blue cup, a little to my right.")
+        state.language, state.lang, state.words = f"{lang.native} · {lang.here}", "zh", zh
+        state.reminder_next(zh("Call Sam"), time.time() + 25 * 60)
+        state.keeping([zh("keys: seen 2 hours ago, to my left"), zh("glasses: seen 10 minutes ago, a little to my right"),
+                       zh("remote: seen 25 minutes ago, behind me on the left")],
+                      [{"label": things["keys"], "yaw": 48.0, "pitch": 20.0, "ago_s": 7300, "metres": 1.7},
+                       {"label": things["glasses"], "yaw": -22.0, "pitch": 14.0, "ago_s": 600, "metres": 0.9},
+                       {"label": things["remote"], "yaw": 125.0, "pitch": 26.0, "ago_s": 1500, "metres": 2.6}])
+        state.looking(things["cup"])
+        state.timer_start()
+        state.step(zh("looked: a little to my left, a little to my right"))
+        state.timer_stop()
+        state._timer = (time.monotonic() - 8.1, time.monotonic())
+        state.found(found, said)
+        state.said(said, "device", zh("search on this computer"))
+        state.doing("Pointing", zh("Pointing at your cup"))
+        for name, times in (("Omnilingual ASR (hearing, Mandarin)", 1), ("Muse Glimmer (translates)", 2), ("SAM 3.1", 3),
+                            ("SeamlessM4T v2 (voice, Mandarin)", 1)):
             state.used(name, "device", times)
     elif scene == "web":
         state.web(SAMPLE_WEB.read_bytes(), "Show me what banana bread is", "Opening the page", (378, 273),

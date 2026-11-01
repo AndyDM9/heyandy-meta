@@ -21,9 +21,9 @@ far), DINOv2, Omnilingual ASR, SeamlessM4T v2 (its voice), Llama Guard 3 and Lla
 on the computer beside the robot, and Muse Spark and Muse Image through the Meta Model API. **Andy gives no health
 advice.**
 
-**It opens as a one-minute story:** eight chapters of the TV, each a real scene (you ask; it finds it, with the
-Reveal; your room in 3D; identical cups told apart; before you go; Spanish; nothing leaves the house), then where to
-go next. Pause, skip with the arrow keys, or "Explore every screen".
+**It opens as a one-minute story:** ten chapters of the TV, each a real scene (meet Andy; you ask; it finds it, with
+the Reveal; it doesn't give up; it guides your hand; your room in 3D; identical cups told apart; before you go; your
+language, in Mandarin; nothing leaves the house), then where to go next. Pause, skip with the arrow keys, or "Explore every screen".
 
 **Andy's eyes, on your own things** (`eyes.html`: "Try it on your own things" at the top, or the story's end): show
 it something of yours once, then a photo of where it might be, and DINOv2, Meta's open image model, finds it, **running
@@ -35,7 +35,7 @@ The TV itself is the robot's, the same page and rendering code as on the robot w
 or keys are here (the one model that runs here is DINOv2, in Andy's eyes, in your browser), and the picture is drawn, not taken in a home. Pick a scene at the top: what Andy shows while
 it searches (what its camera sees, every candidate outlined by SAM 3.1), what it found (how long it took, how far off
 target its point landed, and how far away it is), your own mug told from another, the cup game (every cup's path
-through the shuffle), going out, Andy in Spanish, a web page Andy opened, an answer with sources, a picture, what it remembers, the day's privacy
+through the shuffle), going out, Andy in Spanish and in Mandarin (type Chinese into Ask Andy), a web page Andy opened, an answer with sources, a picture, what it remembers, the day's privacy
 ("what did you send to the cloud today?"), and "What can I ask?". The web page in "On the web" is Wikipedia's (CC BY-SA 4.0).
 Nothing you do here reaches anyone else.
 

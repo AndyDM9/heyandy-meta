@@ -1144,6 +1144,17 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   same translations reach the right ability **104 of 104** written and **89 of 104** spoken. The spoken misses left are
   hearing: Omnilingual ASR on a synthetic voice ("Mấy giờ rồi?" heard as "bài yêu rồi"), and then Glimmer turns the
   garble into some other request ("what am I holding?"), never into anything that deletes or sends.
+- **The TV in Mandarin, and a scene for the public demo (November 1).** Building a Mandarin scene for the demo, from
+  Andy's own translator through the TV's own code, showed four things wrong on the real TV in the thirteen languages:
+  the list of watched things split each line at an English ": ", so a Chinese "：" **stopped the whole TV from drawing**
+  (the page's catch hid it: it now logs it, and a browser test draws every scene and fails on any error); "remote:
+  seen 25 minutes ago" came out as 远程 ("remote access"), so a thing's name now comes from the hand-written table and
+  only the rest is translated; six one-word labels came back in English, so they're asked again with an example, and
+  ten that mean nothing alone ("away", "Morning", "Seen") go with a note of what they are ("away" had been "leave");
+  and the reminder countdown was English ("in 25 minutes"), now the browser's own (25分钟后, через 25 минут). The demo's
+  "Your language" chapter is now that scene ("It hears and speaks fifteen languages, from Spanish to Mandarin"),
+  and typing Chinese into Ask Andy plays it; Spanish stays a scene of its own. The words are Glimmer's, as recorded
+  (`scripts/demo_zh.json`), not corrected by hand: a Chinese reader will find one or two awkward.
 - **Not yet:** a person. Every spoken request here was Andy's own voice, which Omnilingual ASR hears worse than people
   in some languages (Korean) and better in others; and a native speaker should read each language's hand-written lines
   before a home relies on them. Llama Guard 3 was trained for seven of Andy's fifteen languages (English, Spanish,
