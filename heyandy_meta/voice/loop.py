@@ -16,13 +16,20 @@ log = logging.getLogger(__name__)
 
 # "Andy" as speech-to-text writes it: the name, and what it was heard as on 2026-10-27 ("and they", "earndy").
 NAME = r"(?:andy|andi|andí|andie|andee|endy|earndy|handy|annie)"
-WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
+# and as Andy's other languages write it (Chinese and Korean run straight on into the next word: no word boundary)
+NATIVE = r"(?:安迪|安蒂|앤디|엔디|энди|енді|енди|آندي|أندي|اندي|एंडी|ऐंडी)"
+CALL = r"(?:(?:" + NAME + r"|and he|and they)\b|" + NATIVE + r")"
+PAUSE = r"[\s,.!?，、。！？]*"
+WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + CALL + PAUSE, re.I)
 # The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.
-LATER = re.compile(r"\b(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
+LATER = re.compile(r"(?:\b(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + NAME + r"\b|" + NATIVE + r")" + PAUSE + r"(?=\S)", re.I)
 # "Answer only to 'Hey Andy'" (a home with someone called Andy): the greeting is needed, plain "Andy" is a person
 HEY = r"(?:hey|hi|hello|ok|okay|oye|hola)\s+"
 HEY_WAKE = re.compile(r"^\W*" + HEY + r"(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
 HEY_LATER = re.compile(r"\b" + HEY + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
+
+
+OWN_SCRIPT = ("zh", "ko", "ar", "hi", "ru", "uk")  # languages told apart by their script: a safe switch from any other
 
 
 class VoiceLoop:
@@ -113,6 +120,11 @@ class VoiceLoop:
             except Exception as e:  # noqa: BLE001 - one bad utterance must not leave Andy deaf
                 log.warning("hearing failed: %s: %s", type(e).__name__, e)
                 continue
+            if not self.busy:
+                try:
+                    text = self._which_language(text, utterance, voice)
+                except Exception as e:  # noqa: BLE001 - listening again is a bonus: never at the cost of the turn
+                    log.warning("listening again failed: %s: %s", type(e).__name__, e)
             if self.busy:
                 if crisis(text):  # never dropped: stop what's running, and answer it as soon as the turn ends
                     self.andy.stop_following()
@@ -125,6 +137,37 @@ class VoiceLoop:
                 continue
             self.busy = True
             turns.put((text, yaw, utterance))
+
+    def _which_language(self, text: str, utterance, voice) -> str:
+        """Andy was called but didn't understand: perhaps it wasn't Andy's language at all. Omnilingual ASR is asked
+        again without one, and if what it writes is another of Andy's fifteen ("安迪我的眼睛在哪里"), Andy switches to it,
+        says so (by hand, in it), and hears the words again in it. A request Andy understood is never asked again, and
+        speech that isn't for Andy, in any language, is still dropped (it's only ever heard, never kept)."""
+        from ..companion.intents import parse
+        from ..companion.language import LANGUAGES, heard_in
+
+        andy = self.andy
+        if not hasattr(andy, "notice_language"):
+            return text
+        called = WAKE.match(text) or next(reversed(list(LATER.finditer(text))), None)
+        if not called and self._clock() > self.awake_until:
+            return text  # not for Andy
+        current = getattr(andy, "language", "en")
+        rest = text[called.end():] if called else text
+        if current == "en" and parse(rest).kind not in ("chat", "world"):
+            return text  # understood: English it is
+        other = voice.transcribe(utterance, language="auto")
+        code = heard_in(other)
+        if code is None or code == current or code not in LANGUAGES:
+            return text
+        if code == "en" and parse(LATER.sub("", other, count=1)).kind in ("chat", "world"):
+            return text  # back to English only for a request it understands in English
+        if current != "en" and code not in ("en", *OWN_SCRIPT):
+            return text  # from one Latin-letter language to another (Spanish, Portuguese, Italian) is too easy to get wrong
+        andy.notice_language(code)
+        voice.language = getattr(andy, "asr_language", "eng_Latn")
+        self.awake_until = self._clock() + self.follow_up_s  # it was called: what follows the name counts
+        return voice.transcribe(utterance)  # heard again, told the language now
 
     def _turns(self, turns: queue.Queue, endpointer, stop) -> None:
         while not stop.is_set():

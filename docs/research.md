@@ -1196,3 +1196,30 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   was warm everywhere among look-alikes, so it now runs from 0.55 to "found".
 - **Not yet:** a real phone in a real room (the founder's is the first test). A fake camera is steadier than a hand,
   and an actual room is harder than four photos in some ways (clutter, light) and easier in others (few look-alikes).
+
+## 57. Andy notices the language it's called in (November 1)
+
+- **Why:** Andy's fourteen other languages (section 54) began with "speak Russian", in English: no help to someone who
+  speaks only Mandarin. Told English, Omnilingual ASR still writes Andy's name ("andy") but turns the rest into English
+  nonsense ("andy donderstand miss governs" for "Andy, ¿dónde están mis gafas?"; "and die the angel of this so" for
+  Korean). Told nothing, the same model writes many languages in their own words and script ("安迪我的眼睛在哪里").
+- **Built:** the voice server takes `X-Language: auto`. When Andy was called (or is listening for a follow-up) and,
+  in English, the words aren't a request it understands, the voice loop (`voice/loop.py`, `_which_language`) asks
+  Omnilingual ASR again, told nothing, and `heard_in` (`companion/language.py`) says which of Andy's languages that is,
+  from the words alone: the script (Chinese, Korean, Arabic, Hindi); for Cyrillic, only letters or words one of
+  Ukrainian and Russian never has (told nothing, the model wrote Ukrainian speech as Russian; answering a Ukrainian in
+  Russian would be the worst mistake this could make); for Latin letters, at least two of the language's everyday
+  words, its own letters counting too. If it's another of Andy's languages, Andy switches, says so in it by hand
+  ("好的，我现在说中文。"), hears the words again told that language, and answers. A request understood in English is never
+  heard again; speech not for Andy is still dropped in any language; from a language other than English, Andy switches
+  only back to English for a request it understands, or to a language with its own script.
+- **Measured** (`evals/hear_language.py`, `evals/results/hear-language-20261101-1217.json`; Andy's own voice in each
+  language standing in for a person, Andy's name as each writes it, Andy in English): three everyday requests in each
+  of the fourteen: **switched to the right language 31 of 42, and then reached the right ability 26; never to a wrong
+  one.** Portuguese, French and German 3 of 3; Ukrainian, Russian, Korean, Hindi and Italian 1 of 3. **English: 8
+  requests and 4 bits of conversation, never switched.** Listening again takes 0.19 s, 0.48 s with the switch.
+- **What changed because of the measuring:** the first version switched twice to a wrong language, both Ukrainian
+  (written as Russian once, as Polish once): hence the Cyrillic rule and two everyday words for Latin letters. That
+  also stopped "ãndi duvi sõni mi o kiani" (Italian) being taken for Portuguese.
+- **Not yet:** people. The misses here are mostly the model hearing a synthetic voice badly, told nothing; a person
+  may be heard better or worse. Someone who isn't understood can still say "Andy, speak Korean".

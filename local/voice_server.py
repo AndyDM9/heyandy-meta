@@ -13,7 +13,7 @@ Audio is held in memory for one request; nothing is written or logged.
 
     CUDA_VISIBLE_DEVICES=1 ~/opt/voice/.venv/bin/python local/voice_server.py
 
-POST /transcribe  body: float32 little-endian mono samples; headers X-Sample-Rate (default 16000), X-Language
+POST /transcribe  body: float32 little-endian mono samples; headers X-Sample-Rate (default 16000), X-Language (or "auto")
                   (Omnilingual ASR's code, default eng_Latn; spa_Latn for Spanish)
   -> {"text": "where are my glasses", "seconds": 0.04}
 POST /speak       {"text": "I see your glasses.", "voice": "eng", "rate": 16000, "speed": 1.0, "loudness": -21}
@@ -144,8 +144,8 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
             if self.path == "/transcribe":
                 rate = int(self.headers.get("X-Sample-Rate") or 16000)
                 lang = self.headers.get("X-Language") or LANG
-                if not re.fullmatch(r"[a-z]{3}_[A-Z][a-z]{3}", lang):
-                    return self._json(400, {"error": "X-Language: a code like eng_Latn or spa_Latn"})
+                if not re.fullmatch(r"[a-z]{3}_[A-Z][a-z]{3}|auto", lang):
+                    return self._json(400, {"error": "X-Language: a code like eng_Latn or spa_Latn, or auto"})
                 if not 0 < n <= MAX_SECONDS * rate * 4 or n % 4:
                     return self._json(413, {"error": f"send 0 to {MAX_SECONDS} s of float32 samples"})
                 audio = torch.from_numpy(np.frombuffer(self.rfile.read(n), dtype="<f4").copy())
@@ -156,7 +156,9 @@ def serve(asr, tts, asr_card: str, host: str, port: int) -> None:
                     audio = audio * (0.9 / peak)  # a voice across the room arrives quiet; even it out
                 start = time.monotonic()
                 with lock:
-                    kw = {"lang": [lang]} if "LLM" in asr_card else {}  # CTC models can't be told the language
+                    # CTC models can't be told the language; "auto": not told, so it writes what it heard in that language's own
+                    # script (Andy listens again so, to hear someone call it in another of its languages: voice/loop.py)
+                    kw = {"lang": [None if lang == "auto" else lang]} if "LLM" in asr_card else {}
                     text = asr.transcribe([{"waveform": audio.numpy(), "sample_rate": 16000}], batch_size=1, **kw)[0]
                 return self._json(200, {"text": text.strip(), "seconds": round(time.monotonic() - start, 3)})
             if self.path == "/speak":

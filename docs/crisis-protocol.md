@@ -31,6 +31,10 @@ Portuguese, French, Italian, Polish, German and Ukrainian. In each of them:
   languages through interpreters, but its texts and chat are in English and Spanish only. So the Spanish reply says
   988 has help in Spanish, and in the other thirteen it says to call 988 and ask for an interpreter in that language.
   Every reply ends with 911 for danger right now.
+- When Andy is called in one of its other languages while speaking English and doesn't understand, it listens again
+  without a language and switches to the one it hears, so what follows is checked by that language's word list too
+  (it switches when it's sure, which is about three times in four with its own voice; a wrong guess is avoided rather
+  than risked).
 - A native speaker should read each language's hand-written lines before a home relies on them.
 
 ## What Andy never does

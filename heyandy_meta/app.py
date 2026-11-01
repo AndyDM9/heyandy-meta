@@ -829,6 +829,15 @@ class Andy:
         self._source, self._reason = "device", "hearing and speaking switched, on this computer"
         return f"Okay, I'll speak {LANGUAGES[to].name} now."  # said in it, by hand (companion/languages.py)
 
+    def notice_language(self, to: str) -> None:
+        """Someone called Andy in another of its languages (the voice loop heard it, listening again without one):
+        switch to it and say so, in it and by hand ("好的，我现在说中文。"), before answering what they asked."""
+        with self.lock:
+            line = self.set_language(to)
+            self.screen.used("Omnilingual ASR (hearing, which language)", "device")
+            if line.startswith("Okay, I'll speak"):
+                self.say(line)
+
     def save_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
         saved = {"liveliness": self.liveliness, "language": self.language, "hey_only": self.hey_only}

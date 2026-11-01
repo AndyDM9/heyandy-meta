@@ -138,3 +138,95 @@ def test_the_tvs_labels_keep_the_things_hand_written_name_and_are_tried_again_wh
     assert tv.label("remote: seen 25 minutes ago") == "遥控器：25分钟前见过"  # Glimmer alone said 远程 ("remote access")
     assert tv.label("Next") == "下一条提醒"
     assert tv.label("away") == "距离" and "how far a thing is" in g.systems[-1]  # told what the one word means
+
+
+@pytest.mark.parametrize("heard,code", [  # what Omnilingual ASR wrote, told no language (Andy's own voice, Nov 1)
+    ("andy where are my glasses", "en"), ("andi dondestan mis gafas", "es"), ("安迪我的眼睛在哪里", "zh"),
+    ("andi na saan ang salamin ko", "tl"), ("anh đi kim của tôi đau rồi", "vi"), ("энди где май очки", "ru"),
+    ("andy onde estão meus óculos", "pt"), ("andy où sont mes lunettes", "fr"), ("handy wo ist meine brille", "de"),
+    ("Енді, де мої окуляри", "uk"), ("andy dove sono i miei occhiali", "it"), ("andy gdzie są moje okulary", "pl"),
+    # too little to go on: no guess (a Latin-letter guess at Korean; Italian garbled into Portuguese letters)
+    ("andy dean jong otiso", None), ("ãndi duvi sõni mi o kiani", None), ("andy donderstand miss governs", None)])
+def test_which_language_some_words_are_in(heard, code):
+    from heyandy_meta.companion.language import heard_in
+
+    assert heard_in(heard) == code
+
+
+class Listening:
+    """Andy, as the voice loop sees it: a language, and a switch."""
+
+    def __init__(self, language="en"):
+        self.language, self.heard, self.switched, self.said = language, [], [], []
+        self.body = SimpleNamespace(look=lambda *a, **k: None)
+
+    @property
+    def asr_language(self):
+        return LANGUAGES[self.language].asr
+
+    def notice_language(self, to):
+        self.switched.append(to)
+        self.language = to
+
+    def hear(self, text):
+        self.heard.append(text)
+        return "ok"
+
+    def say(self, text):
+        self.said.append(text)
+
+    def turn_to_person(self, *a):
+        pass
+
+
+class Ears:
+    """Omnilingual ASR on one utterance: what it writes told English, told nothing, and told Mandarin."""
+
+    def __init__(self, told_english, untold, told_mandarin=""):
+        self.language, self.asked = "eng_Latn", []
+        self.out = {"eng_Latn": told_english, "auto": untold, "cmn_Hans": told_mandarin}
+
+    def transcribe(self, samples, rate=16000, language=None):
+        self.asked.append(language or self.language)
+        return self.out[language or self.language]
+
+
+def test_called_in_mandarin_andy_switches_says_so_and_answers_in_it():
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy, ears = Listening(), Ears("and he the angel of this so", "安迪我的眼睛在哪里", "安迪，我的眼镜在哪里")
+    loop = VoiceLoop(andy)
+    text = loop._which_language("and he the angel of this so", None, ears)
+    assert andy.switched == ["zh"] and ears.asked == ["auto", "cmn_Hans"] and ears.language == "cmn_Hans"
+    assert loop.heard(text) == "ok" and andy.heard == ["我的眼镜在哪里"]  # the native name is Andy's name too
+
+
+def test_a_request_understood_in_english_is_never_asked_again_and_background_talk_stays_dropped():
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy, ears = Listening(), Ears("andy where are my keys", "should not be asked")
+    assert VoiceLoop(andy)._which_language("andy where are my keys", None, ears) == "andy where are my keys"
+    assert VoiceLoop(andy)._which_language("我们明天去公园吧", None, ears) == "我们明天去公园吧"  # not for Andy
+    assert ears.asked == [] and andy.switched == []
+
+
+def test_from_spanish_only_to_english_or_a_language_with_its_own_script():
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy = Listening("es")
+    ears = Ears("andi dove sono", "andy dove sono i miei occhiali")  # Italian? or Spanish misheard: not worth the risk
+    ears.out["spa_Latn"] = ears.out.pop("eng_Latn"); ears.language = "spa_Latn"
+    VoiceLoop(andy)._which_language("andi dove sono", None, ears)
+    assert andy.switched == []
+    ears.out["auto"] = "andy where are my glasses"
+    ears.out["eng_Latn"] = "andy where are my glasses"
+    VoiceLoop(andy)._which_language("andi wer ar mai glasses", None, ears)
+    assert andy.switched == ["en"]
+
+
+def test_noticing_a_language_says_so_by_hand_in_it(tmp_path):
+    a, body, _ = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    a.translator, a.voice = Glimmer({}), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
+    a.notice_language("zh")
+    said = [e[1] for e in body.log if e[0] == "say"]
+    assert a.language == "zh" and said == [PHRASES["zh"]["Okay, I'll speak Chinese now."]] and a.translator.asked == []

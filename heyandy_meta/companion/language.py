@@ -219,6 +219,61 @@ LANGUAGE = re.compile(r"(?<!not )(?<!n't )(?<!never )(?<!to )(?<!can )(?<!cannot
                       r"^\W*(?:andy\W+)?say (?:it )?(?:in )?(?P<d>" + "|".join(NAMES) + r")\W*$", re.I)
 
 
+# Which of Andy's languages some words are in, from the words alone: its script, its letters, its everyday words. For
+# the voice loop, which listens again without a language when Andy was called but didn't understand (voice/loop.py):
+# a grandmother who speaks Mandarin needn't ask in English first. English needs its own everyday words too, so a
+# Latin-letter guess at Korean ("andy dean jong otiso") is no one's.
+SCRIPTS = [("zh", r"[\u4e00-\u9fff]"), ("ko", r"[\uac00-\ud7af\u1100-\u11ff]"), ("ar", r"[\u0600-\u06ff]"),
+           ("hi", r"[\u0900-\u097f]")]
+# Ukrainian and Russian share most letters, and Omnilingual ASR, told nothing, sometimes wrote Ukrainian speech as
+# Russian: each only on what the other never has (letters, or words), else no guess. A Ukrainian answered in Russian
+# would be the worst mistake this could make.
+UK_ONLY, RU_ONLY = "іїєґ", "ыэъё"
+RU_WORDS = set("где мои мой очки ключи видел могу который час говори".split())
+LETTERS = {"vi": "ăđơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ", "pl": "ąęłśźżćń", "de": "ßäöü",
+           "pt": "ãõ", "es": "ñ¿¡", "fr": "çèœù"}
+EVERYDAY = {  # each language's commonest little words, and what Andy is asked most (where, my, glasses, keys, phone)
+    "en": "where are my is the what time have you seen your keys glasses phone remind me please it do i can find "
+          "how thank thanks tell something going out everything",
+    "es": "dónde donde están estan mis mi qué que hora es por favor llaves gafas tengo puedes recuérdame has visto "
+          "no encuentro encontrar teléfono telefono el los las con para yo tú ayúdame dime",
+    "pt": "onde estão meus meu minha minhas não você que horas são chaves óculos celular viu acho encontro "
+          "telefone com para eu",
+    "fr": "où sont mes mon ma est je tu les des pas quelle heure clés clefs lunettes téléphone vu trouve as ne",
+    "it": "dove sono miei mie mio mia non che ore chiavi occhiali telefono hai visto trovo il le gli",
+    "de": "wo ist meine mein ich nicht wie spät hast du schlüssel brille handy gesehen finde",
+    "pl": "gdzie są moje mój nie która godzina klucze okulary telefon telefonu mogę znaleźć widziałeś",
+    "tl": "nasaan saan ang ko mo ba po mga nakita susi salamin anong oras na hindi mahanap",
+    "vi": "của tôi đâu rồi không mấy giờ kính chìa khóa điện thoại bạn có thấy tìm",
+}
+EVERYDAY_WORDS = {code: set(words.split()) for code, words in EVERYDAY.items()}
+ANDY = re.compile(r"安迪|安蒂|앤디|엔디|энди|енді|енди|آندي|أندي|اندي|एंडी|ऐंडी", re.I)  # the name tells nothing
+
+
+def heard_in(text: str) -> str | None:
+    """"安迪我的眼睛在哪里" -> "zh"; "andi dondestan mis gafas" -> "es"; "andy where are my glasses" -> "en"; a guess
+    with too little to go on -> None."""
+    text = ANDY.sub(" ", text)
+    for code, rx in SCRIPTS:
+        if len(re.findall(rx, text)) >= 2:
+            return code
+    low = text.casefold()
+    words = re.findall(r"[^\W\d_]+", low)
+    if sum(bool(re.match(r"[а-яёіїєґ]", w)) for w in words) >= 2:  # Cyrillic
+        if any(ch in UK_ONLY for ch in low):
+            return "uk"
+        return "ru" if any(ch in RU_ONLY for ch in low) or sum(w in RU_WORDS for w in words) >= 2 else None
+    known = {code: sum(w in EVERYDAY_WORDS[code] for w in words) for code in EVERYDAY}
+    score = dict(known)
+    for code, letters in LETTERS.items():
+        score[code] = score.get(code, 0) + 2 * sum(ch in letters for ch in low)
+    best = max(score, key=score.get)
+    ranked = sorted(score.values(), reverse=True)
+    # two of its everyday words at least: letters alone mislead (Italian garbled into "ãndi duvi sõni" looked
+    # Portuguese; Ukrainian into "ty baczył moje klucie", Polish)
+    return best if ranked[0] >= 2 and ranked[0] > ranked[1] and known.get(best, 0) >= 2 else None
+
+
 def asked_for(text: str) -> str | None:
     """"Speak Spanish" -> "es"; "speak Russian" -> "ru"; "speak English" -> "en"; anything else -> None."""
     m = LANGUAGE.search(text)

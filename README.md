@@ -45,7 +45,10 @@ can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
 
 **Andy speaks fifteen languages,** all on Meta's models in the house: "Andy, speak Russian", "talk to me in Mandarin",
 "Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,
-SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. Of 104
+SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. **Or just
+speak your language:** called in one of them, Andy notices, says so in it and answers (Andy's own voice in fourteen
+languages: the right one 31 times in 42, a wrong one never, and English never switched;
+[`hear-language-20261101-1217.json`](evals/results/hear-language-20261101-1217.json)). Of 104
 everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
 first run; 104 and 89 since ([`languages-20261101-1059.json`](evals/results/languages-20261101-1059.json)). Type
 Chinese into the demo's Ask Andy and its TV answers in Mandarin.
@@ -243,8 +246,9 @@ found, "You're all set", in three sentences.
    person's words stay home (Spanish: 41 of 41 written requests reach the right ability; the other thirteen: 100 of 104
    on the first run). Saying it's an AI, the crisis reply (988 has help in Spanish, and interpreters by phone for the
    rest), Andy's short phrases and the TV's everyday words are written by hand, never machine-translated; the crisis
-   words are caught in each language before any model. The TV follows the language. "Speak English" switches back;
-   it's remembered.
+   words are caught in each language before any model. The TV follows the language. Called in one of them, Andy
+   notices on its own: when it didn't understand, it listens again without a language, and switches if it was another
+   of its own. "Speak English" switches back; it's remembered.
 20. **Talk to it.** "Hey Andy, where are my glasses?" Andy turns towards your voice, then looks. Hearing (Meta's
    Omnilingual ASR) and speaking (Meta's SeamlessM4T v2) run on the computer beside the robot. **Every model Andy
    runs is Meta's**, as the hackathon's rules ask.
@@ -577,7 +581,9 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   synthetic voice slips most in Korean and Vietnamese, and a mishearing becomes some other request (never one that
   deletes or sends). The hand-written lines in each language should be read by a native speaker before a home relies on
   them; Llama Guard 3 was trained for seven of the fifteen, so in the other eight the crisis word list is the check to
-  rely on. The TV's labels in the thirteen newer languages are Glimmer's translations, made on this computer: a few
+  rely on. Noticing the language it's called in works 31 times in 42 with Andy's own voice (Korean, Russian, Ukrainian, Hindi
+  and Italian least); it never switched to a wrong one, by design it would rather not switch. The TV's labels in the
+  thirteen newer languages are Glimmer's translations, made on this computer: a few
   read awkwardly (Mandarin's "steps" came out as a procedure's). SeamlessM4T v2 speaks 36 languages and Omnilingual
   ASR hears far more: another is a few hand-written lines.
 

@@ -25,8 +25,9 @@ keeps what it sees and hears in the house.
   candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
   are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
   on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
-- **In fifteen languages.** "Andy, speak Mandarin": Omnilingual ASR hears it, Muse Glimmer translates on the computer
-  beside the robot, SeamlessM4T v2 speaks it, and every ability works. Saying it's an AI, the crisis reply and Andy's
+- **In fifteen languages, and it notices which.** Just say "安迪，我的眼镜在哪里？": Andy hears it isn't English, switches,
+  and answers in Mandarin. Omnilingual ASR hears it, Muse Glimmer translates on the computer beside the robot,
+  SeamlessM4T v2 speaks it, and every ability works. Saying it's an AI, the crisis reply and Andy's
   short lines are written by hand in each, never machine-translated.
 - **Andy's eyes, live, in your browser.** The public demo runs one of Meta's models for the visitor: show it your mug
   once, then sweep your phone's camera round the room. DINOv2 looks at every moment of it in the browser (nothing goes
@@ -91,7 +92,7 @@ in 4.6 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
 *Languages:* Spanish **41 of 41** written requests reach the right ability, **36 of 41** said aloud and heard back;
 thirteen more (Mandarin to Ukrainian, 104 requests) **100 and 85** on the first run, 104 and 89 with the rules it showed
-were missing.
+were missing; called in one of the fourteen, Andy switched to it 31 times in 42, never to a wrong one.
 *Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables);
 sweeping live (a video as the camera, on a CPU): found in both sweeps, at 15 and 34 s; never in 90 frames without it.
 *On the robot, alone in the room:* **112 of 112** unattended searches over two days ended in a point; on the final
