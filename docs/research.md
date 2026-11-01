@@ -1224,6 +1224,12 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **What changed because of the measuring:** the first version switched twice to a wrong language, both Ukrainian
   (written as Russian once, as Polish once): hence the Cyrillic rule and two everyday words for Latin letters. That
   also stopped "ãndi duvi sõni mi o kiani" (Italian) being taken for Portuguese.
+- **On the robot** (November 1, whole turns spoken in Andy's own voice, heard by its own ears, through the voice loop):
+  "安迪，我的眼镜在哪里？" with nothing said in English first: Andy said "好的，现在我说中文。" out loud, looked, pointed and
+  answered in Mandarin ("找到了！我看到您的眼镜……大约1.5米远", 18.5 s); asked again, it doubted the glasses were real,
+  near a monitor ("I only saw a picture of glasses on a screen", the check that skips pictures on a TV), and kept
+  looking: film with them away from screens. "Andy, speak English", in English: it came back, but said so twice;
+  when the request is the switch itself, the turn now makes it and says so once (checked on the robot).
 - **Not yet:** people. The misses here are mostly the model hearing a synthetic voice badly, told nothing; a person
   may be heard better or worse. Someone who isn't understood can still say "Andy, speak Korean".
 

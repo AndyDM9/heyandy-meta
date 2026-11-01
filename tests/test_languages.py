@@ -251,3 +251,16 @@ def test_a_forget_heard_in_another_language_asks_first_and_a_mistranslation_dele
     a.places.watch("wallet")
     a.hear("forget my wallet")
     assert a.places.watching() == []  # in English, said directly, at once as before
+
+
+def test_in_mandarin_andy_speak_english_said_in_english_brings_english_back():
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    andy = Listening("zh")
+    ears = Ears("", "andy speak english")
+    ears.out["cmn_Hans"] = "安迪 斯皮克 英格利"  # told Mandarin, English speech comes out as Mandarin sounds
+    ears.language = "cmn_Hans"
+    ears.out["eng_Latn"] = "andy speak english"
+    text = VoiceLoop(andy)._which_language("安迪 斯皮克 英格利", None, ears)
+    assert text == "andy speak english" and ears.asked[-1] == "eng_Latn"  # heard again in English, for the turn
+    assert andy.switched == []  # the turn's own "speak English" switches, and says so once (on the robot: said twice)

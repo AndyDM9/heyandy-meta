@@ -234,7 +234,7 @@ LETTERS = {"vi": "ăđơưạảấầẩẫậắằẳẵặẹẻẽếềể
            "pt": "ãõ", "es": "ñ¿¡", "fr": "çèœù"}
 EVERYDAY = {  # each language's commonest little words, and what Andy is asked most (where, my, glasses, keys, phone)
     "en": "where are my is the what time have you seen your keys glasses phone remind me please it do i can find "
-          "how thank thanks tell something going out everything",
+          "how thank thanks tell something going out everything speak english",
     "es": "dónde donde están estan mis mi qué que hora es por favor llaves gafas tengo puedes recuérdame has visto "
           "no encuentro encontrar teléfono telefono el los las con para yo tú ayúdame dime",
     "pt": "onde estão meus meu minha minhas não você que horas são chaves óculos celular viu acho encontro "

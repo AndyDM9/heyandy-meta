@@ -144,7 +144,7 @@ class VoiceLoop:
         says so (by hand, in it), and hears the words again in it. A request Andy understood is never asked again, and
         speech that isn't for Andy, in any language, is still dropped (it's only ever heard, never kept)."""
         from ..companion.intents import parse
-        from ..companion.language import LANGUAGES, heard_in
+        from ..companion.language import LANGUAGES, asked_for, heard_in
 
         andy = self.andy
         if not hasattr(andy, "notice_language"):
@@ -160,13 +160,17 @@ class VoiceLoop:
         code = heard_in(other)
         if code is None or code == current or code not in LANGUAGES:
             return text
-        if code == "en" and parse(LATER.sub("", other, count=1)).kind in ("chat", "world"):
-            return text  # back to English only for a request it understands in English
+        back = LATER.sub("", other, count=1)
+        if code == "en" and parse(back).kind in ("chat", "world") and asked_for(back) != "en":
+            return text  # back to English only for a request it understands in English ("speak English" is one)
         if current != "en" and code not in ("en", *OWN_SCRIPT):
             return text  # from one Latin-letter language to another (Spanish, Portuguese, Italian) is too easy to get wrong
+        self.awake_until = self._clock() + self.follow_up_s  # it was called: what follows the name counts
+        if asked_for(back) == code:  # "Andy, speak English" itself: the turn switches and says so, once (not twice)
+            voice.language = LANGUAGES[code].asr
+            return voice.transcribe(utterance)
         andy.notice_language(code)
         voice.language = getattr(andy, "asr_language", "eng_Latn")
-        self.awake_until = self._clock() + self.follow_up_s  # it was called: what follows the name counts
         return voice.transcribe(utterance)  # heard again, told the language now
 
     def _turns(self, turns: queue.Queue, endpointer, stop) -> None:
