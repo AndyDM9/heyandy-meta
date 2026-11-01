@@ -1,6 +1,6 @@
 # Submission text (for the form on November 4)
 
-*About 1,300 words, and 190 more in the table (trimmed on November 1; the longer version is in this file's history). Fill in the
+*About 1,400 words, and 200 more in the table (trimmed on November 1; the longer version is in this file's history). Fill in the
 [brackets] on the day; check every number against `evals/results/` first.*
 
 ---
@@ -32,11 +32,9 @@ keeps what it sees and hears in the house.
 - **In fifteen languages, and it notices which.** Say "安迪，我的眼镜在哪里？" and Andy switches and answers in Mandarin:
   Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
   AI and the crisis reply are written by hand in each language.
-- **The public demo hears you.** Tap 🎙 in Ask Andy: Meta's wav2vec 2.0 runs in your browser, and the phrases the demo
-  knows are scored against the sound (CTC), so "whirl my keith" still finds your keys (7 of 7 on fresh clips).
-- **Andy's eyes, live, in your browser.** The public demo runs DINOv2 for the visitor: show it your mug once, sweep your
-  phone round the room, and a tone gets warmer as you near it; a confident sighting gets a closer look, as on the
-  robot, before the spotlight. Nothing leaves the phone.
+- **The public demo, in your browser, on Meta's models.** Tap 🎙 and wav2vec 2.0 hears you (the demo's phrases scored
+  against the sound, CTC: "whirl my keith" still finds your keys; 7 of 7 fresh clips); or show Andy's eyes (DINOv2) your
+  mug and sweep your phone round the room: warmer, colder, a closer look, the spotlight. Nothing leaves the browser.
 - **Meta's models, live, and under the hood.** The TV shows each model call as it happens and lays out each turn stage
   by stage; that showed the answer waiting for the point, so Andy now answers while pointing, 9.6 s sooner.
 - **It remembers, and doesn't give up.** What you tell it ("my passport is in the top drawer"), where things live ("is
@@ -89,9 +87,9 @@ in 4.6 looks** (fixed sweep 92 of 100 in 7.1). Nothing there: no false finds.
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12, Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture
 reached the cloud** (24 taken); **every word sent was on its turn's receipt**; crisis words reached no model.
-*Languages:* Spanish **41 of 41** written requests reach the right ability, **36 of 41** said aloud and heard back;
-thirteen more (Mandarin to Ukrainian, 104 requests) **104 of 104** and **89**, run again with the rules the first run (100, 85) showed
-were missing; called in one of the fourteen, Andy switched to it 31 times in 42, never to a wrong one.
+*Languages:* written requests reach the right ability, Spanish **41 of 41**, thirteen more **104 of 104** (the first
+run, 100, showed rules missing); said aloud by Andy's voice and heard back, 36 of 41 and 89 of 104; called in one of
+the fourteen, Andy switched to it 31 times in 42, never to a wrong one.
 *Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables);
 sweeping live (a video as the camera, on a CPU): found in both sweeps, at 15 and 34 s; never in 90 frames without it.
 *On the robot, alone in the room:* **112 of 112** unattended searches since the aim fix ended in a point; on the final
@@ -103,13 +101,13 @@ Every result, failures included: `evals/results/` and `docs/research.md`.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations,
 kept in code: a health question gets Andy's own words, by hand in each language, and never reaches a model (held out,
-25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught). Someone who says
-they've fallen hears "please call 911 right away; I'll find your phone", and Andy finds it and points. It says it's an AI at the start of a conversation and every three hours. Crisis words, in any of its fifteen languages,
-get the 988 line from code and reach no other model, checked twice on this computer (a word list, then Llama Guard 3);
-the reply is written by hand in each language (in thirteen: call and ask for an interpreter). Measured in fifteen
-languages: 60 of 60 indirect phrasings, none of 144 everyday requests and trick remarks taken for one; and we publish
-the limit: warning signs said in ways no list has, 16 of 45, all by Muse Glimmer's narrow third look. It never asks for money
-or passwords. Speech that isn't for Andy is dropped, never shown or kept. Model API spend is capped.
+25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught), and Llama Guard 3
+reads each sentence a model writes before Andy says it. It says it's an AI at the start of a conversation and every
+three hours. Crisis words, in any of its fifteen languages, get the 988 line from code and reach no other model, checked
+on this computer (a word list, then Llama Guard 3); the reply is written by hand in each language. Measured: 60 of 60
+indirect phrasings, none of 144 everyday requests and trick remarks taken for one; and we publish the limit: warning
+signs said in ways no list has, 16 of 45, all by Muse Glimmer's narrow third look. Ask **"Hey Andy, what won't you
+do?"** and it says so, with today's receipts on the TV. Speech that isn't for Andy is dropped, never kept.
 
 ## What's next
 

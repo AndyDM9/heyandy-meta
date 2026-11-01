@@ -318,9 +318,11 @@ found, "You're all set", in three sentences.
 ## How it works
 
 ![What runs in the house and what goes to the cloud: the robot and the TV in the room; on the computer beside the
-robot, a crisis check before any model, hearing and speaking, SAM 3.1 and DINOv2 for seeing, Muse Glimmer for
-thinking offline, Andy's checked tools, and the web with Prompt Guard 2; in the cloud, Muse Spark gets words and
-screenshots of web pages asked for, and Muse Image gets words only](docs/images/architecture.svg)
+robot, safety in code around every model (crisis words to 988, a fall to 911 and the phone found, health questions to
+Andy's own words, Llama Guard 3 reading what's said and each answer), hearing and speaking in fifteen languages, SAM
+3.1, DINOv2, MapAnything and V-JEPA 2 for seeing, Muse Glimmer for thinking offline, Andy's checked tools, and the web
+with Prompt Guard 2; in the cloud, Muse Spark gets words and screenshots of web pages asked for, and Muse Image gets
+words only](docs/images/architecture.svg)
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.

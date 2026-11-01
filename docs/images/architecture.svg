@@ -63,26 +63,27 @@
   <text x="374" y="240" class="s">two RTX 3090s · every model here is served on 127.0.0.1 only</text>
 
   <!-- Safety first -->
-  <rect x="374" y="260" width="372" height="118" rx="12" fill="#fff5f5" stroke="#e8b4b4"/>
-  <text x="392" y="290" class="h" style="font-size:18px">Safety first, before any model</text>
-  <text x="392" y="318" class="t">crisis words → the 988 line, from code</text>
-  <text x="392" y="344" class="t">then Llama Guard 3 8B, a second check</text>
-  <text x="392" y="366" class="meta">META OPEN WEIGHTS · GPU 1</text>
+  <rect x="374" y="260" width="372" height="124" rx="12" fill="#fff5f5" stroke="#e8b4b4"/>
+  <text x="392" y="288" class="h" style="font-size:18px">Safety in code, around every model</text>
+  <text x="392" y="311" class="t" style="font-size:15px">crisis words → 988 · a fall → 911, then the phone</text>
+  <text x="392" y="331" class="t" style="font-size:15px">health questions → Andy's own words</text>
+  <text x="392" y="351" class="t" style="font-size:15px">Llama Guard 3 reads what's said, and each answer</text>
+  <text x="392" y="372" class="meta">META OPEN WEIGHTS · GPU 1</text>
 
   <!-- Hearing and speaking -->
-  <rect x="764" y="260" width="372" height="118" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>
+  <rect x="764" y="260" width="372" height="124" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>
   <text x="782" y="290" class="h" style="font-size:18px">Hearing and speaking</text>
-  <text x="782" y="318" class="t">Omnilingual ASR: English, Spanish</text>
-  <text x="782" y="344" class="t">SeamlessM4T v2: Andy's voice</text>
-  <text x="782" y="366" class="meta">META OPEN WEIGHTS · GPU 1 AND 0</text>
+  <text x="782" y="318" class="t">Omnilingual ASR: fifteen languages</text>
+  <text x="782" y="344" class="t">SeamlessM4T v2: Andy's voice in each</text>
+  <text x="782" y="372" class="meta">META OPEN WEIGHTS · GPU 1 AND 0</text>
 
   <!-- Seeing -->
   <rect x="374" y="396" width="372" height="170" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>
   <text x="392" y="426" class="h" style="font-size:18px">Seeing</text>
-  <text x="392" y="454" class="t">SAM 3.1: finds the thing; its mask</text>
-  <text x="392" y="478" class="t">becomes the head's angle, then checked</text>
-  <text x="392" y="504" class="t">Object Multiplex: every cup at once</text>
-  <text x="392" y="530" class="t">DINOv2: "my mug" · MapAnything: how far</text>
+  <text x="392" y="454" class="t">SAM 3.1 finds it; its mask aims the head</text>
+  <text x="392" y="478" class="t">Object Multiplex: every cup at once</text>
+  <text x="392" y="504" class="t">DINOv2: "my mug" · MapAnything: how far</text>
+  <text x="392" y="530" class="t">V-JEPA 2: a watched thing put down</text>
   <text x="392" y="554" class="meta">META OPEN WEIGHTS · GPU 1</text>
 
   <!-- Thinking -->
@@ -90,22 +91,22 @@
   <text x="782" y="426" class="h" style="font-size:18px">Thinking, offline too</text>
   <text x="782" y="454" class="t">Muse Glimmer 30B (llama.cpp):</text>
   <text x="782" y="478" class="t">conversation, search plans offline,</text>
-  <text x="782" y="504" class="t">"is that a picture on a screen?",</text>
-  <text x="782" y="530" class="t">what it sees, Spanish translation</text>
+  <text x="782" y="504" class="t">screens, what it sees, a crisis look,</text>
+  <text x="782" y="530" class="t">translating fourteen languages</text>
   <text x="782" y="554" class="meta">META OPEN WEIGHTS · GPU 0</text>
 
   <!-- Andy's code -->
   <rect x="374" y="584" width="762" height="142" rx="12" fill="#f3f4f6" stroke="#cfd5de"/>
   <text x="392" y="614" class="h" style="font-size:18px">Andy's code: the agent's tools, checked</text>
   <text x="392" y="642" class="t">look · compare · point · follow · keep an eye on · remind · draw · show on the TV</text>
-  <text x="392" y="668" class="t">every argument checked; named views and numbered places, never motor values; ten looks at most</text>
+  <text x="392" y="668" class="t">every argument checked; named views and places, never motor values; ten looks at most</text>
   <text x="392" y="694" class="t">memory in words ("on the desk, behind the keyboard"), never a picture · a hard cap on spend</text>
   <text x="392" y="716" class="s">Andy's words are built from what the tools did, never from a model's guess.</text>
 
   <!-- Web -->
   <rect x="374" y="744" width="762" height="82" rx="12" fill="#f5f8ff" stroke="#b9c8e6"/>
   <text x="392" y="774" class="h" style="font-size:18px">The web on the TV</text>
-  <text x="392" y="800" class="t">a clean browser (no sign-ins); Llama Prompt Guard 2 reads each page; code reviews every click</text>
+  <text x="392" y="800" class="t">a clean browser, no sign-ins; Llama Prompt Guard 2 reads each page; code checks every click</text>
   <text x="392" y="818" class="meta">META OPEN WEIGHTS · GPU 1</text>
 
   <!-- Room arrows -->
