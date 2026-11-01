@@ -11,7 +11,7 @@ from ..agent.tools import COLOURS
 from ..finder.names import KNOWN, snap
 
 THING = r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,38}?)"
-FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|can you see|look for|help me find|lost|misplaced|"
+FIND = re.compile(r"\b(?:where(?:'s| is| are|'re)|find|have you seen|did you see|have you noticed|can you see|look for|help me find|lost|misplaced|"
                   r"(?:look|search|scan)(?: around)?(?: (?:the|this|my) (?:room|house|table|desk))? for)\s+"
                   + THING
                   + r"(?:\s+(?:is|are|went|go|gone))?(?:\?|$|[,.!]| (?:please|for me|now|again))", re.I)
@@ -76,8 +76,13 @@ SELF_CHECK = re.compile(r"\bare you (?:ok|okay|alright|all right|working(?: prop
                         r"\b(?:run |do )?(?:a )?self[- ]?(?:check|test)\b|\bis everything working\b|\bsystem check\b|"
                         r"\bdiagnos(?:e yourself|tics)\b|\b(?:est[aá]s|est[aá]) bien\b|\br[eé]visate\b", re.I)
 IT = {"it", "them", "that", "this", "those", "there", "one", "the thing", "mis cosas"}
-WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)", re.I)
-FORGET = re.compile(r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
+# "keep an eye on my keys"; and, as a command, "watch my wallet", "look after my wallet" (how translations say it)
+WATCH = re.compile(r"\bkeep (?:an )?eye on\s+" + THING + r"(?:\?|$|[,.!]| please)|"
+                   r"^\W*(?:(?:hey |oye )?andy\W+)?(?:please\s+)?(?:watch|look after|keep watch (?:on|over)|guard)\s+"
+                   r"(?=(?:my|our|the)\s)" + THING.replace("(?P<thing>", "(?P<thing2>") + r"(?:\s+for me)?(?:\?|$|[,.!]| please)", re.I)
+# a command only: "did I forget my keys?" and "don't forget my umbrella" must never delete what Andy remembers
+FORGET = re.compile(r"(?<!did i )(?<!have i )(?<!don't )(?<!dont )(?<!do not )(?<!never )(?<!not )(?<!i )(?<!i'll )(?<!we )"
+                    r"\b(?:forget|stop watching)\s+(?:where\s+)?" + THING + r"(?:\s+(?:is|are))?(?:\?|$|[,.!]| please)", re.I)
 DESCRIBE = re.compile(r"\bwhat (?:am i|i'm) holding\b|\bwhat(?:'s| is| do i have)(?: this| that)? in my hands?\b|\bwhat(?:'s| is) this\b(?! (?:song|noise|sound))"
                       r"|\bwhat(?:'s| is) on the (?P<place>table|desk|counter|shelf|floor|sofa|couch|bed|chair)\b"
                       r"|\bwhat (?:can|do) you see\b|\bdescribe what you see\b|\bwhat colou?r is (?:this|it)\b", re.I)
@@ -146,7 +151,9 @@ POINTING = re.compile(r"\bwhat(?:'s| is) that(?: thing| one)?(?: over there| the
 GOING_OUT = re.compile(r"\b(?:i'?m|i am|we'?re|we are) (?:just )?(?:going out|heading out|off out|popping out|leaving(?: now| "
                        r"the house)?(?=\s*(?:[,.!?]|$|for\b|to\b|in\b))|going to the (?:store|shops|supermarket|beach|bank|park|post office|mall)|off to the "
                        r"(?:store|shops|beach|park))\b|\bdo i have everything\b|\bam i forgetting anything\b|"
-                       r"\bhave i got everything\b", re.I)
+                       r"\bhave i got everything\b|"
+                       # "did I forget anything?", "did I forget my keys?": checking what's still here, never "forget"
+                       r"\b(?:did|have) i (?:forget|forgotten|left|leave)(?: (?:anything|something)\b| (?:my|the|our) )", re.I)
 MAP_OF_THINGS = re.compile(r"\b(?:draw|make|paint|show)(?: me| us)? (?:a |the )?(?:map|picture|postcard|drawing) of "
                            r"(?:where )?(?:all )?(?:my|our|the) things\b|\bmap of (?:where )?(?:all )?(?:my|our) things\b", re.I)
 WEB = [re.compile(r"\b(?:show|put|pull up|bring up|open|look up|display|(?:find|get)(?! my\b))\b.{2,120}?\bon (?:the|my|"
@@ -185,7 +192,7 @@ class Intent:
 
 
 def _thing(m: re.Match) -> str:
-    t = m.group("thing").strip().lower()
+    t = (m.group("thing") or m.groupdict().get("thing2") or "").strip().lower()
     return re.sub(r"\b(?:please|now|again)$", "", t).strip()
 
 
@@ -342,6 +349,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
             return Intent("mine", thing=thing, text=t)
     for kind, rx in (("forget", FORGET), ("watch", WATCH), ("follow", FOLLOW), ("last_seen", LAST_SEEN), ("find", FIND)):
         m = rx.search(t)
+        if m and m.groupdict().get("thing2") and _thing(m).split()[-1] not in KNOWN:
+            m = None  # "watch the news": a command to watch only names a thing Andy knows
         if m:
             thing, place = (PLACE.split(_thing(m), maxsplit=1) + [""])[:2]  # "keys in the kitchen": thing, hint
             rest = [w for w in re.findall(r"[a-z']+", (t[:m.start()] + " " + place + " " + t[m.end():]).lower())

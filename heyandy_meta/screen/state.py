@@ -4,11 +4,26 @@ The picture lives only here, in memory, and is dropped after two minutes. Nothin
 """
 import base64
 import datetime as dt
+import json
+import re
 import threading
 import time
 from dataclasses import dataclass, field, replace
+from functools import lru_cache
+from importlib.resources import files
 
 from ..finder.search import Found
+
+
+@lru_cache(maxsize=1)
+def chrome_words() -> tuple[str, ...]:
+    """The TV's own labels (page.html's Spanish table, its English side, and WORDS): for the other languages, translated by
+    Glimmer once in the background (companion/language.py TVWords) and sent with the state, as each is done."""
+    html = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    a, w = html.index("const ES = {"), html.index("const WORDS = [")
+    keys = re.findall(r'"((?:[^"\\]|\\.)+)"\s*:', html[a:html.index("};", a)])
+    more = re.findall(r'"((?:[^"\\]|\\.)+)"', html[w:html.index("];", w)])
+    return tuple(dict.fromkeys(json.loads('"' + k + '"') for k in keys + more))
 
 PICTURE_SECONDS = 120
 GUIDE_SECONDS = 20  # a guided hand's last frame stays this long without a new one
@@ -483,6 +498,8 @@ class ScreenState:
             out["guide"] = {"v": self.guides, "src": "data:image/jpeg;base64," + base64.b64encode(g["jpeg"]).decode(),
                             **{k: v for k, v in g.items() if k not in ("jpeg", "until")}} if g else None
             out["lang"] = self.lang
+            if self.lang not in ("en", "es") and self.words is not None:  # the TV's own labels, as translated so far
+                out["chrome"] = {k: v for k in chrome_words() if (v := self.words(k)) != k}
             out["hood"] = self._clock() < self._hood_until  # the TV opens /hood while this is on
             out["filming"] = self._filming
             out["flash"] = {"text": self._flash[0], "v": self.flashes} if self._flash and self._clock() < self._flash[1] else None

@@ -798,10 +798,19 @@ class Andy:
 
     def _tv_language(self) -> None:
         """The TV follows: its labels (page.html) and Andy's own words on it (translated in the background)."""
-        self.screen.language = "Español · en esta computadora" if self.language == "es" else ""
+        lang = LANGUAGES[self.language]
+        self.screen.language = f"{lang.native} · {lang.here}" if self.language != "en" else ""
         self.screen.lang = self.language
         if self.language != "en" and self.translator is not None and getattr(self.screen.words, "language", "") != self.language:
             self.screen.words = TVWords(self.translator, self.language)
+
+    def _tv(self, english: str, spanish: str) -> str:
+        """A line for the TV in the person's language: Spanish as written, others translated in the background."""
+        if self.language == "en":
+            return english
+        if self.language == "es":
+            return spanish
+        return self.screen.words(english) if self.screen.words else english
 
     def set_language(self, to: str) -> str:
         """"Andy, habla español" / "speak English": hearing, voice and captions switch, and it's remembered."""
@@ -810,15 +819,15 @@ class Andy:
         if self.voice is not None:
             self._own_voice  # noqa: B018 - the voice it was started with, remembered before the first switch
         if to == self.language:
-            return "Okay." if to == "en" else "I'm already speaking Spanish."
+            return "Okay." if to == "en" else f"I'm already speaking {LANGUAGES[to].name}."
         self.language = to
         if self.voice is not None:
             self.voice.voice = LANGUAGES[to].voice if to != "en" else self._own_voice
-        self.screen.notice("Español" if to == "es" else "English")
+        self.screen.notice(LANGUAGES[to].native or "English")
         self._tv_language()
         self.save_voice()
         self._source, self._reason = "device", "hearing and speaking switched, on this computer"
-        return "Okay, I'll speak Spanish now." if to == "es" else "Okay, I'll speak English now."
+        return f"Okay, I'll speak {LANGUAGES[to].name} now."  # said in it, by hand (companion/languages.py)
 
     def save_voice(self) -> None:
         path = self.places.path.parent / "voice.json"
@@ -2059,9 +2068,9 @@ class Andy:
         if seen["kind"] == "put":
             for label, mask in seen.get("masks", {}).items():
                 self._note_place(label, seen["frame"], mask)
-            self.screen.notice(f"Noticed: {names}, put down" if self.language == "en" else f"Visto: {names}, dejado")
+            self.screen.notice(self._tv(f"Noticed: {names}, put down", f"Visto: {names}, dejado"))
         else:
-            self.screen.notice(f"Noticed: {names}, picked up" if self.language == "en" else f"Visto: {names}, recogido")
+            self.screen.notice(self._tv(f"Noticed: {names}, picked up", f"Visto: {names}, recogido"))
         seen.pop("frame", None)
         self.chime("noticed")
         self.screen.used("V-JEPA 2 (noticing)", "device")

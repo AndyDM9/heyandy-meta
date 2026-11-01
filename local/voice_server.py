@@ -17,7 +17,8 @@ POST /transcribe  body: float32 little-endian mono samples; headers X-Sample-Rat
                   (Omnilingual ASR's code, default eng_Latn; spa_Latn for Spanish)
   -> {"text": "where are my glasses", "seconds": 0.04}
 POST /speak       {"text": "I see your glasses.", "voice": "eng", "rate": 16000, "speed": 1.0, "loudness": -21}
-                  The voice is the language, eng or spa (the old mms-eng and mms-spa still work).
+                  The voice is the language: eng, spa, or any of the 36 SeamlessM4T v2 speaks (fra, rus, cmn, vie,
+                  ...); the old mms-eng and mms-spa still work.
   -> body: float32 little-endian mono samples at "rate" (default 16000, MMS-TTS's own); headers X-Sample-Rate, X-Seconds
 """
 import argparse
@@ -38,6 +39,9 @@ from heyandy_meta.voice.spoken import phrases, words  # noqa: E402
 
 MAX_SECONDS = 30  # Omnilingual ASR's CTC models take clips under 40 s
 VOICE = "eng"
+# The languages SeamlessM4T v2 speaks (its model card's speech output): Andy's voice in any of them
+SPEECH = set("arb ben cat ces cmn cym dan deu eng est fin fra hin ind ita jpn kor mlt nld pes pol por ron rus slk spa swe "
+             "swh tel tgl tha tur ukr urd uzn vie".split())
 TTS_RATE = 16000  # both Seamless and MMS-TTS speak at 16 kHz
 SEAMLESS = "facebook/seamless-m4t-v2-large"
 # Its tokenizer, saved once by scripts/setup-local-models.sh: loaded offline from the hub cache, it turned every word into
@@ -108,13 +112,18 @@ def load(asr_card: str, tts_device: str = "cuda:1", speaker: int = 0, voice_mode
         return np.concatenate(out) if out else np.zeros(0, np.float32)
 
     def tts(text, voice, speed):
-        """Andy's voice in the language asked for (eng or spa): 16 kHz samples."""
-        lang = "spa" if voice.endswith("spa") else "eng"
+        """Andy's voice in the language asked for (eng, spa, or any SeamlessM4T v2 speaks): 16 kHz samples."""
+        lang = voice.removeprefix("mms-")
+        if lang not in SPEECH:
+            raise LookupError(f"no voice for {voice!r}: one of {' '.join(sorted(SPEECH))}")
         with torch.inference_mode():
             if seamless is None or voice.startswith("mms"):
+                if lang not in ("eng", "spa"):
+                    raise LookupError(f"MMS-TTS speaks only eng and spa here, not {lang}")
                 return clearer(mms(text, lang, speed), speed)
             processor, model = seamless
-            said = words(text, "es" if lang == "spa" else "en")
+            # numbers and times in words: for English and Spanish here; the other languages' words come translated
+            said = words(text, "es" if lang == "spa" else "en") if lang in ("eng", "spa") else text
             inputs = processor(text=said, src_lang=lang, return_tensors="pt").to(tts_device)
             with torch.cuda.device(tts_device):  # each request is a new thread, whose current GPU would be the first
                 audio = model.generate(**inputs, tgt_lang=lang, speaker_id=speaker)[0].float().cpu().numpy().squeeze()

@@ -7,6 +7,7 @@ published in docs/crisis-protocol.md.
 """
 import re
 import time
+import unicodedata
 
 DISCLOSURE = "I'm Andy, an AI robot."
 EVERY_S = 3 * 3600
@@ -31,9 +32,42 @@ CRISIS = re.compile(
     re.IGNORECASE)
 
 
+# The other languages Andy speaks (companion/languages.py), by hand, checked on the person's own words before any
+# model reads them (the translator too). Matched anywhere in the words, not as whole words: Chinese has no spaces,
+# Korean and Arabic join small words on, and Russian, Ukrainian and Polish change their endings. Only phrases that
+# mean harming oneself; a figure of speech ("I could die of boredom") may get the crisis reply, which is the safe way
+# to be wrong. A native speaker should read each list (docs/research.md, 54).
+CRISIS_MORE = {
+    "zh": "自杀|自殺|轻生|輕生|寻死|尋死|想死|不想活|活不下去|结束生命|結束生命|结束自己的生命|了结自己|了結自己|伤害自己|傷害自己",
+    "tl": "magpakamatay|nagpapakamatay|papatayin ko ang sarili|patayin ang sarili ko|gusto ko nang mamatay|"
+          "gusto kong mamatay|ayoko nang mabuhay|ayaw ko nang mabuhay|saktan ang sarili ko|wakasan ang buhay ko",
+    "vi": "tự tử|tự sát|muốn chết|không muốn sống|kết liễu đời|tự làm hại bản thân|tự hại mình",
+    "ko": "자살|죽고 싶|죽고싶|살고 싶지 않|살기 싫|목숨을 끊|삶을 끝내|자해",
+    "ru": "самоубий|суицид|покончить с собой|покончу с собой|убить себя|убью себя|хочу умереть|не хочу жить|"
+          "жить не хочу|не хочу больше жить|свести сч[её]ты с жизнью|причинить себе вред|лучше бы я умер",
+    "ar": "انتحار|أنتحر|انتحر|أقتل نفسي|اقتل نفسي|أريد أن أموت|اريد ان اموت|أريد الموت|اريد الموت|لا أريد أن أعيش|"
+          "لا اريد ان اعيش|أنهي حياتي|انهي حياتي|أؤذي نفسي|اؤذي نفسي",
+    "hi": "आत्महत्या|ख़ुदकुशी|खुदकुशी|मरना चाहता|मरना चाहती|जीना नहीं चाहता|जीना नहीं चाहती|ख़ुद को मार|खुद को मार|"
+          "अपनी जान ले|ख़ुद को नुक़सान|खुद को नुकसान",
+    "pt": "suicid|me matar|matar-me|tirar a minha vida|tirar minha vida|tirar minha própria vida|quero morrer|"
+          "não quero mais viver|não quero viver|acabar com a minha vida|acabar com minha vida|me machucar",
+    "fr": "suicid|me tuer|en finir avec la vie|mettre fin à mes jours|mettre fin à ma vie|je veux mourir|"
+          "envie de mourir|je ne veux plus vivre|me faire du mal",
+    "it": "suicid|uccidermi|ammazzarmi|togliermi la vita|farla finita|voglio morire|non voglio più vivere|farmi del male",
+    "pl": "samobój|zabić się|zabiję się|odebrać sobie życie|chcę umrzeć|nie chcę żyć|nie chcę już żyć|"
+          "zrobić sobie krzywdę|skrzywdzić siebie",
+    "de": "selbstmord|suizid|mich umbringen|mir das leben nehmen|will sterben|will nicht mehr leben|"
+          "nicht mehr leben will|mir etwas antun|mich selbst verletzen|lebensmüde",
+    "uk": "самогубств|суїцид|покінчити з собою|покінчу з собою|вбити себе|уб'ю себе|хочу померти|не хочу жити|"
+          "жити не хочу|звести рахунки з життям|заподіяти собі шкоду",
+}
+CRISIS_ANY = re.compile("|".join(CRISIS_MORE.values()), re.IGNORECASE)
+
+
 def crisis(text: str) -> bool:
-    t = (text or "").replace("\u2019", "'").replace("\u2018", "'")  # speech-to-text and keyboards write ’ too
-    return bool(CRISIS.search(t))
+    t = unicodedata.normalize("NFC", text or "")  # one way to write "ế", whichever the keyboard or hearing used
+    t = t.replace("\u2019", "'").replace("\u2018", "'")  # speech-to-text and keyboards write ’ too
+    return bool(CRISIS.search(t) or CRISIS_ANY.search(t))
 
 
 class Disclosure:
