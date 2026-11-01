@@ -34,6 +34,7 @@ from .companion.reminders import Reminders, spoken_time
 from .companion.selfcheck import check as self_check, summary as self_summary
 from .companion.sound import apart, fan, reading, turn_to, wait_for
 from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
+
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
 from .finder.search import Finder, Found, Segmenter
@@ -61,6 +62,9 @@ REFINE_WITHIN_S = 10 * 60  # "make it sunset" changes the last picture, for ten 
 # A chat model claiming an action only the robot's own code takes (it set nothing; Andy's code would have said so).
 CLAIMS = re.compile(r"\b(?:i'?ll|i will|i'?ve|i have|i'?m going to|got it[,.]? i'?ll)\s+(?:\w+\s+){0,2}?"
                     r"(?:remind|set (?:a|the|your)|keep an eye|watch|look for|find|found|search|point)\b", re.I)
+# The translator declining to translate, as Glimmer puts it in English ("I can't translate that."): crisis words only
+REFUSED = re.compile(r"^\W*(?:I'?m sorry,?\s*(?:but\s*)?)?I\s+(?:can'?t|cannot|won'?t|am unable to|'m unable to)\s+"
+                     r"(?:translate|help|assist|provide|do)\b", re.IGNORECASE)
 AGAIN = re.compile(r"^\W*(?:yes|yeah|yep|sure|ok(?:ay)?|again|one more|let'?s go|go on|why not)"
                    r"(?:\W+(?:please|again|one more|let'?s go|let'?s play|why not|sure|yes|go))*\W*$", re.I)  # not "okay thanks"
 HISTORY_TURNS, HISTORY_FORGET_S = 4, 30 * 60  # a conversation: its last few exchanges, forgotten after 30 quiet minutes
@@ -138,6 +142,7 @@ class Andy:
         self.cup_score = [0, 0]  # Andy, the person: this session's cup games, in memory only
         self._again_until = 0.0  # Andy just asked "again?" after a cup game
         self._offered: tuple | None = None  # (thing, when, yaw, pitch): Andy offered to keep an eye on it
+        self._to_forget: tuple | None = None  # (thing, when): asked "shall I forget it?", heard in another language
         self.language = "en"  # "es": Andy hears and speaks Spanish (companion/language.py)
         self.translator = None  # Muse Glimmer on this computer, translating; set where Glimmer runs
         self.guard = None  # Llama Guard 3 on this computer: the second crisis check (companion/safety_model.py)
@@ -173,6 +178,7 @@ class Andy:
         self._noticing: threading.Event | None = None  # set by a turn while a noticing clip holds the head still
         self._notice_lock = threading.Lock()
         self.refresh_panels()  # last: the panels read the language and the rest set above
+
 
     # --- a turn ---
 
@@ -214,7 +220,13 @@ class Andy:
             if self.guard is not None:
                 self.screen.used("Llama Guard 3 (safety check)", "device")
             if not flagged and self.language != "en" and self.translator is not None and not crisis(text):
-                text = self.translator.to_english(text, self.language)  # the rules and tools work in English
+                said, text = text, self.translator.to_english(text, self.language)  # the rules and tools work in English
+                if REFUSED.search(text) and not REFUSED.search(said):
+                    # Glimmer translated 618 everyday requests and never refused one; it refused only crisis words
+                    # ("I don't want to wake up tomorrow" in Korean, Arabic, Polish): a refusal gets the crisis reply
+                    flagged = True
+                elif self.guard is not None and not crisis(text) and self.guard.self_harm(text):
+                    flagged = True  # Llama Guard 3 knows English best: the translation is read too, before any answer
             if self.clock() - self._last_turn > HISTORY_FORGET_S:
                 self.history = []  # a new conversation
             self._last_turn = self.clock()
@@ -312,11 +324,28 @@ class Andy:
         self.screen.keeping(self._memory(), self._memory_map())
         self.screen.looking_out([{"thing": t, "since": self.lost.since(t), "looks": self.lost.looks(t)} for t in self.lost.looking()])
 
+    def _remembers(self, thing: str) -> bool:
+        return (thing in self.places.watching() or self.places.last_seen(thing) is not None
+                or self.told.latest(thing) is not None or self.mine.knows(thing))
+
+    def _forget(self, thing: str) -> str:
+        self.places.forget(thing)
+        self.told.forget(thing)
+        by_sight = self.mine.forget(thing)
+        self.screen.remember_list(self._memory())
+        return f"I've forgotten your {thing}" + (", and what it looks like." if by_sight else ".")
+
     def _answer(self, text: str) -> str:
         if self._setup and self.clock() - self._setup["at"] <= SETUP_WAIT_S:  # the person answering the setup's step
             said = self._setup_step(text)
             if said is not None:
                 return said
+        to_forget, self._to_forget = self._to_forget, None  # "Shall I forget your keys?" (asked in another language)
+        if to_forget and self.clock() - to_forget[1] <= ANSWER_WITHIN_S:
+            if AGAIN.match(text) or re.match(r"^\W*(?:yes\W+)?(?:please do|go ahead|do it|forget (?:it|them))\W*$", text, re.I):
+                return self._forget(to_forget[0])
+            if re.match(r"^\W*(?:no|nope|don'?t|keep (?:it|them))\b", text, re.I):
+                return f"Okay, I'll keep remembering your {to_forget[0]}."
         offered, self._offered = self._offered, None
         if offered and self.clock() - offered[1] <= ANSWER_WITHIN_S:
             thing, _, yaw, pitch = offered
@@ -407,11 +436,13 @@ class Andy:
             return (f"I'll keep an eye on your {i.thing}. I only remember where I last saw {_it(i.thing)}, "
                     f"never a picture. Say 'forget my {i.thing}' to stop.")
         if i.kind == "forget":
-            self.places.forget(i.thing)
-            self.told.forget(i.thing)
-            by_sight = self.mine.forget(i.thing)
-            self.screen.remember_list(self._memory())
-            return f"I've forgotten your {i.thing}" + (", and what it looks like." if by_sight else ".")
+            if self.language != "en":  # heard in another language and translated: a mistranslation mustn't delete
+                # (Glimmer put Korean and Hindi "I've given away my things..." as "forget my things", Nov 1)
+                if not self._remembers(i.thing):
+                    return f"I'm not keeping anything about your {i.thing}, so there's nothing to forget."
+                self._to_forget = (i.thing, self.clock())
+                return f"Shall I forget your {i.thing}? Say yes and I will."
+            return self._forget(i.thing)
         if i.kind == "mine":
             return self.learn_mine(i.thing)
         if i.kind == "remember":

@@ -62,3 +62,54 @@ def test_llama_guard_down_means_the_word_list_alone():
 def test_llama_guard_runs_only_here():
     with pytest.raises(ValueError):
         LlamaGuard("https://api.example.com")
+
+
+class Translating:
+    """Glimmer as the translator, from a table (what isn't in it comes back as it went in)."""
+
+    def __init__(self, table):
+        self.table, self.asked = table, []
+
+    def to_english(self, text, language):
+        self.asked.append(text)
+        return self.table.get(text, text)
+
+    def spoken(self, text, language, disclosure, crisis):
+        return LANGUAGES[language].crisis if text == crisis else text
+
+
+def test_a_translator_that_wont_translate_gets_the_crisis_reply_in_the_persons_language(tmp_path):
+    """Glimmer translated 618 everyday requests and refused none; it refused "I don't want to wake up tomorrow" in
+    Korean, Arabic and Polish (evals/crisis_languages.py). A refusal is answered as a crisis, in the language, by hand."""
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.translator, a.guard = Translating({"내일 다시 깨어나고 싶지 않아요.": "I can't translate that."}), Guard()
+    a.language = "ko"
+    a.hear("내일 다시 깨어나고 싶지 않아요.")
+    said = [e[1] for e in body.log if e[0] == "say"]
+    assert said[-1] == LANGUAGES["ko"].crisis
+
+
+def test_llama_guard_reads_the_translation_too(tmp_path):
+    english = "When I'm gone, nobody will have to look after me any more."  # in no word list
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.translator, a.guard = Translating({"내가 떠나면 더 이상 아무도 나를 돌볼 필요가 없을 거예요.": english}), Guard([english])
+    a.language = "ko"
+    a.hear("내가 떠나면 더 이상 아무도 나를 돌볼 필요가 없을 거예요.")
+    assert [e[1] for e in body.log if e[0] == "say"][-1] == LANGUAGES["ko"].crisis
+    assert a.guard.asked == ["내가 떠나면 더 이상 아무도 나를 돌볼 필요가 없을 거예요.", english]  # the words, then the translation
+
+
+@pytest.mark.parametrize("said,sign", [
+    ("I'm putting my pills away for when I'm ready.", True), ("I am saving the medicine until I am ready.", True),
+    ("When I'm ready, I'm saving up medicine to eat.", True), ("I put the pills off until the day I'm ready.", True),
+    ("I’m saving up my medicines for when I’m ready.", True), ("Everyone would live better without me.", True),
+    ("It's better for everyone if I'm gone.", True), ("If I weren't here, everyone would live better.", True),
+    # what a home says every day, and must never be taken for a crisis
+    ("Remind me to take my pills when I'm ready for bed", False), ("Keep an eye on my pills until I'm ready to take them", False),
+    ("Where are my pills?", False), ("Put my pills on the shelf, I'm ready to go", False),
+    ("I saved my receipts for when I'm ready to file taxes", False), ("It would be better if I was there early", False),
+    ("everyone is better at cooking than me", False)])
+def test_warning_signs_said_another_way_and_everyday_words_that_arent(said, sign):
+    from heyandy_meta.companion.safety import crisis
+
+    assert crisis(said) is sign

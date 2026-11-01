@@ -62,12 +62,33 @@ CRISIS_MORE = {
           "жити не хочу|звести рахунки з життям|заподіяти собі шкоду",
 }
 CRISIS_ANY = re.compile("|".join(CRISIS_MORE.values()), re.IGNORECASE)
+# Warning signs said another way, in English: on the person's words, and on every translation into English, which is
+# how most of Andy's languages reach this check. Measured (evals/crisis_languages.py, November 1): a translation of
+# "I've been saving my pills for when I'm ready" came back in a dozen wordings ("putting the pills aside until I am
+# ready", "collecting my medicines for the day I'm ready") and "everyone would be better off without me" as "would live
+# better without me", "better for everyone if I'm gone". Never "take my pills", never "ready for bed".
+PILLS = r"(?:pills?|tablets?|medicines?|medications?|meds)"
+READY = r"(?:I'?m|I am|I'?ll be|I will be|I'?d be) ready\b(?!\s+(?:to|for)\b)"
+CRISIS_SIGNS = re.compile(
+    r"\b(?:sav|collect|gather|hoard|stockpil|stash|accumulat)\w*\b[^.?!]{0,30}\b" + PILLS + r"\b[^.?!]{0,45}\b" + READY +
+    r"|\b" + READY + r"[^.?!]{0,30}\b(?:sav|collect|gather|hoard|stockpil|stash|accumulat)\w*\b[^.?!]{0,30}\b" + PILLS + r"\b"
+    r"|\b(?:put|putting|set|setting)\b[^.?!]{0,25}\b" + PILLS + r"\b[^.?!]{0,15}\b(?:aside|away|off)\b[^.?!]{0,40}\b" + READY +
+    r"|\b(?:everyone|everybody|they|my family|all of you|people)\b[^.?!]{0,40}\b(?:better|happier)\b[^.?!]{0,25}\bwithout me\b"
+    r"|\bbetter\b[^.?!]{0,30}\bif I(?:'m| am| was| were)? (?:gone|dead|not here|not around)\b"
+    r"|\bif I (?:weren'?t|wasn'?t|were not|was not) (?:here|around|alive)\b[^.?!]{0,40}\b(?:better|happier)\b"
+    # three of the warning signs the 988 Lifeline lists ("know the signs"): being a burden to others, giving away
+    # possessions, wanting to sleep forever. Said as a plan, not a passing remark: "I could sleep forever" isn't one.
+    r"|\b(?:won'?t|will not|not going to|no longer) be a burden\b|\bbe a burden to no ?one\b"
+    r"|\b(?:(?:gave|given|giving|give) (?:away|out)|distribut\w*|handed out)\b[^.?!]{0,35}\b(?:things|stuff|belongings|"
+    r"possessions|everything)\b[^.?!]{0,45}\b(?:won'?t|will not|no longer|not going to|don'?t) need\b"
+    r"|\b(?:want|wish|'d like|would like|longing) to (?:sleep|fall asleep|go to sleep) (?:forever|for good|and (?:not|never) wake)",
+    re.IGNORECASE)
 
 
 def crisis(text: str) -> bool:
     t = unicodedata.normalize("NFC", text or "")  # one way to write "ế", whichever the keyboard or hearing used
     t = t.replace("\u2019", "'").replace("\u2018", "'")  # speech-to-text and keyboards write ’ too
-    return bool(CRISIS.search(t) or CRISIS_ANY.search(t))
+    return bool(CRISIS.search(t) or CRISIS_ANY.search(t) or CRISIS_SIGNS.search(t))
 
 
 class Disclosure:

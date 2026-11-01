@@ -230,3 +230,24 @@ def test_noticing_a_language_says_so_by_hand_in_it(tmp_path):
     a.notice_language("zh")
     said = [e[1] for e in body.log if e[0] == "say"]
     assert a.language == "zh" and said == [PHRASES["zh"]["Okay, I'll speak Chinese now."]] and a.translator.asked == []
+
+
+def test_a_forget_heard_in_another_language_asks_first_and_a_mistranslation_deletes_nothing(tmp_path):
+    """Glimmer put Korean "I've given away my things because I won't need them" as "forget my things" (Nov 1): in
+    another language, forgetting asks first, and only what Andy remembers can be forgotten at all."""
+    table = {"열쇠는 잊어버려": "forget my keys", "네": "Yes.", "물건들을 다 나눠 줬어요": "forget my things"}
+    a, body, _ = andy(Thing("glasses", -48.0, 22.0), tmp_path=tmp_path)
+    a.translator, a.voice = Glimmer(table), SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
+    a.places.watch("keys")
+    a.language = "ko"
+    a.hear("물건들을 다 나눠 줬어요")
+    said = [e[1] for e in body.log if e[0] == "say"]
+    assert "nothing to forget" in said[-1] and a.places.watching() == ["keys"]  # nothing called "things": nothing deleted
+    a.hear("열쇠는 잊어버려")
+    assert a.places.watching() == ["keys"]  # asked, not done
+    a.hear("네")
+    assert a.places.watching() == []  # the yes forgets
+    a.language = "en"
+    a.places.watch("wallet")
+    a.hear("forget my wallet")
+    assert a.places.watching() == []  # in English, said directly, at once as before

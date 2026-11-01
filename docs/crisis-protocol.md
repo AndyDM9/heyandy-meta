@@ -26,7 +26,9 @@ Portuguese, French, Italian, Polish, German and Ukrainian. In each of them:
 - The crisis words are caught **in that language**, by the word list in code, before any model sees them
   (`companion/safety.py`). Then Llama Guard 3 reads the person's own words (it was trained for seven of them: English,
   Spanish, French, German, Hindi, Italian and Portuguese; in the other eight the word list is the check to rely on).
-  Only then does Muse Glimmer translate the words into English, on this computer, and the English word list checks the translation too.
+  Only then does Muse Glimmer translate the words into English, on this computer, and the English word list and
+  Llama Guard 3 check the translation too, before any answer is made. If the translator declines to translate (it
+  translated 618 everyday requests and declined none; it declined only crisis words), that is answered as a crisis.
 - The reply is **written by hand** in that language, never translated by a model. 988 answers calls in more than 240
   languages through interpreters, but its texts and chat are in English and Spanish only. So the Spanish reply says
   988 has help in Spanish, and in the other thirteen it says to call 988 and ask for an interpreter in that language.
@@ -36,6 +38,19 @@ Portuguese, French, Italian, Polish, German and Ukrainian. In each of them:
   (it switches when it's sure, which is about three times in four with its own voice; a wrong guess is avoided rather
   than risked).
 - A native speaker should read each language's hand-written lines before a home relies on them.
+
+## What the checks catch, and what they don't
+The English word list also holds warning signs said another way, on the person's words and on every translation:
+saving up pills "for when I'm ready", "everyone would be better without me", and three signs from the 988 Lifeline's
+own list (talking about being a burden, giving away possessions, wanting to sleep forever), written narrowly so that
+"remind me to take my pills when I'm ready for bed" or "I could sleep forever" don't count. Measured
+(`evals/crisis_languages.py`, fifteen languages, sentences written by hand for the test):
+- four indirect phrasings in each language: **60 of 60** caught (38 with the checks Andy had before November 1);
+- the 104 everyday requests of the languages scorecard: **none** taken for a crisis;
+- **a limit we measured, not a guess:** three other warning signs nobody wrote into the lists (goodbye letters,
+  "there's no way out for me", "I won't be around much longer"), in all fifteen languages: **none of 45** caught, by
+  the word lists or by Llama Guard 3, in English too. The checks catch what they were written for and what Llama
+  Guard recognises; a sign said in a new way can pass. Andy never counsels, and it isn't a safety device.
 
 ## What Andy never does
 - It never gives medical, medication or mental-health advice. Reminders repeat the person's own words.
