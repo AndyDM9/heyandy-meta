@@ -26,6 +26,11 @@ Built on Meta's models for people who live at home, starting with older adults, 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
 **In 30 seconds:**
+- **Who it's for.** Three in four adults 50 and older want to stay in their own homes as they age
+  ([AARP, 2024](https://www.aarp.org/press/releases/2024-12-10-new-aarp-report-majority-adults-50-plus-age-place-policies-communities-catch-up.html)),
+  and a quarter of Americans 65 and older live alone
+  ([Pew Research, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/)):
+  when the glasses go missing, there's no one to ask. Andy is someone to ask, and it can show you.
 - **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
   its camera, and says where, from where you stand. *112 of 112 unattended searches on the robot ended in a point.*
 - **It speaks your language.** Fifteen of them, and it notices which one it's called in: "安迪，我的眼镜在哪里？" gets

@@ -14,8 +14,10 @@ this repository). **Everything below was built this week, on Meta's models. Ever
 
 ## The problem
 
-People who live at home lose the same few things every day: glasses, keys, the phone, the remote, and many of them
-speak another language first. A phone app can't look for them, and a camera that streams the living room to the cloud
+Three in four adults 50 and older want to stay in their own homes as they age (AARP, 2024), and a quarter of Americans
+65 and older live alone (Pew Research, 2025): when the glasses go missing, there's no one to ask "have you seen my
+glasses?". People who live at home lose the same few things every day: glasses, keys, the phone, the remote, and many
+of them speak another language first. A phone app can't look for them, and a camera that streams the living room to the cloud
 is a camera most people won't have. Andy sits on the table, looks around the room for you, points at the thing, and
 keeps what it sees and hears in the house.
 
