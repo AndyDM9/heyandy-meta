@@ -15,6 +15,11 @@ NVIDIA RTX 3090s, 24 GB each), with no inference provider.
 | **MapAnything** (`facebook/map-anything-apache`; Apache-2.0) | GPU 1 (`local/depth_server.py`) | How far away a found thing is, from one camera frame; the room in 3D from five looks (`/scan`); the TV's floor plan of watched things |
 | **V-JEPA 2** (`facebook/vjepa2-vitl-fpc16-256-ssv2`; MIT) | GPU 1 (`local/sam_server.py` `/action`, loaded on first use, about 0.8 GB) | Notices a watched thing put down or picked up: a 4-second clip of where something moved, judged by Meta's video world model (its Something-Something v2 head) |
 
+**In the public demo, in the visitor's own browser** (transformers.js; nothing they show or say leaves it): **DINOv2**
+(with registers, small; `onnx-community/dinov2-with-registers-small`, 8-bit) finds their own things in a photo or a
+live sweep of the camera; **wav2vec 2.0** (`facebook/wav2vec2-base-960h`, Apache-2.0, as `Xenova/wav2vec2-base-960h`,
+8-bit) hears "Say it", the demo's phrases decoded against the sound by CTC (`docs/research.md` sections 53, 56, 60).
+
 Every model Andy runs is Meta's. Llama Guard 3 and Llama Prompt Guard 2: **Built with Llama**.
 
 **Muse Spark 1.3** and **Muse Image 1.0** (Model API) are used only when online: Muse Spark gets words (planning a search
