@@ -1,0 +1,862 @@
+{
+ "when": "2026-11-01 11:53",
+ "summary": {
+  "sweeps with our cup": 2,
+  "found it": 2,
+  "seconds to 'There's your cup'": [
+   14.9,
+   34.4
+  ],
+  "sweeps without it": 2,
+  "said found without it": 0,
+  "most alike, without it": 0.743,
+  "closer looks without it": 0,
+  "frames": 129,
+  "seconds a frame, median": 1.04,
+  "device": "cpu",
+  "script errors": 0
+ },
+ "camera": "a video, 640x360, 10 frames a second, 8 s a picture",
+ "photos": "The Metropolitan Museum of Art, Open Access (CC0); screen/eyes/CREDITS.txt",
+ "runs": [
+  {
+   "found_s": 14.9,
+   "said": "There's your cup.",
+   "why": "83% like the one you showed me, 90% in colour (Andy says \"found\" from 82% alike and 75% in colour).",
+   "device": "cpu",
+   "frames": [
+    {
+     "at": 1217,
+     "whole": 0.715,
+     "colour": 0.796,
+     "says": "maybe"
+    },
+    {
+     "at": 2115,
+     "whole": 0.69,
+     "colour": 0.756,
+     "says": "maybe"
+    },
+    {
+     "at": 2889,
+     "whole": 0.56,
+     "colour": 0.812,
+     "says": "none"
+    },
+    {
+     "at": 3945,
+     "whole": 0.428,
+     "colour": 0.631,
+     "says": "none"
+    },
+    {
+     "at": 5016,
+     "whole": 0.485,
+     "colour": 0.616,
+     "says": "none"
+    },
+    {
+     "at": 6060,
+     "whole": 0.428,
+     "colour": 0.631,
+     "says": "none"
+    },
+    {
+     "at": 7099,
+     "whole": 0.701,
+     "colour": 0.759,
+     "says": "maybe"
+    },
+    {
+     "at": 8162,
+     "whole": 0.643,
+     "colour": 0.778,
+     "says": "maybe"
+    },
+    {
+     "at": 9253,
+     "whole": 0.669,
+     "colour": 0.699,
+     "says": "maybe"
+    },
+    {
+     "at": 10134,
+     "whole": 0.692,
+     "colour": 0.756,
+     "says": "maybe"
+    },
+    {
+     "at": 11126,
+     "whole": 0.748,
+     "colour": 0.765,
+     "says": "maybe"
+    },
+    {
+     "at": 12193,
+     "whole": 0.82,
+     "colour": 0.877,
+     "says": "maybe"
+    }
+   ],
+   "closer": [
+    {
+     "at": 14732,
+     "closer": 0.832,
+     "says": "found"
+    }
+   ],
+   "errors": [],
+   "sweep": "wide",
+   "cup": "with"
+  },
+  {
+   "found_s": null,
+   "said": "Sweep slowly around the room. I'm looking for your cup.",
+   "why": "",
+   "device": "cpu",
+   "frames": [
+    {
+     "at": 1187,
+     "whole": 0.715,
+     "colour": 0.796,
+     "says": "maybe"
+    },
+    {
+     "at": 2268,
+     "whole": 0.731,
+     "colour": 0.805,
+     "says": "maybe"
+    },
+    {
+     "at": 3095,
+     "whole": 0.666,
+     "colour": 0.808,
+     "says": "maybe"
+    },
+    {
+     "at": 3893,
+     "whole": 0.681,
+     "colour": 0.843,
+     "says": "maybe"
+    },
+    {
+     "at": 4937,
+     "whole": 0.512,
+     "colour": 0.588,
+     "says": "none"
+    },
+    {
+     "at": 5711,
+     "whole": 0.676,
+     "colour": 0.863,
+     "says": "maybe"
+    },
+    {
+     "at": 6536,
+     "whole": 0.666,
+     "colour": 0.808,
+     "says": "maybe"
+    },
+    {
+     "at": 7431,
+     "whole": 0.702,
+     "colour": 0.77,
+     "says": "maybe"
+    },
+    {
+     "at": 8538,
+     "whole": 0.669,
+     "colour": 0.807,
+     "says": "maybe"
+    },
+    {
+     "at": 9600,
+     "whole": 0.669,
+     "colour": 0.807,
+     "says": "maybe"
+    },
+    {
+     "at": 10440,
+     "whole": 0.667,
+     "colour": 0.744,
+     "says": "maybe"
+    },
+    {
+     "at": 11151,
+     "whole": 0.713,
+     "colour": 0.769,
+     "says": "maybe"
+    },
+    {
+     "at": 11907,
+     "whole": 0.681,
+     "colour": 0.843,
+     "says": "maybe"
+    },
+    {
+     "at": 12926,
+     "whole": 0.485,
+     "colour": 0.616,
+     "says": "none"
+    },
+    {
+     "at": 13638,
+     "whole": 0.676,
+     "colour": 0.863,
+     "says": "maybe"
+    },
+    {
+     "at": 14368,
+     "whole": 0.711,
+     "colour": 0.759,
+     "says": "maybe"
+    },
+    {
+     "at": 15171,
+     "whole": 0.667,
+     "colour": 0.744,
+     "says": "maybe"
+    },
+    {
+     "at": 16183,
+     "whole": 0.643,
+     "colour": 0.778,
+     "says": "maybe"
+    },
+    {
+     "at": 17273,
+     "whole": 0.692,
+     "colour": 0.598,
+     "says": "maybe"
+    },
+    {
+     "at": 18364,
+     "whole": 0.731,
+     "colour": 0.805,
+     "says": "maybe"
+    },
+    {
+     "at": 19203,
+     "whole": 0.666,
+     "colour": 0.808,
+     "says": "maybe"
+    },
+    {
+     "at": 19999,
+     "whole": 0.681,
+     "colour": 0.843,
+     "says": "maybe"
+    },
+    {
+     "at": 21098,
+     "whole": 0.485,
+     "colour": 0.616,
+     "says": "none"
+    },
+    {
+     "at": 22229,
+     "whole": 0.428,
+     "colour": 0.631,
+     "says": "none"
+    },
+    {
+     "at": 23254,
+     "whole": 0.687,
+     "colour": 0.766,
+     "says": "maybe"
+    },
+    {
+     "at": 24363,
+     "whole": 0.643,
+     "colour": 0.778,
+     "says": "maybe"
+    },
+    {
+     "at": 25511,
+     "whole": 0.743,
+     "colour": 0.794,
+     "says": "maybe"
+    },
+    {
+     "at": 26434,
+     "whole": 0.702,
+     "colour": 0.77,
+     "says": "maybe"
+    },
+    {
+     "at": 27227,
+     "whole": 0.711,
+     "colour": 0.759,
+     "says": "maybe"
+    },
+    {
+     "at": 28043,
+     "whole": 0.681,
+     "colour": 0.843,
+     "says": "maybe"
+    },
+    {
+     "at": 29194,
+     "whole": 0.485,
+     "colour": 0.616,
+     "says": "none"
+    },
+    {
+     "at": 30341,
+     "whole": 0.428,
+     "colour": 0.631,
+     "says": "none"
+    },
+    {
+     "at": 31204,
+     "whole": 0.621,
+     "colour": 0.777,
+     "says": "maybe"
+    },
+    {
+     "at": 32369,
+     "whole": 0.643,
+     "colour": 0.778,
+     "says": "maybe"
+    },
+    {
+     "at": 33492,
+     "whole": 0.715,
+     "colour": 0.796,
+     "says": "maybe"
+    },
+    {
+     "at": 34403,
+     "whole": 0.69,
+     "colour": 0.756,
+     "says": "maybe"
+    },
+    {
+     "at": 35283,
+     "whole": 0.666,
+     "colour": 0.808,
+     "says": "maybe"
+    },
+    {
+     "at": 36094,
+     "whole": 0.676,
+     "colour": 0.863,
+     "says": "maybe"
+    },
+    {
+     "at": 37200,
+     "whole": 0.485,
+     "colour": 0.616,
+     "says": "none"
+    },
+    {
+     "at": 38347,
+     "whole": 0.428,
+     "colour": 0.631,
+     "says": "none"
+    },
+    {
+     "at": 39426,
+     "whole": 0.687,
+     "colour": 0.766,
+     "says": "maybe"
+    },
+    {
+     "at": 40543,
+     "whole": 0.721,
+     "colour": 0.824,
+     "says": "maybe"
+    },
+    {
+     "at": 41683,
+     "whole": 0.69,
+     "colour": 0.814,
+     "says": "maybe"
+    },
+    {
+     "at": 42618,
+     "whole": 0.702,
+     "colour": 0.77,
+     "says": "maybe"
+    },
+    {
+     "at": 43414,
+     "whole": 0.713,
+     "colour": 0.769,
+     "says": "maybe"
+    },
+    {
+     "at": 44240,
+     "whole": 0.503,
+     "colour": 0.667,
+     "says": "none"
+    }
+   ],
+   "closer": [],
+   "errors": [],
+   "sweep": "wide",
+   "cup": "without"
+  },
+  {
+   "found_s": 34.4,
+   "said": "There's your cup.",
+   "why": "82% like the one you showed me, 91% in colour (Andy says \"found\" from 82% alike and 75% in colour).",
+   "device": "cpu",
+   "frames": [
+    {
+     "at": 1316,
+     "whole": 0.671,
+     "colour": 0.751,
+     "says": "maybe"
+    },
+    {
+     "at": 2597,
+     "whole": 0.671,
+     "colour": 0.619,
+     "says": "maybe"
+    },
+    {
+     "at": 3449,
+     "whole": 0.692,
+     "colour": 0.588,
+     "says": "maybe"
+    },
+    {
+     "at": 4513,
+     "whole": 0.468,
+     "colour": 0.463,
+     "says": "none"
+    },
+    {
+     "at": 5761,
+     "whole": 0.475,
+     "colour": 0.69,
+     "says": "none"
+    },
+    {
+     "at": 6923,
+     "whole": 0.457,
+     "colour": 0.686,
+     "says": "none"
+    },
+    {
+     "at": 8200,
+     "whole": 0.435,
+     "colour": 0.559,
+     "says": "none"
+    },
+    {
+     "at": 9396,
+     "whole": 0.639,
+     "colour": 0.612,
+     "says": "maybe"
+    },
+    {
+     "at": 10607,
+     "whole": 0.624,
+     "colour": 0.612,
+     "says": "maybe"
+    },
+    {
+     "at": 11492,
+     "whole": 0.687,
+     "colour": 0.597,
+     "says": "maybe"
+    },
+    {
+     "at": 12676,
+     "whole": 0.481,
+     "colour": 0.473,
+     "says": "none"
+    },
+    {
+     "at": 13782,
+     "whole": 0.519,
+     "colour": 0.934,
+     "says": "none"
+    },
+    {
+     "at": 14813,
+     "whole": 0.742,
+     "colour": 0.906,
+     "says": "maybe"
+    },
+    {
+     "at": 15847,
+     "whole": 0.747,
+     "colour": 0.922,
+     "says": "maybe"
+    },
+    {
+     "at": 16911,
+     "whole": 0.813,
+     "colour": 0.901,
+     "says": "maybe"
+    },
+    {
+     "at": 20454,
+     "whole": 0.47,
+     "colour": 0.515,
+     "says": "none"
+    },
+    {
+     "at": 21620,
+     "whole": 0.438,
+     "colour": 0.693,
+     "says": "none"
+    },
+    {
+     "at": 22679,
+     "whole": 0.527,
+     "colour": 0.452,
+     "says": "none"
+    },
+    {
+     "at": 23912,
+     "whole": 0.447,
+     "colour": 0.52,
+     "says": "none"
+    },
+    {
+     "at": 25133,
+     "whole": 0.526,
+     "colour": 0.626,
+     "says": "none"
+    },
+    {
+     "at": 26391,
+     "whole": 0.612,
+     "colour": 0.586,
+     "says": "none"
+    },
+    {
+     "at": 27449,
+     "whole": 0.69,
+     "colour": 0.754,
+     "says": "maybe"
+    },
+    {
+     "at": 28428,
+     "whole": 0.434,
+     "colour": 0.546,
+     "says": "none"
+    },
+    {
+     "at": 29464,
+     "whole": 0.426,
+     "colour": 0.707,
+     "says": "none"
+    },
+    {
+     "at": 30285,
+     "whole": 0.712,
+     "colour": 0.904,
+     "says": "maybe"
+    },
+    {
+     "at": 31092,
+     "whole": 0.754,
+     "colour": 0.892,
+     "says": "maybe"
+    },
+    {
+     "at": 31929,
+     "whole": 0.811,
+     "colour": 0.904,
+     "says": "maybe"
+    }
+   ],
+   "closer": [
+    {
+     "at": 19384,
+     "closer": 0.808,
+     "says": "maybe"
+    },
+    {
+     "at": 34278,
+     "closer": 0.823,
+     "says": "found"
+    }
+   ],
+   "errors": [],
+   "sweep": "closer",
+   "cup": "with"
+  },
+  {
+   "found_s": null,
+   "said": "Sweep slowly around the room. I'm looking for your cup.",
+   "why": "",
+   "device": "cpu",
+   "frames": [
+    {
+     "at": 1090,
+     "whole": 0.671,
+     "colour": 0.751,
+     "says": "maybe"
+    },
+    {
+     "at": 2080,
+     "whole": 0.669,
+     "colour": 0.623,
+     "says": "maybe"
+    },
+    {
+     "at": 2881,
+     "whole": 0.7,
+     "colour": 0.676,
+     "says": "maybe"
+    },
+    {
+     "at": 3607,
+     "whole": 0.646,
+     "colour": 0.848,
+     "says": "maybe"
+    },
+    {
+     "at": 4555,
+     "whole": 0.513,
+     "colour": 0.498,
+     "says": "none"
+    },
+    {
+     "at": 5576,
+     "whole": 0.475,
+     "colour": 0.69,
+     "says": "none"
+    },
+    {
+     "at": 6474,
+     "whole": 0.527,
+     "colour": 0.452,
+     "says": "none"
+    },
+    {
+     "at": 7485,
+     "whole": 0.443,
+     "colour": 0.522,
+     "says": "none"
+    },
+    {
+     "at": 8503,
+     "whole": 0.475,
+     "colour": 0.745,
+     "says": "none"
+    },
+    {
+     "at": 9520,
+     "whole": 0.686,
+     "colour": 0.618,
+     "says": "maybe"
+    },
+    {
+     "at": 10588,
+     "whole": 0.619,
+     "colour": 0.62,
+     "says": "none"
+    },
+    {
+     "at": 11511,
+     "whole": 0.637,
+     "colour": 0.808,
+     "says": "maybe"
+    },
+    {
+     "at": 12517,
+     "whole": 0.491,
+     "colour": 0.47,
+     "says": "none"
+    },
+    {
+     "at": 13589,
+     "whole": 0.475,
+     "colour": 0.69,
+     "says": "none"
+    },
+    {
+     "at": 14489,
+     "whole": 0.527,
+     "colour": 0.452,
+     "says": "none"
+    },
+    {
+     "at": 15555,
+     "whole": 0.443,
+     "colour": 0.522,
+     "says": "none"
+    },
+    {
+     "at": 16644,
+     "whole": 0.46,
+     "colour": 0.549,
+     "says": "none"
+    },
+    {
+     "at": 17719,
+     "whole": 0.686,
+     "colour": 0.618,
+     "says": "maybe"
+    },
+    {
+     "at": 18592,
+     "whole": 0.688,
+     "colour": 0.62,
+     "says": "maybe"
+    },
+    {
+     "at": 19541,
+     "whole": 0.672,
+     "colour": 0.594,
+     "says": "maybe"
+    },
+    {
+     "at": 20546,
+     "whole": 0.468,
+     "colour": 0.463,
+     "says": "none"
+    },
+    {
+     "at": 21683,
+     "whole": 0.473,
+     "colour": 0.692,
+     "says": "none"
+    },
+    {
+     "at": 22702,
+     "whole": 0.527,
+     "colour": 0.452,
+     "says": "none"
+    },
+    {
+     "at": 23865,
+     "whole": 0.442,
+     "colour": 0.543,
+     "says": "none"
+    },
+    {
+     "at": 24958,
+     "whole": 0.455,
+     "colour": 0.596,
+     "says": "none"
+    },
+    {
+     "at": 26107,
+     "whole": 0.635,
+     "colour": 0.603,
+     "says": "maybe"
+    },
+    {
+     "at": 27056,
+     "whole": 0.7,
+     "colour": 0.676,
+     "says": "maybe"
+    },
+    {
+     "at": 27883,
+     "whole": 0.668,
+     "colour": 0.853,
+     "says": "maybe"
+    },
+    {
+     "at": 29004,
+     "whole": 0.415,
+     "colour": 0.512,
+     "says": "none"
+    },
+    {
+     "at": 29799,
+     "whole": 0.434,
+     "colour": 0.732,
+     "says": "none"
+    },
+    {
+     "at": 30845,
+     "whole": 0.457,
+     "colour": 0.686,
+     "says": "none"
+    },
+    {
+     "at": 32020,
+     "whole": 0.443,
+     "colour": 0.496,
+     "says": "none"
+    },
+    {
+     "at": 33146,
+     "whole": 0.549,
+     "colour": 0.669,
+     "says": "none"
+    },
+    {
+     "at": 34301,
+     "whole": 0.633,
+     "colour": 0.615,
+     "says": "maybe"
+    },
+    {
+     "at": 35385,
+     "whole": 0.69,
+     "colour": 0.609,
+     "says": "maybe"
+    },
+    {
+     "at": 36461,
+     "whole": 0.453,
+     "colour": 0.456,
+     "says": "none"
+    },
+    {
+     "at": 37633,
+     "whole": 0.442,
+     "colour": 0.692,
+     "says": "none"
+    },
+    {
+     "at": 38631,
+     "whole": 0.458,
+     "colour": 0.664,
+     "says": "none"
+    },
+    {
+     "at": 39796,
+     "whole": 0.443,
+     "colour": 0.522,
+     "says": "none"
+    },
+    {
+     "at": 40874,
+     "whole": 0.45,
+     "colour": 0.545,
+     "says": "none"
+    },
+    {
+     "at": 41950,
+     "whole": 0.702,
+     "colour": 0.623,
+     "says": "maybe"
+    },
+    {
+     "at": 42878,
+     "whole": 0.719,
+     "colour": 0.628,
+     "says": "maybe"
+    },
+    {
+     "at": 43695,
+     "whole": 0.692,
+     "colour": 0.588,
+     "says": "maybe"
+    },
+    {
+     "at": 44779,
+     "whole": 0.491,
+     "colour": 0.47,
+     "says": "none"
+    }
+   ],
+   "closer": [],
+   "errors": [],
+   "sweep": "closer",
+   "cup": "without"
+  }
+ ]
+}

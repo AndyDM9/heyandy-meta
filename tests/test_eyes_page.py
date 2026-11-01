@@ -90,3 +90,19 @@ def test_the_colour_fingerprint_tells_a_blue_thing_from_a_red_one(page):
       return { same: dot(blue, blue2), other: dot(blue, red), grey: dot(blue, white), unit: dot(blue, blue) };
     }""")
     assert abs(r["unit"] - 1) < 1e-5 and r["same"] > 0.9 and r["other"] < 0.1 and r["grey"] < 0.1
+
+
+def test_sweeping_the_room_waits_for_your_thing_and_looks_at_one_place_a_frame(page):
+    assert "Sweep the room, live" in page.text_content("#sweep")
+    assert page.get_attribute("#s2", "aria-disabled") == "true"  # step 2 can't be pressed before your thing is known
+    page.eval_on_selector("#sweep", "b => b.click()")  # and pressed anyway, by script: no camera, nothing claimed
+    assert "First, show Andy your thing" in page.text_content("#stage2") and page.errors == []
+    one = page.evaluate("""async () => {
+      const E = await import('./eyes-core.js');
+      const unit = (v) => { const n = Math.hypot(...v); return Float32Array.from(v, (x) => x / n); };
+      const sq = Array.from({ length: 12 * 8 }, (_, i) => unit([Math.sin(i), Math.cos(i * 1.3), 0.5, (i % 7) / 7]));
+      const room = { squares: sq, gw: 12, gh: 8, dim: 4, box: { x: 0, y: 0, w: 640, h: 360 } };
+      const thing = { squares: sq.slice(0, 16), gw: 4, gh: 4, dim: 4 };
+      return E.places(E.likeness(thing, room), room, 1).length;
+    }""")
+    assert one == 1  # live, each frame looks again at only its best place (evals/eyes_live.py measures the whole sweep)

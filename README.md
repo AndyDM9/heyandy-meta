@@ -24,15 +24,19 @@ Built on Meta's models for people who live at home, starting with older adults, 
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
-**Andy's eyes, on your own things, in your browser.** Show it something of yours once (your mug, your keys), then a
-photo of where it might be, and Meta's DINOv2 finds it: yours, not just one like it, **running in the browser**, so the
-photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html), "Try it on your own things" on the demo). It says
+**Andy's eyes, on your own things, in your browser, live.** Show it something of yours once (your mug, your keys),
+then **sweep your phone's camera around the room**: Meta's DINOv2 looks at every moment of it **in the browser**, a tone
+rises and quickens as you get warmer, and when a view looks like yours Andy looks closer, as the robot does, and
+spotlights it with the robot's own "found" sound. Or show it a photo. Yours, not just one like it, and the camera
+and photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html), "Try it on your own things" on the demo). It says
 "There's your mug" only when it's alike *and* the same colour (DINOv2 overlooks colour, so a red twin of your blue mug
 would pass), asks "is it?" when it's close, and says plainly when it doesn't see it. Measured on museum photos (CC0):
 **the right thing found 20 times in 24, never a wrong one; never "found" in 24 tables without it, nor of its twin in
-other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)).
+other colours** ([`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json)). Sweeping live, with a camera that's
+a video of a sweep over the same cups, on a laptop's CPU (about a frame a second): **our cup found in both sweeps, at 15
+and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.74** ([`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json)).
 
-<p align="center"><img src="docs/images/eyes.webp" width="860" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
+<p align="center"><img src="docs/images/eyes-live.webp" width="49%" alt="Andy's eyes sweeping live: on the left, my cup shown once; on the right, the camera's view of four cups with a red Live dot, DINOv2's view glowing gold over one cup, a solid box on it and the warmer meter almost full: &quot;That looks like it. Let me look closer…&quot;"> <img src="docs/images/eyes.webp" width="49%" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
 
 **Ask Andy yourself, in the browser.** The demo opens as a one-minute story; type what you'd say to Andy at any point
 ("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
@@ -63,7 +67,7 @@ who mentions a crisis gets the 988 line from code ([docs/crisis-protocol.md](doc
 | A miss becomes "I'll keep looking", and when the thing turns up, Andy points and says so, unprompted. *On the robot: a "lost" watch found later, 4.1 degrees off, said out loud.* | **"My keys live here." "Is everything home?"** It checks each home, points at what's away, then at where it lives; every evening at 9. *On the robot: the keys found away, pointed at, then their home.* | **"I'm putting my passport in the top drawer."** What no camera sees, it keeps in your words and answers at once: "You told me on Tuesday at 3:12". *On the robot: answered without a single look.* |
 | **Your room in 3D** | **Andy's eyes, in your browser** | **Andy Finder, for every Reachy Mini** |
 | ![The room in 3D: its shape from MapAnything, your things pinned with their distances](docs/images/tv-room.webp) | ![Andy's eyes in the browser: the cup shown once, then the spotlight on it among look-alike cups, "There's your cup"](docs/images/eyes.webp) | ![Andy Finder: "Lost your phone? Ring it", and the turns to the ringing from above](docs/images/finder-ring.webp) |
-| **"Show me the room."** Five looks become your room in 3D (MapAnything), your things pinned: its shape only, never a picture. *Scan to scan within 1 degree and 8 cm.* | Show it your mug once, then a photo, and Meta's DINOv2 finds yours, **in your browser**: alike and the same colour, or it asks. *Never "found" in 24 museum tables without it.* Or type what you'd say to Andy and its TV's scene plays. [Try it](https://huggingface.co/spaces/heyandy-ai/andy). | In the Reachy Mini app store: "Ring it" with nothing to set up (no key, no GPU, no internet), and anything else found with SAM 3.1 ([`apps/andy_finder`](apps/andy_finder)). |
+| **"Show me the room."** Five looks become your room in 3D (MapAnything), your things pinned: its shape only, never a picture. *Scan to scan within 1 degree and 8 cm.* | Show it your mug once, then sweep your phone round the room (warmer, colder) or a photo, and Meta's DINOv2 finds yours, **in your browser**: alike and the same colour, or it asks. *Never "found" in 24 museum tables without it.* Or type what you'd say to Andy and its TV's scene plays. [Try it](https://huggingface.co/spaces/heyandy-ai/andy). | In the Reachy Mini app store: "Ring it" with nothing to set up (no key, no GPU, no internet), and anything else found with SAM 3.1 ([`apps/andy_finder`](apps/andy_finder)). |
 
 <sub>Every picture above is the TV page itself, showing the demo's drawn scenes (`scripts/readme_shots.py` makes them
 again); never a home. The numbers in italics are from the robot, with their files under Proof.</sub>

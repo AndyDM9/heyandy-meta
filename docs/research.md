@@ -1167,3 +1167,32 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   about 39. They still answered, so the preflight's "Glimmer answers" passed.
 - **Changed:** both units wait (up to 90 s) until llama.cpp lists the card (`deploy/heyandy-glimmer.service`,
   `deploy/heyandy-guard.service`); the preflight checks that both servers hold memory on their GPUs.
+
+## 56. Andy's eyes, live: sweep the room, warmer and colder (November 1)
+
+- **Why:** Andy's promise is looking around the room for you, and the public demo's only live Meta model (section 53)
+  looked at one photo. A phone's camera swept round a room is what a visitor without a robot can do, and what the robot
+  does with its head.
+- **Built** (`screen/eyes.html`, "Sweep the room, live"): your thing shown once, then the camera. Each moment gets the
+  photo search's own check with one place instead of three and a smaller first look (`find(..., count = 1)` in
+  `eyes-core.js`): DINOv2 at 336 pixels on the view, then again at the best place, about a second a frame on a laptop's
+  CPU. On the view: DINOv2's likeness in gold, a dashed box on the best place, a meter from colder to warmer, and a tone
+  that rises and quickens with it (a soft sine, like Andy's earcons). A confident sighting (within 0.03 of "found", its
+  colour right) gets **a closer look, as on the robot**: the very frame it was sure of, at full size, through the
+  photo search measured in section 53. "Found" there is the Reveal, with the robot's "found" sound (C, E, G, C) and a
+  buzz on a phone; anything less is "Not that one, I think. Keep sweeping…", and only a better view of something
+  looks again. The camera stops when you press Stop, show a photo, or it finds it; nothing is kept but the held frame
+  on the page.
+- **Measured** (`evals/eyes_live.py`, `evals/results/eyes-live-20261101-1153.json`): Chromium's fake camera playing a
+  video of a sweep (640 by 360, 10 frames a second) over our museum cups, 8 s without ours and 8 s with, two ways of
+  sweeping; on the CPU. **Our cup found in both sweeps, at 15 and 34 s** (the second's first closer look said "maybe",
+  0.81, and the sweep went on; the next said "found", 0.82). Sweeping only the other three look-alike cups for 45 s each:
+  **never "found" in 90 frames, none closer than 0.74, no closer look**. A median 1.04 s a frame.
+- **What changed because of the measuring:** the first version waited for two frames running at "found"; the views of
+  look-alike cups sit close to ours (0.79 against 0.81 to 0.85 in some frames), and a moving camera rarely gave two in a
+  row, so it never found the cup. The closer look, at full size, separates them as the photo search does. Its first
+  version took a new frame for the closer look, by when the camera had moved on; it takes the frame it was sure of.
+  On a CPU, a look never gave the page a turn, so the live loop froze the page: each look now yields first. The meter
+  was warm everywhere among look-alikes, so it now runs from 0.55 to "found".
+- **Not yet:** a real phone in a real room (the founder's is the first test). A fake camera is steadier than a hand,
+  and an actual room is harder than four photos in some ways (clutter, light) and easier in others (few look-alikes).

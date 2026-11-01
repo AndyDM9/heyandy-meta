@@ -54,6 +54,7 @@ function unit(v, off, dim) {
 // What DINOv2 sees in a box of a picture: the whole (cls) and each square (squares, gw by gh), each of unit length.
 export async function look(eyes, transformers, src, box, long) {
   const { Tensor } = transformers;
+  await new Promise((r) => setTimeout(r, 0));  // the page's turn first: on a CPU a look never yields, and live it would freeze
   const p = pixels(src, box, long);
   const out = await eyes.model({ pixel_values: new Tensor("float32", p.data, [1, 3, p.h, p.w]) });
   const t = out.last_hidden_state, dim = t.dims[2], v = t.data;
@@ -173,11 +174,13 @@ export const SURE = 0.82, MAYBE = 0.62, SAME_COLOUR = 0.75;
 // What Andy says of the best place: "found" only if it looks like your thing and is its colour; "maybe" (it asks) if
 // it's close, or alike but another colour; else "none".
 export const verdict = (c) => !c ? "none" : c.whole >= SURE && c.colour >= SAME_COLOUR ? "found" : c.whole >= MAYBE ? "maybe" : "none";
-export async function find(eyes, transformers, thing, src, roomBox, long = 448, onLook = () => () => {}) {
-  let done = onLook("the photo");
+// Live, from a camera (the page's "Sweep the room"), it's the same check with one place a frame and a smaller first
+// look: two to four looks a frame instead of about seven, so a frame or two a second on a laptop's CPU.
+export async function find(eyes, transformers, thing, src, roomBox, long = 448, onLook = () => () => {}, count = 3, what = "the photo") {
+  let done = onLook(what);
   const room = await look(eyes, transformers, src, roomBox, long);
   done();
-  const map = likeness(thing, room), candidates = places(map, room, 3);
+  const map = likeness(thing, room), candidates = places(map, room, count);
   for (const [k, c] of candidates.entries()) {
     done = onLook(`place ${k + 1} of ${candidates.length}, again`);
     c.whole = -1;

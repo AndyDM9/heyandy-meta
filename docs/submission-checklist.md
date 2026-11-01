@@ -33,7 +33,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        one-minute story should play, end on the card, and "Watch the 3-minute video" should open the video;
        type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find. Then "Try it on your own
        things": "No photo to hand? Use our cup", then "Our four cups" should end "There's your cup." (DINOv2 downloads
-       once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too.
+       once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too; then "Sweep the room, live" on the
+       phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 1,300 words on what it is and what's new, and the open-weights note (`docs/open-weights.md`).
 7. [ ] Publish Andy Finder (0.2.0: "Ring it" works with nothing set up) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):

@@ -8,6 +8,7 @@ docs/images, so the README shows what the TV shows today.
     uv run python scripts/readme_shots.py                 # every picture
     uv run python scripts/readme_shots.py guide sound     # some
     uv run python scripts/readme_shots.py eyes            # Andy's eyes, finding our cup (downloads DINOv2 once)
+    uv run python scripts/readme_shots.py sweep           # Andy's eyes sweeping live, with a camera that's a video
 """
 import io
 import subprocess
@@ -115,13 +116,50 @@ def eyes() -> None:
         server.terminate()
 
 
+def sweep() -> None:
+    """Andy's eyes sweeping live: a camera that's a video sweeping over our museum cups (evals/eyes_live.py), shot
+    the moment it's sure enough of a place to look closer, with DINOv2's view in gold and the meter."""
+    import functools
+    import http.server
+    import tempfile
+    import threading
+
+    from playwright.sync_api import sync_playwright
+
+    from evals.eyes_live import Quiet, video
+
+    screen = ROOT / "heyandy_meta" / "screen"
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(screen)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        with tempfile.TemporaryDirectory() as tmp, sync_playwright() as p:
+            cam = video(Path(tmp) / "sweep.y4m", [screen / "eyes" / "cups.webp"], "wide")
+            ctx = p.chromium.launch_persistent_context(
+                str(Path(tmp) / "profile"), headless=True, viewport={"width": 1600, "height": 1000}, permissions=["camera"],
+                args=["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream", f"--use-file-for-fake-video-capture={cam}"])
+            page = ctx.new_page()
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/eyes.html")
+            page.wait_for_function("window.EYES_READY === true")
+            page.click("#ours1")
+            page.wait_for_selector("#known:not([hidden])", timeout=300000)
+            page.click("#sweep")
+            page.wait_for_function("document.getElementById('said').textContent.startsWith('That looks like it')", timeout=180000)
+            page.wait_for_timeout(300)  # sure of a place: "That looks like it. Let me look closer…"
+            print(save(page.screenshot(), "eyes-live", width=1400))
+            ctx.close()
+    finally:
+        server.shutdown()
+
+
 def main() -> None:
-    wanted = sys.argv[1:] or [*SCENES, "demo", "eyes"]
+    wanted = sys.argv[1:] or [*SCENES, "demo", "eyes", "sweep"]
     tv([n for n in wanted if n in SCENES])
     if "demo" in wanted:
         demo()
     if "eyes" in wanted:
         eyes()
+    if "sweep" in wanted:
+        sweep()
 
 
 if __name__ == "__main__":

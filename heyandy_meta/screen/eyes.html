@@ -70,6 +70,20 @@
   @keyframes scan { from { background-position: 120% 0; } to { background-position: -120% 0; } }
   @media (prefers-reduced-motion: reduce) { .scan { animation: none; } .spot { transition: none; } }
   .cam { display: flex; gap: 0.6em; justify-content: center; padding: 0.8em; line-height: 1.2; }
+  /* Sweeping live: DINOv2's view of each frame (gold where it looks like your thing), the best place, warmer or colder */
+  .heat.live.on { opacity: 0.5; }
+  .hunt { position: absolute; border: 3px dashed var(--outline); border-radius: 14px; pointer-events: none;
+          transition: left 0.35s ease-out, top 0.35s ease-out, width 0.35s ease-out, height 0.35s ease-out; }
+  .hunt.sure { border-style: solid; box-shadow: 0 0 0 5px rgba(255, 207, 92, 0.35); }
+  .pill { position: absolute; left: 12px; top: 12px; display: flex; align-items: center; gap: 0.5em; padding: 0.5em 0.8em;
+          font: 700 14px/1 "Atkinson Next", sans-serif; background: rgba(5, 8, 7, 0.72); border-radius: 99em; }
+  .pill::before { content: ""; width: 0.6em; height: 0.6em; border-radius: 50%; background: #ff5a4f; animation: pulse 1.2s ease-in-out infinite; }
+  .warm { position: absolute; left: 14px; right: 14px; bottom: 14px; height: 10px; border-radius: 99em; background: rgba(245, 243, 239, 0.2); }
+  .warm i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--know), var(--gold));
+            transition: width 0.3s; }
+  .warm span { position: absolute; bottom: 16px; font: 700 13px/1 "Atkinson Next", sans-serif; text-shadow: 0 1px 4px #000; }
+  .warm .c { left: 0; } .warm .w { right: 0; }
+  @media (prefers-reduced-motion: reduce) { .hunt, .warm i { transition: none; } .pill::before { animation: none; } }
 
   .hint { color: var(--soft); margin: 1.2vh 0 0; font-size: 0.95em; }
   form.name { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6em; margin-top: 1.4vh; }
@@ -112,8 +126,9 @@
 <header>
   <p class="back"><a href="./">← Andy's TV: the one-minute story</a></p>
   <h1>Andy's eyes, on <em>your</em> things</h1>
-  <p class="lede">Show Andy something of yours, once. Then a photo of where it might be, and Andy finds it: <b>yours,
-    not just one like it.</b> Meta's DINOv2 does the looking, <b>here in your browser</b>: your photos never leave this device.</p>
+  <p class="lede">Show Andy something of yours, once. Then <b>sweep your camera around the room</b> (it sounds warmer as
+    you get close), or show it a photo, and Andy finds it: <b>yours, not just one like it.</b> Meta's DINOv2 does the
+    looking, <b>here in your browser</b>: your camera and photos never leave this device.</p>
 </header>
 <main>
   <section class="step" id="s1" aria-labelledby="h1s">
@@ -135,15 +150,16 @@
   <section class="step" id="s2" aria-labelledby="h2s" aria-disabled="true">
     <h2 id="h2s"><span class="n">2</span> Where might it be?</h2>
     <div class="picks">
-      <button type="button" class="main" data-pick="2">Take or choose a photo</button>
-      <button type="button" data-cam="2">Use the camera</button>
+      <button type="button" class="main" id="sweep">Sweep the room, live</button>
+      <button type="button" data-pick="2">Take or choose a photo</button>
+      <button type="button" data-cam="2">Take one with the camera</button>
       <button type="button" id="ours2" hidden>Our four cups</button>
       <button type="button" id="ours3" hidden>Four, without it</button>
     </div>
     <p class="said" id="said" aria-live="polite"></p>
     <p class="why num" id="why"></p>
     <div class="answer" id="answer" hidden><button type="button" class="main" id="yes">Yes, that's it</button><button type="button" id="no">No</button></div>
-    <div class="stage empty" id="stage2" tabindex="0">First, show Andy your thing. Then a photo of the table, the shelf, the room.</div>
+    <div class="stage empty" id="stage2" tabindex="0">First, show Andy your thing. Then sweep the room with your camera, or a photo of the table, the shelf, the room.</div>
     <div class="tools" id="tools" hidden><label><input type="checkbox" id="showHeat"> Show what Andy saw</label></div>
   </section>
   <div class="live" id="live" aria-live="off"><b>Meta, live · in this browser</b><span class="call"><i></i>DINOv2 <em>ready when you are</em></span></div>
@@ -155,6 +171,10 @@
     and its colour matches too (DINOv2 learned to overlook colour, so a red mug shaped like your blue one would
     otherwise pass). Too close to call, and Andy asks. The same idea as Andy's "this is my mug" on the robot, where DINOv2 runs on the
     computer beside it.</p>
+  <p><b>Sweeping live.</b> Each moment of the camera gets the same check with one place at a time: DINOv2 looks at the
+    whole view, then again at the place most like your thing, a frame or two a second on a laptop's processor, faster
+    on its graphics chip. The tone rises and quickens as that place looks more like it. When two frames running say it's
+    yours, Andy holds that view, looks again closely, and shows you, with the sound the robot makes when it finds something.</p>
   <p><b>Private.</b> The page downloads DINOv2 once (24 MB, from Hugging Face) and the library that runs it (from a
     public CDN); your photos are read here and sent nowhere. Close the page and they're gone.</p>
   <p>Our cups: The Metropolitan Museum of Art, Open Access (CC0), objects 2109, 191578, 207670, 385 and 240140. Built by
@@ -262,6 +282,7 @@
   $("ours3").onclick = async () => use(2, await fromUrl("eyes/cups-without.webp"));
 
   function use(step, canvas) {
+    if (step === 2) stopSweep();  // a photo instead: the camera off
     pics[step] = canvas;
     const stage = $("stage" + step), photo = el("div", null, "photo"); photo.append(canvas);
     stage.className = "stage"; stage.replaceChildren(photo);
@@ -324,6 +345,7 @@
     $("knownName").textContent = `Your ${name}`; $("known").hidden = false; $("name1").hidden = $("hint1").hidden = true;
     $("s2").setAttribute("aria-disabled", "false");
     $("ours2").hidden = $("ours3").hidden = name !== "cup" || !pics[1].dataset.ours;
+    stopSweep();  // a new thing: a sweep starts again from the button
     if (!pics[2]) { const st = $("stage2"); st.className = "stage empty"; st.textContent = `Now a photo of where your ${name} might be: the table, a shelf, the room.`; }
     else search();
     $("s2").scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -344,11 +366,15 @@
     shown = 0; reveal();
   }
   function heat(photo, c) {  // what Andy saw: how like your thing each square looked, gold where most
-    const h = el("canvas", null, "heat"), { gw, gh, map } = result; h.width = gw; h.height = gh;
+    const h = el("canvas", null, "heat"); paint(h, result);
+    h.classList.toggle("on", $("showHeat").checked); photo.append(h);
+  }
+  function paint(h, { gw, gh, map }) {
+    h.width = gw; h.height = gh;
     const g = h.getContext("2d"), img = g.createImageData(gw, gh);
     let lo = Infinity, hi = -Infinity; for (const v of map) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
     map.forEach((v, i) => { const t = Math.pow((v - lo) / (hi - lo || 1), 2.2); img.data.set([255 * t, 207 * t, 92 * t, 255], 4 * i); });
-    g.putImageData(img, 0, 0); h.classList.toggle("on", $("showHeat").checked); photo.append(h);
+    g.putImageData(img, 0, 0);
   }
   $("showHeat").onchange = () => $("stage2").querySelector(".heat")?.classList.toggle("on", $("showHeat").checked);
   function reveal() {
@@ -373,6 +399,7 @@
     const rule = `Andy says "found" from ${Math.round(100 * E.SURE)}% alike and ${Math.round(100 * E.SAME_COLOUR)}% in colour`;
     if (verdict === "found") {
       $("said").textContent = `There's your ${name}.`;
+      if (!shown) { chime(); navigator.vibrate?.([60, 40, 120]); }
       $("why").textContent = `${pct}% like the one you showed me, ${col}% in colour (${rule}).`;
     } else {
       const otherColour = cand.whole >= E.SURE;  // alike in every way but its colour: a twin, perhaps someone else's
@@ -383,6 +410,104 @@
       $("answer").hidden = false;
     }
   }
+  // ---- step 2, live: sweep the room with the camera, warmer as it gets close, and the Reveal once it's sure ----
+  let sweeping = null, sound = true, audio = null;
+  const sweepLog = window.sweepLog = [];  // each frame's numbers (how alike, its colour, the verdict), for evals/eyes_live.py
+  function stopSweep() { if (sweeping) { sweeping.stop(); sweeping = null; } }
+  function tone(freq, at, dur, gain) {  // a soft sine note, as Andy's earcons are (voice/earcons.py)
+    if (!audio || !sound) return;
+    const t = audio.currentTime + at, o = audio.createOscillator(), g = audio.createGain();
+    o.frequency.value = freq; o.connect(g); g.connect(audio.destination);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  // the robot's "found" sound: C5, E5, G5, C6, a rising run to the octave ("there it is!")
+  const chime = () => [[523.25, 0, 0.5, 0.75], [659.25, 0.085, 0.5, 0.8], [783.99, 0.17, 0.5, 0.85], [1046.5, 0.255, 0.62, 1]]
+    .forEach(([f, at, dur, g]) => tone(f, at, dur, 0.42 * g));
+  const say = (text) => { if ($("said").textContent !== text) $("said").textContent = text; };  // read out once, not every frame
+  function place(div, b, c) {
+    Object.assign(div.style, { left: `${100 * b.x / c.width}%`, top: `${100 * b.y / c.height}%`, width: `${100 * b.w / c.width}%`, height: `${100 * b.h / c.height}%` });
+  }
+  async function sweep() {
+    if (!thing) return;
+    stopSweep();
+    try { audio ??= new AudioContext(); audio.resume(); } catch (e) { audio = null; }  // the tap that started it lets it sound
+    const stage = $("stage2");
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 } }, audio: false });
+    } catch (e) {
+      stage.className = "stage empty"; stage.textContent = "The camera isn't available here: take or choose a photo instead.";
+      return;
+    }
+    const video = el("video"), view = el("div", null, "photo"), sight = el("canvas", null, "heat live on"), hunt = el("div", null, "hunt");
+    video.playsInline = video.muted = true; video.srcObject = stream; hunt.hidden = true;
+    const warm = el("div", null, "warm"), fill = el("i"); warm.append(fill, el("span", "colder", "c"), el("span", "warmer", "w"));
+    view.append(video, sight, hunt, el("div", "Live · DINOv2, in this browser", "pill"), warm);
+    const bar = el("div", null, "cam"), stop = el("button", "Stop"), hush = el("button", sound ? "Sound: on" : "Sound: off");
+    bar.append(stop, hush);
+    stage.className = "stage"; stage.replaceChildren(view, bar);
+    $("answer").hidden = $("tools").hidden = true; $("why").textContent = "";
+    pics[2] = null;
+    const run = { on: true, warmth: 0, rejected: 0, beat: 0, t0: performance.now(), saidAt: 0 };
+    sweepLog.length = 0;
+    sweeping = { stop: () => { run.on = false; clearTimeout(run.beat); stream.getTracks().forEach((t) => t.stop()); } };
+    stop.onclick = () => { stopSweep(); empty(2); $("said").textContent = ""; };
+    hush.onclick = () => { sound = !sound; hush.textContent = sound ? "Sound: on" : "Sound: off"; };
+    await video.play().catch(() => {});
+    say(`Sweep slowly around the room. I'm looking for your ${name}.`);
+    const beat = () => {  // warmer, colder: a higher note, closer together, as the best place looks more like it
+      if (!run.on) return;
+      if (run.warmth > 0.08) tone(440 + 520 * run.warmth, 0, 0.08, 0.08 + 0.16 * run.warmth);
+      run.beat = setTimeout(beat, 900 - 720 * run.warmth);
+    };
+    await ready();
+    beat();
+    const frame = el("canvas");
+    while (run.on) {
+      await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));  // the meter and the box drawn before the next frame
+      if (document.hidden || !video.videoWidth) { await new Promise((r) => setTimeout(r, 300)); continue; }
+      const now = await toCanvas(video, video.videoWidth, video.videoHeight);  // this moment, full size, for a closer look
+      const k = 640 / Math.max(now.width, now.height);
+      frame.width = Math.round(now.width * k); frame.height = Math.round(now.height * k);
+      frame.getContext("2d").drawImage(now, 0, 0, frame.width, frame.height);
+      const r = await E.find(eyes, T, thing, frame, { x: 0, y: 0, w: frame.width, h: frame.height }, 336,
+                             (what) => call(`looking at ${what}`), 1, "the camera's view");
+      if (!run.on) break;
+      const best = r.best, whole = best ? best.whole : 0;
+      sweepLog.push({ at: Math.round(performance.now() - run.t0), whole: +whole.toFixed(3), colour: best ? +best.colour.toFixed(3) : 0, says: r.verdict });
+      run.warmth = 0.5 * run.warmth + 0.5 * Math.max(0, Math.min(1, (whole - 0.55) / (E.SURE - 0.55)));
+      run.rejected = Math.max(0, run.rejected - 0.01);
+      fill.style.width = `${Math.round(100 * run.warmth)}%`;
+      paint(sight, r);
+      hunt.hidden = !(best && whole >= E.MAYBE);
+      if (!hunt.hidden) { place(hunt, best.box, frame); hunt.classList.toggle("sure", r.verdict === "found"); }
+      // A confident sighting gets a closer look, as on the robot: the whole frame at full size, the photo search (the
+      // one measured in evals/eyes.py). "Found" there, and it's the Reveal; anything less, and the sweep goes on.
+      if (best && whole >= E.SURE - 0.03 && best.colour >= E.SAME_COLOUR && whole > run.rejected) {
+        const still = now;  // the very view it was sure of, not where the camera has got to since
+        say("That looks like it. Let me look closer…");
+        const closer = await E.find(eyes, T, thing, still, { x: 0, y: 0, w: still.width, h: still.height }, 448,
+                                    (what) => call(`looking closer at ${what}`));
+        sweepLog.push({ at: Math.round(performance.now() - run.t0), closer: +closer.best?.whole.toFixed(3), says: closer.verdict });
+        if (!run.on) break;
+        if (closer.verdict === "found") { stopSweep(); showStill(still, closer); return; }
+        run.rejected = whole + 0.01;  // not that one: only a better view of something looks again
+        say("Not that one, I think. Keep sweeping…"); run.saidAt = performance.now();
+        continue;
+      }
+      if (performance.now() - run.saidAt > 2500 || !$("said").textContent.startsWith("Not that one")) {
+        say(run.warmth > 0.6 ? "Warmer… very close." : run.warmth > 0.3 ? "Warmer…" : `Sweep slowly around the room. I'm looking for your ${name}.`);
+      }
+    }
+  }
+  function showStill(canvas, found) {  // the view Andy was sure of, held, with the spotlight on your thing
+    pics[2] = canvas;
+    const stage = $("stage2"), photo = el("div", null, "photo"); photo.append(canvas);
+    stage.className = "stage"; stage.replaceChildren(photo);
+    result = found; heat(photo, canvas); shown = 0; reveal();
+  }
+  $("sweep").onclick = () => { if (thing) sweep(); else { $("s1").scrollIntoView({ behavior: "smooth" }); } };
   $("yes").onclick = () => { $("answer").hidden = true; $("said").textContent = `Good: your ${name}.`; $("stage2").querySelector(".spot")?.classList.remove("maybe"); };
   $("no").onclick = () => { shown += 1; reveal(); };
 

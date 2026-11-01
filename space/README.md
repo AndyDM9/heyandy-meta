@@ -26,8 +26,9 @@ the Reveal; it doesn't give up; it guides your hand; your room in 3D; identical 
 language, in Mandarin; nothing leaves the house), then where to go next. Pause, skip with the arrow keys, or "Explore every screen".
 
 **Andy's eyes, on your own things** (`eyes.html`: "Try it on your own things" at the top, or the story's end): show
-it something of yours once, then a photo of where it might be, and DINOv2, Meta's open image model, finds it, **running
-in your browser**: your photos are read there and sent nowhere. It says "There's your mug" only when it's alike and the
+it something of yours once, then **sweep your phone's camera round the room** (a tone gets warmer as you near it) or
+show it a photo, and DINOv2, Meta's open image model, finds it, **running in your browser**: the camera and photos are
+read there and sent nowhere. It says "There's your mug" only when it's alike and the
 same colour, asks "is it?" when it's close, and says when it doesn't see it. No photo to hand? Use our cup (The Met's
 Open Access, CC0).
 

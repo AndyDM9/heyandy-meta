@@ -28,9 +28,10 @@ keeps what it sees and hears in the house.
 - **In fifteen languages.** "Andy, speak Mandarin": Omnilingual ASR hears it, Muse Glimmer translates on the computer
   beside the robot, SeamlessM4T v2 speaks it, and every ability works. Saying it's an AI, the crisis reply and Andy's
   short lines are written by hand in each, never machine-translated.
-- **Andy's eyes, on your own things, in your browser.** The public demo runs one of Meta's models for the visitor: show
-  it your mug once, then a photo of where it might be, and DINOv2 finds *yours*, in the browser (the photos go
-  nowhere); "found" only when it's alike and the same colour, otherwise it asks.
+- **Andy's eyes, live, in your browser.** The public demo runs one of Meta's models for the visitor: show it your mug
+  once, then sweep your phone's camera round the room. DINOv2 looks at every moment of it in the browser (nothing goes
+  anywhere), a tone gets warmer as you near it, and a confident sighting gets a closer look, as on the robot, before
+  the spotlight: *yours*, alike and the same colour, or it asks.
 - **Meta's models, live, and under the hood.** The TV shows each Meta model call as it happens, timed, and where it
   runs, and lays out each turn stage by stage; that showed the answer waiting for the point, so now Andy answers while
   pointing, 9.6 s sooner.
@@ -91,7 +92,8 @@ reached the cloud** (24 taken); **every word sent was on its turn's receipt**; c
 *Languages:* Spanish **41 of 41** written requests reach the right ability, **36 of 41** said aloud and heard back;
 thirteen more (Mandarin to Ukrainian, 104 requests) **100 and 85** on the first run, 104 and 89 with the rules it showed
 were missing.
-*Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables).
+*Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables);
+sweeping live (a video as the camera, on a CPU): found in both sweeps, at 15 and 34 s; never in 90 frames without it.
 *On the robot, alone in the room:* **112 of 112** unattended searches over two days ended in a point; on the final
 code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. A find from request to spoken answer, 13
 to 19 s. [The physical scorecard, judged by a person: N of M.]
