@@ -27,7 +27,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
        (`git log -p | grep -E "MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}"` finds nothing). Never rewrite the history: its
        dates show the work was done during the event.
-4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta) and check a fresh clone passes its tests.
+4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta) and check a fresh clone passes its tests. First check
+       GitHub Support has purged the old commits (the founder's ticket of November 1; the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
        (`uv run python scripts/build_static_space.py --video <the video's URL>`, then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
