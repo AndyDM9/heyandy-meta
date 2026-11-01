@@ -144,12 +144,19 @@ def test_every_demo_scene_draws_in_full(browser):
     server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in every}, listed=list(SCENES))
     shown = {}
     try:
+        pictured = {"found", "mandarin", "spanish", *IN_LANGUAGE}
+        count = "() => document.querySelectorAll('#card img, #card canvas, #card svg').length"
         for name in every:
             def look(page, name=name):
-                shown[name] = page.evaluate("() => document.querySelectorAll('#card img, #card canvas, #card svg').length")
+                if name in pictured:  # after the Reveal: waited for, not timed (a slower machine took longer than 1.2 s)
+                    try:
+                        page.wait_for_function(f"({count})() > 0", timeout=8000)
+                    except Exception:  # noqa: BLE001 - counted as it is below, and the assertion says which
+                        pass
+                shown[name] = page.evaluate(count)
             url = f"http://127.0.0.1:{server.server_address[1]}/?scene={name}"
             assert errors_on(browser, url, 1200, look) == [], name
-        assert shown["mandarin"] and shown["spanish"] and shown["found"] and all(shown[n] for n in IN_LANGUAGE)
+        assert not [n for n in pictured if not shown[n]], [n for n in pictured if not shown[n]]
     finally:
         server.shutdown()
 
