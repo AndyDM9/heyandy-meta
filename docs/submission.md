@@ -1,6 +1,6 @@
 # Submission text (for the form on November 4)
 
-*About 1,270 words, and 200 more in the table (trimmed on November 1; the longer version is in this file's history). Fill in the
+*About 1,300 words, and 190 more in the table (trimmed on November 1; the longer version is in this file's history). Fill in the
 [brackets] on the day; check every number against `evals/results/` first.*
 
 ---
@@ -23,33 +23,26 @@ keeps what it sees and hears in the house.
 
 ## What it does
 
-- **"Hey Andy, where are my glasses?"** Andy turns to your voice and looks around; the TV shows each view live, every
-  candidate outlined by SAM 3.1. It points, checks with its own camera that the point landed, and says "There they
-  are! On the armchair, to my left, about 5 feet away" (MapAnything measures how far). It skips a picture of glasses
-  on the TV, picks "the blue cup" from look-alikes, and says so when the red one you asked for isn't there.
-- **In fifteen languages, and it notices which.** Just say "安迪，我的眼镜在哪里？": Andy hears it isn't English, switches,
-  and answers in Mandarin. Omnilingual ASR hears it, Muse Glimmer translates on the computer beside the robot,
-  SeamlessM4T v2 speaks it, and every ability works. Saying it's an AI, the crisis reply and Andy's
-  short lines are written by hand in each, never machine-translated.
-- **Andy's eyes, live, in your browser.** The public demo runs one of Meta's models for the visitor: show it your mug
-  once, then sweep your phone's camera round the room. DINOv2 looks at every moment of it in the browser (nothing goes
-  anywhere), a tone gets warmer as you near it, and a confident sighting gets a closer look, as on the robot, before
-  the spotlight: *yours*, alike and the same colour, or it asks.
-- **Meta's models, live, and under the hood.** The TV shows each Meta model call as it happens, timed, and where it
-  runs, and lays out each turn stage by stage; that showed the answer waiting for the point, so now Andy answers while
-  pointing, 9.6 s sooner.
-- **It remembers, and doesn't give up.** "I'm putting my passport in the top drawer" is kept in your words; "is
-  everything home?" points at what's away, then where it lives; a missed search becomes a promise, and when the thing
-  turns up Andy points and says so, unprompted. **V-JEPA 2** notices a watched thing put down.
-- **"I'm ringing my phone"** turns Andy until its microphones hear the ringing straight ahead; it looks there and
-  points. **"Help me reach it"**, for someone who can't see well: Andy watches their hand and talks it onto the thing
-  ("Toward you, and right"), SAM 3.1 finding the hand and the thing in each frame.
-- **"Show me the room."** Five looks, joined by MapAnything into the room's shape in 3D on the TV: dots, never a
-  picture, your things pinned with their distances.
-- **And:** reminders delivered in person; "I'm going out" (it points at what's still here; Muse Spark checks for
-  rain); "this is my mug", "what's that?" and the cup game (SAM 3.1 Object Multiplex; not yet tried with a person); the
-  weather radar on the TV (Muse Spark's computer use); a map of my things (Muse Image); several requests at once
-  through an agent with Andy's abilities as tools.
+- **"Hey Andy, where are my glasses?"** Andy turns to your voice and looks around, the TV showing each view with SAM
+  3.1's outlines. It points, checks with its own camera that the point landed, and says "There they are! To my left,
+  about 5 feet away" (MapAnything measures how far). It skips a picture of glasses on the TV, and picks "the blue cup"
+  from look-alikes.
+- **In fifteen languages, and it notices which.** Say "安迪，我的眼镜在哪里？" and Andy switches and answers in Mandarin:
+  Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
+  AI and the crisis reply are written by hand in each language.
+- **Andy's eyes, live, in your browser.** The public demo runs DINOv2 for the visitor: show it your mug once, sweep your
+  phone round the room, and a tone gets warmer as you near it; a confident sighting gets a closer look, as on the
+  robot, before the spotlight. Nothing leaves the phone.
+- **Meta's models, live, and under the hood.** The TV shows each model call as it happens and lays out each turn stage
+  by stage; that showed the answer waiting for the point, so Andy now answers while pointing, 9.6 s sooner.
+- **It remembers, and doesn't give up.** What you tell it ("my passport is in the top drawer"), where things live ("is
+  everything home?"), and a missed search becomes a promise: when the thing turns up, Andy points and says so,
+  unprompted. **V-JEPA 2** notices a watched thing put down.
+- **"I'm ringing my phone"** turns Andy to the ringing; **"help me reach it"** talks a hand onto the thing ("toward
+  you, and right") for someone who can't see well; **"show me the room"** makes its shape in 3D from five looks.
+- **And:** reminders delivered in person; "I'm going out" (it points at what's still here); "this is my mug", "what's
+  that?" and the cup game (SAM 3.1 Object Multiplex; not yet tried with a person); the weather radar on the TV (Muse
+  Spark's computer use); a map of my things (Muse Image); several requests at once through an agent.
 
 ## Meta's models, and where each one runs
 
