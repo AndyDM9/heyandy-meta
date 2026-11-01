@@ -20,8 +20,9 @@ from functools import lru_cache
 from ..models import glimmer_fast
 from ..models.common import is_local
 from .guide import ES as GUIDE_ES
-from .languages import FROM_EN, LINES, MORE, TO_EN
+from .languages import FROM_EN, HEALTH_LINES, LINES, MORE, TO_EN
 from .languages import THINGS as THING_NAMES
+from .safety import FEELINGS_REPLY, HEALTH_REPLY
 
 
 @dataclass(frozen=True)
@@ -93,8 +94,15 @@ PHRASES = {"es": {
         "volví a mirar donde vi sus cosas por última vez; el tiempo, de la web",
 }}
 PHRASES["es"].update(GUIDE_ES)  # guiding a hand: "Left.", "A little further.", with no translator between frames
+PHRASES["es"].update({  # a health question, and how someone feels (companion/safety.py): by hand, never translated
+    HEALTH_REPLY: "Soy un robot, así que no puedo darle consejos de salud, pero su médico o su farmacéutico sí. Puedo "
+                  "recordarle que los llame. Si es una emergencia, por favor llame al 911.",
+    FEELINGS_REPLY: "Siento que esté pasando un momento difícil. Soy un robot, así que no puedo darle consejos sobre cómo "
+                    "se siente, pero su médico sí. Puede llamar o enviar un mensaje de texto al 988 a cualquier hora, de "
+                    "día o de noche; tienen ayuda en español."})
 for _code, _row in MORE.items():  # the other languages' short lines, and "Okay, I'll speak it now.", by hand
-    PHRASES[_code] = {**dict(zip(LINES, _row[8])), f"Okay, I'll speak {_row[0]} now.": _row[5]}
+    PHRASES[_code] = {**dict(zip(LINES, _row[8])), f"Okay, I'll speak {_row[0]} now.": _row[5],
+                      HEALTH_REPLY: HEALTH_LINES[_code][0], FEELINGS_REPLY: HEALTH_LINES[_code][1]}
 # Everyday things, by hand: one word is too little for a translator to go on ("keys" came back "keys").
 THINGS = {"es": {
     "keys": "llaves", "key": "llave", "wallet": "billetera", "purse": "monedero", "glasses": "gafas",

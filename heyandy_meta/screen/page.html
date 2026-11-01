@@ -830,6 +830,10 @@
     ["answer", /^\W*(?:what|who|when|how|why|which|is|are|do|does|can|tell me)\b/i],
   ];
   const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "Where's my passport?", "Is everything home?", "Show me the room"];
+  // A health question typed, which matched no scene: what Andy says to it on the robot, its own words, never a model's
+  // (companion/safety.py HEALTH_REPLY; on the robot the rule is wider, and tested)
+  const HEALTH_TYPED = /\b(?:hurts?|aches?|aching|pain|sore|swollen|dizzy|fever|cough|rash|headaches?|migraines?|nause\w*|pills?|tablets?|medicines?|medications?|meds|doses?|tylenol|ibuprofen|aspirin|advil|statins?|insulin|antibiotics?|melatonin|vitamins?|blood (?:pressure|sugar)|cholesterol|diabet\w*|dementia|symptoms?|diagnos\w*|side effects?|depress\w*|anxious|anxiety)\b/i;
+  const HEALTH_SAID = "I'm a robot, so I can't give health advice: your doctor or pharmacist can. I can remind you to call them. If it's an emergency, please call 911.";
   let asked = null, asking = 0;
   // Typed in another of Andy's fifteen languages: that language's scene, as Andy notices the language it's called in
   // (companion/language.py heard_in: the script, else two of the language's everyday words; the same lists).
@@ -866,7 +870,8 @@
   function route(text) {
     const t = text.replace(/^\W*(?:hey |oye )?andy\W*/i, ""), lang = typedIn(text);
     if (lang && lang !== "en") return lang === "zh" ? "mandarin" : lang === "es" ? "spanish" : "in-" + lang;
-    return (ASK.find(([, rx]) => rx.test(t)) || ["help"])[0];
+    const hit = (ASK.find(([, rx]) => rx.test(t)) || ["help"])[0];
+    return (hit === "answer" || hit === "help") && HEALTH_TYPED.test(t) ? "help" : hit;  // never an answer, on the robot either
   }
   function ask(text) {
     text = String(text || "").replace(/\s+/g, " ").trim().slice(0, 120);
@@ -880,6 +885,7 @@
     asked = { text, scene: scene === "find" ? "found" : scene,
               note: /^in-|^mandarin$|^spanish$/.test(scene) ? "On the robot, Andy notices the language it's asked in and answers in it. This scene was recorded finding a mug."
                   : other ? `This scene was recorded finding a mug; on the robot, Andy looks for your ${thing.toLowerCase()} the same way.`
+                  : scene === "help" && HEALTH_TYPED.test(text) ? `On the robot, Andy says: "${HEALTH_SAID}" Its own words, written in code in each of its fifteen languages: a health question never reaches a model.`
                   : scene === "help" ? "Nothing matched that, so here's what Andy can do. On the robot, Andy also just talks." : "" };
     chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar();
     if (scene === "find") setTimeout(() => { if (run === asking) { chosen = "found"; pictureKey = ""; demoBar(); } }, 2600);

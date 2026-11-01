@@ -62,6 +62,12 @@ TELL = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:remember(?: that)?\W+)?(?:i
                   r"(?:my |the |our |a |an )?(?P<thing>[a-z][a-z '\-]{1,40}?) (?:away |back )?" + _WHERE + r"\W*$|"
                   r"^\W*(?:(?:hey |oye )?andy\W+)?(?:remember(?: that)?\W+)?(?:my|the|our) (?P<thing2>[a-z][a-z '\-]{1,40}?) "
                   r"(?:is|are|'s|'re) (?:now |kept |always )?" + _WHERE.replace("where", "where2") + r"\W*$", re.I)
+# "I keep getting heartburn at night, what helps?" was kept as where the heartburn is (evals/no_advice.py, Nov 1): a
+# doing, not a thing, and a time, not a place
+NOT_TOLD_THING = re.compile(r"(?:getting|having|feeling|losing|forgetting|waking|dropping|seeing|hearing|thinking|"
+                            r"making|doing|going|coming|trying|falling|wanting|needing)\b", re.I)
+NOT_A_PLACE = re.compile(r"at (?:night|noon|midnight|dawn|dusk|\d|weekends?|lunch|dinner|breakfast|times|first|last|"
+                         r"least|once|all)\b", re.I)
 NOT_THINGS = {"kids", "children", "child", "baby", "dog", "cat", "husband", "wife", "mom", "dad", "mum", "kettle", "tv",
               "heating", "oven", "washing", "dishwasher", "car", "light", "lights", "music", "radio", "it", "them", "that"}
 # filming (app.py film): "we're filming", "take two" (a clap to sync to), "cut", "that's a wrap"
@@ -304,7 +310,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("setup", text=t)
     if (m := TELL.search(t)) and not WATCH.search(t):
         thing, where = (m.group("thing") or m.group("thing2")).strip().lower(), (m.group("where") or m.group("where2")).strip()
-        if thing not in NOT_THINGS and not re.search(r"\b(?:here|there)\W*$", where, re.I):
+        if (thing not in NOT_THINGS and not re.search(r"\b(?:here|there)\W*$", where, re.I)
+                and not NOT_TOLD_THING.match(thing) and not NOT_A_PLACE.match(where)):
             return Intent("tell", thing=snap(thing), text=where)
     for kind, rx in (("home_check", HOME_CHECK), ("home_forget", HOME_FORGET), ("home_where", HOME_WHERE), ("home_set", HOME_SET)):
         if m := rx.search(t):

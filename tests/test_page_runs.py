@@ -76,6 +76,32 @@ def test_the_public_demo_runs_and_asking_andy_plays_a_scene(browser):
         server.shutdown()
 
 
+def test_a_health_question_typed_into_the_demo_shows_andys_own_words(browser):
+    from heyandy_meta.companion.safety import HEALTH_REPLY
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    got = {}
+
+    def typed(page_):
+        got.update(page_.evaluate("() => { ask('How many Tylenol can I take?'); const h = asked; "
+                                  "ask('Sing me a song'); return {health: h.note, other: asked.note, said: HEALTH_SAID}; }"))
+
+    try:
+        assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/", 2500, typed) == []
+    finally:
+        server.shutdown()
+    assert got["said"] == HEALTH_REPLY and HEALTH_REPLY in got["health"] and "never reaches a model" in got["health"]
+    assert got["other"].startswith("Nothing matched that")
+
+
 def test_the_settings_gear_opens_its_menu_and_under_the_hood_runs(browser):
     from heyandy_meta.screen.hood import Hood
 

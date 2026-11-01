@@ -151,5 +151,68 @@ MORE = {
            "нагадай мені о дев'ятій ранку полити квіти", "Я нагадаю вам о 17:00 зателефонувати доньці."),
 }
 
+# Andy's answer to a health question, and to how someone feels (companion/safety.py HEALTH_REPLY and FEELINGS_REPLY),
+# by hand: never a model's words, so never machine-translated either. 988 has help by text and in Spanish; in the
+# others, by phone with an interpreter, as the crisis reply says.
+HEALTH_LINES = {
+    "zh": ("我是机器人，不能给您健康方面的建议，您的医生或药剂师可以。我可以提醒您给他们打电话。如果是紧急情况，请拨打 911。",
+           "很抱歉您现在不好受。我是机器人，不能就您的感受给建议，但您的医生可以。您可以随时拨打 988，白天晚上都可以，并说您需要中文口译员。"),
+    "tl": ("Robot ako, kaya hindi ako makapagbibigay ng payo tungkol sa kalusugan: ang doktor o parmasyutiko mo ang "
+           "makakatulong. Puwede kitang paalalahanan na tawagan sila. Kung emergency ito, tumawag ka sa 911.",
+           "Pasensya na at mahirap ito para sa iyo ngayon. Robot ako, kaya hindi ako makapagbibigay ng payo tungkol sa "
+           "nararamdaman mo, pero ang doktor mo ay makakatulong. Puwede kang tumawag sa 988 anumang oras, araw man o "
+           "gabi, at humingi ng interpreter sa Tagalog."),
+    "vi": ("Tôi là robot nên không thể đưa ra lời khuyên về sức khỏe: bác sĩ hoặc dược sĩ của quý vị có thể giúp. Tôi có "
+           "thể nhắc quý vị gọi cho họ. Nếu là trường hợp khẩn cấp, xin hãy gọi 911.",
+           "Tôi rất tiếc vì lúc này quý vị đang thấy khó khăn. Tôi là robot nên không thể khuyên về cảm xúc của quý vị, "
+           "nhưng bác sĩ của quý vị có thể. Quý vị có thể gọi 988 bất cứ lúc nào, ngày hay đêm, và xin một thông dịch "
+           "viên tiếng Việt."),
+    "ko": ("저는 로봇이라서 건강에 관한 조언은 드릴 수 없지만, 의사나 약사는 도와드릴 수 있어요. 그분들께 전화하시도록 알려 "
+           "드릴 수 있어요. 응급 상황이라면 911에 전화해 주세요.",
+           "지금 힘드시다니 안타까워요. 저는 로봇이라서 기분에 관한 조언은 드릴 수 없지만, 의사는 도와드릴 수 있어요. 988에 "
+           "밤낮 언제든지 전화하셔서 한국어 통역을 요청하실 수 있어요."),
+    "ru": ("Я робот, поэтому не могу давать советы о здоровье: это может сделать ваш врач или фармацевт. Я могу напомнить "
+           "вам позвонить им. Если это экстренный случай, пожалуйста, позвоните 911.",
+           "Мне жаль, что вам сейчас тяжело. Я робот, поэтому не могу советовать, как быть с тем, что вы чувствуете, но "
+           "ваш врач может. Вы можете позвонить 988 в любое время, днём и ночью, и попросить переводчика с русского."),
+    "ar": ("أنا روبوت، لذلك لا أستطيع تقديم نصائح صحية، لكن طبيبك أو الصيدلي يستطيع. يمكنني أن أذكّرك بالاتصال بهم. إذا "
+           "كانت حالة طارئة، فاتصل بالرقم 911 من فضلك.",
+           "يؤسفني أن الأمر صعب عليك الآن. أنا روبوت، لذلك لا أستطيع أن أنصحك بشأن ما تشعر به، لكن طبيبك يستطيع. يمكنك "
+           "الاتصال بالرقم 988 في أي وقت ليلًا أو نهارًا، وطلب مترجم للغة العربية."),
+    "hi": ("मैं एक रोबोट हूँ, इसलिए स्वास्थ्य के बारे में सलाह नहीं दे सकता, लेकिन आपके डॉक्टर या फ़ार्मासिस्ट दे सकते हैं। "
+           "मैं आपको उन्हें फ़ोन करने की याद दिला सकता हूँ। अगर यह आपातकाल है, तो कृपया 911 पर कॉल करें।",
+           "मुझे अफ़सोस है कि अभी आपके लिए मुश्किल समय है। मैं एक रोबोट हूँ, इसलिए आपकी भावनाओं के बारे में सलाह नहीं दे "
+           "सकता, लेकिन आपके डॉक्टर दे सकते हैं। आप दिन हो या रात, किसी भी समय 988 पर कॉल करके हिन्दी दुभाषिये के लिए "
+           "कह सकते हैं।"),
+    "pt": ("Sou um robô, então não posso dar conselhos de saúde, mas o seu médico ou farmacêutico pode. Posso lembrar "
+           "você de ligar para eles. Se for uma emergência, por favor ligue para o 911.",
+           "Sinto muito que esteja difícil agora. Sou um robô, então não posso dar conselhos sobre o que você está "
+           "sentindo, mas o seu médico pode. Você pode ligar para o 988 a qualquer hora, de dia ou de noite, e pedir um "
+           "intérprete de português."),
+    "fr": ("Je suis un robot, je ne peux donc pas donner de conseils de santé, mais votre médecin ou votre pharmacien, "
+           "oui. Je peux vous rappeler de les appeler. Si c'est une urgence, appelez le 911, s'il vous plaît.",
+           "Je suis désolé que ce soit difficile en ce moment. Je suis un robot, je ne peux donc pas vous conseiller sur "
+           "ce que vous ressentez, mais votre médecin, oui. Vous pouvez appeler le 988 à toute heure du jour ou de la "
+           "nuit et demander un interprète en français."),
+    "it": ("Sono un robot, quindi non posso dare consigli sulla salute, ma il suo medico o il farmacista sì. Posso "
+           "ricordarle di chiamarli. Se è un'emergenza, per favore chiami il 911.",
+           "Mi dispiace che sia un momento difficile. Sono un robot, quindi non posso darle consigli su come si sente, "
+           "ma il suo medico sì. Può chiamare il 988 a qualsiasi ora, di giorno o di notte, e chiedere un interprete di "
+           "italiano."),
+    "pl": ("Jestem robotem, więc nie mogę udzielać porad zdrowotnych, ale lekarz lub farmaceuta może. Mogę przypomnieć "
+           "o telefonie do nich. W nagłym wypadku proszę zadzwonić pod numer 911.",
+           "Przykro mi, że jest teraz ciężko. Jestem robotem, więc nie mogę doradzać w sprawie samopoczucia, ale lekarz "
+           "może. O każdej porze dnia i nocy można zadzwonić pod numer 988 i poprosić o tłumacza języka polskiego."),
+    "de": ("Ich bin ein Roboter und kann Ihnen keine Gesundheitsratschläge geben, aber Ihr Arzt oder Ihre Apotheke kann "
+           "das. Ich kann Sie daran erinnern, dort anzurufen. Wenn es ein Notfall ist, rufen Sie bitte die 911 an.",
+           "Es tut mir leid, dass es gerade schwer ist. Ich bin ein Roboter und kann Sie nicht dazu beraten, wie es Ihnen "
+           "geht, aber Ihr Arzt kann das. Sie können jederzeit, Tag und Nacht, die 988 anrufen und um einen Dolmetscher "
+           "für Deutsch bitten."),
+    "uk": ("Я робот, тому не можу давати порад щодо здоров'я: це може зробити ваш лікар або фармацевт. Я можу нагадати "
+           "вам зателефонувати їм. Якщо це невідкладний випадок, будь ласка, зателефонуйте 911.",
+           "Мені шкода, що вам зараз важко. Я робот, тому не можу радити щодо того, що ви відчуваєте, але ваш лікар може. "
+           "Ви можете будь-коли, вдень і вночі, зателефонувати 988 і попросити перекладача з української."),
+}
+
 for _code, _row in MORE.items():  # every language has every line and thing, in order
-    assert len(_row) == 12 and len(_row[8]) == len(LINES) and len(_row[9]) == len(THINGS), _code
+    assert len(_row) == 12 and len(_row[8]) == len(LINES) and len(_row[9]) == len(THINGS) and _code in HEALTH_LINES, _code

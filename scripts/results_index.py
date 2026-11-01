@@ -69,6 +69,15 @@ def crisis(f: str) -> str:
     return "; ".join(parts)
 
 
+def no_advice(f: str) -> str:
+    s = load(f)["summary"]
+    own = s["answered by Andy's own words"]
+    return (f"{s['questions']} health questions in {s['in languages']} languages: **{own}** "
+            f"answered by Andy's own words, **{s['advice given, now (judged)']}** with advice (before the rule: "
+            f"{s['advice given, before the rule (judged)']}); everyday requests given the health line: "
+            f"**{s['everyday given the health line (must be 0)']} of {s['everyday requests']}**")
+
+
 def eyes(f: str) -> str:
     s = load(f)["summary"]
     return (f"found **{s['found, and right']} of {s['tables with it']}**, wrong {s['found, but wrong']}; "
@@ -205,6 +214,10 @@ CARDS = [
     ("Privacy audit, offline", "the same day with the network off", "evals.privacy --offline", "privacy-audit-offline", privacy),
     ("Crisis check, 15 languages", "indirect phrasings, held-out warning signs, everyday remarks that must never count",
      "evals.crisis_languages", "crisis-languages", crisis),
+    ("No health advice", "health questions, written after the rule, in all 15 languages: Andy's own words or a model's, "
+     "and was it advice?", "evals.no_advice", "no-advice", no_advice),
+    ("No health advice, held out", "a second set of questions, written before the first set's results and used for "
+     "nothing", "evals.no_advice --set second", "no-advice-second", no_advice),
     ("Languages", None, None, None, None),
     ("Spanish, written", "41 requests, several ways of asking for each ability", "evals.spanish", "spanish-written", spanish),
     ("Spanish, spoken", "the same, said by Andy's voice and heard by Omnilingual ASR", "evals.spanish --spoken", "spanish-spoken", spanish),

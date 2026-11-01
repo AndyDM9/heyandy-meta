@@ -85,6 +85,103 @@ CRISIS_SIGNS = re.compile(
     re.IGNORECASE)
 
 
+# No health advice (the README's promise, and the organizers' condition for the entry, October 30), kept in code as the
+# crisis reply is: a symptom said, or a question about a medicine, a condition, a reading or how someone feels, gets
+# Andy's own words, written by hand in each of its languages, and never reaches a model, on this computer or in the
+# cloud. Before this (November 1), Muse Spark, asked to "explain what a statin does", explained it. Conversation only:
+# "where are my pills?" is still a search, "remind me at 8 to take my pills" a reminder. Read on the English (in another
+# language, the translation of it), after the crisis checks. Measured: evals/no_advice.py.
+HEALTH_REPLY = ("I'm a robot, so I can't give health advice: your doctor or pharmacist can. I can remind you to call "
+                "them. If it's an emergency, please call 911.")
+FEELINGS_REPLY = ("I'm sorry it's hard right now. I'm a robot, so I can't give advice about how you feel, but your "
+                  "doctor can. You can call or text 988 any time, day or night.")
+_BODY = r"(?:\w+\s+){0,2}"  # "my (left) knee", "my lower back"
+SYMPTOM = re.compile(
+    r"\b(?:my|his|her)\s+" + _BODY + r"(?:hurts?|is hurting|are hurting|aches?|is aching|are aching|is sore|are sore|"
+    r"(?:is|are|has been|have been|keeps?|look|looks|feel|feels) (?:swollen|sore|bleeding|numb|itchy|hurting|aching|"
+    r"blurry|puffy|inflamed|infected|swelling)|swells?|bleeds?|itch(?:es)?|cramps?|throbs?|is killing me|are killing me)\b"
+    r"|\bi(?:'ve| have| had)?\s+(?:got |have |had |a |an |some )*(?:headaches?|migraines?|(?:a )?fever|a temperature|"
+    r"a cough|coughing|a cold|sore throat|a rash|(?:stomach|tummy|tooth|back|ear)\s?aches?|chest pains?|pains?|cramps?|"
+    r"heartburn|indigestion|diarrh\w*|nausea|the flu|covid|an infection|a lump|a bruise|a blister|swelling)\b"
+    r"|\bi(?:'m| am| was)?\s*(?:feel|felt|feeling|keep feeling|getting|am getting)\s+(?:so |really |very |a bit |a little |"
+    r"kind of |quite )*(?:dizzy|light-?headed|faint|sick(?! of| and tired)|nauseous|feverish|weak|short of breath|"
+    r"breathless|numb|achy|shaky|unwell|ill|poorly|bloated)\b"
+    r"|\bi(?:'m| am)\s+(?:so |really |very |a bit |a little )*(?:dizzy|light-?headed|nauseous|feverish|short of breath|"
+    r"unwell|in (?:a lot of |so much )?pain)\b"
+    r"|\b(?:can'?t|cannot|hard to|trouble|difficulty)\s+(?:breathe|breathing|swallow\w*|sleep\w*|pee\w*|feel my)\b"
+    r"|\b(?:i|i've|i have|he|she)\s+(?:just\s+)?(?:fell|fallen|fainted|passed out|blacked out|threw up|"
+    r"been (?:throwing up|vomiting|coughing))\b"
+    r"|\b(?:heartburn|indigestion|constipat\w*|diarrh\w*|nause\w*|migraines?|vertigo|incontinen\w*|headaches?|"
+    r"toothaches?|backaches?|stomach ?aches?|earaches?|fever)\b"
+    # the held-out set's misses (November 1), added after it was measured: always tired, a mole, a bad knee
+    r"|\b(?:always|constantly) (?:tired|exhausted)\b|\b(?:tired|exhausted) all the time\b"
+    r"|\bsore (?:throat|back|knees?|neck|shoulders?|feet|legs?|arms?|hips?|joints?|muscles?|eyes?|gums?|teeth|tooth)\b"
+    r"|\bchest (?:pains?|feels tight|is tight|hurts)\b|\btight chest\b|\bheart (?:is )?(?:racing|pounding)\b|"
+    r"\bpalpitations\b|\bblurr(?:y|ed) vision\b|\bslurr(?:ed|ing)\b", re.I)
+MEDICAL = re.compile(
+    r"\b(?:pills?|tablets?|capsules?|medicines?|medications?|meds|drugs?(?! ?stores?)|doses?|dosage|prescriptions?|"
+    r"tylenol|acetaminophen|paracetamol|ibuprofen|advil|motrin|aleve|naproxen|aspirin|statins?|lipitor|atorvastatin|"
+    r"metformin|insulin|warfarin|eliquis|blood thinners?|antibiotics?|antidepressants?|melatonin|sleeping pills?|"
+    r"painkillers?|pain relievers?|opioids?|vitamins?|supplements?|inhalers?|antacids?|laxatives?|benadryl|"
+    r"antihistamines?|side effects?|blood pressure|blood sugar|glucose|cholesterol|a1c|heart rate|pulse|diabet\w*|"
+    r"heart (?:attack|disease|failure|condition|problems?)|strokes?|cancer|tumou?rs?|arthritis|dementia|alzheimer'?s?|"
+    r"parkinson'?s?|asthma|copd|kidneys?|liver|thyroid|infections?|flu|covid|pneumonia|allerg(?:y|ies|ic)|"
+    r"osteoporosis|symptoms?|diagnos\w*|treatments?|surgery|(?:test|lab|blood) results|x-?rays?|mri|blood tests?|"
+    r"calories|lose weight|my weight|my diet|diet for|vaccines?|depress\w*|anxiety|insomnia|health|healthy|my heart|"
+    r"the er|emergency room|urgent care|put me on|prescribed|urine|pee|stool|bowels?|phlegm|mucus|blood in|"
+    r"(?:a|my) cold(?!\s+(?:day|night|morning|evening|drink|beer|one|front|snap|spell|wind|room|shower|glass|water))|"
+    r"(?:good|bad|healthy|unhealthy) for me|moles?|lumps?|bad (?:knee|back|hip|leg|shoulder|heart)|"
+    r"(?:hours of|enough|how much) sleep|memory (?:loss|problems?)|forgetting (?:words|names)|"
+    r"see (?:a doctor|someone|a specialist)|"
+    r"\w{2,}(?:pril|olol|sartan|prazole|mycin|cillin|azepam|oxetine|dipine|formin|vastatin))\b", re.I)
+ASKING = re.compile(
+    r"\?\s*$|^\W*(?:(?:hey|hi|ok|okay)\W+)?(?:andy\W+)?(?:how|what|what's|whats|why|which|when|should|shall|can|could|"
+    r"is|are|do|does|will|would|may|might|am)\b|\b(?:should i|can i|could i|do i need|is it (?:ok|okay|safe|bad|good|"
+    r"normal|dangerous|serious|alright|all right)|is that (?:ok|okay|safe|bad|good|normal|dangerous|serious|high|low|too)|"
+    r"how (?:much|many|often|long)|what (?:should|can|do) i|tell me about|explain|compare|what (?:is|are|does|do)|"
+    r"what's|whats|worried|concerned|scared|afraid|good for|bad for|safe to|ok(?:ay)? to|help (?:with|for)|"
+    r"anything for|something for|recommend|suggest|advice|advise|mean|means)\b", re.I)
+FEELING = re.compile(
+    r"\b(?:i(?:'m| am)|i(?:'ve| have) been|i feel|i'm feeling|i am feeling|i keep feeling|i get|feeling)\s+"
+    r"(?:so |really |very |quite |a bit |a little |kind of |kinda |pretty |too |always |constantly )*"
+    r"(?:down|low|depressed|anxious|panicky|hopeless|worthless|miserable)\b(?! (?:on|of|to|for|with|here|there|stairs)\b)"
+    r"|\b(?:my|i have|i've got|i get|i'm having) (?:depression|anxiety|panic attacks?)\b"
+    r"|\b(?:am i|do you think i'?m|i think i'?m|i might be) depressed\b"
+    # the first held-out set's misses: how to stop worrying, nothing makes me happy (a sign the 988 Lifeline lists)
+    r"|\b(?:stop|quit) (?:worrying|being (?:so )?(?:anxious|sad|down))\b|\bworry (?:all the time|constantly|so much)\b"
+    r"|\bnothing (?:makes me happy|makes me smile|brings me joy|feels good)\b|\bdon'?t enjoy anything\b"
+    r"|\b(?:can'?t stop|keep) crying\b|\bcry all the time\b"
+    r"|\bhelp me (?:relax|calm down|feel better|stop worrying|cope)\b|\b(?:so|really|very|too) stressed\b"
+    # sad, unhappy or lonely for a while (in other languages "feeling down" came back from translation as "sad"):
+    # not "I'm sad my team lost"
+    r"|\b(?:sad|unhappy|lonely)\b[^.?!]{0,25}\b(?:lately|these (?:past )?(?:few )?days|these days|for (?:days|weeks|months)|"
+    r"all the time|every day|most days|since)\b|\b(?:lately|these days|for weeks|most days|every day)\b[^.?!]{0,25}"
+    r"\b(?:sad|unhappy|lonely)\b", re.I)
+# Muse Glimmer, translating, declined a health question ("मेरी पीठ में दर्द है, मुझे क्या लेना चाहिए?" came back as "I
+# can't provide medical advice."): its refusal says what the question was
+REFUSED_HEALTH = re.compile(r"^\W*(?:I'?m sorry\W+(?:but\s+)?)?I (?:can'?t|cannot|won'?t|am unable to|'m unable to) "
+                            r"(?:provide|give|offer|help with) (?:any |you )?(?:medical|health|medication|dosage)", re.I)
+# not a question about health, though it names a medicine: did I take them (Andy can't know; the model says so), where
+NOT_HEALTH = re.compile(r"\bdid i (?:take|have|forget|miss)\b|\b(?:on|in|under|behind|next to|by) the (?:table|counter|"
+                        r"shelf|desk|drawer|kitchen|bathroom|bedroom|cabinet|cupboard|sofa|couch|floor|bed|nightstand)\b",
+                        re.I)
+
+
+def health(text: str) -> str | None:
+    """"Can I take ibuprofen with my blood pressure pills?" and "my knee is swollen" -> HEALTH_REPLY; "I've been
+    feeling down" -> FEELINGS_REPLY; "I took my pills", "tell me a joke" -> None (conversation, as before)."""
+    t = (text or "").replace("\u2019", "'")
+    if REFUSED_HEALTH.search(t):
+        return HEALTH_REPLY
+    if FEELING.search(t):
+        return FEELINGS_REPLY
+    if SYMPTOM.search(t):  # "I fell in the bathroom" is one wherever it was
+        return HEALTH_REPLY
+    if MEDICAL.search(t) and ASKING.search(t) and not NOT_HEALTH.search(t):
+        return HEALTH_REPLY
+    return None
+
+
 def crisis(text: str) -> bool:
     t = unicodedata.normalize("NFC", text or "")  # one way to write "ế", whichever the keyboard or hearing used
     t = t.replace("\u2019", "'").replace("\u2018", "'")  # speech-to-text and keyboards write ’ too

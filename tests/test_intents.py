@@ -110,3 +110,9 @@ def test_do_you_see_is_a_search_only_for_a_thing_andy_knows():
     for said in ("Do you see any point in living?", "Do you see a future for me?", "Do you see any hope for me?"):
         assert parse(said).kind == "chat", said
     assert parse("Do you see my keys?").thing == "keys" and parse("Can you see the remote?").kind == "find"
+
+
+def test_i_keep_getting_something_at_night_is_not_where_a_thing_is_kept():
+    assert parse("I keep getting heartburn at night, what helps?").kind == "chat"
+    assert parse("I keep my passport in the top drawer").kind == "tell"
+    assert parse("I keep my wedding ring in the blue box").thing == "wedding ring"

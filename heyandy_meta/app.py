@@ -33,7 +33,7 @@ from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.selfcheck import check as self_check, summary as self_summary
 from .companion.sound import apart, fan, reading, turn_to, wait_for
-from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, respond
+from .companion.safety import CRISIS_REPLY, DISCLOSURE, Disclosure, crisis, health, respond
 
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
@@ -392,6 +392,11 @@ class Andy:
             if len(re.findall(r"[a-z']+", rest.lower())) < 3:  # only the question ("please", "Andy")
                 return self.privacy_today()
             return self.privacy_today(on_screen=False) + " " + self._answer(rest)  # then the rest, as asked
+        if (i.kind in ("chat", "world", "help") or needs_agent(text)) and (line := health(text)):
+            # conversation, a question for the web, or "what can I do?" ("my legs cramp at night, what can I do?")
+            # a health question: Andy's own words, by hand in each language, and no model at all (companion/safety.py)
+            self._source, self._reason = "device", "a health question: Andy's own words, never a model's"
+            return line
         if brief or needs_agent(text):
             done = self.agent(text, brief)
             if done is not None:
