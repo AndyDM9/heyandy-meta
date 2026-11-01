@@ -29,7 +29,7 @@ from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
 OUT = ROOT / "docs" / "images"
 SCENES = {"found": 8.5, "guide": 2.5, "turned": 8.5, "sound": 3.0, "home": 2.5, "told": 2.5, "room": 6.0,
-          "mandarin": 9.0}  # settle, s
+          "mandarin": 9.0, "promises": 2.5}  # settle, s
 WHOLE = {"mandarin"}  # the whole TV, not just its card: every label on it is in the language
 SIZE = (1920, 1080)
 CARD = (590, 240, 1850, 852)  # the TV's main card: what a scene is about, legible small (the captions run the full width)
