@@ -82,6 +82,12 @@ def eyes_live(f: str) -> str:
             f"\"found\" without it {s['said found without it']}, in {s['frames']} frames, {s['seconds a frame, median']} s a frame")
 
 
+def say_it(f: str) -> str:
+    s = load(f)["summary"]
+    return (f"fresh: the right scene **{s['fresh, the right scene']}**, nothing forced {s['fresh, nothing forced (no scene)']}; "
+            f"tuning set {s['tuning set, the right scene']}; {s['seconds to hear, median']} s to hear")
+
+
 def rehearsal(f: str) -> str:
     d = load(f)
     ok = sum(s["ok"] for s in d["shots"])
@@ -207,6 +213,7 @@ CARDS = [
     ("In the browser", None, None, None, None),
     ("Andy's eyes", "DINOv2 in the browser, museum photos: yours among look-alikes, and not there at all", "evals.eyes", "eyes", eyes),
     ("Andy's eyes, live", "sweeping a camera (a video of one) over our cup and its look-alikes", "evals.eyes_live", "eyes-live", eyes_live),
+    ("Say it", "the demo's microphone: Meta's wav2vec 2.0 in the browser, phrases scored by CTC", "evals.say_it", "say-it", say_it),
 ]
 
 

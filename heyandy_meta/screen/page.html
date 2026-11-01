@@ -294,6 +294,10 @@
   form.ask button { font: inherit; font-weight: 800; padding: 0.5rem 1.2rem; border-radius: 99rem; cursor: pointer;
                     border: 0; background: var(--outline); color: #070a09; }
   form.ask.dark input { background: rgba(245, 243, 239, 0.08); color: #F5F3EF; border-color: rgba(245, 243, 239, 0.35); }
+  form.ask button.mic { padding: 0.5rem 0.9rem; background: transparent; border: 2px solid var(--outline); color: inherit; }
+  form.ask button.mic.on { background: #c8372d; border-color: #c8372d; color: #fff; animation: micpulse 1s ease-in-out infinite; }
+  @keyframes micpulse { 50% { opacity: 0.6; } }
+  @media (prefers-reduced-motion: reduce) { form.ask button.mic.on { animation: none; } }
   #story form.ask { flex: 0 1 22rem; } #story form.ask button { padding: 0.5rem 1rem; }
   .tries { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .tries button { font: inherit; font-size: 1.1rem; padding: 0.25rem 0.8rem; border-radius: 99rem; cursor: pointer;
@@ -783,7 +787,7 @@
   // from its TV for that plays; a search starts as the real one does, "Let me look" and the views as it looks, then
   // the find. The words are matched here, in the page, much as companion/intents.py does; nothing typed is sent.
   const ASK = [
-    ["guide", /\b(?:help me (?:reach|grab|get to|pick up)|guide (?:my hand|me)|lead my hand)\b|gu[ií](?:e|a)(?:me| mi mano)/i],
+    ["guide", /\b(?:(?:help )?me (?:reach|grab|get to|pick up)|guide (?:my hand|me)|lead my hand)\b|gu[ií](?:e|a)(?:me| mi mano)/i],
     ["sound", /\b(?:ring|ringing|call|calling) (?:my |the |it|them)|\blisten (?:for|out)\b|\bby (?:its|the) (?:sound|ring)|\bfollow the (?:sound|ringing)|\bbeep/i],
     ["hood", /\bunder the hood\b|\bhow (?:did|do) you (?:do|find) (?:that|it)\b|\bhow fast\b|\bwhich models?\b|\bhow does it work\b/i],
     ["checked", /\bare you (?:ok|okay|alright|all right|working|broken)\b|\b(?:check|test) yourself\b|\bself[- ]?(?:check|test)\b|\bis everything working\b/i],
@@ -791,7 +795,7 @@
     ["home", /\b(?:live|lives|belong|belongs) (?:here|there)\b|\bis everything (?:home|in (?:its|it's) place|where it belongs)\b|\bwhere (?:do|does) (?:my|the) \w+ (?:live|belong)\b|\b(?:bedtime|home|tidy) check\b|\bstop losing\b/i],
     ["turned", /\bi(?:'ve| have)? found\b|\b(?:stop|keep|still) looking\b|\bwhat are you looking for\b|\bgive up\b|\bturned up\b/i],
     ["room", /\b(?:the room|room in 3d|in 3d|3d|whole room|map of the room)\b/i],
-    ["cups", /\b(?:cup game|shell game|shuffle|which cup|under (?:the|a|which) cup|the ball)\b/i],
+    ["cups", /\b(?:cup game|shell game|shuffle|which cup|under (?:the|a|which) cup|the ball|play the cups?)\b/i],
     ["out", /\b(?:going out|leaving|heading out|go out|umbrella|need a coat)\b/i],
     ["mine", /\bthis is my\b|\bis (?:this|that) mine\b|\bmy own\b/i],
     ["mandarin", /[\u3400-\u9fff]|\b(?:mandarin|chinese)\b/i],  // typed in Chinese: the scene in Mandarin
@@ -821,6 +825,25 @@
     const [best, n] = Object.entries(score).sort((a, b) => b[1] - a[1])[0], second = Object.values(score).sort((a, b) => b - a)[1];
     return n >= 2 && n > second ? best : null;
   }
+  // Said, not typed: Meta's wav2vec 2.0 writes what it hears letter by letter ("show me the rom", "pasport"), so a
+  // word one letter from a word Andy's routes know (two for a long one) becomes that word, as a lexicon decodes.
+  const LEXICON = new Set([...ASK.flatMap(([, rx]) => rx.source.toLowerCase().match(/[a-z]{3,}/g) || []),
+    ..."keys glasses mug cup remote wallet phone passport umbrella watch where everything home room show help reach".split(" ")]);
+  function edits(a, b) {
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  function snap(text) {
+    return text.toLowerCase().replace(/[a-z']{3,}/g, (w) => {
+      if (LEXICON.has(w)) return w;
+      let best = w, bestD = w.length >= 6 ? 3 : 2;
+      for (const v of LEXICON) { const d = edits(w, v); if (d < bestD) { best = v; bestD = d; } }
+      return best;
+    });
+  }
   function route(text) {
     const t = text.replace(/^\W*(?:hey |oye )?andy\W*/i, ""), lang = typedIn(text);
     if (lang && lang !== "en") return lang === "zh" ? "mandarin" : lang === "es" ? "spanish" : "in-" + lang;
@@ -842,11 +865,134 @@
     chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar();
     if (scene === "find") setTimeout(() => { if (run === asking) { chosen = "found"; pictureKey = ""; demoBar(); } }, 2600);
   }
+  // ---- Say it: the demo heard, not typed. Meta's wav2vec 2.0 (facebook/wav2vec2-base-960h, Apache-2.0; 8-bit, 95 MB,
+  // fetched once, on the first tap) runs in this browser: nothing said leaves it. English. It writes what it hears letter
+  // by letter ("whirl my keith"), so the things people say to this demo are scored against what it heard, as a speech
+  // system decodes a fixed set of commands (CTC): the best is taken when it explains the sound nearly as well as the
+  // free transcript and clearly better than the next; else the transcript, its near-miss words snapped (docs/research.md 60).
+  let ears = null, earsLoading = null, listening = null;
+  const VOCAB = "<pad> <s> </s> <unk> | E T A O N I H S R D L U M W C F G Y P B V K ' X J Q Z".split(" ");
+  const LETTER = Object.fromEntries(VOCAB.map((c, i) => [c, i]));
+  const SAY = ["hey andy where are my keys", "where are my glasses", "where is my phone", "where is the remote",
+    "where is my wallet", "help me reach it", "i'm ringing my phone", "where's my passport", "is everything home",
+    "show me the room", "let's play the cup game", "i'm going out", "what did you send to the cloud today",
+    "how did you do that", "what can you do", "are you okay", "draw me a picture", "show me the weather radar",
+    "this is my mug", "what do you remember"];  // each one a scene of this demo
+  const FITS_WITHIN = 2.0, WINS_BY = 1.0;  // nats a letter: measured on 36 clips of Meta's voices (24 in, 12 out of SAY)
+  function earsReady(onProgress) {
+    if (ears) return Promise.resolve(ears);
+    earsLoading ??= (async () => {
+      const T = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6");
+      T.env.allowLocalModels = false;
+      const model = await T.AutoModelForCTC.from_pretrained("Xenova/wav2vec2-base-960h",
+                                                            { dtype: "q8", device: "wasm", progress_callback: onProgress });
+      ears = { model, T };
+      return ears;
+    })().catch((e) => { earsLoading = null; throw e; });
+    return earsLoading;
+  }
+  const lse = (a, b) => a === -Infinity ? b : b === -Infinity ? a : Math.max(a, b) + Math.log1p(Math.exp(-Math.abs(a - b)));
+  function ctc(lp, ids) {  // -log P(these letters | the sound) per letter: the forward algorithm, blanks between letters
+    const S = 2 * ids.length + 1, lab = (i) => (i % 2 ? ids[(i - 1) / 2] : 0);
+    let a = new Array(S).fill(-Infinity); a[0] = lp[0][0]; if (S > 1) a[1] = lp[0][lab(1)];
+    for (let t = 1; t < lp.length; t++) {
+      const b = new Array(S).fill(-Infinity);
+      for (let k = 0; k < S; k++) {
+        let v = a[k]; if (k > 0) v = lse(v, a[k - 1]);
+        if (k > 1 && k % 2 && lab(k) !== lab(k - 2)) v = lse(v, a[k - 2]);
+        b[k] = v + lp[t][lab(k)];
+      }
+      a = b;
+    }
+    return -(S > 1 ? lse(a[S - 1], a[S - 2]) : a[0]) / Math.max(1, ids.length);
+  }
+  const letters = (text) => [...text.toUpperCase().replace(/[^A-Z' ]/g, "").trim().replace(/\s+/g, "|")].map((c) => LETTER[c]);
+  async function hearIt(audio) {
+    const { model, T } = await earsReady();
+    let m = 0; for (const v of audio) m += v; m /= audio.length;
+    let s = 0; for (const v of audio) s += (v - m) ** 2; s = Math.sqrt(s / audio.length + 1e-7);
+    const x = audio.map((v) => (v - m) / s);
+    const { logits } = await model({ input_values: new T.Tensor("float32", x, [1, x.length]) });
+    const [, F, V] = logits.dims, d = logits.data, lp = [];
+    for (let t = 0; t < F; t++) {
+      let mx = -Infinity; for (let v = 0; v < V; v++) mx = Math.max(mx, d[t * V + v]);
+      let z = 0; for (let v = 0; v < V; v++) z += Math.exp(d[t * V + v] - mx);
+      const row = new Float32Array(V); for (let v = 0; v < V; v++) row[v] = d[t * V + v] - mx - Math.log(z); lp.push(row);
+    }
+    const best = lp.map((r) => r.indexOf(Math.max(...r)));
+    const text = best.filter((c, i) => c !== best[i - 1] && (c > 3 || c === 4)).map((c) => (c === 4 ? " " : VOCAB[c])).join("")
+      .replace(/\s+/g, " ").trim().toLowerCase();
+    if (!text) return { text: "" };
+    const free = ctc(lp, letters(text)), ranked = SAY.map((p) => [p, ctc(lp, letters(p))]).sort((p, q) => p[1] - q[1]);
+    const sure = ranked[0][1] - free <= FITS_WITHIN && ranked[1][1] - ranked[0][1] >= WINS_BY;
+    return { text, meant: sure ? ranked[0][0] : snap(text) };
+  }
+  async function to16k(chunks, rate) {  // the microphone's rate to the 16 kHz the model was trained on
+    const n = chunks.reduce((a, c) => a + c.length, 0), all = new Float32Array(n);
+    let o = 0; for (const c of chunks) { all.set(c, o); o += c.length; }
+    if (rate === 16000) return all;
+    const off = new OfflineAudioContext(1, Math.ceil(n * 16000 / rate), 16000), buf = off.createBuffer(1, n, rate);
+    buf.copyToChannel(all, 0); const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+    return (await off.startRendering()).getChannelData(0);
+  }
+  async function sayIt(button, input) {
+    if (listening) { listening(); return; }  // a second tap: stop now
+    const show = (t) => { input.value = ""; input.placeholder = t; };
+    let stream;
+    // no echo cancelling or noise suppression: they help a call, and smear the sounds a model trained on clean speech reads
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: true } }); }
+    catch (e) { show("The microphone isn't available here: type it instead."); return; }
+    const files = {};
+    let progress = "";
+    const loading = earsReady((p) => {
+      if (p.status !== "progress" || !p.total) return;
+      files[p.file] = [p.loaded, p.total];
+      const [a, b] = Object.values(files).reduce(([x, y], [l, t]) => [x + l, y + t], [0, 0]);
+      progress = ` (getting Andy's ears ready, once: ${Math.round(100 * a / b)}%)`;
+    });
+    loading.catch(() => {});
+    let ctx;  // recorded at 16 kHz where the browser can (one resampling, its own), else resampled after
+    try { ctx = new AudioContext({ sampleRate: 16000 }); } catch (e) { ctx = new AudioContext(); }
+    const src = ctx.createMediaStreamSource(stream), proc = ctx.createScriptProcessor(4096, 1, 1);
+    const chunks = [], t0 = performance.now();
+    let voiced = false, quiet = 0, done = false;
+    const finish = async () => {
+      if (done) return;
+      done = true; listening = null;
+      proc.disconnect(); src.disconnect(); stream.getTracks().forEach((t) => t.stop()); ctx.close();
+      button.classList.remove("on"); button.textContent = "🎙";
+      if (!voiced) { show("I didn't hear anything: tap 🎙 and say it, or type it."); return; }
+      show("Hearing it…" + progress);
+      try {
+        await loading;
+        const audio = await to16k(chunks, ctx.sampleRate), t = performance.now();
+        const heard = await hearIt(audio), s = ((performance.now() - t) / 1000).toFixed(1);
+        if (!heard.text) { show("I didn't catch that: tap 🎙 and say it again, or type it."); return; }
+        input.placeholder = "Ask Andy anything… in any of its 15 languages";
+        ask(heard.meant);
+        const as = heard.meant !== heard.text ? `, as “${heard.text}”` : "";
+        if (asked) { asked.note = `Heard by Meta's wav2vec 2.0, here in your browser (${s} s${as}): nothing you said left it.`
+                                  + (asked.note ? " " + asked.note : ""); demoBar(); }
+      } catch (e) { show("Andy's ears couldn't start in this browser: type it instead."); }
+    };
+    listening = finish;
+    proc.onaudioprocess = (e) => {
+      const d = e.inputBuffer.getChannelData(0); chunks.push(new Float32Array(d));
+      let sum = 0; for (let i = 0; i < d.length; i++) sum += d[i] * d[i];
+      if (Math.sqrt(sum / d.length) > 0.015) { voiced = true; quiet = 0; } else if (voiced) quiet += d.length / ctx.sampleRate;
+      if ((voiced && quiet > 1.0) || performance.now() - t0 > 7000) finish();
+    };
+    src.connect(proc); proc.connect(ctx.destination);
+    button.classList.add("on"); button.textContent = "■";
+    show("Listening… say it: “Hey Andy, show me the room”" + progress);
+  }
   function askForm(dark) {
     const f = el("form", null, "ask" + (dark ? " dark" : "")), input = el("input"), go_ = el("button", "Ask");
     input.type = "text"; input.maxLength = 120; input.placeholder = "Ask Andy anything… in any of its 15 languages"; input.enterKeyHint = "send";
     input.setAttribute("aria-label", "Ask Andy"); input.autocomplete = "off"; go_.type = "submit";
-    f.append(input, go_); f.onsubmit = e => { e.preventDefault(); ask(input.value); };
+    const mic = el("button", "🎙", "mic"); mic.type = "button"; mic.title = "Say it (Meta's wav2vec 2.0 hears you, in this browser)";
+    mic.setAttribute("aria-label", "Say it instead of typing"); mic.onclick = () => sayIt(mic, input);
+    f.append(input, mic, go_); f.onsubmit = e => { e.preventDefault(); ask(input.value); };
     return f;
   }
   function tries(dark) {

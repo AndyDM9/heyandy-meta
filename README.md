@@ -38,8 +38,8 @@ Built on Meta's models for people who live at home, starting with older adults, 
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
   the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
 - **Try it now, no robot needed:** [the one-minute story](https://huggingface.co/spaces/heyandy-ai/andy), then *Ask
-  Andy* anything in any of its fifteen languages; or **Andy's eyes, live**: show it your mug, sweep your phone round
-  the room, and Meta's DINOv2 finds yours, in your browser.
+  Andy* anything in any of its fifteen languages, typed or **said** (tap 🎙: Meta's wav2vec 2.0 hears you, in your
+  browser); or **Andy's eyes, live**: show it your mug, sweep your phone round the room, and Meta's DINOv2 finds yours.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. It says it's an AI, and anyone
@@ -99,6 +99,11 @@ and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.
 TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои
 очки?", "내 안경 어디 있어?") and the TV answers in that language, as Andy does when it's called in one. The words are
 matched in the page and sent nowhere; a link can ask for you: add `?ask=I'm ringing my phone` to the demo's address.
+**Or say it:** tap 🎙 and Meta's wav2vec 2.0 hears you, in your browser (English, 95 MB, fetched once; nothing you say
+leaves it). It writes what it hears letter by letter ("whirl my keith"), so the things people say to the demo are
+scored against the sound, as speech systems decode a fixed set of commands, and one is taken only when it clearly fits
+best: with Meta's own voices, the right scene **7 of 7** on phrases it wasn't tuned on, and never a scene forced on what
+has none ([`say-it-20261101-1537.json`](evals/results/say-it-20261101-1537.json)).
 
 **Andy speaks fifteen languages,** all on Meta's models in the house: "Andy, speak Russian", "talk to me in Mandarin",
 "Oye Andy, habla español". Omnilingual ASR hears the language, Muse Glimmer translates on the computer beside the robot,

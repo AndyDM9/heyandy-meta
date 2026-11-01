@@ -30,6 +30,8 @@ keeps what it sees and hears in the house.
 - **In fifteen languages, and it notices which.** Say "安迪，我的眼镜在哪里？" and Andy switches and answers in Mandarin:
   Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
   AI and the crisis reply are written by hand in each language.
+- **The public demo hears you.** Tap 🎙 in Ask Andy: Meta's wav2vec 2.0 runs in your browser, and the phrases the demo
+  knows are scored against the sound (CTC), so "whirl my keith" still finds your keys (7 of 7 on fresh clips).
 - **Andy's eyes, live, in your browser.** The public demo runs DINOv2 for the visitor: show it your mug once, sweep your
   phone round the room, and a tone gets warmer as you near it; a confident sighting gets a closer look, as on the
   robot, before the spotlight. Nothing leaves the phone.

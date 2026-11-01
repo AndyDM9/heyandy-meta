@@ -1282,3 +1282,26 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   can point; the Mandarin find missed the glasses that the English one found at the same moment. Run again, both
   found them: at about 5 feet they're found every time in English and two times in four in Mandarin (the same
   search, from the same translation: the thing, not the language). For filming: closer, and in front.
+
+## 60. Say it: the public demo hears you, with Meta's wav2vec 2.0 in the browser (November 1)
+
+- **Why:** Andy is spoken to; its public demo could only be typed to. A Meta speech model small enough for a browser:
+  wav2vec 2.0 base fine-tuned on 960 hours of LibriSpeech (`facebook/wav2vec2-base-960h`, Apache-2.0), 8-bit through
+  transformers.js, 95 MB, English, the same library and CDN as Andy's eyes.
+- **Measured first, as a plain transcriber** (two of Meta's voices on this computer, a dozen things to say to the demo):
+  it writes what it hears letter by letter, with no words to expect ("HEY ANDY WHIRL MY KEITH", "SHOW ME THE ROM"):
+  the right scene 15 of 24. Snapping a near-miss word to the demo's own words (one letter off, two for a long word):
+  21. Through a microphone (Chromium's fake one), worse again ("to rea the rule"): echo cancelling and noise suppression
+  are off now (they smear what a model trained on clean speech reads), and recording is at 16 kHz where the browser can.
+- **Then decoding, not transcribing:** the demo has a score of scenes and people mostly say the phrases it suggests, so
+  each known phrase is scored against the sound (`ctc()` in `page.html`: the CTC forward algorithm over the model's
+  letter likelihoods, per letter), the way a speech system decodes a fixed set of commands. One is taken when it explains
+  the sound within 2.0 nats a letter of the free transcript and beats the next by 1.0; else the transcript, snapped.
+  Set on 36 clips (24 phrases, 12 things with no scene): 24 of 24, none forced. **Fresh clips, made after and never
+  used to set it, through the page's own code: the right scene 7 of 7** ("where is the rumot", "this is my mank", "ar
+  you c" for "are you okay"), **none forced** of 2 with no scene; 0.5 s to hear (`evals/say_it.py`,
+  `say-it-20261101-1537.json`). Through the fake microphone, end to end: 3.5 to 4.5 s from the tap to the scene.
+- **On the page:** 🎙 beside Ask; the first tap asks for the microphone and fetches the model once (its progress shown);
+  it stops after a second of quiet (seven at most, or a second tap); the "You asked" line says "Heard by Meta's wav2vec
+  2.0, here in your browser (0.8 s, as "whirl my keith"): nothing you said left it."
+- **Not yet:** people's voices (only Meta's synthetic ones here), noisy rooms, accents; English only.

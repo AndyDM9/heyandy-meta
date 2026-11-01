@@ -150,3 +150,37 @@ def test_asking_andy_in_any_of_its_languages_plays_that_languages_scene(browser)
         server.shutdown()
     assert got["r"] == ["mandarin", "spanish", "in-ru", "in-uk", "in-ko", "in-fr", "in-de", "in-vi", "in-hi", "in-ar",
                         "in-tl", "in-pt", "in-it", "in-pl", "find", "guide"]
+
+
+def test_say_it_has_a_microphone_scores_phrases_by_ctc_and_snaps_near_misses(browser):
+    """The demo's 🎙 (Meta's wav2vec 2.0 in the browser; evals/say_it.py measures it with the model): the phrase that
+    explains the letters best wins, by the CTC forward algorithm; a word one letter off a word Andy's routes know is
+    that word. No network here: the model isn't fetched, the maths is checked on made-up letter likelihoods."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    got = {}
+
+    def check(page):
+        got.update(page.evaluate("""() => {
+          const V = 32, frames = (word) => [...word].flatMap((c) => {  // each letter likely for two frames, then a blank
+            const row = (i) => { const r = new Float32Array(V).fill(Math.log(0.01)); r[i] = Math.log(0.69); return r; };
+            return [row(LETTER[c]), row(LETTER[c]), row(0)];
+          });
+          const lp = frames("HI");
+          return { mics: document.querySelectorAll('button.mic').length, hi: ctc(lp, letters('hi')), ho: ctc(lp, letters('ho')),
+                   room: snap('show me the rom'), pass: snap('wheres my pasport'), typed: route(snap('what time is it')) };
+        }"""))
+
+    try:
+        assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/?explore", 1500, check) == []
+    finally:
+        server.shutdown()
+    assert got["mics"] >= 1 and got["hi"] < got["ho"]
+    assert got["room"] == "show me the room" and "passport" in got["pass"]
