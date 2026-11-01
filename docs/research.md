@@ -1427,3 +1427,25 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   person would call health information: a model's cold-versus-flu explanation, a breathing exercise (twice), tips for
   a doctor's visit. "Judged" in section 63 means that judge. Each of those questions now gets Andy's own words under the
   widened rule.
+
+- **A second reader went through it, and the health rule (November 1, late evening), looking only for faults;** fixed,
+  each with a test: "I fell asleep", "I fell for it", "I fell out with my sister" got the health line, and "my wife
+  fell asleep" or "he fell for it" the whole emergency turn; "remind me at 3 pm to call 911 drills" set no reminder;
+  "I'm on the floor looking for my keys" found the phone; "my chest hurts from laughing" counted. Also: no playful
+  "oops" when the phone isn't in sight right after "please call 911"; the 911 line now comes before the first turn's
+  "I'm Andy, an AI robot." (said at the next turn instead); an emergency said while another turn runs is held and
+  answered after it, as crisis words are; Llama Guard reads the newest words of a long answer, and is asked once a turn
+  if it doesn't answer (no 3 s wait a sentence).
+
+## 66. "Hey Andy, what won't you do?" (November 1, evening)
+
+- **Why:** Andy's promises (no camera picture leaves the house, no health advice, the crisis line from code, saying
+  it's an AI) are kept in code and measured, but only a reader of this repository could know. The person beside the
+  robot should be able to ask, and see the proof.
+- **Built:** `intents.py` PROMISES ("what won't you do?", "can I trust you?", "what are your rules?") and
+  `app.py` `promises`: said in one breath ("I never send a camera picture of your home to the cloud, I never give health
+  advice, and I always say I'm an AI. And no camera picture has left this house today."), and the TV's card "What I
+  never do", each promise with today's count from the receipts the TV already keeps (pictures and words sent, health
+  questions answered in Andy's own words, sentences of the models' answers Llama Guard 3 read). Counted and answered on
+  this computer: asking sends nothing. How many crisis replies there were is never shown: a TV is seen by anyone in
+  the room. The public demo has it as a scene ("what won't you do?" in Ask Andy).

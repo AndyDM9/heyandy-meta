@@ -671,7 +671,7 @@
                   "“Oye Andy, ¿qué recuerdas?”", "“Oye Andy, ¿qué enviaste a la nube hoy?”", "“Oye Andy, habla inglés.”"];
   // The public demo only: sample scenes, chosen by each visitor for themselves (or in turn, every 10 s).
   const NAMES = { start: "Getting started", idle: "Waiting", finding: "Finding", found: "Found", guide: "Guide my hand", turned: "Lost and found", sound: "By its sound", home: "Everything home?", told: "You told me", checked: "Are you OK?", mine: "My mug", cups: "The cup game", out: "Going out", spanish: "En español", mandarin: "说中文", "in-tl": "Tagalog", "in-vi": "Tiếng Việt", "in-ko": "한국어", "in-ru": "Русский", "in-ar": "العربية", "in-hi": "हिन्दी", "in-pt": "Português", "in-fr": "Français", "in-it": "Italiano", "in-pl": "Polski", "in-de": "Deutsch", "in-uk": "Українська",
-                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", help: "What can I ask?" };
+                  web: "On the web", answer: "An answer", drawing: "A picture", memory: "Memory", room: "The room in 3D", story: "Your keys' day", privacy: "Today's privacy", promises: "What I never do", help: "What can I ask?" };
   let scenes = null, chosen = new URLSearchParams(location.search).get("scene");
   function scene() { return chosen || (scenes ? scenes[Math.floor(Date.now() / 10000) % scenes.length] : ""); }
   // Story mode: what a visitor sees first on the public demo (never on Andy's own TV, and not when a link names a scene).
@@ -819,6 +819,7 @@
     ["mine", /\bthis is my\b|\bis (?:this|that) mine\b|\bmy own\b/i],
     ["mandarin", /[\u3400-\u9fff]|\b(?:mandarin|chinese)\b/i],  // typed in Chinese: the scene in Mandarin
     ["spanish", /[¿¡ñ]|\b(?:d[oó]nde|llaves|taza|gafas|hola|espa[ñn]ol|spanish|oye)\b/i],
+    ["promises", /\bwhat (?:won'?t|will you not|do you never|will you never) (?:you )?do\b|\bcan i trust you\b|\byour (?:rules|promises)\b/i],
     ["privacy", /\b(?:send|sent|cloud|privacy|private|receipt|record(?:ed|ing)?|spy|camera)\b/i],
     ["story", /\bwhat happened\b|\bstory of\b|\busually (?:leave|put|are|is)\b|\bwhere do i usually\b|\btoday\b/i],
     ["memory", /\b(?:remember|memory|keep(?:ing)? an eye)\b/i],
@@ -833,7 +834,7 @@
   // A health question typed, which matched no scene: what Andy says to it on the robot, its own words, never a model's
   // (companion/safety.py HEALTH_REPLY; on the robot the rule is wider, and tested)
   const HEALTH_TYPED = /\b(?:hurts?|aches?|aching|pain|sore|swollen|dizzy|fever|cough|rash|headaches?|migraines?|nause\w*|pills?|tablets?|medicines?|medications?|meds|doses?|tylenol|ibuprofen|aspirin|advil|statins?|insulin|antibiotics?|melatonin|vitamins?|blood (?:pressure|sugar)|cholesterol|diabet\w*|dementia|symptoms?|diagnos\w*|side effects?|depress\w*|anxious|anxiety)\b/i;
-  const EMERGENCY_TYPED = /\bi(?:'ve| have| just)?\s*(?:just\s+)?(?:fell|fallen|had a fall)\b(?!\s+(?:asleep|for|in love|behind|apart))|\b(?:can'?t|cannot) (?:get up|breathe)\b(?!\s+(?:early|tomorrow|in the morning))|\bchest (?:pains?|hurts)\b|\bcollapsed\b|\bcall 911\b/i;
+  const EMERGENCY_TYPED = /\bi(?:'ve| have| just)?\s*(?:just\s+)?(?:fell|fallen|had a fall)\b(?!\s+(?:asleep|for|in love|behind|apart))|\b(?:can'?t|cannot) (?:get up|breathe)\b(?!\s+(?:early|tomorrow|in the morning))|\bchest (?:pains?|hurts)\b|\b(?:he|she|my \w+) (?:just )?collapsed\b|\bcall 911\b/i;
   const EMERGENCY_SAID = "If you need help, please call 911 right away. I'll find your phone.";
   const HEALTH_SAID = "I'm a robot, so I can't give health advice: your doctor or pharmacist can. I can remind you to call them. If it's an emergency, please call 911.";
   let asked = null, asking = 0;
@@ -1613,7 +1614,7 @@
         for (const x of s.sources) src.append(el("div", x.title + " · " + new URL(x.url).hostname.replace(/^www\./, "")));
         body.replaceChildren(el("div", s.caption.replace(/ That's according to .*$/, ""), "answer"), src);
       } else if (s.privacy) {  // "what did you send today?": the day's receipts, counted
-        kicker = T("Today's privacy"); title = s.privacy.title;
+        kicker = T(s.privacy.title === "What I never do" ? "My promises, with today's receipts" : "Today's privacy"); title = s.privacy.title;
         const box = el("div", null, "check");
         for (const r of s.privacy.rows) {
           const row = el("div", null, "row " + (r.mark === "✓" ? "gone" : r.mark === "!" ? "here" : "unknown"));

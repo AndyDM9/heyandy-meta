@@ -27,6 +27,8 @@ keeps what it sees and hears in the house.
   3.1's outlines. It points, checks with its own camera that the point landed, and says "There they are! To my left,
   about 5 feet away" (MapAnything measures how far). It skips a picture of glasses on the TV, and picks "the blue cup"
   from look-alikes.
+- **"Hey Andy, I fell and I can't get up."** "If you need help, please call 911 right away. I'll find your phone."
+  Andy searches for the phone and points at it (16.5 s on the robot): it can't call anyone, but it can find the phone.
 - **In fifteen languages, and it notices which.** Say "安迪，我的眼镜在哪里？" and Andy switches and answers in Mandarin:
   Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
   AI and the crisis reply are written by hand in each language.

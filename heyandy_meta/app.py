@@ -258,7 +258,8 @@ class Andy:
                     self.emote("grateful1")
                 elif HELLO.search(text):
                     self.emote("welcoming1")
-            reply = respond(text, self._answer, self.disclosure, opening=self._say_opening, flagged=flagged)
+            urgent = not flagged and emergency(text) and parse(text).kind != "remind"  # 911 before anything, the AI line too
+            reply = respond(text, self._answer, self.disclosure, opening=self._say_opening, flagged=flagged, urgent=urgent)
             rest = reply
             for part in self._said:  # what was already said as it came (the opening, streamed sentences)
                 rest = rest.removeprefix(part).lstrip()
@@ -388,17 +389,20 @@ class Andy:
         brief = bool(MORNING.search(text)) and self._briefed != today
         if (to := asked_for(text)) is not None:
             return self.set_language(to)
+        if i.kind == "promises":  # counted and answered on this computer: asking sends nothing
+            return self.promises()
         if i.kind == "privacy":  # before anything that might use the cloud: asking sends nothing
             rest = " ".join(part for part in CLAUSES.split(text) if part.strip() and not PRIVACY.search(part))
             if len(re.findall(r"[a-z']+", rest.lower())) < 3:  # only the question ("please", "Andy")
                 return self.privacy_today()
             return self.privacy_today(on_screen=False) + " " + self._answer(rest)  # then the rest, as asked
-        if emergency(text):  # "I fell and I can't get up": 911, then the phone found, whatever else was asked
+        if emergency(text) and i.kind != "remind":  # "I fell and I can't get up": 911, then the phone found
             return self.emergency_turn(text)
         if (i.kind in ("chat", "world", "help") or needs_agent(text)) and (line := health(text)):
             # conversation, a question for the web, or "what can I do?" ("my legs cramp at night, what can I do?")
             # a health question: Andy's own words, by hand in each language, and no model at all (companion/safety.py)
             self._source, self._reason = "device", "a health question: Andy's own words, never a model's"
+            self.screen.own_words()
             return line
         if brief or needs_agent(text):
             done = self.agent(text, brief)
@@ -538,12 +542,15 @@ class Andy:
             return self.look_up(text)
         return self.talk(text)
 
-    def _advice(self, asked: str, answer: str) -> bool:
-        """Llama Guard 3, on this computer, reads a model's answer before Andy says it (0.04 s): health advice?"""
+    def _advice(self, asked: str, answer: str) -> bool | None:
+        """Llama Guard 3, on this computer, reads a model's answer before Andy says it (0.04 s): health advice? None if
+        it couldn't be asked (the sentence is said: the word rule and the instructions still stand)."""
         if self.guard is None or not hasattr(self.guard, "advice"):
             return False
         self.screen.used("Llama Guard 3 (checking the answer)", "device")
-        return bool(self.guard.advice(asked, answer))
+        self.screen.answer_read()
+        verdict = self.guard.advice(asked, answer)
+        return None if verdict is None else bool(verdict)
 
     def _say_now(self, part: str) -> None:
         """Say part of this turn's reply as soon as it's ready (the hear() at the end says only the rest)."""
@@ -561,13 +568,15 @@ class Andy:
     def talk(self, text: str) -> str:
         """Conversation, spoken sentence by sentence as the model writes it. Each sentence is checked first: one that
         claims an action the robot's own code didn't take stops the answer and is replaced with how to ask for it."""
-        parts = []
+        parts, checking = [], True
         if decide(text, self.online).where == "cloud" and not isinstance(self.router.cloud, NoCloud):
             self._receipt_conversation(text)  # before the attempt: words that went count even if the answer doesn't come
         try:
             for sentence in self.router.stream(text, self.online, self.history):
                 self._source, self._reason = self.router.last.where, self.router.last.reason  # known once it answers
-                if self._advice(text, " ".join(parts + [sentence])):
+                verdict = self._advice(text, " ".join(parts + [sentence])) if checking else False
+                checking = verdict is not None  # Llama Guard didn't answer: not asked again this turn (no 3 s waits)
+                if verdict:
                     # the word rule didn't know the question; Llama Guard 3 read the answer as health advice
                     self._reason += "; Llama Guard 3 read health advice in the answer, so Andy's own words instead"
                     parts.append(HEALTH_REPLY)
@@ -627,6 +636,26 @@ class Andy:
         pictures = (f" {_n(d.pictures, 'camera picture')} of the staged scene went to SAM 3.1; no sound did."
                     if d.pictures else " No camera pictures and no sound left the house.")
         return f"{went}, I sent {_n(d.words, 'word')} to {names}{shots}.{pictures}" + (" It's on the screen." * on_screen)
+
+    def promises(self) -> str:
+        """"What won't you do?": what Andy never does, each with today's receipts, said and shown on the TV. Counted
+        and answered on this computer; how many crisis replies there were is nobody's business on a TV, so never shown."""
+        d = self.screen.day()
+        self._source, self._reason = "device", "Andy's promises, with today's receipts, counted on this computer"
+        rows = [("✓", "No camera picture or sound has left this house today" if not d.pictures else
+                 f"No sound has left this house; {_n(d.pictures, 'camera picture')} of the staged scene went to SAM 3.1"),
+                ("✓", f"No health advice: {_n(d.own_words, 'health question')} answered in my own words today, never a "
+                      "model's" if d.own_words else "No health advice: a health question gets my own words, never a model's"),
+                ("✓", f"Llama Guard 3 read {_n(d.answers_read, 'sentence')} of the models' answers before I said them"
+                      if d.answers_read else "Llama Guard 3 reads every answer a model writes before I say it"),
+                ("✓", "Crisis words get the 988 line from my code, before any model"),
+                ("✓", f"Every word sent to the cloud is on its receipt: {_n(d.words, 'word')} today" if d.words else
+                      "Nothing I was told has gone to the cloud today"),
+                ("✓", "I say I'm an AI at the start of every conversation")]
+        self.screen.privacy_day("What I never do", rows)
+        today = ("no camera picture has left this house today" if not d.pictures else "no sound has left this house today")
+        return ("I never send a camera picture of your home to the cloud, I never give health advice, and I always say "
+                f"I'm an AI. And {today}. It's on the screen, with the receipts.")
 
     def look_up(self, question: str) -> str:
         if not self.online or self.spark is None:
@@ -691,10 +720,15 @@ class Andy:
         then what a robot that finds things can do at once: find their phone and point at it, so they can call. It
         never watches for falls and claims no safety: it acts only on what it's told (docs/crisis-protocol.md)."""
         self._source, self._reason = "device", "an emergency said: 911 first, in Andy's own words, then its phone found"
+        self.screen.own_words()
         self.face_person_to_speak()
         self.say(EMERGENCY_REPLY)
         self._said.append(EMERGENCY_REPLY)
-        words = self.find("phone", text, opening=False)
+        self._urgent = True  # no "oops" sound if the phone isn't in sight
+        try:
+            words = self.find("phone", text, opening=False)
+        finally:
+            self._urgent = False
         self._source, self._reason = "device", "an emergency said: 911 first, in Andy's own words, then its phone found"
         return f"{EMERGENCY_REPLY} {words}"
 
@@ -2086,7 +2120,8 @@ class Andy:
     def _not_found(self, thing: str) -> str:
         if self._background:
             return ""  # Andy's own second look: nothing to say, and it keeps looking
-        self.emote("oops1")
+        if not getattr(self, "_urgent", False):  # never a playful "oops" right after "please call 911"
+            self.emote("oops1")
         if self._no_promise:
             return f"I can't see your {thing} from here."
         note = self.told.latest(thing)

@@ -53,7 +53,7 @@ class LlamaGuard:
         with its Specialized Advice category (S6) described as Andy's policy, the way Meta's model card shows a policy
         given in the prompt. True/False; None if it couldn't be asked (the word rule and the instructions still stand).
         Measured (evals/guard_replies.py, docs/research.md section 65)."""
-        prompt = AGENT_CHECK.format(categories=ADVICE_POLICY, user=asked[:1500], agent=answer[:1500])
+        prompt = AGENT_CHECK.format(categories=ADVICE_POLICY, user=asked[:1500], agent=answer[-1500:])  # the newest words
         body = json.dumps({"prompt": prompt, "n_predict": 10, "temperature": 0, "cache_prompt": True})
         req = urllib.request.Request(self.endpoint + "/completion", body.encode(), {"Content-Type": "application/json"})
         start = time.monotonic()

@@ -100,13 +100,19 @@ FEELINGS_REPLY = ("I'm sorry it's hard right now. I'm a robot, so I can't give a
 # watches for falls and claims no safety; it acts only on what it's told. Before (November 1) a fall got the health
 # line, "your doctor or pharmacist can".
 EMERGENCY_REPLY = "If you need help, please call 911 right away. I'll find your phone."
+# "fell" that isn't a fall: asleep, for it, in love, behind, out with someone (a review found "my wife fell asleep" got
+# the whole emergency turn, November 1)
+_NOT_A_FALL = (r"(?!\s+(?:asleep|for|in love|behind|apart|through|short|silent|ill|off the wagon|out with|"
+               r"into (?:a|the) habit|off (?:my|his|her|the) chair laughing))")
 EMERGENCY = re.compile(
-    r"\bi(?:'ve| have| just| 'm| am)?\s*(?:just\s+)?(?:fell|fallen|had a fall|tripped and fell)\b"
-    r"(?!\s+(?:asleep|for|in love|behind|apart|through|short|silent|ill|off the wagon|out with|into (?:a|the) habit))"
-    r"|\bi(?:'m| am) on the floor\b|\b(?:can'?t|cannot) (?:get up|stand up|get off the floor)\b"
-    r"(?!\s+(?:early|that early|so early|in the morning|tomorrow|at \d|before|for|on time|anymore for))"
+    r"\bi(?:'ve| have| just| 'm| am)?\s*(?:just\s+)?(?:fell|fallen|had a fall|tripped and fell)\b" + _NOT_A_FALL +
+    r"|\bi(?:'m| am) on the floor\b(?!\s+(?:looking|playing|with|cleaning|doing|stretching|exercising|reading|sorting|"
+    r"fixing|folding|wrapping|searching))"
+    r"|\b(?:can'?t|cannot) (?:get up|stand up|get off the floor)\b"
+    r"(?!\s+(?:early|that early|so early|in the morning|tomorrow|at \d|before|for|on time|anymore for|the stairs|"
+    r"those stairs|these stairs))"
     r"|\b(?:he|she|my (?:husband|wife|mom|mum|dad|mother|father|son|daughter|partner|friend|neighbou?r))\s+(?:just\s+)?"
-    r"(?:fell|has fallen|collapsed|passed out|fainted|isn'?t breathing|can'?t breathe)\b"
+    r"(?:(?:fell|has fallen)\b" + _NOT_A_FALL + r"|collapsed|passed out|fainted|isn'?t breathing|can'?t breathe)\b"
     r"|\bchest (?:pains?|hurts|is hurting|feels tight|is tight)\b|\btight chest\b|\bpain in my chest\b"
     r"|\b(?:can'?t|cannot) breathe\b|\b(?:struggling|trouble) breathing\b"
     r"|\b(?:face|mouth) (?:is )?droop\w*|\bslurr(?:ed|ing) (?:speech|my words)\b|\bcan'?t (?:feel|move) my (?:arm|leg|face)\b"
@@ -114,9 +120,18 @@ EMERGENCY = re.compile(
     r"|\b(?:call|get) (?:911|an ambulance|the paramedics)\b", re.I)
 
 
+# said in fun ("my chest hurts from laughing", "I can't breathe when you tell jokes like that"), or over ("my son fell
+# off his bike but he's fine")
+JOKING = re.compile(r"\blaugh\w*|\bjokes?\b|\bfunny\b|\bhilarious\b", re.I)
+NOT_URGENT = re.compile(r"\blaugh\w*|\bjokes?\b|\bfunny\b|\bhilarious\b|\b(?:but|and) (?:i'?m|he'?s|she'?s|they'?re|we'?re|i am|he is|"
+                        r"she is|they are) (?:fine|ok(?:ay)?|alright|all right|good)\b", re.I)
+
+
 def emergency(text: str) -> bool:
-    """"I fell in the bathroom", "my chest hurts", "call 911": yes; "I fell asleep on the couch", "the book fell": no."""
-    return bool(EMERGENCY.search((text or "").replace("\u2019", "'")))
+    """"I fell in the bathroom", "my chest hurts", "call 911": yes; "I fell asleep on the couch", "the book fell", "my
+    chest hurts from laughing": no."""
+    t = (text or "").replace("\u2019", "'")
+    return bool(EMERGENCY.search(t)) and not NOT_URGENT.search(t)
 
 
 _BODY = r"(?:\w+\s+){0,2}"  # "my (left) knee", "my lower back"
@@ -133,7 +148,7 @@ SYMPTOM = re.compile(
     r"|\bi(?:'m| am)\s+(?:so |really |very |a bit |a little )*(?:dizzy|light-?headed|nauseous|feverish|short of breath|"
     r"unwell|in (?:a lot of |so much )?pain)\b"
     r"|\b(?:can'?t|cannot|hard to|trouble|difficulty)\s+(?:breathe|breathing|swallow\w*|sleep\w*|pee\w*|feel my)\b"
-    r"|\b(?:i|i've|i have|he|she)\s+(?:just\s+)?(?:fell|fallen|fainted|passed out|blacked out|threw up|"
+    r"|\b(?:i|i've|i have|he|she)\s+(?:just\s+)?(?:fainted|passed out|blacked out|threw up|"  # a fall: emergency()
     r"been (?:throwing up|vomiting|coughing))\b"
     r"|\b(?:heartburn|indigestion|constipat\w*|diarrh\w*|nause\w*|migraines?|vertigo|incontinen\w*|headaches?|"
     r"toothaches?|backaches?|stomach ?aches?|earaches?|fever)\b"
@@ -199,7 +214,7 @@ def health(text: str) -> str | None:
         return HEALTH_REPLY
     if FEELING.search(t):
         return FEELINGS_REPLY
-    if SYMPTOM.search(t):  # "I fell in the bathroom" is one wherever it was
+    if SYMPTOM.search(t) and not JOKING.search(t):  # "my chest hurts from laughing" isn't one
         return HEALTH_REPLY
     if MEDICAL.search(t) and ASKING.search(t) and not NOT_HEALTH.search(t):
         return HEALTH_REPLY
@@ -229,14 +244,14 @@ class Disclosure:
         return ""
 
 
-def respond(text: str, answer, disclosure: Disclosure, opening=None, flagged: bool = False) -> str:
+def respond(text: str, answer, disclosure: Disclosure, opening=None, flagged: bool = False, urgent: bool = False) -> str:
     """The one entry point for a spoken turn: the crisis reply bypasses the model; otherwise the model answers.
     opening, if given, is handed the AI disclosure before the answer is made, so it can be said at once. flagged: the
     second check (Llama Guard on this computer, safety_model.py) heard it where the word list didn't."""
     if flagged or crisis(text):
         disclosure.last_said = disclosure.last_turn = disclosure._clock()
         return CRISIS_REPLY
-    prefix = disclosure.prefix()
+    prefix = "" if urgent else disclosure.prefix()  # an emergency: 911 first; "I'm Andy, an AI robot." stays due, for next
     if prefix and opening:
         opening(prefix)
     return prefix + answer(text)

@@ -55,6 +55,8 @@ class Day:
     to: dict = field(default_factory=dict)  # "Muse Spark" -> the turns it was sent something on
     screenshots: int = 0  # screenshots of web pages the person asked to see
     pictures: int = 0  # camera pictures of a staged scene (never a lived-in room)
+    own_words: int = 0  # health questions (and a fall, and feelings) answered in Andy's own words, never a model's
+    answers_read: int = 0  # sentences of a model's answer Llama Guard 3 read before Andy said them
 
 
 def _family(model: str) -> str:
@@ -267,6 +269,16 @@ class ScreenState:
         with self._lock:
             d = self._today()
             return replace(d, to=dict(d.to))
+
+    def own_words(self) -> None:
+        """A health question answered in Andy's own words (companion/safety.py): counted for "what won't you do?"."""
+        with self._lock:
+            self._today().own_words += 1
+
+    def answer_read(self) -> None:
+        """A sentence of a model's answer read by Llama Guard 3 before Andy said it."""
+        with self._lock:
+            self._today().answers_read += 1
 
     def sent(self, model: str, words: str, earlier: int = 0) -> None:
         """Words that left the house this turn, and to which model (earlier: past exchanges sent along with them)."""

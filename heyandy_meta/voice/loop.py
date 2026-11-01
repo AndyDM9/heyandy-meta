@@ -10,7 +10,7 @@ import re
 import threading
 import time
 
-from ..companion.safety import crisis
+from ..companion.safety import crisis, emergency
 
 log = logging.getLogger(__name__)
 
@@ -125,7 +125,7 @@ class VoiceLoop:
                 except Exception as e:  # noqa: BLE001 - listening again is a bonus: never at the cost of the turn
                     log.warning("listening again failed: %s: %s", type(e).__name__, e)
             if self.busy:
-                if crisis(text):  # never dropped: stop what's running, and answer it as soon as the turn ends
+                if crisis(text) or emergency(text):  # never dropped: stop what's running, answer it as soon as the turn ends
                     self.andy.stop_following()
                     self._pending = (text, yaw, utterance)
                     continue

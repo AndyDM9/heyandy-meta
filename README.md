@@ -33,6 +33,9 @@ Built on Meta's models for people who live at home, starting with older adults, 
   when the glasses go missing, there's no one to ask. Andy is someone to ask, and it can show you.
 - **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
   its camera, and says where, from where you stand. *112 of 112 unattended searches on the robot ended in a point.*
+- **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
+  911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 s from the words.* Andy can't call
+  anyone and doesn't watch for falls; it does what a robot that finds things can.
 - **It speaks your language.** Fifteen of them, and it notices which one it's called in: "安迪，我的眼镜在哪里？" gets
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
@@ -47,7 +50,9 @@ of a model: a health question, in any of its fifteen languages, gets Andy's own 
 pharmacist can; I can remind you to call them"), and never reaches a model. Someone who says they've fallen hears
 "please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 s from the
 words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
-([docs/crisis-protocol.md](docs/crisis-protocol.md)).
+([docs/crisis-protocol.md](docs/crisis-protocol.md)). Ask it **"Hey Andy, what won't you do?"** and it says so, with
+today's receipts on its TV: no camera picture has left the house, how many health questions got its own words, how
+many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud.
 
 ## What Andy does
 

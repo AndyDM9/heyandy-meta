@@ -32,7 +32,7 @@ from heyandy_meta.screen.server import serve  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
 SCENES = ("start", "idle", "finding", "found", "guide", "turned", "sound", "home", "told", "checked", "mine", "cups", "out", "spanish", "mandarin", "web", "answer", "drawing", "memory", "room",
-          "story", "privacy", "help")
+          "story", "privacy", "promises", "help")
 SAMPLE_DRAWING = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-drawing.webp"  # made by Muse Image
 SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-web.jpg"  # Wikipedia, CC BY-SA 4.0
 # The TV's words in Andy's thirteen newer languages, recorded once from Andy's own translator (Muse Glimmer through
@@ -447,6 +447,19 @@ def show(state: ScreenState, scene: str) -> None:
         state.said("Today, 21 of your 24 requests stayed in this house. For the other 3, I sent 68 words to Muse Spark, "
                    "and 2 screenshots of web pages you asked to see. No camera pictures and no sound left the house. "
                    "It's on the screen.", "device", "counted on this computer from today's privacy receipts")
+        state.doing("Speaking", "Looking at you")
+        state.used("Omnilingual ASR (hearing)", "device")
+    elif scene == "promises":  # "What won't you do?" (app.py promises): the same receipts, as promises
+        state.privacy_day("What I never do",
+                          [("✓", "No camera picture or sound has left this house today"),
+                           ("✓", "No health advice: 2 health questions answered in my own words today, never a model's"),
+                           ("✓", "Llama Guard 3 read 41 sentences of the models' answers before I said them"),
+                           ("✓", "Crisis words get the 988 line from my code, before any model"),
+                           ("✓", "Every word sent to the cloud is on its receipt: 68 words today"),
+                           ("✓", "I say I'm an AI at the start of every conversation")])
+        state.said("I never send a camera picture of your home to the cloud, I never give health advice, and I always "
+                   "say I'm an AI. And no camera picture has left this house today. It's on the screen, with the receipts.",
+                   "device", "Andy's promises, with today's receipts, counted on this computer")
         state.doing("Speaking", "Looking at you")
         state.used("Omnilingual ASR (hearing)", "device")
     elif scene == "help":
