@@ -53,6 +53,11 @@ again); never a home. The numbers in italics are from the robot, with their file
 
 ![Under the hood: a search on the robot laid out stage by stage, to scale: hearing (Omnilingual ASR) 0.16 s, the safety check (Llama Guard 3), the head and base moving three times, the camera, SAM 3.1 seeing at each look, Muse Glimmer checking the picture, MapAnything measuring, SeamlessM4T v2 speaking; 15.4 s in all, the first sound at 0.16 s](docs/images/hood.webp)
 
+**Meta's models, live, on the TV.** While a turn runs, the find's card shows each of Meta's models as it works: a
+pulsing dot and its seconds so far, then how long it took ("SAM 3.1 seeing 0.76 s · Muse Glimmer checking the picture
+0.78 s · MapAnything how far 0.21 s · SeamlessM4T v2 speaking"), and where it runs; after 20 s of quiet the card
+goes back to its summary. On the robot it shows SAM 3.1 checking the aim while Andy is still speaking.
+
 The TV's gear (or "Hey Andy, how did you do that?") opens **Under the hood**: each turn timed live on the computer
 beside Andy, stage by stage, with which of Meta's models did each and where it runs, every local service's health,
 and recent turns in three lanes (the body, the models, the voice). It showed where a search's time went, and that

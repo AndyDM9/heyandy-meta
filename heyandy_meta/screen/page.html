@@ -38,6 +38,18 @@
   .scene i:nth-child(2) { background: var(--bg3); right: -25vw; bottom: -35vw; animation: drift 120s ease-in-out infinite alternate-reverse; }
   @keyframes drift { to { transform: translate(8vw, 6vw); } }
   .stage { height: 100vh; padding: 3.75rem 5rem 3.25rem; display: grid; gap: 1.75rem; grid-template-rows: auto 1fr auto; }
+  /* "Meta, live": the card's models row, while Meta's models work (what the judges asked to see), then the summary */
+  #calls { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 1.2rem; margin-top: 1rem; }
+  #calls[hidden] { display: none; }
+  #calls > b { color: var(--muted); font-weight: 600; }
+  #calls span { display: inline-flex; align-items: baseline; gap: 0.5rem; padding: 0.25rem 0.85rem; border-radius: 99rem;
+                background: var(--solid); box-shadow: inset 0 0 0 0.12rem color-mix(in srgb, var(--accent) 25%, transparent); }
+  #calls span.live { box-shadow: inset 0 0 0 0.15rem var(--outline); }
+  #calls i { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--accent); align-self: center; flex: none; }
+  #calls span.live i { background: var(--outline); animation: g-wait 0.9s ease-in-out infinite; }
+  #calls em { font-style: normal; color: var(--muted); } #calls small { font-family: "Atkinson Mono", monospace; font-size: 1.05rem; }
+  #calls i { width: 0.6rem; height: 0.6rem; }
+  #calls span.cloud { box-shadow: inset 0 0 0 0.12rem var(--cloud); }
   .panel { background: var(--panel); border-radius: 2rem; padding: 1.75rem 2.25rem;
            box-shadow: 0 0.6rem 2.4rem rgba(16, 36, 29, 0.10), inset 0 0 0 0.1rem rgba(255, 255, 255, 0.55);
            backdrop-filter: blur(1.5rem) saturate(1.2); }
@@ -514,7 +526,7 @@
     <section id="card" class="panel" aria-live="polite">
       <div><div class="kicker" id="kicker"></div><h1 id="title"></h1></div>
       <div id="body"></div>
-      <div><div id="models"></div><div id="receipt"></div><div id="why"></div></div>
+      <div><div id="calls" hidden aria-label="Meta's models, working now"></div><div id="models"></div><div id="receipt"></div><div id="why"></div></div>
       <div id="timer"></div>
     </section>
   </main>
@@ -1453,6 +1465,26 @@
     $("card").classList.toggle("room", (!!s.room || !!s.timeline) && !s.web && !s.drawing);  // the found shot: the picture large, the title short
     $("timer").textContent = s.running && s.seconds !== null ? s.seconds.toFixed(1) + " s" : "";
   }
+  // "Meta, live": each of Meta's models while it works (a pulsing dot and its seconds so far), and the last few that
+  // just finished, with how long each took; gone after 20 s of quiet. The robot's motors and camera aren't in it.
+  const DOING = { hear: "hearing", safety: "safety check", think: "thinking", plan: "planning the search", see: "seeing",
+                  know: "knows it by sight", notice: "noticing", check: "checking the picture", measure: "how far", speak: "speaking" };
+  const DOING_ES = { hear: "oye", safety: "control de seguridad", think: "piensa", plan: "planea", see: "ve", know: "lo reconoce",
+                     notice: "nota", check: "revisa la imagen", measure: "mide", speak: "habla" };
+  function calls(c) {
+    const box = $("calls");
+    if (!c || (!c.live.length && !c.done.length)) { box.hidden = true; $("models").hidden = false; return; }
+    box.hidden = false; $("models").hidden = true;  // the live strip stands in for the summary while it runs
+    const pill = (x, live) => {
+      const p = el("span", null, (live ? "live" : "") + (x.where !== "on this computer" ? " cloud" : ""));
+      p.append(el("i"), el("b", x.model), el("em", (LANG === "es" ? DOING_ES : DOING)[x.stage] || x.stage),
+               el("small", x.s.toFixed(x.s < 10 ? 2 : 1) + " s"));
+      if (x.where !== "on this computer") p.append(el("em", "· " + x.where));
+      return p;
+    };
+    box.replaceChildren(el("b", LANG === "es" ? "Modelos de Meta, en vivo · en esta computadora" : "Meta's models, live · on this computer"),
+                        ...c.live.map(x => pill(x, true)), ...c.done.slice(0, Math.max(0, 5 - c.live.length)).map(x => pill(x, false)));
+  }
   // The privacy receipt: on every turn, exactly which words went to which cloud model, or that nothing did.
   function receipt(s) {
     const r = $("receipt");
@@ -1541,6 +1573,7 @@
     side(s); card(s); models(s.models);
     $("why").textContent = s.reason ? T("Why: ") + s.reason : "";
     receipt(s);
+    calls(s.calls);
     if (s.caption !== lastCaption || s.state === "Speaking") captionAt = Date.now();
     lastCaption = s.caption;
     $("captions").textContent = s.caption;

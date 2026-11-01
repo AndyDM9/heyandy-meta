@@ -1,0 +1,46 @@
+{
+ "when": "2026-10-31 20:56",
+ "how": "a search on the robot ('where is my cup?', typed), Andy's TV served on this computer, the 'Meta, live' strip's words read every 0.3 s (no picture kept); '*' is a call running",
+ "seen": [
+  {
+   "s": 2.2,
+   "strip": "Llama Guard 3 safety check 0.04 s"
+  },
+  {
+   "s": 3.1,
+   "strip": "* SAM 3.1 seeing 0.10 s"
+  },
+  {
+   "s": 3.7,
+   "strip": "SAM 3.1 seeing 0.76 s"
+  },
+  {
+   "s": 6.1,
+   "strip": "* Muse Glimmer checking the picture 0.10 s"
+  },
+  {
+   "s": 7.0,
+   "strip": "* MapAnything how far 0.10 s; Muse Glimmer checking the picture 0.78 s"
+  },
+  {
+   "s": 7.6,
+   "strip": "MapAnything how far 0.21 s"
+  },
+  {
+   "s": 8.2,
+   "strip": "* SeamlessM4T v2 speaking 0.20 s"
+  },
+  {
+   "s": 10.0,
+   "strip": "* SeamlessM4T v2 speaking 1.90 s; * SAM 3.1 seeing 0.00 s (the aim check, while it speaks)"
+  },
+  {
+   "s": 10.6,
+   "strip": "SAM 3.1 seeing 0.77 s"
+  },
+  {
+   "s": 12.8,
+   "strip": "* SeamlessM4T v2 speaking 4.70 s"
+  }
+ ]
+}

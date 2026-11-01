@@ -4,6 +4,14 @@ Judged on impact (30%), use of Meta's models (25%), technical depth (20%) and th
 the demo; the numbers carry the depth. Filmed on the Reachy Mini Lite in a staged room (no other people, nothing
 personal in view). The TV page is screen-recorded at the same time.
 
+**What the organizers asked of the video (Discord #questions, Oct 31, the Cerebral Valley app):** judged on Impact
+(30%), Use of Meta AI tooling (25%), Technical depth and execution (20%) and Demo (25%: "a working, impressive demo
+that holds up live and is genuinely cool to watch"); open with the one line on what existed before and what was built
+this week; then "the working end-to-end flow with live Meta model calls visible, and a brief look at where and how
+Meta's models are used"; the problem isn't required but helps Impact. So in the uncut find, keep the TV in shot:
+its card shows each Meta model live as it works ("Meta's models, live"), and "how did you do that?" opens Under the
+hood for the where and how.
+
 | Time | On screen | Said, and what happens |
 |---|---|---|
 | 0:00–0:06 | Title card (`film/card-title.mp4`) | **Required first line (FAQ):** what existed before (a Reachy Mini; our own earlier object-finding prototype) and that everything shown was built this week on Meta's models. *(the founder's exact words)* |

@@ -94,6 +94,7 @@ class ScreenState:
         self.hood = None  # under the hood (screen/hood.py), set by the app: each turn's timings, for /hood
         self.services = None  # a callable: each local service and whether it answers, for /hood (set by the app)
         self._hood_until = 0.0  # "show me under the hood": the TV opens the page until then
+        self.calls_sample = None  # the public demo's "Meta, live" strip: calls recorded on the robot (scripts/demo_screen.py)
         self._checked: dict | None = None  # "are you OK?": each part, its status and detail, and how long it took
         self._told: dict | None = None  # an answer from what the person told Andy: the thing, their words, when
         self._homes: dict | None = None  # "is everything home?": each thing home, away (where it is) or not seen
@@ -470,6 +471,7 @@ class ScreenState:
                             **{k: v for k, v in g.items() if k not in ("jpeg", "until")}} if g else None
             out["lang"] = self.lang
             out["hood"] = self._clock() < self._hood_until  # the TV opens /hood while this is on
+            out["calls"] = self.hood.calls() if self.hood is not None else self.calls_sample  # "Meta, live" on the TV
             if self._gaze and self._clock() - self._gaze[2] < 30:
                 out["gaze"] = {"yaw": round(self._gaze[0], 1), "pitch": round(self._gaze[1], 1),
                                "age": round(self._clock() - self._gaze[2], 1)}

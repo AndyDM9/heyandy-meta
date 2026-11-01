@@ -1028,3 +1028,21 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   s, the answer at 5.8 to 6.0 s, done at 10.7 to 11.0 s (two runs). The answer comes about 9.6 s sooner; the turn takes
   about half as long. Under the hood's sample is re-recorded with it: the voice lane now runs alongside the body's.
 
+## 51. "Meta's models, live" on the TV, as the organizers asked (2026-10-31)
+
+- **Why:** on Oct 31 the organizers (the Cerebral Valley app in Discord #questions, "On the Demo Video") said the
+  video should show "the working end-to-end flow with live Meta model calls visible, and a brief look at where and how
+  Meta's models are used", judged on Impact 30%, Use of Meta AI tooling 25%, Technical depth 20%, Demo 25%. Nothing
+  else had changed: no new announcements since Oct 30; the deadline is still Nov 4, 9 PM ET. Andy's TV showed which
+  models a turn used only after it; Under the hood, only after the turn ended.
+- **Built:** the timing wrappers of section 49 also mark a call as running (`Hood.calling` / `done`); `Hood.calls()`
+  gives the Meta models working now (with their seconds so far) and the last five finished (with how long each took)
+  and where each runs, the robot's motors and camera left out; the TV's state carries it every 0.4 s. The find's card
+  shows it in place of its summary row while there's activity ("Meta's models, live · on this computer"), a running
+  call with a pulsing dot and a yellow ring, a cloud model marked "Meta Model API"; after 20 s of quiet the summary
+  comes back. The public demo's searching and found scenes show the calls recorded on the robot.
+- **Seen on the robot** (`evals/results/live-calls-20261031-2056.json`: the strip's words read every 0.3 s from Andy's
+  own TV during a search): Llama Guard 3 (0.04 s); SAM 3.1 running, then 0.76 s; Muse Glimmer checking the picture,
+  then 0.78 s; MapAnything, then 0.21 s; SeamlessM4T v2 speaking, counting up; and, while it spoke, SAM 3.1 running again
+  for the aim check (section 50).
+

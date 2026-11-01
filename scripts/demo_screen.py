@@ -126,9 +126,25 @@ def sample_room() -> tuple[bytes, list[dict]]:
     return struct.pack(f"<{len(mm)}h", *mm), things
 
 
+@functools.lru_cache(maxsize=1)
+def recorded_calls() -> list[dict]:
+    """The Meta model calls of a search recorded on the robot (heyandy_meta/screen/hood_sample.json), in order."""
+    import json
+
+    from heyandy_meta.screen.hood import META_STAGES, STAGES
+
+    sample = json.loads((Path(__file__).resolve().parents[1] / "heyandy_meta" / "screen" / "hood_sample.json").read_text())
+    return [{"stage": st, "model": m or STAGES[st][1], "where": "on this computer", "s": round(b - a, 2)}
+            for st, a, b, m in sample["latest"]["spans"] if st in META_STAGES]
+
+
 def show(state: ScreenState, scene: str) -> None:
     state.clear()
     state.looking_out([])  # a scene's "still looking for" is its own, not the last scene's
+    calls = recorded_calls()  # "Meta, live", as on the robot: mid-search, a look running; found, the last few done
+    state.calls_sample = ({"live": [{**calls[3], "s": 0.31}], "done": [{**c, "ago": 1.0} for c in calls[:3][::-1]]} if scene == "finding"
+                          else {"live": [], "done": [{**c, "ago": 2.0} for c in calls[::-1][:5]]} if scene in ("found", "guide", "turned")
+                          else None)
     state.new_turn()
     state.reminder_next("Call Sam", time.time() + 25 * 60)
     state.keeping(["keys: seen 2 hours ago, to my left", "glasses: seen 10 minutes ago, a little to my right",

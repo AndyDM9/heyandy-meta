@@ -100,3 +100,46 @@ def test_the_public_demos_sample_was_recorded_on_the_robot_and_says_so():
     data = hood_json(ScreenState(), sample=True)
     assert data["sample"] is True and data["latest"]["what"] == "a search" and data["recorded"].startswith("2026-10-31")
     assert data["latest"]["stages"]["see"] > 0 and data["latest"]["first_sound"] is not None
+
+
+def test_meta_live_shows_each_meta_model_while_it_works_then_how_long_it_took():
+    c = Clock()
+    hood = Hood(clock=c)
+    seen = {}
+
+    class Eyes:
+        def find(self, frame, q):
+            c.t += 0.3
+            seen["during"] = hood.calls()  # what the TV shows while SAM 3.1 works
+            c.t += 0.2
+            return []
+
+    class Body:
+        def look(self, y, p):
+            c.t += 1.0
+
+    eyes = hood.wrap(Eyes(), {"find": ("see", "SAM 3.1")})
+    body = hood.wrap(Body(), {"look": ("move", "the robot's motors")})
+    hood.heard(c.t, 0.2)
+    body.look(10, 0)  # the robot's own motors: not a Meta model, not on the strip
+    eyes.find(None, "cup")
+    live = seen["during"]["live"]
+    assert live == [{"stage": "see", "model": "SAM 3.1", "where": "on this computer", "s": 0.3}]
+    done = hood.calls()["done"]
+    assert [d["model"] for d in done] == ["SAM 3.1", "Omnilingual ASR"] and done[0]["s"] == pytest.approx(0.5)
+    c.t += 25
+    assert hood.calls() == {"live": [], "done": []}  # 20 s of quiet: gone
+
+
+def test_a_cloud_model_is_said_to_be_in_the_cloud():
+    hood = Hood()
+    with hood.span("think", "Muse Spark"):
+        pass
+    assert hood.calls()["done"][0]["where"] == "Meta Model API"
+
+
+def test_the_tv_state_carries_the_strip(tmp_path):
+    a, _, _ = andy(Thing("keys", -20.0, 25.0), tmp_path=tmp_path)
+    a.hear("where are my keys?")
+    calls = a.screen.snapshot()["calls"]
+    assert any(d["model"] == "SAM 3.1" for d in calls["done"]) and all(d["stage"] != "move" for d in calls["done"])
