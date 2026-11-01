@@ -391,6 +391,9 @@ words only](docs/images/architecture.svg)
 uv sync --extra dev && uv run pytest -q   # no network calls: the model clients are tested against stand-ins
 uv run python -m heyandy_meta             # talk to Andy by keyboard, in a pretend living room; TV at 127.0.0.1:8765
 ```
+On a laptop, with nothing else set up, finding, reminders, the health and fall lines and "what won't you do?" all work
+(tried on a fresh clone, November 1); conversation needs Muse Glimmer on this computer (`scripts/setup-local-models.sh`)
+or Muse Spark (`MODEL_API_KEY`), and says "I'm having trouble thinking just now" without either.
 **On the robot computer, everything comes from this repository** (Ubuntu, two 24 GB GPUs with CUDA, the Reachy Mini Lite
 on USB; the steps download Meta's open weights from their public pages, so accept the gated ones on Hugging Face first:
 SAM 3.1, Llama Guard 3, Llama Prompt Guard 2):
