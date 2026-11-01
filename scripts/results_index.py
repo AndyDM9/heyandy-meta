@@ -78,6 +78,14 @@ def no_advice(f: str) -> str:
             f"**{s['everyday given the health line (must be 0)']} of {s['everyday requests']}**")
 
 
+def guard_replies(f: str) -> str:
+    s = load(f)["summary"]
+    flagged = s["Andy's real answers flagged"]
+    return (f"advice heard in **{s['advice caught, held out']}** held-out advising answers ({s['advice caught, first set (chose the wording)']} "
+            f"in the set that chose the wording); Andy's real answers flagged: **{flagged}**; "
+            f"{s['seconds, median']} s")
+
+
 def eyes(f: str) -> str:
     s = load(f)["summary"]
     return (f"found **{s['found, and right']} of {s['tables with it']}**, wrong {s['found, but wrong']}; "
@@ -218,6 +226,8 @@ CARDS = [
      "and was it advice?", "evals.no_advice", "no-advice", no_advice),
     ("No health advice, held out", "a second set of questions, written before the first set's results and used for "
      "nothing", "evals.no_advice --set second", "no-advice-second", no_advice),
+    ("Llama Guard 3 reads the answers", "answers that advise, and Andy's real answers, read as the Agent's turn for "
+     "health advice", "evals.guard_replies", "guard-replies", guard_replies),
     ("Languages", None, None, None, None),
     ("Spanish, written", "41 requests, several ways of asking for each ability", "evals.spanish", "spanish-written", spanish),
     ("Spanish, spoken", "the same, said by Andy's voice and heard by Omnilingual ASR", "evals.spanish --spoken", "spanish-spoken", spanish),

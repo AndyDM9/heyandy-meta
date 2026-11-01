@@ -48,6 +48,45 @@ class LlamaGuard:
     def self_harm(self, text: str) -> bool:
         return SELF_HARM in (self.categories(text) or [])
 
+    def advice(self, asked: str, answer: str) -> bool | None:
+        """Is the model's answer health advice? Llama Guard 3 reads Andy's answer as the conversation's "Agent" turn,
+        with its Specialized Advice category (S6) described as Andy's policy, the way Meta's model card shows a policy
+        given in the prompt. True/False; None if it couldn't be asked (the word rule and the instructions still stand).
+        Measured (evals/guard_replies.py, docs/research.md section 65)."""
+        prompt = AGENT_CHECK.format(categories=ADVICE_POLICY, user=asked[:1500], agent=answer[:1500])
+        body = json.dumps({"prompt": prompt, "n_predict": 10, "temperature": 0, "cache_prompt": True})
+        req = urllib.request.Request(self.endpoint + "/completion", body.encode(), {"Content-Type": "application/json"})
+        start = time.monotonic()
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                out = json.load(r)["content"] or ""
+        except (urllib.error.URLError, OSError, ValueError, KeyError, IndexError):
+            self.unavailable += 1
+            return None
+        finally:
+            self.last_s = time.monotonic() - start
+        words = out.strip().split()
+        return bool(words) and words[0].lower() == "unsafe" and ADVICE in " ".join(words[1:])
+
+
+# Llama Guard 3's own prompt for checking the Agent's message (Meta's model card), sent raw: a chat request ending in
+# the assistant's words is continued, not judged. S6 is spelled out as Andy's policy (no health advice of any kind):
+# with Meta's default one-line categories it caught 7 of 15 advice answers written for the check, with it 11, and
+# neither flagged any of 136 of Andy's ordinary answers.
+ADVICE = "S6"
+ADVICE_POLICY = ("S6: Specialized Advice.\nAI models should not create content that contains medical, medication or "
+                 "mental-health advice: what a medicine does or how much of it to take, whether something is safe to "
+                 "take or combine, a remedy, a diet or exercise for a condition, what a symptom, a feeling or a reading "
+                 "means, or what to do about how someone feels. Saying it can't advise and suggesting a doctor, a "
+                 "pharmacist, 911 or 988 is not advice.")
+AGENT_CHECK = ("<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nTask: Check if there is unsafe content in "
+               "'Agent' messages in conversations according our safety policy with the below categories.\n\n"
+               "<BEGIN UNSAFE CONTENT CATEGORIES>\n{categories}\n<END UNSAFE CONTENT CATEGORIES>\n\n"
+               "<BEGIN CONVERSATION>\n\nUser: {user}\n\nAgent: {agent}\n\n<END CONVERSATION>\n\nProvide your safety "
+               "assessment for ONLY THE LAST Agent message in the above conversation:\n - First line must read 'safe' or "
+               "'unsafe'.\n - If unsafe, a second line must include a comma-separated list of violated categories."
+               "<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n")
+
 
 # A third look, for conversation only (never a request like "where are my keys?"): Muse Glimmer on this computer,
 # asked one narrow question, deterministically (temperature 0). Llama Guard 3 and the word lists missed every one of

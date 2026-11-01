@@ -56,7 +56,7 @@ keeps what it sees and hears in the house.
 | **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
 | **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; fifteen languages |
 | **DINOv2** (open weights) | GPU 1; and in the visitor's browser on the public demo | Knows the person's own things by sight |
-| **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | A second crisis check; reads each web page before Muse Spark does |
+| **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | A second crisis check, and reads each sentence of a model's answer for health advice; reads each web page before Muse Spark does |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
 

@@ -80,7 +80,7 @@ def figures() -> list[dict]:
 MODELS = [("SAM 3.1", "finds and outlines"), ("Muse Glimmer", "plans, checks, translates"),
           ("MapAnything", "how far; the room in 3D"), ("V-JEPA 2", "sees a thing put down"),
           ("DINOv2", "knows your mug"), ("Omnilingual ASR", "hears"), ("SeamlessM4T v2", "speaks"),
-          ("Llama Guard 3", "a crisis check"), ("Prompt Guard 2", "spots tricks in web pages")]
+          ("Llama Guard 3", "crisis words; advice in answers"), ("Prompt Guard 2", "spots tricks in web pages")]
 CLOUD = [("Muse Spark", "the agent and the web: words, and web pages"), ("Muse Image", "drawings, from words")]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

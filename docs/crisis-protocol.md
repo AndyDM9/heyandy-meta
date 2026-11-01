@@ -74,7 +74,11 @@ no model sees the question, on this computer or in the cloud. The crisis checks 
 medicine still does what it asks: "where are my pills?" is a search, "remind me at 8 pm to take my pills" a reminder.
 Measured with questions written after the rule (`evals/no_advice.py`): see the README's Proof and `docs/research.md`
 section 63. It is a word rule: a health question said in a way it doesn't know reaches the conversation model, which
-is told never to give medical advice (and, judged, almost never did).
+is told never to give medical advice (and, judged, almost never did). Each sentence of that model's answer, and of a
+web answer, is read first by Llama Guard 3 on this computer, as the conversation's Agent turn with Specialized Advice
+spelled out as this policy: one it calls advice is replaced by the line above and the answer stops. It catches dosing
+and medicine advice, not reassurance (held out, 11 of 25 advising answers; none of 168 of Andy's real answers flagged;
+`evals/guard_replies.py`).
 
 ## If someone says they've fallen, or can't breathe
 "I fell and I can't get up", "my chest hurts", "my husband collapsed", "call 911": 911 first, in Andy's own words (by

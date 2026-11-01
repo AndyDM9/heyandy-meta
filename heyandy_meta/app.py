@@ -33,7 +33,8 @@ from .companion.intents import PRIVACY, REFINE, WEB_CLOSE, WEB_MORE, parse
 from .companion.reminders import Reminders, spoken_time
 from .companion.selfcheck import check as self_check, summary as self_summary
 from .companion.sound import apart, fan, reading, turn_to, wait_for
-from .companion.safety import CRISIS_REPLY, DISCLOSURE, EMERGENCY_REPLY, Disclosure, crisis, emergency, health, respond
+from .companion.safety import (CRISIS_REPLY, DISCLOSURE, EMERGENCY_REPLY, HEALTH_REPLY, Disclosure, crisis, emergency,
+                                health, respond)
 
 from .finder.geometry import LITE, pixel_to_angles
 from .finder.perspective import from_them, on_plan
@@ -537,6 +538,13 @@ class Andy:
             return self.look_up(text)
         return self.talk(text)
 
+    def _advice(self, asked: str, answer: str) -> bool:
+        """Llama Guard 3, on this computer, reads a model's answer before Andy says it (0.04 s): health advice?"""
+        if self.guard is None or not hasattr(self.guard, "advice"):
+            return False
+        self.screen.used("Llama Guard 3 (checking the answer)", "device")
+        return bool(self.guard.advice(asked, answer))
+
     def _say_now(self, part: str) -> None:
         """Say part of this turn's reply as soon as it's ready (the hear() at the end says only the rest)."""
         self.face_person_to_speak()
@@ -559,6 +567,12 @@ class Andy:
         try:
             for sentence in self.router.stream(text, self.online, self.history):
                 self._source, self._reason = self.router.last.where, self.router.last.reason  # known once it answers
+                if self._advice(text, " ".join(parts + [sentence])):
+                    # the word rule didn't know the question; Llama Guard 3 read the answer as health advice
+                    self._reason += "; Llama Guard 3 read health advice in the answer, so Andy's own words instead"
+                    parts.append(HEALTH_REPLY)
+                    self._say_now(HEALTH_REPLY)
+                    break
                 if CLAIMS.search(sentence):
                     self._reason += "; a promise the model can't keep was replaced"
                     parts.append(HONEST)
@@ -628,6 +642,9 @@ class Andy:
             return "I couldn't look that up just now. Please try again in a little while."
         self._source, self._reason = "cloud", "web search (Muse Spark)"
         self.screen.used("Muse Spark + web search", "cloud")
+        if self._advice(question, ans.text):  # the web's answer is read as health advice: Andy's own words instead
+            self._reason += "; Llama Guard 3 read health advice in the answer, so Andy's own words instead"
+            return HEALTH_REPLY
         self.screen.answered(ans.text, ans.sources, "cloud", self._reason)
         return ans.spoken
 

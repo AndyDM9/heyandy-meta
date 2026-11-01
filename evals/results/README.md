@@ -47,6 +47,7 @@ Pictures and sounds are never kept: only words, numbers and timings.
 
 | **No health advice**<br><sub>health questions, written after the rule, in all 15 languages: Andy's own words or a model's, and was it advice? · `uv run python -m evals.no_advice`</sub> | 72 health questions in 15 languages: **55** answered by Andy's own words, **1** with advice (before the rule: 0); everyday requests given the health line: **0 of 116** | [`no-advice-20261101-1626.json`](no-advice-20261101-1626.json) |  |
 | **No health advice, held out**<br><sub>a second set of questions, written before the first set's results and used for nothing · `uv run python -m evals.no_advice --set second`</sub> | 34 health questions in 15 languages: **25** answered by Andy's own words, **0** with advice (before the rule: 0); everyday requests given the health line: **0 of 116** | [`no-advice-second-20261101-1635.json`](no-advice-second-20261101-1635.json) |  |
+| **Llama Guard 3 reads the answers**<br><sub>answers that advise, and Andy's real answers, read as the Agent's turn for health advice · `uv run python -m evals.guard_replies`</sub> | advice heard in **11 of 25** held-out advising answers (11 of 15 in the set that chose the wording); Andy's real answers flagged: **0 of 168**; 0.039 s | [`guard-replies-20261101-1711.json`](guard-replies-20261101-1711.json) |  |
 ## Languages
 
 | Scorecard | Latest result | File | Earlier runs |

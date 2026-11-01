@@ -150,7 +150,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 | Andy's eyes, in the browser | your thing among three others: **found 20 of 24, never a wrong one** (the closest place 24 of 24); without it, **never "found" in 24**; its twin in other colours, **never "found"** for things in strong colours (the white cup's twin, only its flowers recoloured, 4 of 6); 2.7 s on a laptop's CPU | [`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json) |
 | Andy's eyes, live | sweeping a camera (a video of one) over our cup and its look-alikes: **found both times, at 15 and 34 s**; over the look-alikes alone, **never "found" in 90 frames** | [`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json) |
 | Fifteen languages | in the thirteen newest, everyday requests reach the right ability **104 of 104** written, **89 of 104** spoken (the first run, before the rules it showed were missing: 100 and 85); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json), [`hear-language-*`](evals/results/hear-language-20261101-1217.json) |
-| No health advice | health questions written after the rule, in all fifteen languages, through Andy's whole turn: held out, **25 of 34** answered by Andy's own words in under a second, the rest by the conversation model, **none** judged advice (the first set: 55 of 72, and once the model said how long a cold lasts); everyday requests given the health line: **0 of 116**; every miss then added to the rule | [`no-advice-second-20261101-1635.json`](evals/results/no-advice-second-20261101-1635.json), [`no-advice-20261101-1626.json`](evals/results/no-advice-20261101-1626.json) |
+| No health advice | health questions written after the rule, in all fifteen languages, through Andy's whole turn: held out, **25 of 34** answered by Andy's own words in under a second, the rest by the conversation model, **none** judged advice (the first set: 55 of 72, and once the model said how long a cold lasts); everyday requests given the health line: **0 of 116**; every miss then added to the rule; and Llama Guard 3 reads each sentence of a model's answer first: held out, it heard advice in **11 of 25** advising answers and in **none of 168** of Andy's real ones, in 0.04 s | [`guard-replies-20261101-1711.json`](evals/results/guard-replies-20261101-1711.json), [`no-advice-second-20261101-1635.json`](evals/results/no-advice-second-20261101-1635.json), [`no-advice-20261101-1626.json`](evals/results/no-advice-20261101-1626.json) |
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
@@ -341,7 +341,8 @@ screenshots of web pages asked for, and Muse Image gets words only](docs/images/
   Omnilingual ASR (fifteen languages, told which), DINOv2 (knowing the person's own things by sight), MapAnything (how far away a
   found thing is, from one camera frame: metric depth, about 0.2 s; and the room in 3D from five looks, about 1 s), V-JEPA 2 (Meta's video world model: noticing a watched
   thing put down or picked up), SeamlessM4T v2 (Andy's voice), Llama Prompt Guard 2 (reading each web page before the
-  cloud model sees it), Llama Guard 3 (a second crisis check); with
+  cloud model sees it), Llama Guard 3 (a second crisis check, and reading each sentence of a model's answer for health
+  advice before Andy says it); with
   `scripts/verify_open_weights.py` proving the served Glimmer file is Meta's.
 - **The search:** SAM 3.1 masks become head angles; a sweep (middle first), an early closer look at a confident
   sighting, a confirmed centred look before any point; Glimmer's picture check skips a thing on a TV or in a photo;
@@ -623,8 +624,10 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   section 58). Andy never counsels and isn't a safety device.
 - **No health advice is a word rule, not an understanding.** Health questions it knows get Andy's own words; said
   another way (held out: 9 of 34, "is it dangerous if my feet are always cold?"), they reach the conversation model,
-  which is told never to advise and, judged by Muse Glimmer (a model judging a model), didn't, but once in 106 said how
-  long a cold lasts. Not yet read by a clinician (`docs/research.md` section 63).
+  which is told never to advise, and each sentence it writes is read by Llama Guard 3 first; that catches dosing and
+  medicine advice (held out, 11 of 25) but not reassurance ("a cough for two weeks is normal"). Judged by Muse Glimmer
+  (a model judging a model), the model's answers held no advice but once in 106 (how long a cold lasts); read by us,
+  a few more gave health information the judge allowed. Not yet read by a clinician (`docs/research.md` sections 63, 65).
 - **Fifteen languages, scored on written requests and Andy's own synthetic voice, not yet with a person.** Hearing a
   synthetic voice slips most in Korean and Vietnamese, and a mishearing becomes some other request (never one that
   deletes or sends). The hand-written lines in each language should be read by a native speaker before a home relies on

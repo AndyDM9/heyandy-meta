@@ -138,3 +138,55 @@ def test_the_emergency_line_is_by_hand_in_every_language(tmp_path):
     a.language = "zh"
     a.hear("我摔倒了，起不来")
     assert PHRASES["zh"][EMERGENCY_REPLY] in said(body)
+
+
+class Guard:
+    """Llama Guard 3 reading answers: says advice for the answers given, and records what it read."""
+
+    def __init__(self, advice=()):
+        self.flag, self.read = set(advice), []
+
+    def advice(self, asked, answer):
+        self.read.append(answer)
+        return any(a in answer for a in self.flag)
+
+    def self_harm(self, text):
+        return False
+
+
+def test_llama_guard_reads_each_sentence_and_an_advising_one_becomes_andys_own_words(tmp_path):
+    from tests.test_streaming import StreamingDevice
+
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.guard = Guard(advice=["eight glasses"])
+    a.device = a.router.device = StreamingDevice(["Good question.", "Drink eight glasses of water a day.", "Cheers!"])
+    reply = a.hear("how much should I have each day")  # nothing the word rule knows
+    assert said(body)[-2:] == ["Good question.", HEALTH_REPLY] and "eight glasses" not in reply and "Cheers" not in reply
+    assert a.guard.read == ["Good question.", "Good question. Drink eight glasses of water a day."]
+    assert "Llama Guard 3 read health advice" in a.screen.reason
+
+
+def test_an_answer_llama_guard_passes_is_said_as_it_was(tmp_path):
+    from tests.test_streaming import StreamingDevice
+
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.guard = Guard()
+    a.device = a.router.device = StreamingDevice(["I'm well, thanks.", "And you?"])
+    assert a.hear("how are you").endswith("I'm well, thanks. And you?")
+
+
+def test_llama_guard_down_never_stops_an_answer(tmp_path):
+    from tests.test_streaming import StreamingDevice
+
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.guard = SimpleNamespace(advice=lambda asked, answer: None, self_harm=lambda text: False)
+    a.device = a.router.device = StreamingDevice(["Hello there."])
+    assert a.hear("hi andy").endswith("Hello there.")
+
+
+def test_the_answer_check_is_llama_guards_own_agent_prompt_with_andys_policy():
+    from heyandy_meta.companion.safety_model import ADVICE_POLICY, AGENT_CHECK
+
+    prompt = AGENT_CHECK.format(categories=ADVICE_POLICY, user="How long does a cold last?", agent="About a week.")
+    assert "'Agent' messages" in prompt and "User: How long does a cold last?\n\nAgent: About a week." in prompt
+    assert prompt.endswith("<|start_header_id|>assistant<|end_header_id|>\n\n") and "S6: Specialized Advice." in prompt
