@@ -558,7 +558,7 @@
   const TRY = ["“Hey Andy, where are my glasses?”", "“Hey Andy, keep an eye on my keys.”", "“Hey Andy, remind me at 3 pm to call Sam.”",
                "“Hey Andy, draw me a picture of a cat in a sunny garden.”", "“Hey Andy, what am I holding?”", "“Hey Andy, let's play the cup game.”", "“Hey Andy, this is my mug.”", "“Hey Andy, show me the weather radar on the TV.”",
                "“Hey Andy, the blue mug, next to the laptop.”", "“Hey Andy, what do you remember?”", "“Hey Andy, what did you send to the cloud today?”", "“Hey Andy, what can I ask?”"];
-  let lastCaption = "", captionAt = 0, pictureKey = "", helpUntil = 0;
+  let lastCaption = "", captionAt = 0, pictureKey = "", helpUntil = 0, revealedShot = "";
   // Settings: a gear, top right, for a mouse or a TV remote (Tab, Enter, Escape). Under the hood is its own page.
   const hoodUrl = () => (window.HEYANDY_STATIC ? "hood.html" : "hood");
   function menu(open) {
@@ -1321,7 +1321,7 @@
       if (key !== pictureKey) { pictureKey = key; body.replaceChildren(guided(g)); }
     } else if (s.picture) {
       kicker = T(s.game ? "The cup game" : s.picture.turned ? "It turned up · Andy kept looking" : "Found"); title = s.picture.words;
-      const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words;
+      const key = s.picture.src.length + ":" + s.picture.box.join(",") + ":" + s.picture.words + ":" + s.picture.aim_deg;
       if (key !== pictureKey) {
         pictureKey = key;
         const facts = el("div", null, "facts"), stats = el("div", null, "stats");
@@ -1349,7 +1349,8 @@
         const fig = picture(s.picture);  // under the picture, what to say next: it gives up the room, not the words
         if (!s.game && !s.picture.trails) fig.append(el("small", T("Say “Hey Andy, guide my hand” and I'll talk your hand onto it"), "next-try"));
         const split = el("div", null, "split"); split.append(fig, facts); body.replaceChildren(split);
-        if (!s.game && !s.picture.trails && s.picture.seconds_left >= 112) reveal(s.picture, s.seconds);  // a find just now
+        const shot = s.picture.src.length + ":" + s.picture.box.join(",");  // once per find: not again when its aim is checked
+        if (!s.game && !s.picture.trails && s.picture.seconds_left >= 112 && shot !== revealedShot) { revealedShot = shot; reveal(s.picture, s.seconds); }
       }
     } else {
       pictureKey = "";

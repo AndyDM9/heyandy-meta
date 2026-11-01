@@ -190,6 +190,12 @@ class ReachyBody:
 
         self.play(sound(name), RATE)
 
+    def wait_said(self) -> None:
+        """Until what was queued to be said soon is said: an earcon plays after it, never over it."""
+        wait = getattr(self._say, "wait", None)
+        if wait:
+            wait()
+
     def say_soon(self, text: str) -> None:
         """Start saying it and carry on (the head can start turning); anything said next waits its turn."""
         soon = getattr(self._say, "soon", None)

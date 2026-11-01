@@ -217,7 +217,8 @@ def test_the_reveal_plays_only_for_a_find_made_just_now():
 
     page = files("heyandy_meta.screen").joinpath("page.html").read_text()
     assert "function reveal(" in page
-    assert "if (!s.game && !s.picture.trails && s.picture.seconds_left >= 112) reveal(s.picture, s.seconds);" in page
+    assert "if (!s.game && !s.picture.trails && s.picture.seconds_left >= 112 && shot !== revealedShot)" in page
+    assert "revealedShot = shot; reveal(s.picture, s.seconds);" in page  # once per find, not again when its aim is checked
     import sys
     from pathlib import Path
 

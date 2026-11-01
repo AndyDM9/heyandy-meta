@@ -59,7 +59,8 @@
   .earlier { margin-top: 3.4vh; }
   ol.turns { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.2vh; }
   ol.turns li { display: grid; grid-template-columns: 6rem 1fr; gap: 1.4vw; align-items: center; }
-  ol.turns .bar { position: relative; height: clamp(14px, 1.4vh, 20px); background: var(--track); border-radius: 6px; overflow: hidden; }
+  ol.turns .lanes { display: grid; gap: 3px; }
+  ol.turns .bar { position: relative; height: clamp(6px, 0.7vh, 9px); background: var(--track); border-radius: 4px; overflow: hidden; }
   ol.turns small { grid-column: 2; color: var(--soft); font-size: clamp(12px, 0.95vw, 16px); }
   .legend { display: flex; flex-wrap: wrap; gap: 0.6vh 1.4vw; margin-top: 1.4vh; color: var(--soft); font-size: clamp(12px, 0.95vw, 16px); }
   .legend i { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 3px; margin-right: 0.4em; vertical-align: -0.05em; }
@@ -122,10 +123,19 @@
                                (() => { const li = el("li", null, "zero"); li.append(el("b", "0", "num"), " camera pictures sent to the cloud, by design"); return li; })());
     const turns = (h.turns || []).slice().reverse(), max = Math.max(1, ...turns.map(t => t.total)), list = $("turns"); list.replaceChildren();
     if (!turns.length) list.append(el("li", "None yet.", "empty"));
+    // each turn on a real time axis, in three lanes (the body, the models, the voice): what overlaps shows overlapping
+    const LANES = [["move", "camera"], ["safety", "think", "plan", "see", "know", "notice", "check", "measure"], ["hear", "speak"]];
     for (const t of turns) {
-      const li = el("li"), bar = el("div", null, "bar"); let at = 0;
-      for (const stage of ORDER) if (t.stages[stage]) { const g = el("i", null, "seg"); g.style.left = (100 * at / max) + "%"; g.style.width = (100 * t.stages[stage] / max) + "%"; g.style.background = `var(--${stage})`; bar.append(g); at += t.stages[stage]; }
-      li.append(el("b", s1(t.total) + " s", "num"), bar, el("small", t.what)); list.append(li);
+      const li = el("li"), lanes = el("div", null, "lanes");
+      for (const lane of LANES) {
+        const bar = el("div", null, "bar");
+        for (const [stage, a, b] of t.spans || []) if (lane.includes(stage)) {
+          const g = el("i", null, "seg"); g.style.left = (100 * Math.max(0, a) / max) + "%"; g.style.width = (100 * Math.max(0, b - a) / max) + "%";
+          g.style.background = `var(--${stage})`; bar.append(g);
+        }
+        lanes.append(bar);
+      }
+      li.append(el("b", s1(t.total) + " s", "num"), lanes, el("small", t.what + " · body, models, voice")); list.append(li);
     }
     $("legend").replaceChildren(...ORDER.filter(k => st[k]).map(k => { const d = el("span"); const i = el("i"); i.style.background = `var(--${k})`; d.append(i, `${st[k][0]} (${st[k][1]})`); return d; }));
     if (fromAndy) { if (h.show_s > 0) seenShow = true; else if (seenShow) location.href = "./"; }  // opened by voice: back after

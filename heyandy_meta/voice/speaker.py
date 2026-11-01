@@ -1,4 +1,5 @@
 """Andy's voice: each sentence is made on this computer and played as soon as it's ready."""
+import queue
 import re
 import threading
 import time
@@ -14,6 +15,8 @@ class Speaker:
         self._turn = threading.Lock()  # one thing said at a time, in order
         self._maker = ThreadPoolExecutor(1, thread_name_prefix="voice")  # the next sentence, made while one plays
         self._kept: dict[tuple, object] = {}  # short fixed phrases ("There it is!", "Let me look."), as they sound
+        self._later: queue.Queue = queue.Queue()  # said soon: in order, by one worker, never over each other
+        self._worker: threading.Thread | None = None
 
     def _make(self, sentence: str):
         """A short phrase Andy says again and again is made once per voice setting; anything longer, every time."""
@@ -28,21 +31,33 @@ class Speaker:
         return self._kept[key]
 
     def __call__(self, text: str) -> None:
+        self._later.join()  # whatever was to be said soon comes first
         with self._turn:
             self._say(text)
 
+    def wait(self) -> None:
+        """Until everything to be said soon has been said (a sound of Andy's own mustn't play over it)."""
+        self._later.join()
+
     def soon(self, text: str) -> None:
-        """Say it without waiting ("Let me look." while the head starts turning). The turn is taken now, so whatever
-        is said next comes after it."""
-        self._turn.acquire()
+        """Say it without waiting ("Let me look." while the head starts turning), even while something else is being said:
+        it's queued, and said in order; whatever is said next, with or without waiting, comes after it. (It once waited
+        while the first turn's "I'm Andy, an AI robot." played, and held up the search 2.4 s.)"""
+        if self._worker is None or not self._worker.is_alive():
+            self._worker = threading.Thread(target=self._saying, daemon=True, name="saying")
+            self._worker.start()
+        self._later.put(text)
 
-        def run():
+    def _saying(self) -> None:
+        while True:
+            text = self._later.get()
             try:
-                self._say(text)
+                with self._turn:
+                    self._say(text)
+            except Exception:  # noqa: BLE001 - a sentence that can't be made or played mustn't stop the next
+                pass
             finally:
-                self._turn.release()
-
-        threading.Thread(target=run, daemon=True, name="saying").start()
+                self._later.task_done()
 
     def _say(self, text: str) -> None:
         sentences = [x for x in SENTENCE.split(text.strip()) if x.strip()]

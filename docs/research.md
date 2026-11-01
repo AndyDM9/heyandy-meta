@@ -1007,3 +1007,24 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   MapAnything 0.52, speaking 4.9. Most of the wait is the body moving and the answer being said, not the models: the
   place to make Andy faster is the motion (fewer, shorter moves) and saying the answer while still pointing.
 
+## 50. Andy answers while it points (2026-10-31)
+
+- **Why:** Under the hood (section 49) showed a search's wait was mostly the body and the voice, in a row. Profiled
+  step by step on the robot (every call timed), the first search of a session went: "I'm Andy, an AI robot." said
+  before the search started (2.4 s); looking and confirming (5.0 s); pointing, then checking the aim and correcting it
+  twice (7.0 s); MapAnything (0.2 s) and the found note (0.9 s); only then the answer (4.9 s): 20.5 s, the answer
+  starting at 15.5 s. With a person to face, Andy also held the point 1.2 s and turned to them before speaking.
+- **Built:** the finder tells the app the moment a find is confirmed, before the point (`Finder.on_confirmed`). On the
+  robot, Andy then measures how far (MapAnything, 0.2 s; the words say it), shows the find on the TV, and starts the
+  found note and the answer on a thread, while the head turns to point, dips and checks its aim; the turn waits for
+  both. During a search the head is in its still "searching" mode, so speaking adds no sway to the aim check. After the
+  answer it turns to the person, with no hold first (the point was held all through the answer). The first turn's
+  "I'm Andy, an AI robot." no longer holds the search up: speech said "soon" is now an ordered queue with one worker
+  (it used to wait for the speaker if anything was playing), and an earcon waits for that queue, never playing over
+  speech. The TV reveals a find once, then updates its aim figure without replaying. In simulation the order stays
+  as before; a test makes the head slow and checks the note and the words start before the point ends, once.
+- **Measured on the robot, the same search ("Where is my cup?", the first turn), profiled:** before, the found note at
+  14.6 s, the answer at 15.5 s, done at 20.5 s. After: the search starting at 0.03 s (was 2.4), the note at 4.9 to 5.1
+  s, the answer at 5.8 to 6.0 s, done at 10.7 to 11.0 s (two runs). The answer comes about 9.6 s sooner; the turn takes
+  about half as long. Under the hood's sample is re-recorded with it: the voice lane now runs alongside the body's.
+

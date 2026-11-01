@@ -295,3 +295,30 @@ def test_short_phrases_are_made_once_per_voice_setting():
     v.speed = 0.85  # "speak more slowly": made again, at the new speed
     s("There it is!")
     assert made.count("There it is!") == 2
+
+
+def test_soon_speech_never_waits_even_while_something_is_being_said():
+    """The first turn's "I'm Andy, an AI robot." played, and "Let me look." waited for it: the search started 2.4 s late
+    on the robot. Now both are queued at once, said in order, and the answer after them."""
+    import threading
+    import time
+
+    gate, played = threading.Event(), []
+
+    class Voice:
+        def speak(self, text, rate=16000):
+            return text
+
+    def play(audio, rate):
+        if audio == "I'm Andy, an AI robot.":
+            gate.wait(2)  # still playing
+        played.append(audio)
+
+    s = Speaker(Voice(), play)
+    start = time.monotonic()
+    s.soon("I'm Andy, an AI robot.")
+    s.soon("Let me look.")
+    assert time.monotonic() - start < 0.3  # neither waited: the search starts at once
+    threading.Timer(0.2, gate.set).start()
+    s("There it is!")
+    assert played == ["I'm Andy, an AI robot.", "Let me look.", "There it is!"]

@@ -55,6 +55,7 @@ class Finder:
     why: str = ""  # why the last closer look came back empty, in words for the plan and the TV
     on_look: Callable[[float, float], None] | None = None  # told each direction as the head turns (the TV's progress)
     on_frame: Callable[[Frame, list], None] | None = None  # each frame and what SAM 3.1 found in it (the TV's live view)
+    on_confirmed: Callable[[Found], None] | None = None  # the moment a find is confirmed, before the point: to answer while pointing
     rejected: str = ""  # set by ``check`` to say why it said no ("a mug, but not yours")
     verify: bool = True  # after pointing, look once more: is it in the middle of the view?
     aim_tolerance: float = 3.0  # degrees off the middle before the head's command is corrected
@@ -142,6 +143,8 @@ class Finder:
     def point(self, found: Found) -> Found:
         self.last_found = found
         found.reachable = self.body.reach.allows(found.yaw, found.pitch)
+        if self.on_confirmed:
+            self.on_confirmed(found)  # known: the answer can start while the head turns to point and checks its aim
         self.body.point(found.yaw, found.pitch)  # the body clamps an unreachable direction to its limit
         if self.verify and found.reachable:
             self._check_aim(found)

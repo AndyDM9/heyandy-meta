@@ -55,9 +55,11 @@ again); never a home. The numbers in italics are from the robot, with their file
 
 The TV's gear (or "Hey Andy, how did you do that?") opens **Under the hood**: each turn timed live on the computer
 beside Andy, stage by stage, with which of Meta's models did each and where it runs, every local service's health,
-and what Andy has done since it started. Above, a search on the robot: Andy's first sound came 0.16 s after the
-words; most of the 15.4 s is the head moving and the answer being spoken, not the models. Only numbers and names are
-kept, in memory: never a word said or a picture (`screen/hood.py`, `screen/hood.html`).
+and recent turns in three lanes (the body, the models, the voice). It showed where a search's time went, and that
+changed Andy: **it now answers the moment a find is confirmed, while its head turns to point and checks its aim**,
+as a person points and speaks at once. Measured on the robot, the same search: the answer used to start 15.5 s after
+the words and now starts at **5.8 to 6.0 s**; the whole turn went from 20.5 s to **10.7 to 11.0 s**. Only numbers and
+names are kept, in memory: never a word said or a picture (`screen/hood.py`, `screen/hood.html`).
 
 ## Why it's different
 
@@ -82,6 +84,7 @@ kept, in memory: never a word said or a picture (`screen/hood.py`, `screen/hood.
 | It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |
 | By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder 4 of 4 | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
 | Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (the third: the search missed, and said so) | [`home-*`](evals/results) |
+| How soon it answers | the same search, profiled: the answer started **15.5 s** after the words; now **5.8 to 6.0 s**, said while pointing; the turn **20.5 s → 10.7 to 11.0 s** | [research §50](docs/research.md#50-andy-answers-while-it-points-2026-10-31), [`hood-20261031-2036.json`](evals/results/hood-20261031-2036.json) |
 | Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 

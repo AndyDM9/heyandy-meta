@@ -1,0 +1,448 @@
+{
+ "latest": {
+  "kind": "find",
+  "what": "a search",
+  "total": 12.77,
+  "stages": {
+   "hear": 0.13,
+   "safety": 0.05,
+   "move": 7.04,
+   "camera": 0.43,
+   "see": 3.71,
+   "check": 0.77,
+   "measure": 0.21,
+   "speak": 4.92
+  },
+  "first_sound": 0.13,
+  "spans": [
+   [
+    "hear",
+    0.0,
+    0.13,
+    ""
+   ],
+   [
+    "safety",
+    0.56,
+    0.61,
+    "Llama Guard 3"
+   ],
+   [
+    "move",
+    0.61,
+    1.51,
+    "the robot's motors"
+   ],
+   [
+    "camera",
+    1.51,
+    1.6,
+    "the robot's camera"
+   ],
+   [
+    "see",
+    1.6,
+    2.36,
+    "SAM 3.1"
+   ],
+   [
+    "move",
+    2.36,
+    3.98,
+    "the robot's motors"
+   ],
+   [
+    "camera",
+    3.98,
+    4.01,
+    "the robot's camera"
+   ],
+   [
+    "see",
+    4.01,
+    4.75,
+    "SAM 3.1"
+   ],
+   [
+    "check",
+    4.75,
+    5.52,
+    "Muse Glimmer"
+   ],
+   [
+    "measure",
+    5.52,
+    5.73,
+    "MapAnything"
+   ],
+   [
+    "move",
+    5.73,
+    8.44,
+    "the robot's motors"
+   ],
+   [
+    "camera",
+    8.44,
+    8.54,
+    "the robot's camera"
+   ],
+   [
+    "see",
+    8.54,
+    9.28,
+    "SAM 3.1"
+   ],
+   [
+    "move",
+    9.28,
+    10.18,
+    "the robot's motors"
+   ],
+   [
+    "camera",
+    10.18,
+    10.3,
+    "the robot's camera"
+   ],
+   [
+    "see",
+    10.3,
+    11.03,
+    "SAM 3.1"
+   ],
+   [
+    "speak",
+    6.62,
+    11.54,
+    "SeamlessM4T v2"
+   ],
+   [
+    "move",
+    11.03,
+    11.94,
+    "the robot's motors"
+   ],
+   [
+    "camera",
+    11.94,
+    12.03,
+    "the robot's camera"
+   ],
+   [
+    "see",
+    12.03,
+    12.77,
+    "SAM 3.1"
+   ]
+  ]
+ },
+ "turns": [
+  {
+   "kind": "time",
+   "what": "the time",
+   "total": 4.52,
+   "stages": {
+    "hear": 0.12,
+    "safety": 0.04,
+    "speak": 3.91
+   },
+   "first_sound": 0.12,
+   "spans": [
+    [
+     "hear",
+     0.0,
+     0.12
+    ],
+    [
+     "safety",
+     0.57,
+     0.61
+    ],
+    [
+     "speak",
+     0.61,
+     4.52
+    ]
+   ]
+  },
+  {
+   "kind": "self_check",
+   "what": "a self-check",
+   "total": 16.8,
+   "stages": {
+    "hear": 0.12,
+    "safety": 0.04,
+    "camera": 0.09,
+    "see": 0.38,
+    "move": 1.81,
+    "speak": 13.92
+   },
+   "first_sound": 0.12,
+   "spans": [
+    [
+     "hear",
+     0.0,
+     0.12
+    ],
+    [
+     "safety",
+     0.55,
+     0.59
+    ],
+    [
+     "camera",
+     0.59,
+     0.68
+    ],
+    [
+     "see",
+     0.69,
+     1.07
+    ],
+    [
+     "move",
+     1.07,
+     1.97
+    ],
+    [
+     "move",
+     1.97,
+     2.88
+    ],
+    [
+     "speak",
+     2.88,
+     16.8
+    ]
+   ]
+  },
+  {
+   "kind": "find",
+   "what": "a search",
+   "total": 12.77,
+   "stages": {
+    "hear": 0.13,
+    "safety": 0.05,
+    "move": 7.04,
+    "camera": 0.43,
+    "see": 3.71,
+    "check": 0.77,
+    "measure": 0.21,
+    "speak": 4.92
+   },
+   "first_sound": 0.13,
+   "spans": [
+    [
+     "hear",
+     0.0,
+     0.13
+    ],
+    [
+     "safety",
+     0.56,
+     0.61
+    ],
+    [
+     "move",
+     0.61,
+     1.51
+    ],
+    [
+     "camera",
+     1.51,
+     1.6
+    ],
+    [
+     "see",
+     1.6,
+     2.36
+    ],
+    [
+     "move",
+     2.36,
+     3.98
+    ],
+    [
+     "camera",
+     3.98,
+     4.01
+    ],
+    [
+     "see",
+     4.01,
+     4.75
+    ],
+    [
+     "check",
+     4.75,
+     5.52
+    ],
+    [
+     "measure",
+     5.52,
+     5.73
+    ],
+    [
+     "move",
+     5.73,
+     8.44
+    ],
+    [
+     "camera",
+     8.44,
+     8.54
+    ],
+    [
+     "see",
+     8.54,
+     9.28
+    ],
+    [
+     "move",
+     9.28,
+     10.18
+    ],
+    [
+     "camera",
+     10.18,
+     10.3
+    ],
+    [
+     "see",
+     10.3,
+     11.03
+    ],
+    [
+     "speak",
+     6.62,
+     11.54
+    ],
+    [
+     "move",
+     11.03,
+     11.94
+    ],
+    [
+     "camera",
+     11.94,
+     12.03
+    ],
+    [
+     "see",
+     12.03,
+     12.77
+    ]
+   ]
+  }
+ ],
+ "since": {
+  "turns": 3,
+  "see": 6,
+  "camera": 6,
+  "measure": 1,
+  "check": 1,
+  "plan": 0,
+  "think": 0,
+  "speak": 3,
+  "move": 8,
+  "know": 0,
+  "notice": 0,
+  "started": 1793493335.1809635
+ },
+ "stages": {
+  "hear": [
+   "Hearing",
+   "Omnilingual ASR",
+   "on this computer"
+  ],
+  "safety": [
+   "Safety check",
+   "Llama Guard 3",
+   "on this computer"
+  ],
+  "think": [
+   "Thinking",
+   "Muse Glimmer",
+   "on this computer"
+  ],
+  "plan": [
+   "Planning the search",
+   "Muse Glimmer",
+   "on this computer"
+  ],
+  "move": [
+   "Head and base",
+   "the robot's motors",
+   "the robot"
+  ],
+  "camera": [
+   "Camera",
+   "the robot's camera",
+   "the robot"
+  ],
+  "see": [
+   "Seeing",
+   "SAM 3.1",
+   "on this computer"
+  ],
+  "know": [
+   "Knowing it by sight",
+   "DINOv2",
+   "on this computer"
+  ],
+  "notice": [
+   "Noticing",
+   "V-JEPA 2",
+   "on this computer"
+  ],
+  "check": [
+   "Checking the picture",
+   "Muse Glimmer",
+   "on this computer"
+  ],
+  "measure": [
+   "How far",
+   "MapAnything",
+   "on this computer"
+  ],
+  "speak": [
+   "Speaking",
+   "SeamlessM4T v2",
+   "on this computer"
+  ]
+ },
+ "services": [
+  {
+   "name": "Seeing",
+   "model": "SAM 3.1",
+   "ok": true,
+   "ms": 1
+  },
+  {
+   "name": "How far",
+   "model": "MapAnything",
+   "ok": true,
+   "ms": 1
+  },
+  {
+   "name": "Thinking",
+   "model": "Muse Glimmer",
+   "ok": true,
+   "ms": 0
+  },
+  {
+   "name": "Hearing and speaking",
+   "model": "Omnilingual ASR \u00b7 SeamlessM4T v2",
+   "ok": true,
+   "ms": 1
+  },
+  {
+   "name": "Safety",
+   "model": "Llama Guard 3",
+   "ok": true,
+   "ms": 0
+  }
+ ],
+ "recorded": "2026-10-31 20:36"
+}

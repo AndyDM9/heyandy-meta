@@ -114,7 +114,8 @@ class Hood:
             for stage, a, b, _ in t["spans"]:
                 per[stage] = round(per.get(stage, 0.0) + (b - a), 2)
             out["turns"].append({"kind": t["kind"], "what": KINDS.get(t["kind"], "a turn"), "total": t["total"],
-                                 "stages": per, "first_sound": t["first_sound"]})
+                                 "stages": per, "first_sound": t["first_sound"],
+                                 "spans": [[stage, a, b] for stage, a, b, _ in t["spans"]]})
         if turns:
             t = turns[-1]
             out["latest"] = {**out["turns"][-1], "spans": t["spans"]}

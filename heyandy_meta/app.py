@@ -161,6 +161,11 @@ class Andy:
         self.person: tuple[float, float] | None = None  # where the person is (yaw, pitch), to face them when talking
         self._pointed = False  # this turn pointed at something
         self.hold_point_s = 1.2 if hasattr(self.body, "motion") else 0.0  # the real robot holds a point a moment
+        # On the robot, the answer starts the moment a find is confirmed, while the head turns to point and checks its
+        # aim (Under the hood showed the point, its checks and the turn to the person all came before the words).
+        self.answer_while_pointing = hasattr(self.body, "motion")
+        self._early: tuple | None = None  # (found, its words, the thread saying them)
+        self._answered = False  # this turn's answer was said while pointing: no hold before turning to the person
         self._last_turn = float("-inf")
         self._noticing: threading.Event | None = None  # set by a turn while a noticing clip holds the head still
         self._notice_lock = threading.Lock()
@@ -213,20 +218,22 @@ class Andy:
             if not (flagged or crisis(text)):  # a crisis turn is the crisis reply, and nothing before it
                 self.reminders.mention_missed(self.say)
             self._source = self._reason = ""
-            self._pointed, self._said = False, []
+            self._pointed, self._said, self._answered, self._early = False, [], False, None
             self.screen.doing("Thinking", "Looking at you")
             if not (flagged or crisis(text)):  # a feeling of its own at a calm moment: never in a crisis turn
                 if THANKS.search(text):
                     self.emote("grateful1")
                 elif HELLO.search(text):
                     self.emote("welcoming1")
-            reply = respond(text, self._answer, self.disclosure, opening=self._say_now, flagged=flagged)
+            reply = respond(text, self._answer, self.disclosure, opening=self._say_opening, flagged=flagged)
             rest = reply
             for part in self._said:  # what was already said as it came (the opening, streamed sentences)
                 rest = rest.removeprefix(part).lstrip()
             if rest:
                 self.face_person_to_speak()
                 self.say(rest)
+            elif self._answered:
+                self.face_person_to_speak()  # answered while pointing: now turn to them, for whatever they say next
             self.refresh_panels()
             # The "I'm Andy, an AI robot." opening is the code's, not the model's: kept out so it isn't copied.
             if reply != CRISIS_REPLY:  # crisis words never go to a model, not even as history
@@ -250,12 +257,13 @@ class Andy:
             self.body.look(yaw, pitch, precise=False)
 
     def face_person_to_speak(self) -> None:
-        """Speak to the person, not to the thing: after pointing, hold it a moment, then turn to them."""
+        """Speak to the person, not to the thing: after pointing, hold it a moment, then turn to them (no hold when the
+        answer was said while pointing: the point was held all through it)."""
         if self.person is None:
             return
         yaw, pitch = self.person
         if abs(getattr(self.body, "yaw", yaw) - yaw) > 8 or abs(getattr(self.body, "pitch", pitch) - pitch) > 8:
-            if self._pointed:
+            if self._pointed and not self._answered:
                 time.sleep(self.hold_point_s)
             self.body.look(yaw, pitch, precise=False)
         face = getattr(self.body, "face", None)
@@ -475,6 +483,13 @@ class Andy:
         self.say(part.strip())
         self._said.append(part.strip())
 
+    def _say_opening(self, part: str) -> None:
+        """The first turn's "I'm Andy, an AI robot.", said without waiting for it to end: it no longer holds up a search
+        (2.4 s on the robot); what's said next waits its turn."""
+        self.face_person_to_speak()
+        self.say(part.strip(), soon=True)
+        self._said.append(part.strip())
+
     def talk(self, text: str) -> str:
         """Conversation, spoken sentence by sentence as the model writes it. Each sentence is checked first: one that
         claims an action the robot's own code didn't take stops the answer and is replaced with how to ask for it."""
@@ -572,6 +587,7 @@ class Andy:
         if c is None or not self.sounds or (self.quiet() and not even_when_quiet):
             return
         try:
+            getattr(self.body, "wait_said", lambda: None)()  # after anything still being said ("Let me look."), not over it
             self.hood.sound()
             c(name)
         except Exception:  # noqa: BLE001 - a sound is never worth a failed turn
@@ -650,7 +666,12 @@ class Andy:
             self.screen.step("recall: " + (f"last seen {side(last[0])}" if last else "no recent sighting")
                              + (f"; usually {usual['near'] or side(usual['yaw'])}" if usual else ""))
             self.gesture("searching")
-            found = self.finder.find(thing, last, (usual["yaw"], usual["pitch"]) if usual else None)
+            if self.answer_while_pointing and not self._background and self._by_sound is False and not self._no_promise:
+                self.finder.on_confirmed = self._answer_early
+            try:
+                found = self.finder.find(thing, last, (usual["yaw"], usual["pitch"]) if usual else None)
+            finally:
+                self.finder.on_confirmed = None
             looks = "once" if self.finder.looks == 1 else f"{self.finder.looks} times"
             self.screen.step(f"looked {looks}" + (f"; {self.finder.why}" if self.finder.why else ""))
         self.screen.timer_stop()
@@ -658,7 +679,9 @@ class Andy:
         self.screen.used("Muse Glimmer (picture check)", "device", getattr(self.judge, "calls", 0) - checks)
         if found is None:
             return self._not_found(thing)
-        self._measure(found)
+        early, self._early = (self._early if self._early and self._early[0] is found else None), None
+        if not early:
+            self._measure(found)
         self.places.saw(found.label, found.yaw, found.pitch, when=self.clock(), metres=found.metres, how="found")
         self._note_place(found.label, found.frame, found.mask)
         self._pointed = True
@@ -669,10 +692,28 @@ class Andy:
             self.screen.step(f"checked: pointing at it, {found.aim_deg:.0f}° off the middle"
                              + (" after aiming again" if found.reaimed else ""))
         self.gesture("found")
-        words = words or self._found_words(found)
-        self.screen.found(found, words)  # the TV's Reveal starts...
-        self.chime("found")  # ...as Andy's "there it is!" sound plays, before the words
+        words = words or (early[1] if early else self._found_words(found))
+        self.screen.found(found, words)  # the TV's Reveal starts (or, answered early, gets the checked aim)...
+        if early:
+            early[2].join()  # the answer, said while the head pointed and checked: done before the turn ends
+        else:
+            self.chime("found")  # ...as Andy's "there it is!" sound plays, before the words
         return words + ("" if self._background else self._offer_to_watch(found.label, (found.yaw, found.pitch)))
+
+    def _answer_early(self, found: Found) -> None:
+        """Confirmed, not yet pointed: say so now, while the head turns to point and checks its aim, as a person points
+        and speaks at once. How far is measured first (MapAnything, about 0.2 s): the words say it. On the robot this
+        moved the words about 7 s earlier (research.md section 50)."""
+        self.screen.timer_stop()  # found: the TV's "to find it" stops here
+        self._measure(found)
+        words = self._found_words(found)
+        self.screen.doing("Pointing", f"At your {found.label}")
+        self.screen.found(found, words)  # the Reveal, with the found note
+        self._said.append(words)
+        self._answered = True
+        say = threading.Thread(target=lambda: (self.chime("found"), self.say(words)), daemon=True, name="answering")
+        self._early = (found, words, say)
+        say.start()
 
     def _offer_to_watch(self, thing: str, where=(0.0, 0.0), times: int = 3, within_s: float = 7 * 24 * 3600) -> str:
         """Asked for the same thing a few times this week, and not kept an eye on: offer, once a week. Only the word and
