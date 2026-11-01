@@ -44,7 +44,7 @@ def test_ring_it_places_the_ringing_as_andy_does_from_any_start():
             ends = []
             for turn in (app_turn, andy_turn):
                 head = [start]
-                yaw, _ = turn(lambda: read(head[0]), lambda y: head.__setitem__(0, y), start)
+                yaw, _ = turn(lambda h=head: read(h[0]), lambda y, h=head: h.__setitem__(0, y), start)
                 ends.append(yaw)
             assert ends[0] == ends[1] and abs(ends[0] - source) <= 15
 

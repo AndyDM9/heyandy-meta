@@ -32,7 +32,7 @@ CRISIS = {
 def test_every_language_has_everything_written_by_hand():
     voices = re.search(r'SPEECH = set\("([^)]*)"', (Path(__file__).parents[1] / "local" / "voice_server.py").read_text(),
                        re.S)[1].replace('"', " ").split()
-    for code, row in MORE.items():
+    for code in MORE:
         lang = LANGUAGES[code]
         assert lang.disclosure and lang.native and lang.here and "988" in lang.crisis and "911" in lang.crisis, code
         assert lang.voice in voices, code  # SeamlessM4T v2 speaks it (local/voice_server.py)
