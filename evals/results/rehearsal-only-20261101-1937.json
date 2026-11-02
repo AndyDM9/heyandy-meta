@@ -1,0 +1,25 @@
+{
+ "when": "2026-11-01 19:37",
+ "shots": [
+  {
+   "shot": "several things at once",
+   "said": "Hey Andy, find the cup and remind me in two minutes to call Sam.",
+   "heard": "hey andy find the cup and remind me in two minutes to call sam",
+   "andy said": [
+    "There it is! I see your cup, a little to my right, about 4 feet away.",
+    "Found your cup a little to my right about 4 feet away and you're all set for 7:39 to call Sam!"
+   ],
+   "seconds": 26.3,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": true
+}
