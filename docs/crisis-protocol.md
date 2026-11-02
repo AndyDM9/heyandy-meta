@@ -76,9 +76,11 @@ translator, read it first, as they read every turn). The crisis checks come firs
 medicine still does what it asks: "where are my pills?" is a search, "remind me at 8 pm to take my pills" a reminder.
 Measured with questions written after the rule (`evals/no_advice.py`): see the README's Proof and `docs/research.md`
 section 63. It is a word rule: a health question said in a way it doesn't know reaches the conversation model, which
-is told never to give medical advice (and, judged, almost never did). Each sentence of that model's answer, and of a
-web answer, is read first by Llama Guard 3 on this computer, as the conversation's Agent turn with Specialized Advice
-spelled out as this policy: one it calls advice is replaced by the line above and the answer stops. It catches dosing
+is told never to give medical advice (and, judged, almost never did). Each sentence a model writes for Andy to say (in
+conversation, a web answer, the agent's answer to several things at once, what's on a web page, "what am I holding?")
+is read first by Llama Guard 3 on this computer, as the conversation's Agent turn with Specialized Advice spelled out
+as this policy: one it calls advice is replaced by the line above (in conversation the answer stops there; elsewhere
+what Andy did and found is kept). It catches dosing
 and medicine advice, not reassurance (held out, 11 of 25 advising answers; none of 168 of Andy's real answers flagged;
 `evals/guard_replies.py`).
 
