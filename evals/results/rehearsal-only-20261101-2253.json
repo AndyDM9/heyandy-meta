@@ -1,0 +1,25 @@
+{
+ "when": "2026-11-01 22:53",
+ "shots": [
+  {
+   "shot": "the weather radar on the TV",
+   "said": "Hey Andy, show me the weather radar on the TV.",
+   "heard": "hey andy show me the weather radar on the tv",
+   "andy said": [
+    "Let me find that for you.",
+    "The TV is showing the National Weather Service radar map with precipitation over the central US and Florida. You can say scroll down, or go back."
+   ],
+   "seconds": 30.1,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": true
+}
