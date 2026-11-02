@@ -1853,3 +1853,16 @@ Found and fixed, each with a test:
   so never sent to Muse Spark. Tried in the real browser on a public page (its address noted, the page captured) and
   in tests (loopback, home network, Tailscale: refused). And preflight now fails if any of Andy's ports ever listens
   beyond this computer (`listening_wide`; it fails too if it reads none of them).
+
+## 84. The monitor's jam, prevented with no restart (November 2, afternoon)
+
+- **Why:** the fix of section 77 restarts the desktop's sound and then Andy (about two minutes), so it waited for
+  after filming, while switching the monitor off still jams the robot's audio.
+- **Now** (`scripts/desktop_audio.py`): read-only by default, it says where the desktop's sound would go if the monitor
+  went away, by WirePlumber 0.4's own order (an output chosen by hand before, newest first, if one is still there;
+  else the highest priority). On November 2 it says the robot's speaker, as happened that morning. `--apply` adds a
+  silent output at priority 2000 to the running sound server (`pactl load-module module-null-sink`): no restart of the
+  desktop's sound or of Andy, gone at the next login. It then checks that the sound in use didn't move, that the new
+  output reads priority 2000, and that the monitor going would now send the sound there; if any of those fails it takes
+  the output away again. `--undo` takes it away. Tested against a faked sound system, including one that moves the
+  sound (undone). Not applied: the founder decides on filming day.
