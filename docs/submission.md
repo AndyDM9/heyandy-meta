@@ -114,7 +114,13 @@ indirect phrasings, none of 144 everyday requests and trick remarks taken for on
 signs said in ways no list has, 16 of 45, all by Muse Glimmer's narrow third look. Ask **"Hey Andy, what won't you
 do?"** and it says so, with today's receipts on the TV. Speech that isn't for Andy is dropped, never kept.
 
-## What's next
+## What's next: from this table to people's homes
 
-Our own robot body (in design), the same software behind the same body interface; each language tried with people who
-speak it; and the physical scorecard in more homes.
+- **Now, for anyone with a Reachy Mini:** Andy Finder, in its app store. It finds things with SAM 3.1 through Meta's
+  Model API on any Reachy Mini, no GPU needed: two pictures when the thing is in the first view (one to find it, one to
+  check the point), seven at most for a full sweep, so about half a cent a find at Meta's $2.50 per 1,000 images, under
+  two cents at worst. "Ring it" needs nothing at all.
+- **The whole Andy** runs today on a desktop with two 24 GB GPUs, so that pictures and voice never leave the house;
+  next, the same software on fewer, smaller models in one box beside the robot.
+- **Our own robot body** (in design), the same software behind the same body interface; each language tried with people
+  who speak it; and the physical scorecard in more homes.

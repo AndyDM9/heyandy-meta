@@ -226,7 +226,8 @@ found, "You're all set", in three sentences.
    **Andy Finder, for every Reachy Mini owner** (`apps/andy_finder`, for the Reachy Mini app store): the same "Ring it" with
    nothing to set up (no key, no GPU, no internet), and finding anything else with SAM 3.1, with Andy's measured fixes
    (the camera's focus held on the table, each pixel's true ray, the head read back after its nod) and its own camera
-   checking the point: on the robot, 13 of 14 checks within 1.7 degrees.
+   checking the point: on the robot, 13 of 14 checks within 1.7 degrees. Through Meta's Model API it needs no GPU: two
+   pictures for a thing in the first view, seven at most, so about half a cent a find at Meta's $2.50 per 1,000 images.
    **"I'm ringing my phone."** A phone under a cushion is invisible to a camera, but it rings. Andy turns its head
    towards the ringing until its microphones hear it straight ahead, as a person turns to a sound, then looks only
    around that way with SAM 3.1, and points: "I followed the ringing. There it is!" Can't see it? It points where the
