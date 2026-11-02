@@ -21,10 +21,13 @@ from heyandy_meta.robot.reachy_mini import ReachyBody
 
 
 def ask(prompt: str, choices: str) -> str:
+    """One letter of ``choices``; anything else (Enter alone included: "" is in every string) asks again. Enter alone
+    once crashed the run (November 1, the first trial)."""
     while True:
         a = input(f"{prompt} [{'/'.join(choices)}] ").strip().lower()[:1]
-        if a in choices:
+        if a and a in choices:
             return a
+        print(f"  Type one letter: {', '.join(choices)}, then Enter.")
 
 
 def main() -> None:
@@ -79,6 +82,8 @@ def main() -> None:
                                "pointed": None if found is None else [round(found.yaw, 1), round(found.pitch, 1)]})
     except (KeyboardInterrupt, EOFError):
         print("\nstopped; saving what was done")
+    except Exception as e:  # noqa: BLE001 - whatever stops it, the trials already judged are saved below
+        print(f"\nstopped by {type(e).__name__}: {e}; saving what was done")
     finally:
         body.look(0.0, 0.0)
     done = [t for t in trials if not t["absent"]]
