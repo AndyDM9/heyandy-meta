@@ -122,6 +122,17 @@ def turn_to(listen, turn, start: float, reach=(-150.0, 150.0), on_step=None) -> 
     if zeros:
         return sum(zeros) / len(zeros), steps
     return (max(left) + STEP_DEG / 2) if left else (min(right) - STEP_DEG / 2), steps
+def side_heard(media) -> float | None:
+    """Which side of the head a sound is on, in degrees (left +), from the microphone array; None if it can't say.
+    Pollen's SDK raises when the array's USB read fails, though its docstring says None: HeyAndy's own hearing thread
+    ended on one (November 2, research.md section 73), so a failed read is a chunk without a side, and listening goes on."""
+    try:
+        d = media.get_DoA()
+    except OSError:
+        return None
+    return 90.0 - math.degrees(d[0]) if d and d[1] else None
+
+
 def where_to_look(x: float, y: float, w: int, h: int, yaw: float, pitch: float) -> tuple[float, float]:
     """The head direction (degrees, yaw left +, pitch down +) that puts pixel (x, y) of a view taken at (yaw, pitch) in
     the middle: the pixel's ray in the room (HeyAndy's finder/geometry.py). Adding the pixel's two angles to the view's,
@@ -483,8 +494,7 @@ class AndyFinder(ReachyMiniApp):
                         continue
                     a = np.concatenate(got)
                     mono = a.mean(axis=1) if a.ndim == 2 else a
-                    d = media.get_DoA()
-                    side_ = 90.0 - math.degrees(d[0]) if d and d[1] else None
+                    side_ = side_heard(media)
                     chunks.append((time.monotonic(), float(np.sqrt(np.mean(mono ** 2))), flatness(mono), side_))
                     del chunks[:-400]
 

@@ -99,6 +99,10 @@ class ReachyBody:
 
             # Never media_backend="no_media": it makes the daemon release the camera and audio for everyone.
             robot = ReachyMini(automatic_body_yaw=False, connection_mode="localhost_only").__enter__()
+            # The daemon turns the motors on as it starts, and off when an app it ran stops (November 2, after Andy
+            # Finder was started and stopped from its store: Andy came back limp, and couldn't focus or point). On.
+            if hasattr(robot, "enable_motors"):
+                robot.enable_motors()
         self._full_pose = None
         if pose is None:
             from reachy_mini.utils import create_head_pose

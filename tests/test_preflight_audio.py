@@ -27,3 +27,45 @@ def test_the_audio_device_is_found_by_its_product_name(tmp_path):
     assert preflight.audio_port(tmp_path) == "1-5.2.1"
     (tmp_path / "1-5.2.1" / "product").write_text("Something else\n")
     assert preflight.audio_port(tmp_path) is None
+
+
+def test_a_service_start_is_given_to_journalctl_in_a_form_it_reads():
+    """systemd's "Mon 2026-11-02 08:41:47 EST" is refused by journalctl; two checks read an empty log and passed."""
+    from types import SimpleNamespace
+
+    import pytest
+
+    asked = []
+
+    def run(cmd, **kw):
+        asked.append(cmd)
+        return SimpleNamespace(stdout="@1793626907\n")
+    assert preflight.started("heyandy-robot", run=run) == "@1793626907" and "--timestamp=unix" in asked[0]
+    with pytest.raises(RuntimeError, match="can't tell when"):
+        preflight.started("heyandy-robot", run=lambda cmd, **kw: SimpleNamespace(stdout="Mon 2026-11-02 08:41:47 EST"))
+
+
+def test_a_journal_that_cant_be_read_is_an_error_not_an_empty_log():
+    from types import SimpleNamespace
+
+    import pytest
+
+    refused = lambda cmd, **kw: SimpleNamespace(returncode=1, stdout="", stderr="Failed to parse timestamp: Mon")  # noqa: E731
+    with pytest.raises(RuntimeError, match="Failed to parse timestamp"):
+        preflight.journal("-k", "--since", "Mon 2026-11-02 08:41:47 EST", run=refused)
+    read = lambda cmd, **kw: SimpleNamespace(returncode=0, stdout="usb 1-5.2.1: cannot submit urb 0\n", stderr="")  # noqa: E731
+    assert preflight.audio_usb_errors(preflight.journal("-k", run=read), "1-5.2.1") == 1
+
+
+def test_this_computers_journalctl_reads_the_form_preflight_gives_it():
+    import shutil
+    import subprocess
+    import time
+
+    import pytest
+
+    if not shutil.which("journalctl"):
+        pytest.skip("no journalctl here")
+    out = subprocess.run(["journalctl", "--since", f"@{int(time.time()) - 60}", "-n", "1", "--no-pager"],
+                         capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr

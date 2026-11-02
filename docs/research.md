@@ -1673,3 +1673,23 @@ Found and fixed, each with a test:
 - **Limits:** drawn notes in a clear hand, not a real camera's view of handwriting; a note that doesn't address Andy and
   isn't a jailbreak rests on Glimmer's instruction alone (a prize flyer with a phone number: described without the
   number). Shopping lists are no longer read out, as documents weren't before.
+
+## 75. Before publishing Andy Finder: the store's own path, and two checks that never looked (November 2, late morning)
+
+- **Andy Finder as an owner gets it:** built into a wheel (its page, fonts and the store's entry point inside),
+  installed fresh from PyPI with reachy-mini 1.13.0 and openai 3.42 (newer than ours: every call it makes has the same
+  arguments in both), and passed Pollen's own `reachy-mini-app-assistant check`. Started and stopped through the
+  daemon's REST API, as the store's dashboard does: it focused on the table in 11 s, stopped in 0.32 s on the daemon's
+  SIGINT, and gave the camera its autofocus back. (It had seemed to ignore Ctrl-C that morning: started with nohup in
+  the background, it was the shell ignoring SIGINT, not the app.) "Ring it" read the voice's direction unguarded, as
+  Andy did (section 73): now a failed read is a chunk without a side. On a touch screen its buttons are 44 px.
+- **The daemon turns the motors off when an app it ran stops.** Andy came back limp: no head to turn, so no focus to
+  find ("left to the camera's autofocus") and nothing to point with. Andy only ever had motors because the daemon
+  turns them on as it starts. Now Andy turns them on as it connects (tested: motors set off, Andy restarted, on), and
+  preflight fails while they're off, with the fix.
+- **Two preflight checks had read nothing since October 30.** They gave journalctl the time a service started in
+  systemd's own words ("Mon 2026-11-02 08:41:47 EST"), which journalctl refuses ("Failed to parse timestamp"); the
+  empty log looked clean, so "the camera and sound card, as the daemon found them" and that morning's microphone check
+  passed whatever had happened. Now the time is asked for as journalctl reads it (`--timestamp=unix`), any journalctl
+  error fails the check, and an empty daemon log isn't a pass. Checked against the morning: the microphone check now
+  counts 7,088 audio errors before the reset, 0 after.

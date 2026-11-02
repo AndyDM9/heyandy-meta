@@ -159,3 +159,17 @@ def test_focus_held_by_something_else_stays_held_after_the_app():
     focus.hold(lambda y, p: None, lambda: _jpeg(1.0), settle_s=0)
     focus.release()
     assert calls[-1][-1] == "focus_automatic_continuous=0"
+
+
+def test_ring_it_keeps_listening_when_the_arrays_usb_read_fails():
+    """Pollen's SDK raises on a failed direction read (1.12 and 1.13), though its docstring says None."""
+    from types import SimpleNamespace
+
+    from andy_finder.main import side_heard
+
+    def broken():
+        raise OSError(5, "Input/Output Error")
+
+    assert side_heard(SimpleNamespace(get_DoA=broken)) is None
+    assert side_heard(SimpleNamespace(get_DoA=lambda: (0.0, True))) == pytest.approx(90.0)  # 0 rad is the left
+    assert side_heard(SimpleNamespace(get_DoA=lambda: (1.2, False))) is None  # no speech or ringing detected

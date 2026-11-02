@@ -54,6 +54,25 @@ from heyandy_meta.robot.audio_watch import faults as audio_usb_errors  # noqa: E
 from heyandy_meta.robot.audio_watch import port as audio_port  # noqa: E402
 
 
+def started(unit: str, run=subprocess.run) -> str:
+    """When a user service last started, as journalctl takes it ("@1793626907"). systemd's own words for it ("Mon
+    2026-11-02 08:41:47 EST") are refused by journalctl ("Failed to parse timestamp"), so from October 30 to November 2
+    two checks here read an empty log and passed whatever had happened."""
+    since = run(["systemctl", "--user", "show", unit, "-p", "ActiveEnterTimestamp", "--timestamp=unix", "--value"],
+                capture_output=True, text=True).stdout.strip()
+    if not since.startswith("@") or not since[1:].isdigit():
+        raise RuntimeError(f"can't tell when {unit} started ({since!r}): is it running?")
+    return since
+
+
+def journal(*args: str, run=subprocess.run) -> str:
+    """A stretch of the journal (journalctl's own arguments); never an empty log in place of an error."""
+    out = run(["journalctl", *args, "--no-pager", "-o", "cat"], capture_output=True, text=True)
+    if out.returncode != 0:
+        raise RuntimeError(f"journalctl couldn't be read: {(out.stderr or '').strip()[:100]}")
+    return out.stdout
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cloud", action="store_true", help="also make one tiny Muse Spark call")
@@ -77,12 +96,15 @@ def main() -> None:
         if s.get("state") != "running":  # e.g. started before the robot's power was on: it stays in error until restarted
             raise RuntimeError(f"{s.get('state')}: {s.get('error') or 'not ready'} -> turn the robot's power on, then "
                                "systemctl --user restart heyandy-robot heyandy-app")
-        return f"running, motors found (daemon {s.get('version', '?')})"
+        mode = (s.get("backend_status") or {}).get("motor_control_mode")
+        if mode not in (None, "enabled"):  # off once an app the daemon ran has stopped (November 2): Andy is limp
+            raise RuntimeError(f"the motors are {mode}: Andy can't turn its head -> systemctl --user restart heyandy-app "
+                               "(it turns them on), or curl -X POST localhost:8000/api/motors/set_mode/enabled")
+        return f"running, motors on (daemon {s.get('version', '?')})"
 
     @check("Andy's log, last 10 minutes")
     def _():
-        log = subprocess.run(["journalctl", "--user", "-u", "heyandy-app", "--since", "10 min ago", "--no-pager"],
-                             capture_output=True, text=True).stdout
+        log = journal("--user", "-u", "heyandy-app", "--since", "10 min ago")
         bad = [line for line in log.splitlines() if "Traceback" in line or "a turn failed" in line]
         if bad:
             raise RuntimeError(f"{len(bad)} errors: {bad[-1][-120:]}")
@@ -173,10 +195,9 @@ def main() -> None:
 
     @check("the robot's camera and sound card, as its daemon found them")
     def _():
-        since = subprocess.run(["systemctl", "--user", "show", "heyandy-robot", "-p", "ActiveEnterTimestamp",
-                                "--value"], capture_output=True, text=True).stdout.strip()
-        log = subprocess.run(["journalctl", "--user", "-u", "heyandy-robot", "--since", since or "-1h", "--no-pager",
-                              "-o", "cat"], capture_output=True, text=True).stdout
+        log = journal("--user", "-u", "heyandy-robot", "--since", started("heyandy-robot"))
+        if "Daemon" not in log and "daemon" not in log:  # its own start is always in it: an empty read isn't a pass
+            raise RuntimeError("the daemon's log since it started is empty: can't tell")
         # The daemon looks for them once, as it starts: started before the login that allows opening them, it
         # runs with no camera, and Andy is blind (Oct 30). Only the daemon's own words are read, never a picture.
         missing = [what for what, said in (("camera", "No camera found"), ("sound card", "No Reachy Mini audio card"))
@@ -191,10 +212,7 @@ def main() -> None:
         port = audio_port()
         if not port:
             raise RuntimeError("no Reachy Mini Audio on USB: is the robot plugged in and its power on?")
-        since = subprocess.run(["systemctl", "--user", "show", "heyandy-robot", "-p", "ActiveEnterTimestamp",
-                                "--value"], capture_output=True, text=True).stdout.strip()
-        log = subprocess.run(["journalctl", "-k", "--since", since or "-1h", "--no-pager", "-o", "cat"],
-                             capture_output=True, text=True).stdout
+        log = journal("-k", "--since", started("heyandy-robot"))
         bad = audio_usb_errors(log, port)
         if bad:
             raise RuntimeError(f"{bad} USB errors from the robot's audio ({port}): Andy may not hear -> "

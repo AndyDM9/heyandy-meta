@@ -126,3 +126,6 @@ button:disabled { opacity: 0.45; cursor: default; }
                             animation: wave 2.4s ease-out infinite; }
 @keyframes wave { from { transform: scale(0.5); opacity: 0.9; } to { transform: scale(3); opacity: 0; } }
 @media (max-width: 34rem) { .ring { flex-direction: column; align-items: stretch; } .sonar { grid-template-columns: 1fr; text-align: center; } .sonar svg { max-height: 60%; } }
+@media (pointer: coarse) {  /* a finger, not a mouse: every tap target at least 44 px (the chips were 38) */
+  button, input { min-height: 44px; }
+}
