@@ -26,6 +26,16 @@ hood for the where and how.
 | 2:16–2:44 | The numbers and the models (`film/card-numbers.mp4`, 22.6 s, every figure read from `evals/results` when it's made) | The scorecard (simulated and physical, failures included), and every Meta model with where it runs: SAM 3.1, Muse Glimmer, MapAnything, Omnilingual ASR, SeamlessM4T v2 (the voice), DINOv2, Llama Guard 3 and Llama Prompt Guard 2 (and V-JEPA 2, if "Andy notices" is in) on our hardware: every model Andy runs is Meta's; Muse Spark and Muse Image in the cloud (words, and screenshots of a web page asked for on the TV). |
 | 2:44–3:00 | Robot close-up, then the end card (`film/card-end.mp4`) | What's next (our own robot design, as a silhouette only) and one line on why HeyAndy. Last frame: the Space's address and "Ask Andy yourself" (typing "I'm ringing my phone" into it on screen). |
 
+**A tighter cut, if the plan above runs long** (a judge's read of everything, November 2, research.md 85: about fifteen
+features in three minutes is a lot, and the strongest moments get less time): keep the required first line; the
+problem with the health caption; **the uncut find** (the TV decoy skipped, then 3 s of "how did you do that?"); one of
+**Mandarin** or **the network unplugged** (its receipt: "Nothing left this house"); **several things at once** (the
+agent); **the sticky note**, if it works on real paper; **"what won't you do?"**, then **"what did you hear today?"**.
+Drop from the quick cuts: the room in 3D, the lighthouse, the weather radar, "what am I holding?" (the note does it
+better). The numbers: `film/card-short.mp4` (10.3 s: 13 of 15 judged by a person, 1.1 degrees, 0 of 24 pictures to the
+cloud; `uv run python scripts/film_cards.py --only short`) in place of the 22.6 s card, the other figures as captions
+over the action. Post the sticky note or the TV decoy on X as soon as one take is good.
+
 **The cup game, if it scores well with real cups:** it replaces "Follow the mug" at 0:55 to 1:12 and becomes the X clip.
 "Hey Andy, let's play the cup game": the ball goes under a cup, a slow shuffle, "Let me replay that" (a labelled time cut over
 the replay), Andy points, the cup is lifted, and the TV shows every cup's path. It shows SAM 3.1's Object Multiplex

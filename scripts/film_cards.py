@@ -176,6 +176,25 @@ def numbers(figs: list[dict]) -> tuple[str, float]:
     return body, shown + 1.3 + (len(MODELS) + len(CLOUD)) * 0.35 + 4.5
 
 
+SHORT = ("physical-fixed-", "unattended-20261101-2300", "privacy-audit")  # a person's verdict, the aim, privacy
+
+
+def short(figs: list[dict]) -> tuple[str, float]:
+    """The numbers in about ten seconds, for a tighter cut (a judge's read, November 2: 22 s of figures is a lot):
+    a person's verdict first, then the aim the robot checks itself, then the privacy audit; the models in one line."""
+    pick = [f for key in SHORT for f in figs if f["from"].startswith(key)][:3]
+    step, first = 1.2, 0.6
+    tiles = "".join(
+        f'<div class="fig pop" style="animation-delay: {first + i * step:.2f}s"><b data-to="{_esc(f["big"])}" '
+        f'data-start="{(first + i * step) * 1000:.0f}">{_esc(f["big"])}</b><span>{_esc(f["line"])}</span>'
+        f'<small>{_esc(f["from"])}</small></div>' for i, f in enumerate(pick))
+    shown = first + len(pick) * step + 1.6
+    body = (f'<div class="card"><p class="kick in">Measured: every figure from evals/results</p><div class="figs">{tiles}</div>'
+            f'<h2 class="in" style="animation-delay: {shown:.2f}s">Every model Andy runs is Meta\'s: eleven, and the camera '
+            f'reaches only the ones at home.</h2></div>')
+    return body, shown + 4.5
+
+
 def end() -> tuple[str, float]:
     sig = (ROOT / "docs" / "images" / "heyandy-signature-reversed.svg").read_text().replace("<svg ", '<svg class="sig in" ', 1)
     body = (f'<div class="card center">{sig}{FACE}<h1 class="in" style="animation-delay: 0.4s">Andy finds what you\'ve lost.<br>'
@@ -212,7 +231,7 @@ def render(body: str, seconds: float, out: Path, size=(1920, 1080)) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=("title", "numbers", "end"))
+    ap.add_argument("--only", choices=("title", "numbers", "short", "end"))
     ap.add_argument("--line", default=LINE, help="the title card's line: what existed before and what's new (the FAQ's)")
     ap.add_argument("--out", default=str(ROOT / "film"))
     ap.add_argument("--check", action="store_true", help="print the figures and their files, render nothing")
@@ -222,7 +241,7 @@ def main() -> None:
         for f in figs:
             print(f"{f['big']:>14}  {f['line']}  ({f['from']})")
         return
-    cards = {"title": lambda: title(args.line), "numbers": lambda: numbers(figs), "end": end}
+    cards = {"title": lambda: title(args.line), "numbers": lambda: numbers(figs), "short": lambda: short(figs), "end": end}
     for name, make in cards.items():
         if args.only and name != args.only:
             continue

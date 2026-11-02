@@ -5,7 +5,7 @@
   </picture>
 </p>
 
-# HeyAndy x Meta
+# Andy, by HeyAndy
 
 **A tabletop robot that finds what you've lost, points at it, and keeps your home's pictures in your home.**
 Built on Meta's models for people who live at home, starting with older adults, by **HeyAndy, Inc.**

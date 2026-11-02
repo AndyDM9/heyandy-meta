@@ -1866,3 +1866,28 @@ Found and fixed, each with a test:
   output reads priority 2000, and that the monitor going would now send the sound there; if any of those fails it takes
   the output away again. `--undo` takes it away. Tested against a faked sound system, including one that moves the
   sound (undone). Not applied: the founder decides on filming day.
+
+## 85. A judge's read, and the text fixed by it (November 2, afternoon)
+
+- **How:** a separate agent, not told this file's conclusions, read the submission, the README, the system card, the
+  results page and the demo script as a skeptical judge with the rubric, and was asked for scores, the first
+  impression, the changes worth most per hour, and every claim that reads as overclaimed or inconsistent.
+- **Its scores** (the video not yet filmed): Meta's tooling 9, technical depth 8.5, demo 6.5, impact 6. Most
+  memorable: "BANANA BANANA" from a sticky note, and "I'll find your phone". Its sharpest point: a judge who catches one
+  doubtful number discounts all of them.
+- **Fixed in the submission, as it found them:** the crisis check named two looks where there are three (a word list,
+  Llama Guard 3, then Muse Glimmer's one narrow question), and its 60 of 60 is the set it was tuned on, its held-out 16
+  of 45 all Glimmer's (section 58); 250 of 253 is the robot judging its own aim, now said, with the person's 13 of 15
+  first; V-JEPA 2 and "my mug or yours" carry "not yet tried" where they're claimed; Andy Finder is in its app store
+  from November 4, and its pictures go to Meta's API; "a median 1.1" had no unit, "the middle of the view" is defined
+  once, and "seeded rooms", "looks", "fixed sweep", "on the final code" and "the dress rehearsal" say what they are;
+  one pitch everywhere ("keeps your home's pictures in your home"); full links, and a place for the X post; "this
+  week" is "during the event (October 26 to November 4)"; the public demo's wav2vec 2.0 is named.
+- **Added, sourced:** the frontier in one line at the top; how long people spend looking: 2.5 days a year, the
+  remote, phone, keys and glasses most, from a 2017 survey by Pixie, a company that sells trackers (fielded October
+  2016, over 1,700 people; https://prnewswire.com/news-releases/lost-and-found-the-average-american-spends-25-days-each-year-looking-for-lost-items-collectively-costing-us-households-27-billion-annually-in-replacement-costs-300449305.html);
+  where Andy stands: Amazon's Astro roams the home (by invitation; its business version was ended in 2024), ElliQ keeps
+  company at the table, and NYU's OK-Robot fetches things with open models: 58.5% of pick-and-drop tasks in ten homes
+  (Liu et al., 2024, https://arxiv.org/abs/2401.12202).
+- **Not done here** (the founder's): the video cut to fewer moments, the robot itself on the README's first screen
+  (after a good take), and anyone Andy is for trying it.

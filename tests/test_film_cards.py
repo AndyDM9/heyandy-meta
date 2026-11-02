@@ -37,3 +37,10 @@ def test_each_card_has_its_words_and_a_length():
         assert 5 <= seconds <= 30 and "<" in body
     assert "Before this week" in film_cards.title(film_cards.LINE)[0]
     assert film_cards.DEMO in film_cards.end()[0]
+
+
+def test_the_short_numbers_card_puts_a_persons_verdict_first_in_about_ten_seconds():
+    body, seconds = film_cards.short(film_cards.figures())
+    assert 8 <= seconds <= 12
+    order = [body.index(k) for k in ("13 of 15", "1.1°", "0 of 24")]
+    assert order == sorted(order) and "250 of 253" not in body
