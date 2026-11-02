@@ -54,6 +54,23 @@ from heyandy_meta.robot.audio_watch import faults as audio_usb_errors  # noqa: E
 from heyandy_meta.robot.audio_watch import port as audio_port  # noqa: E402
 
 
+def services_down(answer: str, services=SERVICES) -> list[str]:
+    """The services systemctl says aren't active; an answer that isn't one word per service is an error, not "all
+    running" (an empty answer used to pass, zipped against nothing)."""
+    states = answer.split()
+    if len(states) != len(services):
+        raise RuntimeError(f"systemctl answered for {len(states)} of {len(services)} services")
+    return [s for s, state in zip(services, states) if state != "active"]
+
+
+def power_too_high(answer: str, cap: float = 300.0, cards: int = 2) -> list[str]:
+    """The cards above the cap, from nvidia-smi's index,power.limit; nothing read is an error, not "none too high"."""
+    rows = [r for r in answer.strip().splitlines() if r.strip()]
+    if len(rows) != cards:
+        raise RuntimeError(f"nvidia-smi gave {len(rows)} cards' power limits, not {cards}")
+    return [f"GPU {i.strip()} at {float(w):.0f} W" for i, w in (r.split(",") for r in rows) if float(w) > cap]
+
+
 def started(unit: str, run=subprocess.run) -> str:
     """When a user service last started, as journalctl takes it ("@1793626907"). systemd's own words for it ("Mon
     2026-11-02 08:41:47 EST") are refused by journalctl ("Failed to parse timestamp"), so from October 30 to November 2
@@ -81,8 +98,8 @@ def main() -> None:
 
     @check("services")
     def _():
-        out = subprocess.run(["systemctl", "--user", "is-active", *SERVICES], capture_output=True, text=True).stdout.split()
-        down = [s for s, state in zip(SERVICES, out) if state != "active"]
+        out = subprocess.run(["systemctl", "--user", "is-active", *SERVICES], capture_output=True, text=True).stdout
+        down = services_down(out)
         if down:
             raise RuntimeError("not running: " + ", ".join(down) + " (systemctl --user start ...)")
         return f"all {len(SERVICES)} running"
@@ -116,6 +133,8 @@ def main() -> None:
 
         with urllib.request.urlopen("http://127.0.0.1:8765/state.json", timeout=5) as r:
             s = json.load(r)
+        if s.get("trouble"):  # Andy's own watch put it there (robot/audio_watch.py): its ears or voice stopped
+            raise RuntimeError(f"Andy's TV says: {s['trouble'][:110]}")
         if s.get("lang", "en") != "en":  # saved across restarts (voice.json): November 1 it was left in Arabic
             raise RuntimeError(f"Andy is speaking '{s['lang']}', and will start in it again -> say \"Hey Andy, speak "
                                "English\" (the film starts in English)")
@@ -223,9 +242,7 @@ def main() -> None:
     def _():
         out = subprocess.run(["nvidia-smi", "--query-gpu=index,power.limit", "--format=csv,noheader,nounits"],
                              capture_output=True, text=True).stdout
-        # both at 300 W (GPU 0 since it left the case, Nov 1; it was 220 W)
-        high = [f"GPU {i.strip()} at {float(w):.0f} W" for i, w in (r.split(",") for r in out.strip().splitlines())
-                if float(w) > 300]
+        high = power_too_high(out)  # both at 300 W (GPU 0 since it left the case, Nov 1; it was 220 W)
         if high:  # the desktop's display server puts the factory limits back when it starts
             raise RuntimeError(", ".join(high) + ": sudo systemctl start heyandy-gpu-cap-again, then this again")
         return "both at 300 W or less"

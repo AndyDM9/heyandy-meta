@@ -16,6 +16,7 @@ import subprocess
 import threading
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 FAULTS = ("usb_set_interface failed", "cannot submit urb", "cannot get freq", "clock source")
 FIX = "uv run python scripts/reset_robot_audio.py"
@@ -48,17 +49,24 @@ class AudioWatch:
         self._since = self.started
         self._doa = getattr(body, "doa_failures", 0)
         self.trouble: str | None = None  # what's wrong, in words, while it is
+        self.unread = 0  # looks at the kernel's log that couldn't be read
 
     def _kernel(self, now: float) -> int:
         if not self.where:
             return 0
         try:
-            log = self.run(["journalctl", "-k", "--since", f"@{int(self._since)}", "--no-pager", "-o", "cat"],
-                           capture_output=True, text=True, timeout=10).stdout
-        except (OSError, subprocess.SubprocessError):
+            out = self.run(["journalctl", "-k", "--since", f"@{int(self._since)}", "--no-pager", "-o", "cat"],
+                           capture_output=True, text=True, timeout=10)
+        except (OSError, subprocess.SubprocessError) as e:
+            out = SimpleNamespace(returncode=1, stdout="", stderr=str(e))
+        if getattr(out, "returncode", 0) != 0:  # can't read it: said once, never taken for "no errors" in silence
+            if not self.unread:
+                print(f"can't read the kernel's log to watch my microphones and speaker: "
+                      f"{(out.stderr or '').strip()[:100]}", flush=True)
+            self.unread += 1
             return 0
         self._since = now
-        return faults(log, self.where)
+        return faults(out.stdout, self.where)
 
     def check(self) -> str | None:
         """One look; returns the trouble in words, or None. Tells on_change when that changes."""

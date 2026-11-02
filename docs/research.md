@@ -1693,3 +1693,10 @@ Found and fixed, each with a test:
   passed whatever had happened. Now the time is asked for as journalctl reads it (`--timestamp=unix`), any journalctl
   error fails the check, and an empty daemon log isn't a pass. Checked against the morning: the microphone check now
   counts 7,088 audio errors before the reset, 0 after.
+- **Then every check, asked whether it can pass without looking.** Three could: "services" (an empty answer from
+  systemctl, zipped against nothing, read "all 6 running"), "GPU power capped" (an empty answer from nvidia-smi had
+  no card over 300 W) and the TV page (it didn't read the trouble line Andy's own watch puts there). Each now fails on
+  an answer it can't count, and the TV page fails while Andy's TV shows a trouble line; Andy's watch says once if it
+  can't read the kernel's log instead of taking that for "no errors". Tested on empty answers. **And a leak check before
+  a long filming day:** the SAM 3.1 server (up 11.5 h, 12.8 GB of RAM: its weights) answered 60 finds and guard reads
+  without growing by a megabyte, in RAM or on the GPU.

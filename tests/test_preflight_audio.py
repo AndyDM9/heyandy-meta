@@ -69,3 +69,16 @@ def test_this_computers_journalctl_reads_the_form_preflight_gives_it():
     out = subprocess.run(["journalctl", "--since", f"@{int(time.time()) - 60}", "-n", "1", "--no-pager"],
                          capture_output=True, text=True)
     assert out.returncode == 0, out.stderr
+
+
+def test_no_answer_is_never_all_running_nor_all_capped():
+    """Fail closed: a check that read nothing must not pass (November 2, three of preflight's could)."""
+    import pytest
+
+    with pytest.raises(RuntimeError, match="0 of 6"):
+        preflight.services_down("")
+    assert preflight.services_down("active\n" * 5 + "failed\n") == ["heyandy-app"]
+    with pytest.raises(RuntimeError, match="0 cards"):
+        preflight.power_too_high("")
+    assert preflight.power_too_high("0, 300.00\n1, 300.00\n") == []
+    assert preflight.power_too_high("0, 420.00\n1, 300.00\n") == ["GPU 0 at 420 W"]

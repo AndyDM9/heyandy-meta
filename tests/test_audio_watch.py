@@ -88,3 +88,13 @@ def test_the_tv_shows_the_trouble_and_are_you_ok_says_it():
     assert state.snapshot()["trouble"].endswith(FIX)
     state.trouble(None)
     assert state.snapshot()["trouble"] == ""
+
+
+def test_a_kernel_log_that_cant_be_read_is_said_once_and_never_taken_for_no_errors(capsys):
+    clock = Clock()
+    refused = lambda cmd, **kw: SimpleNamespace(returncode=1, stdout="", stderr="Failed to parse timestamp")  # noqa: E731
+    watch = AudioWatch(ears(clock.t), run=refused, clock=clock, where="1-5.2.1")
+    for _ in range(3):
+        clock.t += 5
+        watch._kernel(clock.t)
+    assert watch.unread == 3 and capsys.readouterr().out.count("can't read the kernel's log") == 1
