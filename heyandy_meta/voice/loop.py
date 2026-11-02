@@ -50,6 +50,8 @@ class VoiceLoop:
         self.follow_ups_left = 0  # what Andy will still take without its name, until it's called again
         self._not_for_andy: list[float] = []  # when utterances it wasn't called in ended: only the times, never words
         self.utterance_end = 0.0  # time.monotonic() when the last utterance ended
+        self.marks: dict = {}  # the turn's own times (time.monotonic()): heard, listened again, began; never words
+        self._again: tuple[float, float] | None = None
         self.busy = False  # a turn is running (on its own thread, so "stop" and "done" can still be heard)
         self._pending = None  # crisis words heard during a turn: answered straight after it
 
@@ -167,6 +169,7 @@ class VoiceLoop:
             except Exception as e:  # noqa: BLE001 - one bad utterance must not leave Andy deaf
                 log.warning("hearing failed: %s: %s", type(e).__name__, e)
                 continue
+            heard_at, self._again = time.monotonic(), None
             if not self.busy:
                 try:
                     text = self._which_language(text, utterance, voice)
@@ -187,6 +190,7 @@ class VoiceLoop:
                 self._report(None, "Stopped." if stopped else None, utterance, endpointer)  # its length only
                 continue
             self.busy = True
+            self.marks = {"ended": self.utterance_end, "heard": heard_at, "again": self._again}
             turns.put((text, yaw, utterance))  # counted by heard(), when its turn says whether it was for Andy
 
     def _which_language(self, text: str, utterance, voice) -> str:
@@ -209,7 +213,11 @@ class VoiceLoop:
         rest = text[called.end():] if called else text
         if current == "en" and parse(rest).kind not in ("chat", "world"):
             return text  # understood: English it is
+        started = time.monotonic()
         other = voice.transcribe(utterance, language="auto")
+        self._again = (started, time.monotonic())
+        if getattr(andy, "hood", None) is not None:
+            andy.hood.heard_again(*self._again)
         if crisis(other) and not crisis(text):
             # crisis words heard only when listened to again ("앤디, 죽고 싶어요" while in English): nothing comes before
             # the crisis reply, so no "Okay, I'll speak Korean now": the language changes quietly, for the reply's sake
@@ -245,6 +253,7 @@ class VoiceLoop:
             except queue.Empty:
                 continue
             reply = None
+            self.marks["began"] = time.monotonic()
             try:
                 reply = self.heard(text, yaw)
             except Exception as e:  # noqa: BLE001 - one bad turn must not leave Andy deaf

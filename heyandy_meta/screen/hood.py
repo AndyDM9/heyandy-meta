@@ -47,6 +47,7 @@ class Hood:
         self._turn: dict | None = None
         self._heard: tuple[float, float] | None = None  # (when the person stopped speaking, how long hearing took)
         self._sound_before: float | None = None  # Andy's "heard" note, played before the turn begins
+        self._before: list[tuple] = []  # stages run after the words and before the turn: (stage, started, ended, model)
         self._live: dict[int, tuple] = {}  # Meta model calls running now: id -> (stage, model, started)
         self._done: deque = deque(maxlen=8)  # the latest finished: (stage, model, started, ended)
         self._ids = 0
@@ -59,6 +60,14 @@ class Hood:
             self._heard = (words_ended, hearing_s)
             now = self.clock()
             self._done.append(("hear", STAGES["hear"][1], now - hearing_s, now))
+
+    def heard_again(self, started: float, ended: float) -> None:
+        """The voice loop listened again, told no language (did they speak another of Andy's?): before the turn
+        begins, so it's kept and joins the turn's timeline when it does."""
+        with self._lock:
+            if self._turn is None:
+                self._before = (self._before + [("hear", started, ended, "again")])[-4:]
+            self._done.append(("hear", STAGES["hear"][1], started, ended))
 
     def calling(self, stage: str, model: str) -> int:
         """A call starting, for the TV's live strip; returns its id for done()."""
@@ -95,6 +104,10 @@ class Hood:
                           "first_sound": round(early - t0, 2) if early is not None and t0 <= early <= now else None}
             if heard and t0 < now:
                 self._turn["spans"].append(["hear", 0.0, round(max(0.0, min(heard[1], now - t0)), 2), ""])
+            before, self._before = self._before, []
+            for stage, a, b, model in before:
+                if t0 <= a <= b <= now:
+                    self._turn["spans"].append([stage, round(a - t0, 2), round(b - t0, 2), model])
 
     def kind(self, kind: str) -> None:
         with self._lock:

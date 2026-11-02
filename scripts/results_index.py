@@ -213,6 +213,16 @@ def gpu_budget(f: str) -> str:
             f"else **{s['everything else GB']} GB**" + (" (one 24 GB card's worth)" if s["everything else fits one 24 GB card"] else ""))
 
 
+def speech_gaps(f: str) -> str:
+    s = load(f)["summary"]
+    was, now = s["made as said (before)"], s["made ahead (now)"]
+    return (f"silence between an answer's sentences: **{now['silence between sentences, median s']} s** (median; was "
+            f"{was['silence between sentences, median s']} s, at worst {was['silence between sentences, longest s']}); "
+            f"{was['silence in all the answers s']} s of silence in {was['answers']} answers became "
+            f"{now['silence in all the answers s']} s; first sound {was['first sound, median s']} s became "
+            f"{now['first sound, median s']} s")
+
+
 def energy(f: str) -> str:
     s = load(f)["summary"]
     every, night = s["all"], s["night (no turns)"]
@@ -288,6 +298,9 @@ CARDS = [
     ("Help me reach it", "the hand-guiding on an empty table: never a hand made up", "evals.guide", "guide", guide),
     ("Are you OK?", "Andy's check of itself, once with a service stopped on purpose", "evals.selfcheck", "selfcheck", selfcheck),
     ("Under the hood", "real turns timed stage by stage", "evals.hood", "hood", hood),
+    ("Silence in its answers", "Andy's real voice service making each sentence of four answers, said in the turn's own "
+     "order (checked, then the head turned), each made when said or made ahead as it arrives; a pretend speaker plays "
+     "nothing", "evals.speech_gaps", "speech-gaps", speech_gaps),
     ("The room in 3D", "five looks joined by MapAnything, scan to scan", "evals.room", "room", room),
     ("Its own lens", "the focal length Andy measured with its own camera", "evals.lens", "lens", lens),
     ("Noticing", "V-JEPA 2 on clips of an empty table: nothing noticed", "evals.notice", "notice-empty", notice),

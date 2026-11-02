@@ -1974,3 +1974,31 @@ Found and fixed, each with a test:
   whether someone's there. Someone there wakes it; so does any turn, filming (never resting in a take), a reminder said,
   or following. A lamp going on costs one look. `--no-rest` turns it off; the journal says when it rested and woke, and
   how often SAM was asked.
+
+## 90. Silence inside Andy's answers (November 2, evening)
+
+- **Why:** the demo is judged on video, and the first thing a viewer feels is how long Andy takes. The journal keeps
+  each turn's "first word N s after the person stopped" (a number, never the words): a median of 3.3 s over 76 turns
+  on November 2 (5.8 s for the slowest tenth), against 1.6 s over 18 turns on October 30, though those days' requests
+  differ (more finds then, which say "Let me look." at once; more conversation now). The hood (screen/hood.py: stage
+  names and times only) showed where a conversation's time goes: hearing 0.7 to 0.9 s from the end of the words (0.55
+  s of it the silence that says they've ended), the "heard" note about 2.2 s, Llama Guard 3 reading the answer's first
+  sentence (0.03 to 0.08 s), the head turning to the person (0.9 s, before the first sentence), then each sentence
+  made and said in turn.
+- **Found:** a streamed answer's sentences were each made only when the one before had been said: the voice already
+  made a sentence's next sentence while one played, but the conversation hands it one sentence at a time. So silence
+  between sentences, the time to make each (SeamlessM4T v2 takes about 0.3 s a second of sound), and the head's turn
+  before the first was waited out before the first was even begun.
+- **Now** (`voice/speaker.py` prepare, `app.py` _ahead): the answer is read as it arrives on a thread of its own and
+  each sentence's voice started at once; each is still said only after its checks pass, one by one and in order, and
+  what's made and then not said (a sentence the checks stopped: Andy's own words come instead) is dropped before
+  anything else is made, so the replacement never waits behind it. English only: another language is translated
+  first, when said. Measured (`evals/speech_gaps.py`, `speech-gaps-20261102-1839`: the real voice service, four written
+  answers twice each way, the turn's own order of check and head turn, a pretend speaker that plays nothing): silence
+  between sentences, a median of 0.56 s (2.11 s at worst) became 0.05 s (Llama Guard's read); all the silence in 8
+  answers, 14.6 s became 1.0 s; the first sound, 1.35 s became 0.95 s (made while the head turns).
+- **Still to find:** on the robot the "heard" note came about 2.2 s after the words; the same loop off the robot, with
+  the real voice service, reaches it in 0.84 to 1.14 s. Listening again told no language (a conversation in English,
+  and every turn in another language: section 57) is about 0.25 s of it. The journal's "turn answered" line now says
+  when the words were heard, how long listening again took and when the turn began, and the hood shows listening again
+  in the turn's timeline, so the next turns on the robot say where the rest goes.

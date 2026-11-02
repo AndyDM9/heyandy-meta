@@ -1,0 +1,150 @@
+{
+ "when": "2026-11-02 18:39",
+ "what": "Silence inside Andy's answers: between a streamed answer's sentences, and before its first, with each sentence's",
+ "check s": 0.05,
+ "head turn s": 0.9,
+ "summary": {
+  "made as said (before)": {
+   "answers": 8,
+   "first sound, median s": 1.35,
+   "silence between sentences, median s": 0.56,
+   "silence between sentences, longest s": 2.11,
+   "silence in all the answers s": 14.6,
+   "silences": 20
+  },
+  "made ahead (now)": {
+   "answers": 8,
+   "first sound, median s": 0.95,
+   "silence between sentences, median s": 0.05,
+   "silence between sentences, longest s": 0.05,
+   "silence in all the answers s": 1.0,
+   "silences": 20
+  }
+ },
+ "answers": {
+  "made as said (before)": [
+   {
+    "first sound s": 1.37,
+    "silences s": [
+     0.54,
+     0.61,
+     1.57
+    ]
+   },
+   {
+    "first sound s": 1.33,
+    "silences s": [
+     0.53,
+     0.91
+    ]
+   },
+   {
+    "first sound s": 1.36,
+    "silences s": [
+     0.57,
+     1.19
+    ]
+   },
+   {
+    "first sound s": 1.34,
+    "silences s": [
+     0.47,
+     1.34,
+     0.44
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.58,
+     0.54,
+     0.59
+    ]
+   },
+   {
+    "first sound s": 1.4,
+    "silences s": [
+     0.62,
+     0.55
+    ]
+   },
+   {
+    "first sound s": 1.44,
+    "silences s": [
+     2.11,
+     0.45
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.45,
+     0.52,
+     0.05
+    ]
+   }
+  ],
+  "made ahead (now)": [
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05
+    ]
+   },
+   {
+    "first sound s": 0.95,
+    "silences s": [
+     0.05,
+     0.05,
+     0.05
+    ]
+   }
+  ]
+ }
+}

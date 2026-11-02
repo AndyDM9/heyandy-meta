@@ -438,3 +438,52 @@ def test_talk_over_andys_answers_is_a_room_talking_and_ends_a_conversation_alrea
     assert loop.heard("so the numbers for the quarter") == "ok"  # taken: the window was open
     t[0] += 10
     assert loop.heard("let's move on to the next item") is None  # but not another
+
+
+def test_a_turn_keeps_its_own_times_listening_again_included():
+    """Numbers for the journal's "turn answered" line (where a turn's time went): when the words were heard, how long
+    listening again took (a conversation in English is heard again, told no language), when the turn began."""
+    import threading
+
+    from heyandy_meta.screen.hood import Hood
+
+    stop, done = threading.Event(), threading.Event()
+
+    class Talking(Andy):
+        language, asr_language, hey_only = "en", "eng_Latn", False
+
+        def __init__(self):
+            super().__init__()
+            self.hood = Hood()
+
+        def notice_language(self, code):
+            pass
+
+        def hear(self, text):
+            done.set()
+            return "ok"
+
+    class Voice:
+        language = "eng_Latn"
+
+        def transcribe(self, audio, language=None):
+            return "andy how is your day going"
+
+    class Ears:
+        active, rate, end_silence_s, floor = False, RATE, 0.5, 0.0
+
+        def feed(self, samples, flag):
+            return samples
+
+    def mic(stop):
+        yield np.zeros(RATE, np.float32), True, None
+        stop.wait(3.0)
+
+    a = Talking()
+    loop = VoiceLoop(a)
+    threading.Thread(target=loop.run, args=(mic, Voice(), Ears(), stop), daemon=True).start()
+    assert done.wait(3.0)
+    stop.set()
+    m = loop.marks
+    assert m["ended"] <= m["heard"] <= m["again"][0] <= m["again"][1] <= m["began"]
+    assert a.hood._before and a.hood._before[0][3] == "again"  # waiting for the turn's timeline

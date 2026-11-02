@@ -306,6 +306,18 @@ class ReachyBody:
         if self._say:
             self._say(text)
 
+    def prepare(self, text: str) -> None:
+        """Start making what's about to be said (voice/speaker.py): ready when it's said, nothing played now."""
+        prepare = getattr(self._say, "prepare", None)
+        if prepare:
+            prepare(text)
+
+    def unprepare(self) -> None:
+        """Drop what was made ahead and not said."""
+        unprepare = getattr(self._say, "unprepare", None)
+        if unprepare:
+            unprepare()
+
     def chime(self, name: str) -> None:
         """One of Andy's earcons (voice/earcons.py) on the robot's speaker: "heard", "found", "reminder", "noticed"."""
         from ..voice.earcons import RATE, sound

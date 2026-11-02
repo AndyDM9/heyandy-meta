@@ -17,6 +17,39 @@ class Speaker:
         self._kept: dict[tuple, object] = {}  # short fixed phrases ("There it is!", "Let me look."), as they sound
         self._later: queue.Queue = queue.Queue()  # said soon: in order, by one worker, never over each other
         self._worker: threading.Thread | None = None
+        self._ready: dict[tuple, object] = {}  # sentences being made ahead (prepare), by what they'll sound like
+        self._ready_lock = threading.Lock()
+
+    def _key(self, sentence: str) -> tuple:
+        return (sentence.strip(), getattr(self.voice, "voice", None), getattr(self.voice, "speed", None),
+                getattr(self.voice, "loudness", None), self.rate)
+
+    def prepare(self, text: str) -> None:
+        """Start making what's about to be said (a streamed answer's sentences, as they come): when it's said, it's
+        ready, so no silence while it's made after the sentence before. Nothing is played here, and what's made and
+        then not said (a sentence the checks stopped) is dropped: only the last few are kept."""
+        for sentence in [x for x in SENTENCE.split(text.strip()) if x.strip()]:
+            key = self._key(sentence)
+            with self._ready_lock:
+                if key in self._ready:
+                    continue
+                self._ready[key] = self._maker.submit(self._make, sentence)
+                while len(self._ready) > 8:
+                    self._ready.pop(next(iter(self._ready)))
+
+    def unprepare(self) -> None:
+        """Drop what was made ahead and not said, and stop making what hasn't started: the next thing said (Andy's own
+        words in place of an answer the checks stopped) never waits behind sentences that won't be said."""
+        with self._ready_lock:
+            ready, self._ready = self._ready, {}
+        for made in ready.values():
+            made.cancel()
+
+    def _coming(self, sentence: str):
+        """The sentence's sound: the one made ahead if it was, else made now (on the one voice thread, in order)."""
+        with self._ready_lock:
+            made = self._ready.pop(self._key(sentence), None)
+        return made or self._maker.submit(self._make, sentence)
 
     def _make(self, sentence: str):
         """A short phrase Andy says again and again is made once per voice setting; anything longer, every time."""
@@ -61,10 +94,10 @@ class Speaker:
 
     def _say(self, text: str) -> None:
         sentences = [x for x in SENTENCE.split(text.strip()) if x.strip()]
-        coming = self._maker.submit(self._make, sentences[0]) if sentences else None
+        coming = self._coming(sentences[0]) if sentences else None
         for i in range(len(sentences)):
             audio = coming.result()
-            coming = self._maker.submit(self._make, sentences[i + 1]) if i + 1 < len(sentences) else None
+            coming = self._coming(sentences[i + 1]) if i + 1 < len(sentences) else None
             if i == 0:
                 self.started = (self.started + [time.monotonic()])[-8:]
             self.play(audio, self.rate)

@@ -13,6 +13,7 @@ Pictures from the home go only to models on this computer (SAM 3.1 and Glimmer);
 import datetime as dt
 import json
 import math
+import queue
 import re
 import struct
 import threading
@@ -596,8 +597,9 @@ class Andy:
         parts, checking = [], True
         if decide(text, self.online).where == "cloud" and not isinstance(self.router.cloud, NoCloud):
             self._receipt_conversation(text)  # before the attempt: words that went count even if the answer doesn't come
+        ahead = self._ahead(self.router.stream(text, self.online, self.history))
         try:
-            for sentence in self.router.stream(text, self.online, self.history):
+            for sentence in ahead:
                 self._source, self._reason = self.router.last.where, self.router.last.reason  # known once it answers
                 verdict = self._advice(text, " ".join(parts + [sentence])) if checking else False
                 checking = verdict is not None  # Llama Guard didn't answer: not asked again this turn (no 3 s waits)
@@ -605,6 +607,7 @@ class Andy:
                     # the word rule didn't know the question; Llama Guard 3 read the answer as health advice
                     self._reason += "; Llama Guard 3 read health advice in the answer, so Andy's own words instead"
                     parts.append(HEALTH_REPLY)
+                    ahead.close()  # what was made ahead is dropped: Andy's own words come at once
                     self._say_now(HEALTH_REPLY)
                     break
                 if CLAIMS.search(sentence):
@@ -614,15 +617,54 @@ class Andy:
                 if CANT.search(sentence):
                     self._reason += "; the model said Andy can't see or find things, which isn't so"
                     parts.append(SEEING)
+                    ahead.close()
                     self._say_now(SEEING)
                     break
                 parts.append(sentence)
                 self._say_now(sentence)
         except APIError:
             parts.append("I'm having trouble thinking just now. Could you say that again in a minute?")
+        finally:
+            ahead.close()  # stopped early (a promise replaced): nothing made ahead waits in front of what's said next
         if self._source:
             self.screen.used("Muse Spark" if self._source == "cloud" else "Muse Glimmer", self._source)
         return " ".join(parts)
+
+    def _ahead(self, sentences):
+        """A streamed answer, read as it comes on a thread of its own, each sentence's voice started as it arrives
+        (voice/speaker.py prepare): by the time it's checked, the head has turned and the sentence before is said, it's
+        ready, so no silence while it's made. Still said one by one, in order, each only once it passes its checks;
+        what's made and not said is dropped. English only: another language is translated first, when it's said."""
+        prepare = getattr(self.body, "prepare", None)
+        if prepare is None or self.language != "en":
+            yield from sentences
+            return
+        q: queue.Queue = queue.Queue()
+        done, stop, gate = object(), threading.Event(), threading.Lock()
+
+        def read():
+            try:
+                for sentence in sentences:
+                    with gate:  # never a sentence made ahead after the answer was stopped (it'd hold up what's said)
+                        if stop.is_set():
+                            return
+                        prepare(sentence)
+                    q.put(sentence)
+            except BaseException as e:  # noqa: BLE001 - the model's error is the turn's, raised where it reads
+                q.put(e)
+            finally:
+                q.put(done)
+
+        threading.Thread(target=read, daemon=True, name="answer-ahead").start()
+        try:
+            while (item := q.get()) is not done:
+                if isinstance(item, BaseException):
+                    raise item
+                yield item
+        finally:
+            with gate:
+                stop.set()
+                getattr(self.body, "unprepare", lambda: None)()
 
     def _receipt_conversation(self, text: str) -> None:
         """What a turn sent Muse Spark: the words, and the earlier exchanges that go with them, word for word."""

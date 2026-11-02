@@ -174,8 +174,13 @@ def main() -> None:
             if reply is None:  # not for Andy: only how many words, never what was said
                 print(f"(heard {text}; not for Andy)", flush=True)
                 return
-            first = getattr(andy.body._say, "first_after", lambda t: None)(loop.utterance_end)
-            wait = f"[first word {first - loop.utterance_end:.1f}s after the person stopped]" if first else ""
+            m = loop.marks
+            end = m.get("ended", loop.utterance_end)  # this turn's words (something said over it ends later)
+            first = getattr(andy.body._say, "first_after", lambda t: None)(end)
+            wait = f"[first word {first - end:.1f}s after the person stopped]" if first else ""
+            if "heard" in m and "began" in m:  # where the time went: numbers only
+                again = f", listened again {m['again'][1] - m['again'][0]:.1f}s" if m.get("again") else ""
+                wait += f" [heard at {m['heard'] - end:.1f}s{again}, turn began at {m['began'] - end:.1f}s]"
             if args.quiet:  # a service: its output is kept in the journal, so timings only, never words
                 print(f"turn answered {wait}", flush=True)
             else:

@@ -237,6 +237,10 @@ def breath() -> dict:
             "other": night["control"]["largest z at any other rate"], "kept": night["keeps time with the breath"]}
 
 
+def gaps() -> dict:
+    return summary(newest("speech-gaps"))
+
+
 def a11y() -> dict:
     return summary(newest("accessibility"))
 
@@ -462,6 +466,15 @@ FIGURES = [
            lambda: f"Overnight Andy let go {breath()['an hour']} sounds an hour"),
     Figure("z 1,926 at its rate, 5.1 at most at any other", "ego-noise (latest)",
            lambda: f"z {breath()['z']} at its rate, {breath()['other']} at most at any other"),
+    # silence inside its answers
+    Figure("between its sentences, 0.56 s of silence became 0.05 s", "speech-gaps (latest)",
+           lambda: "between its sentences, {} s of silence became {} s".format(
+               gaps()["made as said (before)"]["silence between sentences, median s"],
+               gaps()["made ahead (now)"]["silence between sentences, median s"])),
+    Figure("14.6 s of silence in 8 answers became 1.0 s", "speech-gaps (latest)",
+           lambda: "{} s of silence in {} answers became {} s".format(
+               gaps()["made as said (before)"]["silence in all the answers s"], gaps()["made as said (before)"]["answers"],
+               gaps()["made ahead (now)"]["silence in all the answers s"])),
     # the open weights, every file
     Figure("54 of 54 files", "open-weights-all (latest)",
            lambda: "{matched} of {files} files".format(**summary(newest("open-weights-all")))

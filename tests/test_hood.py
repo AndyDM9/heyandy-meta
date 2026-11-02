@@ -44,6 +44,24 @@ def test_a_turn_is_timed_from_the_end_of_the_words_stage_by_stage():
     assert hood.since["see"] == 1 and hood.since["turns"] == 1
 
 
+def test_listening_again_before_the_turn_joins_its_timeline():
+    """November 2: a conversation's "heard" note came 2.2 s after the words on the robot and the timeline had a hole:
+    listening again (told no language) is now in it."""
+    c = Clock()
+    hood = Hood(clock=c)
+    hood.heard(99.0, 0.3)  # words ended at 99.0; heard by 99.3
+    hood.heard_again(99.35, 99.6)
+    c.t = 100.2
+    hood.begin()
+    hood.end()
+    spans = hood.snapshot()["latest"]["spans"]
+    assert ["hear", 0.0, 0.3, ""] in spans and ["hear", 0.35, 0.6, "again"] in spans
+    assert hood.snapshot()["latest"]["stages"]["hear"] == pytest.approx(0.55)
+    hood.begin()  # the next turn starts clean
+    hood.end()
+    assert [x for x in hood.snapshot()["latest"]["spans"] if x[3] == "again"] == []
+
+
 def test_the_wrapper_passes_everything_else_straight_through():
     class Body:
         yaw = 0.0
