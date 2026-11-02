@@ -407,6 +407,11 @@
   #story .bars i { flex: 1; height: 0.35rem; border-radius: 99rem; background: rgba(245, 243, 239, 0.22); overflow: hidden; }
   #story .bars i b { display: block; height: 100%; width: 0; background: var(--outline); }
   #story .row { display: flex; align-items: center; gap: 2.5rem; }
+  #story .proof { display: block; margin-top: 0.45rem; font: 600 1rem/1.3 "Atkinson Mono", monospace; letter-spacing: 0.01em;
+                  color: rgba(245, 243, 239, 0.78); }
+  #story .proof::before { content: ""; display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%;
+                          margin-right: 0.5rem; vertical-align: 0.05rem; border: 2px solid currentColor; }
+  #story .proof.robot { color: var(--outline); } #story .proof.robot::before { background: currentColor; }
   #story .ch { flex: none; font: 700 1.35rem/1 "Atkinson Mono", monospace; color: var(--outline); letter-spacing: 0.08em; }
   #story h2 { margin: 0; font-size: 2.6rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; }
   #story p { margin: 0.35rem 0 0; font-size: 1.6rem; color: rgba(245, 243, 239, 0.78); }
@@ -437,7 +442,9 @@
     #story .bars { margin-bottom: 3.5vw; } #story .bars i { height: 0.9vw; }
     #story .row { flex-wrap: wrap; gap: 2.5vw; align-items: flex-start; }
     #story .ch { font-size: 3.2vw; } #story h2 { font-size: 6.4vw; } #story p { font-size: 4vw; margin-top: 1vw; }
-    #story nav { width: 100%; gap: 2vw; }
+    #story nav { width: 100%; gap: 2vw; flex-wrap: wrap; }  /* the ask box its own row, the buttons under it (they overlapped) */
+    #story nav form.ask { flex: 1 1 100%; } #story nav > button { flex: 1 1 auto; }
+    #story .proof { font-size: 3vw; margin-top: 1.5vw; }
     #story button, #end a, #end button { font-size: 3.6vw; padding: 2.2vw 3.6vw; }
     body.storying .stage { transform: none; }
     body.exploring { height: auto; min-height: 100vh; overflow-y: auto; } body.exploring .stage { transform: none; }
@@ -691,6 +698,19 @@
     ["mandarin", 7, "Your language", "It hears and speaks fifteen languages, from Spanish to Mandarin; Muse Glimmer translates on the computer beside the robot."],
     ["promises", 9, "What it never does", "Pictures and voice stay home, no health advice ever, and it says it's an AI. Ask it: “Hey Andy, what won't you do?”"],
   ];
+  // What each chapter rests on, said plainly under it: measured on the robot, or not yet (evals/results/README.md).
+  // A judge's review (November 2) found the story showing abilities never tried on the robot with real things.
+  const PROOF = {
+    finding: ["robot", "On the robot: 250 of 253 unattended searches ended in a point"],
+    found: ["robot", "On the robot: the latest 18, a median 1.1° off, checked by its own camera"],
+    turned: ["robot", "On the robot, once: a watch found later, pointed 4.1° off, said unprompted"],
+    guide: ["not", "Not yet with a real hand: on the robot, no hand imagined in 34 frames of an empty table"],
+    room: ["robot", "On the robot: scan to scan within 1 degree and 8 cm"],
+    cups: ["not", "Not yet on the robot: synthetic shuffles of identical cups, the right one in 3 of 5"],
+    out: ["not", "Timed on the robot from a typed request (37 to 42.5 s); not yet with a person leaving"],
+    mandarin: ["robot", "On the robot: asked in Mandarin, found the glasses and pointed, 17.5 s from the words"],
+    promises: ["robot", "On the robot: said with the day's receipts, 12.7 s from the words; kept in code"],
+  };
   if (window.HEYANDY_CLIP)  // built with --clip: the robot itself first, filmed, its TV beneath it
     STORY.unshift(["idle", window.HEYANDY_CLIP_SECONDS || 10, "Andy, on the table",  // a quiet TV under it: no Reveal over the robot
                    "The robot: it turns to your voice, looks around the room, and points. Then its TV, chapter by chapter.", true]);
@@ -730,6 +750,8 @@
     chosen = name; pictureKey = "";
     band.querySelector(".ch").textContent = `${String(story.at + 1).padStart(2, "0")} / ${String(STORY.length).padStart(2, "0")}`;
     const text = band.querySelector(".text"); text.replaceChildren(el("h2", title), el("p", line));
+    const proof = !STORY[story.at][4] && PROOF[name];  // the filmed chapter is its own evidence
+    if (proof) text.append(el("small", proof[1], "proof " + proof[0]));
     text.classList.remove("fresh"); void text.offsetWidth; text.classList.add("fresh");
   }
   function storyTick() {

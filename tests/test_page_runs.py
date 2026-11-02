@@ -252,3 +252,44 @@ def test_the_story_opens_on_the_robot_when_the_space_has_a_clip(browser):
         server.shutdown()
     assert seen[True][1:] == ["Andy, on the table", True, False] and seen[True][0] == seen[False][0] + 1
     assert seen[False][2] is False and seen[False][1] == "Meet Andy"
+
+
+def test_each_story_chapter_says_what_it_rests_on_and_a_phone_can_press_every_button(browser):
+    """November 2: a judge's review found the story showing abilities never tried on the robot (the cup game, the hand
+    guiding), and at a phone's width the story's buttons sat on top of each other. Each chapter now says, under it,
+    whether it was measured on the robot or not yet; and on a phone the ask box has its own row."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    url = f"http://127.0.0.1:{server.server_address[1]}/"
+    try:
+        page = browser.new_page(viewport={"width": 1920, "height": 1080})
+        page.goto(url)
+        page.wait_for_function("document.body.classList.contains('storying')", timeout=10000)
+        proofs = page.evaluate("""() => STORY.map((c, i) => { go(i); const p = document.querySelector('#story .proof');
+                                                             return [c[0], p ? p.className : null, p ? p.textContent : ''] })""")
+        page.close()
+        overlaps = {}
+        for width, height in ((390, 844), (360, 740)):
+            page = browser.new_page(viewport={"width": width, "height": height})
+            page.goto(url)
+            page.wait_for_function("document.body.classList.contains('storying')", timeout=10000)
+            boxes = page.eval_on_selector_all("#story nav button", "els => els.map(e => { const r = e.getBoundingClientRect();"
+                                              " return [r.left, r.top, r.right, r.bottom] })")
+            overlaps[width] = [(i, j) for i, a in enumerate(boxes) for j, c in enumerate(boxes) if i < j
+                               and a[0] < c[2] - 1 and c[0] < a[2] - 1 and a[1] < c[3] - 1 and c[1] < a[3] - 1]
+            overlaps[f"{width} wider"] = page.evaluate("document.documentElement.scrollWidth") > width
+            page.close()
+    finally:
+        server.shutdown()
+    kinds = {name: (cls or "").replace("proof ", "") for name, cls, _ in proofs}
+    assert kinds["idle"] == "" and kinds["finding"] == kinds["found"] == kinds["promises"] == "robot"
+    assert kinds["cups"] == kinds["guide"] == kinds["out"] == "not"  # never tried on the robot with real things
+    assert all(text.startswith(("On the robot", "Not yet", "Timed on the robot")) for _, cls, text in proofs if cls)
+    assert overlaps == {390: [], "390 wider": False, 360: [], "360 wider": False}
