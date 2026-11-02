@@ -80,8 +80,9 @@ with what it's for, what it isn't, and where it falls short: [Andy's system card
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
 | **wav2vec 2.0** (open weights) | Your browser, on the public demo only | Hears "Say it" |
 
-Nine of Andy's eleven are open weights on our own two GPUs ([each one's source and licence](docs/open-weights.md));
-the camera and microphone reach only those.
+Nine of Andy's eleven are open weights on our own two GPUs ([each one's source and licence](docs/open-weights.md)),
+and every one of their files is verified: 54 of 54 files byte for byte what Meta published, at the revision Andy loads
+(`scripts/verify_all_weights.py`). The camera and microphone reach only those.
 
 ![What runs in the house and what goes to the cloud: the robot and the TV in the room; on the computer beside the
 robot, safety in code around every model (crisis words to 988, a fall to 911 and the phone found, health questions to

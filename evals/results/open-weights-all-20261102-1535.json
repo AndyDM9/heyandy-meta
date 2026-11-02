@@ -1,0 +1,119 @@
+{
+ "when": "2026-11-02 15:35",
+ "what": "Every open-weight model Andy runs, file by file, against what Meta published, at the revision Andy loads.",
+ "summary": {
+  "models": 9,
+  "every file matches": true,
+  "files": 54,
+  "matched": 54,
+  "minutes": 3.2
+ },
+ "models": [
+  {
+   "model": "Muse Glimmer 30B",
+   "how": "deploy/heyandy-glimmer.service: the model and its perception encoder (the drafter isn't loaded)",
+   "files": 2,
+   "matched": 2,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/meta-models/Muse-Glimmer-30B-GGUF",
+   "revision": "main"
+  },
+  {
+   "model": "SAM 3.1",
+   "how": "local/sam_server.py --checkpoint ~/models/sam3.1/sam3.1_multiplex.pt",
+   "files": 11,
+   "matched": 11,
+   "different": [],
+   "not published": [],
+   "ours": [
+    "SHA256SUMS",
+    "download.sh",
+    "download.log"
+   ],
+   "publisher": "huggingface.co/facebook/sam3.1",
+   "revision": "main"
+  },
+  {
+   "model": "DINOv2",
+   "how": "local/sam_server.py EMBED_REVISION",
+   "files": 3,
+   "matched": 3,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/facebook/dinov2-base",
+   "revision": "f9e44c814b77203eaa57a6bdbbd535f21ede1415"
+  },
+  {
+   "model": "Llama Prompt Guard 2",
+   "how": "local/sam_server.py GUARD_REVISION",
+   "files": 5,
+   "matched": 5,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M",
+   "revision": "a8ded8e697ce7c355e395a0df51f94adb4a2fd27"
+  },
+  {
+   "model": "V-JEPA 2",
+   "how": "local/sam_server.py ACTION_REVISION",
+   "files": 4,
+   "matched": 4,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/facebook/vjepa2-vitl-fpc16-256-ssv2",
+   "revision": "4aa02df83918538fc21cfaf576382fa20e489a80"
+  },
+  {
+   "model": "SeamlessM4T v2",
+   "how": "local/voice_server.py, from the cache",
+   "files": 10,
+   "matched": 10,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/facebook/seamless-m4t-v2-large",
+   "revision": "5f8cc790b19fc3f67a61c105133b20b34e3dcb76"
+  },
+  {
+   "model": "MapAnything",
+   "how": "local/depth_server.py, HF_HOME=~/opt/mapanything/hf (deploy/heyandy-depth.service)",
+   "files": 2,
+   "matched": 2,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/facebook/map-anything-apache",
+   "revision": "00f9c245bbcb60522d1ed7f9e9d88462c6e3f38a"
+  },
+  {
+   "model": "Llama Guard 3 8B",
+   "how": "deploy/heyandy-guard.service serves the GGUF converted here from these files",
+   "files": 15,
+   "matched": 15,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "huggingface.co/meta-llama/Llama-Guard-3-8B",
+   "revision": "7327bd9f6efbbe6101dc6cc4736302b3cbb6e425",
+   "converted here": {
+    "file": "Llama-Guard-3-8B-Q4_K_M.gguf",
+    "sha256": "4171cc59f1d1d4e6d45523f517b8fb0b3a1bd8957c9b01bb989fcd78cdedd207"
+   }
+  },
+  {
+   "model": "Omnilingual ASR",
+   "how": "local/voice_server.py --asr omniASR_LLM_1B_v2 (its card: dl.fbaipublicfiles.com/mms/)",
+   "files": 2,
+   "matched": 2,
+   "different": [],
+   "not published": [],
+   "ours": [],
+   "publisher": "https://dl.fbaipublicfiles.com/mms/"
+  }
+ ]
+}

@@ -70,8 +70,10 @@ keeps what it sees and hears in the house.
 The public demo adds one more of Meta's open models, in the visitor's browser: **wav2vec 2.0** hears "Say it" (with
 DINOv2 for Andy's eyes).
 
-**Open weights, verified:** the Muse Glimmer file our own GPU serves has the same SHA-256 as Meta's published weights
-(`scripts/verify_open_weights.py`, run November 2; every model's source and licence in `docs/open-weights.md`).
+**Open weights, verified, every file:** of the nine open-weight models Andy runs, 54 of 54 files on our computer are
+byte for byte what Meta published, at the revision Andy loads (SHA-256 against Hugging Face; Omnilingual ASR against
+Meta's own download server; `scripts/verify_all_weights.py`, November 2). Llama Guard 3 is served as a GGUF we converted
+from those files; every model's source and licence: `docs/open-weights.md`.
 
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left

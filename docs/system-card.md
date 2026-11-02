@@ -9,7 +9,8 @@ where it falls short. Every figure links to its evidence: the scorecards in [`ev
 
 A tabletop robot (a Reachy Mini Lite) with a TV beside it, for people who live at home: it finds what you've lost,
 points at it and says where, from where you stand; it remembers where things are, delivers the reminders you set, and
-speaks fifteen languages. Every model it runs is Meta's ([which, where, and their licences](open-weights.md)).
+speaks fifteen languages. Every model it runs is Meta's ([which, where, and their licences](open-weights.md)); every
+file of its nine open-weight models is byte for byte what Meta published (`scripts/verify_all_weights.py`).
 
 ## Intended use, and not
 

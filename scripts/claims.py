@@ -420,6 +420,10 @@ FIGURES = [
            lambda: "a quiet conversation keeps {} of {} follow-ups".format(*quiet_conversation())),
     Figure("at most six follow-ups in a row", "code: heyandy_meta.voice.loop.FOLLOW_UPS",
            lambda: f"at most {['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'][code_constant('heyandy_meta.voice.loop', 'FOLLOW_UPS')]} follow-ups in a row"),
+    # the open weights, every file
+    Figure("54 of 54 files", "open-weights-all (latest)",
+           lambda: "{matched} of {files} files".format(**summary(newest("open-weights-all")))
+           if summary(newest("open-weights-all"))["every file matches"] else "not every file matches"),
     # the public demo, for people who see less well
     Figure("pass on all 56 of its states", "accessibility (latest)",
            lambda: f"pass on all {a11y()['pages and states']} of its states" if a11y()["with an axe violation"] == 0

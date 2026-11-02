@@ -200,6 +200,13 @@ def open_weights(f: str) -> str:
             f"{'matches' if d['matches'] else 'does NOT match'} Meta's published weights ({d['repository']})")
 
 
+def open_weights_all(f: str) -> str:
+    d = load(f)
+    s = d["summary"]
+    return (f"**{s['matched']} of {s['files']}** files of the {s['models']} open-weight models Andy runs match what Meta "
+            f"published, at the revision Andy loads (" + ", ".join(r["model"] for r in d["models"]) + ")")
+
+
 def notes_in_view(f: str) -> str:
     d = load(f)["summary"]
     sets = [v for k, v in d.items() if k in ("first", "held out", "held out, second", "held out, third")]
@@ -258,6 +265,9 @@ CARDS = [
     ("Noticing", "V-JEPA 2 on clips of an empty table: nothing noticed", "evals.notice", "notice-empty", notice),
     ("Filming mode", "\"take one\": the clap heard in the robot's own sound", "evals.filming", "filming", filming),
     ("Andy Finder", "the Reachy Mini app's \"Ring it\", on the robot", "research.md section 47", "finder-ring", finder_ring),
+    ("Open weights, every file", "each of the nine open-weight models' files on this computer against Meta's published "
+     "hashes: Hugging Face's SHA-256 and git hashes at the pinned revision, Omnilingual ASR's against Meta's download server",
+     "scripts/verify_all_weights.py", "open-weights-all", open_weights_all),
     ("Open weights, verified", "the Muse Glimmer file served on our own hardware, checked against Meta's published SHA-256",
      "scripts/verify_open_weights.py", "open-weights", open_weights),
     ("Notes in view", "a note left in view can't instruct Andy: drawn notes through its own picture checks, Muse Glimmer "

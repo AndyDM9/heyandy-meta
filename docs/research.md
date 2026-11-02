@@ -1897,3 +1897,19 @@ Found and fixed, each with a test:
   GitHub's own renderer to check: six tables, every fold renders, no raw markdown left.
 - **Not done here** (the founder's): the video cut to fewer moments, the robot itself on the README's first screen
   (after a good take), and anyone Andy is for trying it.
+
+## 86. Every open-weight file, against what Meta published (November 2, afternoon)
+
+- **Why:** the Best Open Weight Build prize asks for Meta's open models run on our own hardware; we had shown it for
+  one file (Muse Glimmer's, section 23 and November 2's re-run). Andy runs nine.
+- **How** (`scripts/verify_all_weights.py`): each model's files as its service loads them (the pinned revisions read
+  from `local/sam_server.py`; the Hugging Face cache's own folders for the others; `~/models` for SAM 3.1, Glimmer and
+  Llama Guard 3's source), hashed four ways in one read (SHA-256, git's blob hash, MD5, and MD5 over 8 MiB parts) and
+  compared with the publisher's record: Hugging Face's SHA-256 for each large file and git hash for each small one at
+  that revision, and, for Omnilingual ASR's v2 checkpoint (not on Hugging Face, from Meta's own download server, which
+  publishes no checksum), the server's size and S3 ETag: "16d95035...-1088", the MD5 of 1,088 parts of 8 MiB,
+  recomputed here and equal. Nothing is downloaded. Our own notes beside the weights (download.sh, SHA256SUMS) aren't
+  compared; the GGUF of Llama Guard 3 we converted is recorded by its own hash.
+- **Result:** all nine, **54 of 54 files** (`open-weights-all-20261102-1535`), and each revision is still the
+  repository's current main. The first run had counted `.gitattributes` as ours; it's Meta's, and matches too. 3.2
+  minutes for about 60 GB.

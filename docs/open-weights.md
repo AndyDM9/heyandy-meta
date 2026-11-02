@@ -27,6 +27,29 @@ or a multi-part request, web answers with sources, harder conversation) and, onl
 of web pages for its computer use; Muse Image gets words. Pictures and voice from the home never go to the cloud (Meta
 can't turn off data retention for hackathon credits; see `research.md`), and the TV's privacy receipt shows what did.
 
+## Every file, verified
+
+`uv run python scripts/verify_all_weights.py` (about three minutes; it hashes about 60 GB and downloads nothing) checks
+every file of the nine open-weight models as Andy's services load them against the publisher's own record: on Hugging
+Face, the SHA-256 published for each large file and the git hash of each small one, at the revision the code pins
+(DINOv2, Prompt Guard 2 and V-JEPA 2, read from `local/sam_server.py`) or the one this computer holds (each still Meta's
+current main on November 2); Omnilingual ASR's v2 checkpoint, which isn't on Hugging Face, against Meta's own download
+server (its size and its S3 ETag, recomputed here over the same 8 MiB parts). November 2
+(`evals/results/open-weights-all-20261102-1535.json`):
+
+```
+MATCH  Muse Glimmer 30B      2 of 2   meta-models/Muse-Glimmer-30B-GGUF (the model and its perception encoder)
+MATCH  SAM 3.1              11 of 11  facebook/sam3.1
+MATCH  DINOv2                3 of 3   facebook/dinov2-base at f9e44c814b77 (pinned)
+MATCH  Llama Prompt Guard 2  5 of 5   meta-llama/Llama-Prompt-Guard-2-86M at a8ded8e697ce (pinned)
+MATCH  V-JEPA 2              4 of 4   facebook/vjepa2-vitl-fpc16-256-ssv2 at 4aa02df83918 (pinned)
+MATCH  SeamlessM4T v2       10 of 10  facebook/seamless-m4t-v2-large at 5f8cc790b19f
+MATCH  MapAnything           2 of 2   facebook/map-anything-apache at 00f9c245bbcb
+MATCH  Llama Guard 3 8B     15 of 15  meta-llama/Llama-Guard-3-8B at 7327bd9f6efb (served as a GGUF converted here)
+MATCH  Omnilingual ASR       2 of 2   dl.fbaipublicfiles.com/mms/ (omniASR-LLM-1B-v2.pt, its tokenizer)
+54 of 54 files
+```
+
 ## Verify it
 
 ```bash
