@@ -3,10 +3,9 @@
 The room's camera is the same pinhole as the real one, so a test can check that the finder points where an object
 really is. Frames carry no picture; the room's own segmenter reads the head's direction from them instead.
 """
-import math
 from dataclasses import dataclass, field
 
-from ..finder.geometry import LITE, Camera
+from ..finder.geometry import LITE, Camera, angles_to_pixel
 from ..models.common import Mask
 from .body import Frame, Reach
 
@@ -29,11 +28,10 @@ class Room:
     pointed_at: Thing | None = None  # what the person in the room is pointing at, if anything
 
     def where_in_frame(self, thing: Thing, yaw: float, pitch: float) -> tuple[float, float] | None:
-        dyaw, dpitch = math.radians(thing.yaw - yaw), math.radians(thing.pitch - pitch)
-        if abs(dyaw) >= math.pi / 2 or abs(dpitch) >= math.pi / 2:
+        at = angles_to_pixel(thing.yaw, thing.pitch, yaw, pitch, self.cam)  # the real camera's geometry, inverted
+        if at is None:
             return None
-        x = self.cam.cx - self.cam.fx * math.tan(dyaw)
-        y = self.cam.cy + self.cam.fx * math.tan(dpitch)
+        x, y = at
         h = thing.size_px / 2
         if h <= x < self.cam.width - h and h <= y < self.cam.height - h:
             return x, y

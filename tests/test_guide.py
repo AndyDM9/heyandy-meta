@@ -105,7 +105,7 @@ def test_the_hand_is_talked_in_and_it_ends_when_the_hand_is_there():
     assert words[0] == "Right."  # to Andy's right in the picture is to the person's left: the mug is to their right
     assert any(e[0] == "note" for e in log)  # the same words aren't said every frame: a note instead
     assert r.why == "there" and r.closest is not None and r.closest <= THERE_M
-    assert r.frames >= 5 and clock.t >= 0.4 * (r.frames - 1)  # paced: a frame every 0.4 s at most
+    assert r.frames >= 5 and clock.t >= 0.4 * (r.frames - 1) - 1e-9  # paced: a frame every 0.4 s at most
 
 
 def test_no_hand_no_words_but_a_reminder_and_it_gives_up_in_time():

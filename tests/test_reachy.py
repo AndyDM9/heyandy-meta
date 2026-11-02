@@ -281,3 +281,34 @@ def test_a_robot_made_up_for_a_test_never_touches_a_camera():
     robot = FakeReachy()
     ReachyBody(robot, pose=lambda yaw, pitch, roll=0.0: ("pose", yaw, pitch), sleep=lambda s: None, run=cam.run)
     assert cam.calls == []
+
+
+class DippingReachy(ExactReachy):
+    """Like the Lite measured on November 1: a look lands where it's sent, but after the pointing dip the head stays
+    about 4 degrees low until it's moved again."""
+
+    def goto_target(self, head=None, body_yaw=None, duration=0.5, **kw):
+        super().goto_target(head, body_yaw, duration, **kw)
+        dipped = len(self.moves) >= 3 and self.moves[-2][0][2] > self.moves[-1][0][2]  # just came back up
+        self.sag = 4.0 if dipped else 0.0
+
+    def get_current_head_pose(self):
+        _, yaw, pitch = self.moves[-1][0]
+        y, p = math.radians(yaw), math.radians(pitch + getattr(self, "sag", 0.0))
+        return [[math.cos(y) * math.cos(p), -math.sin(y), 0, 0], [math.sin(y) * math.cos(p), math.cos(y), 0, 0],
+                [-math.sin(p), 0, math.cos(p), 0], [0, 0, 0, 1]]
+
+
+def test_after_the_dip_the_point_is_read_back_and_lifted_once():
+    b, robot = body(DippingReachy())
+    b.point(20.0, 10.0)
+    heads = [m[0] for m in robot.moves]
+    assert heads[:3] == [("pose", 20.0, 10.0), ("pose", 20.0, 16.0), ("pose", 20.0, 10.0)]  # face, dip, back
+    assert len(heads) == 4 and heads[3][2] == pytest.approx(6.0)  # 4 degrees low: sent 4 higher, once
+    assert abs(b.pitch - 10.0) < 1.5
+
+
+def test_a_point_that_lands_needs_no_correction():
+    b, robot = body(ExactReachy())
+    b.point(20.0, 10.0)
+    assert len(robot.moves) == 3

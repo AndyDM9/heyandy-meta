@@ -274,12 +274,26 @@ class ReachyBody:
         return Frame(data, w, h, self.yaw, self.pitch)
 
     def point(self, yaw: float, pitch: float) -> None:
-        """Point with the head: face the thing, dip once towards it, and hold."""
+        """Point with the head: face the thing, dip once towards it, and hold. The dip leaves the head low (measured
+        on the Lite, November 1: a median 3.9 degrees, up to 6.8), and where the head stops varies from move to move by
+        up to 8 degrees, steady 0.3 s after: so where it really is is read back and corrected, up to twice, by small
+        moves; no camera frame (the camera's check of the point then rarely has to move it, at 2 to 4 s a time)."""
         self.look(yaw, pitch)
         head, sent_pitch, base = self._sent
         self._send(head, min(sent_pitch + 6.0, self.reach.pitch_down + 10.0), base, 0.4)
         self._send(head, sent_pitch, base, 0.4)
         self._sleep(self.settle_s)  # still before the camera checks the point (a small thing blurs out mid-move)
+        now = self.measured()
+        fix = lambda err: max(-10.0, min(10.0, err))  # noqa: E731
+        for _ in range(2):  # where it stops varies from move to move (up to 8 degrees, steady by 0.3 s): twice at most
+            if not now or max(abs(yaw - now[0]), abs(pitch - now[1])) <= self.tolerance:
+                break
+            head, sent_pitch = max(-60.0, min(60.0, head + fix(yaw - now[0]))), sent_pitch + fix(pitch - now[1])
+            self._send(head, sent_pitch, base, 0.3)
+            self._sleep(self.settle_s)
+            now = self.measured()
+        if now:
+            self.yaw, self.pitch = now
 
     def say(self, text: str) -> None:
         if self._say:

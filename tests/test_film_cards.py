@@ -9,7 +9,8 @@ import film_cards  # noqa: E402
 
 def test_the_figures_come_from_the_files_and_say_what_they_say():
     figs = {f["from"]: f["big"] for f in film_cards.figures()}
-    assert figs["evals/results/unattended-*"] == "144 of 145"  # since the aim fix; the one miss, Nov 1 evening, kept
+    assert figs["evals/results/unattended-*"] == "206 of 208"  # since the aim fix; both misses (the keys, Nov 1) kept
+    assert figs["unattended-20261101-2231"] == "0.9°"  # the final code: focus held, the true ray, the head read back
     judged = [f for f in film_cards.figures() if f["from"].startswith("physical-fixed-")]
     assert judged and "never at the wrong thing" in judged[0]["line"]  # a person's verdicts, second on the card
     assert film_cards.figures()[1] is not None and film_cards.figures()[1]["from"].startswith("physical-fixed-")

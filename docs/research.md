@@ -1538,3 +1538,35 @@ Found and fixed, each with a test:
 - **Found on the way:** Andy had been left speaking Arabic since 20:10, saved, so it would have started in Arabic for
   the filming. Set back to English, and the preflight now fails unless Andy speaks English. The scorecards that drive
   the robot directly now hold the head still while searching, as the app does (no breathing in the frames).
+
+
+## 71. Where a pixel points, and where the head stops (November 1, late)
+
+- **Why:** the same keys, seen from three views that night, came out 8 degrees apart in pitch, and 7 of 9 points were
+  corrected by the camera's check after pointing, 2 to 4 s each.
+- **Where a pixel points.** The keys, the cup and the glasses seen from 36 head directions (90 sightings; numbers
+  only), each thing's direction compared across views under each camera model. Adding the pixel's two angles to the
+  head's, as Andy did, is right only on the frame's middle row and column: with the head tilted down, a thing at the
+  side of the frame sits higher than the middle row says (38 degrees to the side in a view 15 down: 11.8 down, not
+  15). Sightings of one thing disagreed by a median 1.6 to 1.9 degrees (at the frame's sides 3.2, nine in ten within
+  6.2); with each pixel's true ray, 0.9 to 1.1 (at the sides 1.6, nine in ten within 2.8). Pollen's published
+  calibration with its 12 lens terms did worse (1.4 to 2.1; its non-square pixels as the SDK scales them, worse still),
+  and the focal length fitted on two things and tested on the third came out 1050 to 1090: Andy's own 1054 stands.
+  `finder/geometry.py` now turns the ray properly, with its exact inverse for the simulated camera.
+- **Where the head stops.** Head pose only, no camera: after the pointing nod the head stayed a median 3.9 degrees
+  low (0.5 to 6.8), and where it stops varies from move to move by up to 8 degrees, steady 0.3 s after the move. So
+  after the nod Andy reads back where the head is and lifts it, up to twice, in small moves (about 0.7 s each, against
+  2 to 4 s for the camera's correction).
+- **Measured, the same 18 searches from the same starts** (the keys, the cup, the glasses; `--seed 11`):
+
+  | | pointed | median off | worst | re-aimed by the camera | median time |
+  |---|---|---|---|---|---|
+  | the true ray alone (`unattended-20261101-2217`) | 17 of 18 | 2.2° | 5.8° | 11 | 12.8 s |
+  | and the head read back once after the nod (`-2225`) | 18 of 18 | 2.0° | 7.8° | 7 | 9.9 s |
+  | and up to twice (`-2231`) | **18 of 18** | **0.9°** | **2.1°** | **0** | **9.8 s** (9.0 to 10.9) |
+
+  Earlier that evening, focus held but before either change, the first 9 of these: 4.8 degrees, 6.5 at worst, 7
+  re-aimed, 13.5 s (`unattended-20261101-2149`); the true ray alone on those 9: 2.7, 4.1, 1, 9.2 s (`-2212`). Since
+  the aim fix, 206 of 208 unattended searches ended in a point.
+- **Not yet:** a person judging the points again (section 69's scorecard), and the simulated search's figures (they
+  were made with the old geometry; the simulated camera now uses the new one).

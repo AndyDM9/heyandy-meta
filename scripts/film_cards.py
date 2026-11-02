@@ -39,7 +39,7 @@ def figures() -> list[dict]:
     runs = sorted(glob.glob(str(RESULTS / "unattended-*.json")))
     after_fix = [json.loads(Path(f).read_text())["summary"] for f in runs if Path(f).name > "unattended-20261030-1714.json"]
     trials, pointed = sum(s["trials"] for s in after_fix), sum(s["pointed"] for s in after_fix)
-    final = _load("unattended-20261031-1106.json")["summary"]
+    final = _load("unattended-20261101-2231.json")["summary"]  # the final code: focus held, the true ray, the head read back
     privacy = _load("privacy-audit.json")["summary"]
     spark, glimmer = _load("agent-spark.json")["summary"], _load("agent-glimmer.json")["summary"]
     room = _load("room-20261031-1129.json")["summary"]["across_scans"]
@@ -54,8 +54,9 @@ def figures() -> list[dict]:
         {"big": f"{judged['correct'] + judged['absent_correct']} of {judged['trials']}",
          "line": "judged by a person: pointed at the thing, or \"not found\" when it was hidden; never at the wrong thing",
          "from": judged_file.removesuffix(".json"), "ok": judged["false_finds"] == 0},
-        {"big": f"{final['aim_deg_median']}°", "line": "median off the middle, checked by its own camera after each point",
-         "from": "unattended-20261031-1106", "ok": final["pointed"] == final["trials"]},
+        {"big": f"{final['aim_deg_median']}°", "line": f"median off the middle, checked by its own camera after each point "
+                 f"({final['aim_deg_worst']}° at worst, {final['seconds_median']} s a find)",
+         "from": "unattended-20261101-2231", "ok": final["pointed"] == final["trials"] and final["aim_deg_worst"] < 5},
         {"big": f"{privacy['camera_pictures_to_cloud']} of {privacy['camera_pictures_taken']}",
          "line": f"camera pictures reached the cloud, in a day of {privacy['turns']} requests", "from": "privacy-audit",
          "ok": privacy["camera_pictures_to_cloud"] == 0},

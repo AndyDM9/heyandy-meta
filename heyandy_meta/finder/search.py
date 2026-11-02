@@ -190,9 +190,11 @@ class Finder:
             cam = self._cam(frame)
             best = min(masks, key=lambda m: ((m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
                        * (1 + abs(math.log(max(1.0, m.box[2] - m.box[0]) / size))))
-            off_yaw, off_pitch = pixel_to_angles(*best.center, 0.0, 0.0, cam)  # from the middle of this frame
-            found.aim_deg = round(math.hypot(off_yaw, off_pitch), 1)
-            found.yaw, found.pitch = frame.yaw + off_yaw, frame.pitch + off_pitch  # where it really is, for memory
+            y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)  # where it really is, for memory
+            off_yaw, off_pitch = y - frame.yaw, p - frame.pitch  # what the head should turn by to face it
+            found.aim_deg = round(math.degrees(math.atan(math.hypot(best.center[0] - cam.cx, best.center[1] - cam.cy)
+                                                         / cam.fx)), 1)  # the angle between the view and the thing
+            found.yaw, found.pitch = y, p
             if found.aim_deg <= self.aim_tolerance or attempt == self.aim_corrections:
                 return
             cmd_yaw, cmd_pitch = cmd_yaw + off_yaw, cmd_pitch + off_pitch

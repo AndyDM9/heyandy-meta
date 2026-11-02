@@ -1,7 +1,15 @@
 """From a pixel in a view to where the head should look, and merging sightings.
 
-A pinhole camera at the head's pivot, square pixels, no lens distortion: good to a degree or two near the
-centre of the frame, worse at the edges. Yaw is positive to the left, pitch positive down.
+A pinhole camera at the head's pivot, square pixels, no lens distortion, and the pixel's ray turned by the view's
+pitch and then its yaw. Yaw is positive to the left, pitch positive down.
+
+Measured on our Lite (2026-11-01, evening): the keys, the cup and the glasses seen from 36 head directions (90
+sightings), each thing's direction compared across views. Adding the pixel's two angles to the view's, as this did
+before, is right only on the frame's middle row and column: with the head tilted down, a thing at the side of the frame
+sits higher than the middle row says. Its sightings disagreed by a median 1.6 to 1.9 degrees (at the frame's sides 3.2,
+nine in ten within 6.2); turned properly, 0.9 to 1.1 (at the sides 1.6, nine in ten within 2.8). Pollen's published lens
+calibration, with its 12 distortion terms, did worse than this plain lens (1.4 to 2.1), and fitting the focal length
+on two of the things and testing on the third gave 1050 to 1090: the 1054 below stands.
 """
 import math
 from dataclasses import dataclass
@@ -27,11 +35,34 @@ class Camera:
 LITE = Camera()
 
 
+def _axes(view_yaw: float, view_pitch: float):
+    """The camera's forward, right and down directions in the room (x ahead, y to the left, z up)."""
+    ps, th = math.radians(view_yaw), math.radians(view_pitch)
+    forward = (math.cos(th) * math.cos(ps), math.cos(th) * math.sin(ps), -math.sin(th))
+    right = (math.sin(ps), -math.cos(ps), 0.0)
+    down = (-math.sin(th) * math.cos(ps), -math.sin(th) * math.sin(ps), -math.cos(th))
+    return forward, right, down
+
+
 def pixel_to_angles(x: float, y: float, view_yaw: float, view_pitch: float, cam: Camera = LITE) -> tuple[float, float]:
-    """Head yaw and pitch, in degrees, that put pixel (x, y) of this view at the centre."""
-    yaw = view_yaw + math.degrees(math.atan2(cam.cx - x, cam.fx))
-    pitch = view_pitch + math.degrees(math.atan2(y - cam.cy, cam.fx))
-    return yaw, pitch
+    """Head yaw and pitch, in degrees, that put pixel (x, y) of this view at the centre: the pixel's ray in the room."""
+    forward, right, down = _axes(view_yaw, view_pitch)
+    a, b = (x - cam.cx) / cam.fx, (y - cam.cy) / cam.fx
+    w = [forward[i] + a * right[i] + b * down[i] for i in range(3)]
+    return math.degrees(math.atan2(w[1], w[0])), math.degrees(math.atan2(-w[2], math.hypot(w[0], w[1])))
+
+
+def angles_to_pixel(yaw: float, pitch: float, view_yaw: float, view_pitch: float,
+                    cam: Camera = LITE) -> tuple[float, float] | None:
+    """Where a direction in the room falls in this view, in pixels; None if it's behind the camera."""
+    forward, right, down = _axes(view_yaw, view_pitch)
+    ps, th = math.radians(yaw), math.radians(pitch)
+    w = (math.cos(th) * math.cos(ps), math.cos(th) * math.sin(ps), -math.sin(th))
+    ahead = sum(w[i] * forward[i] for i in range(3))
+    if ahead <= 1e-6:
+        return None
+    return (cam.cx + cam.fx * sum(w[i] * right[i] for i in range(3)) / ahead,
+            cam.cy + cam.fx * sum(w[i] * down[i] for i in range(3)) / ahead)
 
 
 @dataclass
