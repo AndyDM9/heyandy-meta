@@ -1593,7 +1593,8 @@ Found and fixed, each with a test:
   The last search, for the glasses, said "not there": they had been taken off the desk (right after, SAM 3.1 scored
   them 0 in every view, the cup and the keys seen); counted as a miss. Since the aim fix, 223 of 226.
   With the glasses back, the same 18 again (`unattended-20261101-2300`): **18 of 18, a median 7.8 s (7.1 to 9.6), 1.1
-  degrees off, 2.2 at worst, none re-aimed**. Since the aim fix, 241 of 244.
+  degrees off, 2.2 at worst, none re-aimed**. And with the memory handed back, 9 more (`-2315`): 9 of 9, 7.9 s,
+  0.7 degrees, 1.7 at worst. Since the aim fix, 250 of 253.
 - **Left for after the filming:** Pollen's daemon feeds the camera to apps on this computer at 10 frames a second
   (`IPC_FPS`), though the camera captures 60 and the daemon used 27% of one core. Finding works from still frames; the
   cup game might do better faster (section 29: 3 of 5 at 10, 0 of 4 at 5). `scripts/robot_daemon.py` raises the cap
