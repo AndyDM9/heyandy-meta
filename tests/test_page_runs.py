@@ -257,7 +257,8 @@ def test_the_story_opens_on_the_robot_when_the_space_has_a_clip(browser):
 def test_each_story_chapter_says_what_it_rests_on_and_a_phone_can_press_every_button(browser):
     """November 2: a judge's review found the story showing abilities never tried on the robot (the cup game, the hand
     guiding), and at a phone's width the story's buttons sat on top of each other. Each chapter now says, under it,
-    whether it was measured on the robot or not yet; and on a phone the ask box has its own row."""
+    whether it was measured on the robot or not yet; on a phone the ask box has its own row; and under a finger every
+    button is at least 44 px tall (the explore bar's were 21)."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
     from demo_screen import SCENES, show
 
@@ -286,8 +287,17 @@ def test_each_story_chapter_says_what_it_rests_on_and_a_phone_can_press_every_bu
                                and a[0] < c[2] - 1 and c[0] < a[2] - 1 and a[1] < c[3] - 1 and c[1] < a[3] - 1]
             overlaps[f"{width} wider"] = page.evaluate("document.documentElement.scrollWidth") > width
             page.close()
+        page = browser.new_page(viewport={"width": 390, "height": 844}, has_touch=True, is_mobile=True)  # a finger
+        page.goto(url)
+        page.wait_for_function("document.body.classList.contains('storying')", timeout=10000)
+        page.evaluate("exploreAll()")
+        page.wait_for_timeout(300)
+        smallest = page.evaluate("""() => Math.min(...[...document.querySelectorAll('#demo button, #story nav button, form.ask button')]
+                                     .filter(e => e.getBoundingClientRect().height > 2).map(e => e.getBoundingClientRect().height))""")
+        page.close()
     finally:
         server.shutdown()
+    assert smallest >= 44  # the explore bar's scene buttons were 21 px tall on a phone
     kinds = {name: (cls or "").replace("proof ", "") for name, cls, _ in proofs}
     assert kinds["idle"] == "" and kinds["finding"] == kinds["found"] == kinds["promises"] == "robot"
     assert kinds["cups"] == kinds["guide"] == kinds["out"] == "not"  # never tried on the robot with real things

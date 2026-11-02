@@ -460,6 +460,12 @@
     html #reveal .credit { font-size: 2.8vw; } html #reveal .sig { display: none; }
   }
   @keyframes st-in { from { opacity: 0; transform: translateY(0.8rem); } to { opacity: 1; transform: none; } }
+  @media (pointer: coarse) {  /* a finger, not a mouse: every tap target at least 44 px (WCAG 2.5.5; 2.5.8 asks 24). The
+                                 explore bar's scene buttons were 21 px tall on a phone (November 2) */
+    #demo button, #demo a, .tries button, #story nav button, form.ask button, form.ask input, #end a, #end button {
+      min-height: 44px; }
+    #demo a, #end a { display: inline-flex; align-items: center; }
+  }
 
   /* A tall or narrow screen (a phone, an upright tablet, a narrow window, a portrait monitor): one column, the card
      first, type sized to be read there rather than shrunk to a TV's shape; the page scrolls, the captions stay in view */
