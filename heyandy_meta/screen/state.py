@@ -57,6 +57,8 @@ class Day:
     pictures: int = 0  # camera pictures of a staged scene (never a lived-in room)
     own_words: int = 0  # health questions (and a fall, and feelings) answered in Andy's own words, never a model's
     answers_read: int = 0  # sentences of a model's answer Llama Guard 3 read before Andy said them
+    speech: int = 0  # times the microphones heard someone speak (heard on this computer, to listen for Andy's name)
+    for_andy: int = 0  # of those, the ones Andy answered (called, or just after a reply); the rest let go at once
 
 
 def _family(model: str) -> str:
@@ -280,6 +282,13 @@ class ScreenState:
         """A health question answered in Andy's own words (companion/safety.py): counted for "what won't you do?"."""
         with self._lock:
             self._today().own_words += 1
+
+    def heard_speech(self, for_andy: bool) -> None:
+        """Someone spoke near Andy: counted for "what did you hear today?" (when and what were never kept)."""
+        with self._lock:
+            d = self._today()
+            d.speech += 1
+            d.for_andy += for_andy
 
     def answer_read(self) -> None:
         """A sentence of a model's answer read by Llama Guard 3 before Andy said it."""

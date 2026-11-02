@@ -101,3 +101,42 @@ def test_the_rest_of_a_combined_request_is_answered_too(tmp_path):
     assert "nothing has left this house." in reply and reply.endswith("I see your keys, a little to my left.")
     assert a.hear("privacy report please").endswith("nothing has left this house.")  # the combined request: one turn
     assert a.screen.day().turns == 1  # a turn counts once the next one starts
+
+
+@pytest.mark.parametrize("text", ["what did you hear today?", "Andy, what have you heard?", "how much did you hear today",
+                                  "are you recording?", "are you always listening?", "do you record what I say?"])
+def test_asking_what_andy_heard(text):
+    assert parse(text).kind == "heard"
+
+
+@pytest.mark.parametrize("text", ["what did you hear me say?", "did you hear that?", "say that again", "I didn't hear you",
+                                  "what did you send to the cloud today?", "I heard the news today"])
+def test_not_a_question_about_listening(text):
+    assert parse(text).kind != "heard"
+
+
+def test_what_andy_heard_today_is_counted_never_kept_and_asking_sends_nothing(tmp_path):
+    from heyandy_meta.voice.loop import VoiceLoop
+
+    a, calls = weather(tmp_path)
+    loop = VoiceLoop(a)
+    for said in ("we should move the launch to friday", "I agree", "andy where are my keys", "and the weather"):
+        loop.heard(said)
+    d = a.screen.day()
+    assert (d.speech, d.for_andy) == (4, 2)
+    before = len(calls)
+    reply = a.hear("what did you hear today?")
+    assert len(calls) == before  # counted and answered on this computer
+    assert "near me 4 times, all on this computer. 2 of those were for me. The other 2 I let go at once" in reply
+    assert "I never record" in reply
+    assert a.screen.privacy["title"] == "What I heard today"
+    assert not any(w in str(a.screen.privacy) for w in ("launch", "friday", "agree"))  # never the words
+
+
+def test_before_anyone_has_spoken():
+    from heyandy_meta.app import Andy
+
+    started = dt.datetime(2026, 11, 3, 9, 12).timestamp()
+    screen = ScreenState(now=lambda: started)
+    a = NS(screen=screen, _source="", _reason="", _privacy_card=lambda t, rows, promises=False: screen.privacy_day(t, rows))
+    assert Andy.heard_today(a) == "Since I started at 9:12, I haven't heard anyone speak near me. I never record: no sound is ever kept."

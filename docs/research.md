@@ -1818,3 +1818,19 @@ Found and fixed, each with a test:
   dial and the sound scene at both widths on every push, and fails on the page as it was.
 - **Not covered:** automated checks find only part of what a person with a screen reader or low vision meets; nobody
   has used the demo that way yet.
+
+## 82. "What did you hear today?" (November 2, afternoon)
+
+- **Why:** a robot with microphones in a home is always listening for its name; "what did you send to the cloud
+  today?" answers half of the worry, and the meeting of section 79 (1,246 times someone spoke near it in two and a half
+  hours) showed the other half: how much it hears, and what it does with it.
+- **Now:** Andy counts each utterance it hears and whether it was for it (`voice/loop.py` VoiceLoop.heard, and speech
+  over its own answers; a number each, never a word), in the same day's counts as the privacy receipts
+  (`screen/state.py`, from midnight, in memory only). "What did you hear today?", "how much did you hear?", "are you
+  recording?", "do you record what I say?" (not "what did you hear me say?", which is "say that again", nor "did you
+  hear that?") get, counted and answered on this computer, for example (these numbers are made up): "Today, I heard someone speak near me 412 times, all on this
+  computer. 9 of those were for me. The other 403 I let go at once, and I kept no sound and no words of them. I never
+  record." and a card on the TV with the same counts. Exact about what happens: every utterance is heard by Omnilingual
+  ASR on this computer to listen for the name; what's for Andy may be kept only as words, and only what it's asked to
+  remember. Checked before saying it: the code writes no audio anywhere (the only WAV it writes is its own chimes,
+  exported for the docs) and the voice service stores nothing.

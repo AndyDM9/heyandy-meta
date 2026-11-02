@@ -1,6 +1,6 @@
 # Submission text (for the form on November 4)
 
-*About 1,560 words, and 240 more in the table (trimmed again on November 2; longer versions are in this file's history). Fill in the
+*About 1,580 words, and 240 more in the table (trimmed again on November 2; longer versions are in this file's history). Fill in the
 [brackets] on the day. Every figure here is read from its source by `scripts/claims.py` and a test fails if one disagrees:
 run `uv run python scripts/claims.py` after any new run or edit.*
 
@@ -64,7 +64,9 @@ keeps what it sees and hears in the house.
 
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
-this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's. Unplug the network and Andy carries on.
+this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's, and "what did you hear today?" says how
+often someone spoke near it and how few were for it (kept: no sound, and not a word of the rest). Unplug the network
+and Andy carries on.
 (The one exception is a switch for filming in a staged room: SAM 3.1 through the API, and the TV says so.)
 
 ## Technical depth (what was hard)

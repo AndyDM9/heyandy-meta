@@ -57,6 +57,12 @@ class VoiceLoop:
         """Andy takes what's said next without its name: just after a reply, and only so many times in a row."""
         return self._clock() <= self.awake_until and self.follow_ups_left > 0
 
+    def _count(self, for_andy: bool) -> None:
+        """One utterance heard, and whether it was for Andy: for "what did you hear today?" (a number, never words)."""
+        screen = getattr(self.andy, "screen", None)
+        if screen is not None and hasattr(screen, "heard_speech"):
+            screen.heard_speech(for_andy)
+
     def not_for_andy(self) -> None:
         """An utterance Andy wasn't called in, or said over its answer: when it ended, never what it said."""
         self._not_for_andy.append(self._clock())
@@ -74,7 +80,13 @@ class VoiceLoop:
             STOP.search(text) or (getattr(self.andy, "playing", False) and DONE.search(text)))
 
     def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
-        """One utterance's text. Returns what Andy said, or None if it wasn't for Andy."""
+        """One utterance's text. Returns what Andy said, or None if it wasn't for Andy (counted either way: a number)."""
+        reply = self._heard(text, voice_yaw)
+        if text.strip():
+            self._count(for_andy=reply is not None)
+        return reply
+
+    def _heard(self, text: str, voice_yaw: float | None = None) -> str | None:
         text = " ".join(text.split())
         if crisis(text) and not self.stops(text) and getattr(self.andy, "following", False):
             self.andy.stop_following()  # whatever Andy is doing, this comes first
@@ -161,6 +173,8 @@ class VoiceLoop:
                 except Exception as e:  # noqa: BLE001 - listening again is a bonus: never at the cost of the turn
                     log.warning("listening again failed: %s: %s", type(e).__name__, e)
             if self.busy:
+                if text.strip() and not (crisis(text) or emergency(text)):  # those are counted when their turn runs
+                    self._count(for_andy=self.stops(text))
                 if crisis(text) or emergency(text):  # never dropped: stop what's running, answer it as soon as the turn ends
                     self.andy.stop_following()
                     self._pending = (text, yaw, utterance)
@@ -173,7 +187,7 @@ class VoiceLoop:
                 self._report(None, "Stopped." if stopped else None, utterance, endpointer)  # its length only
                 continue
             self.busy = True
-            turns.put((text, yaw, utterance))
+            turns.put((text, yaw, utterance))  # counted by heard(), when its turn says whether it was for Andy
 
     def _which_language(self, text: str, utterance, voice) -> str:
         """Andy was called but didn't understand: perhaps it wasn't Andy's language at all. Omnilingual ASR is asked

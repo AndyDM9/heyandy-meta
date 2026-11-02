@@ -148,6 +148,13 @@ REMIND = re.compile(r"\bremind me\b", re.I)
 PRIVACY = re.compile(r"\bwhat (?:did|have) you (?:send|sent|shared?)\b|\bwhat(?:'s| has)? (?:left|gone out of|went out of) "
                      r"(?:the|this|my) (?:house|home)\b|\bwhat (?:went|goes|has gone) (?:to|up to|out to) the "
                      r"(?:cloud|internet)\b|\bprivacy (?:report|summary|receipt)s?\b|\bwhat do you send\b", re.I)
+# "What did you hear today?" / "Are you recording?": the day's counts of speech heard and answered (app.py heard_today);
+# never "what did you hear me say" (that's "say it again"), never "did you hear that?" (a question about a sound)
+HEARD = re.compile(r"\bwhat (?:did|have) you (?:hear|heard)(?! me\b)(?: (?:today|so far|all day))?\W*$|"
+                   r"\bhow (?:much|many times|often) (?:did|have) you (?:hear|heard|listened?)\b|"
+                   r"\bare you (?:always listening|recording|listening all the time)\b|"
+                   r"\bdo you (?:record|keep|save|store) (?:what|everything|anything|all) (?:i|we|people) (?:say|said)\b|"
+                   r"\bdo you record\b|\bwhat do you keep of what (?:i|we) say\b", re.I)
 # "What won't you do?": Andy's promises, each with today's receipts (app.py promises)
 # Only as the whole question: "can I trust you to remind me at 8?" is a reminder (found by review, November 1)
 PROMISES = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:"
@@ -296,6 +303,8 @@ def parse(text: str, now: dt.datetime | None = None) -> Intent:
         return Intent("promises", text=t)
     if PRIVACY.search(t):
         return Intent("privacy", text=t)
+    if HEARD.search(t):
+        return Intent("heard", text=t)
     if REMIND.search(t):
         when = parse_time(t, now)
         words = _reminder_words(when[1]) if when else ""

@@ -21,7 +21,9 @@ they were; reminders you asked for; conversation, pictures and web pages on its 
   health question gets Andy's own words, written by hand in each language, and no model answers it.
 - **Emergencies beyond pointing at the phone.** It can't call anyone and doesn't watch for falls; "I fell and I can't
   get up" gets "please call 911 right away. I'll find your phone", then it finds and points at the phone.
-- **Watching people.** It keeps no camera picture or sound; speech not addressed to it is dropped, never kept.
+- **Watching people.** It keeps no camera picture or sound; speech not addressed to it is dropped, never kept. Ask
+  "what did you hear today?" and it says how often someone spoke near it and how few of those were for it: counts,
+  never words.
 - **Things it can't see:** in a drawer, under something, out of the room.
 
 ## Where your pictures and words go

@@ -395,6 +395,8 @@ class Andy:
             return self.set_language(to)
         if i.kind == "promises":  # counted and answered on this computer: asking sends nothing
             return self.promises()
+        if i.kind == "heard":  # counted and answered on this computer: asking sends nothing
+            return self.heard_today()
         if i.kind == "privacy":  # before anything that might use the cloud: asking sends nothing
             rest = " ".join(part for part in CLAUSES.split(text) if part.strip() and not PRIVACY.search(part))
             if len(re.findall(r"[a-z']+", rest.lower())) < 3:  # only the question ("please", "Andy")
@@ -659,6 +661,30 @@ class Andy:
         pictures = (f" {_n(d.pictures, 'camera picture')} of the staged scene went to SAM 3.1; no sound did."
                     if d.pictures else " No camera pictures and no sound left the house.")
         return f"{went}, I sent {_n(d.words, 'word')} to {names}{shots}.{pictures}" + (" It's on the screen." * on_screen)
+
+    def heard_today(self) -> str:
+        """"What did you hear today?" / "Are you recording?": how often someone spoke near Andy and how few of those were
+        for it, from the day's counts (VoiceLoop counts each utterance, never its words), said and shown on the TV.
+        Exact about what happens: every utterance is heard on this computer to listen for the name, what isn't for Andy
+        is let go at once, and no sound is ever kept."""
+        d = self.screen.day()
+        self._source, self._reason = "device", "counted on this computer: how often someone spoke, never what was said"
+        midnight = _now(lambda: d.since).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        when = "Today" if d.since <= midnight else f"Since I started at {spoken_time(d.since)}"
+        rest = d.speech - d.for_andy
+        rows = [("✓", f"{_n(d.speech, 'time')} someone spoke near me: heard on this computer, listening for my name"),
+                ("✓", f"{d.for_andy} of them for me" + (f"; {rest} let go at once, not a word of them kept" if rest else "")),
+                ("✓", "No recording: no sound is ever kept, and none left the house"),
+                ("✓", "Kept of what you ask me: only what you ask me to remember, as words")]
+        self._privacy_card("What I heard today", rows)
+        if not d.speech:
+            return f"{when}, I haven't heard anyone speak near me. I never record: no sound is ever kept."
+        if not rest:
+            return (f"{when}, I heard someone speak near me {_n(d.speech, 'time')}, all of it for me. I never record: no "
+                    "sound is ever kept. It's on the screen.")
+        return (f"{when}, I heard someone speak near me {_n(d.speech, 'time')}, all on this computer. {d.for_andy} of "
+                f"those were for me. The other {rest} I let go at once, and I kept no sound and no words of them. I never "
+                "record. It's on the screen.")
 
     def _privacy_card(self, title: str, rows: list[tuple[str, str]], promises: bool = False) -> None:
         """The day's receipts, or Andy's promises, on the TV in the person's language (the TV follows the language;
