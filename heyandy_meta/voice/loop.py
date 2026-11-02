@@ -28,16 +28,45 @@ HEY = r"(?:hey|hi|hello|ok|okay|oye|hola)\s+"
 HEY_WAKE = re.compile(r"^\W*" + HEY + r"(?:" + NAME + r"|and he|and they)\b[\s,.!?]*", re.I)
 HEY_LATER = re.compile(r"\b" + HEY + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
 
+# After a reply Andy takes what's said next without its name, as a person would. Each reply opens that window again, so
+# a room's own talk could keep it answering: November 2, in a meeting near the robot, 26 turns in 20 minutes, each
+# within 20 s of the last, until the robot was unplugged (research.md section 79). So:
+FOLLOW_UPS = 6  # at most this many in a row without the name, then the name again: a backstop for a room that waits
+                # for Andy to finish (the meeting's own talk over its answers is what ends a chain: below)
+# and when the room is talking (people, a call on speaker, the TV), this many utterances Andy wasn't called in, or said
+# over its own answer, within this long: a conversation it isn't part of, so it answers its name and takes nothing
+# after, unless it asked something (one answer, then the name again)
+ROOM_TALKING = (5, 90.0)
+
 
 
 
 class VoiceLoop:
-    def __init__(self, andy, follow_up_s: float = 20.0, clock=time.monotonic, on_heard=None):
+    def __init__(self, andy, follow_up_s: float = 20.0, clock=time.monotonic, on_heard=None,
+                 follow_ups: int = FOLLOW_UPS, room_talking: tuple[int, float] = ROOM_TALKING):
         self.andy, self.follow_up_s, self._clock, self.on_heard = andy, follow_up_s, clock, on_heard
+        self.follow_ups, self.room_talking = follow_ups, room_talking
         self.awake_until = float("-inf")
+        self.follow_ups_left = 0  # what Andy will still take without its name, until it's called again
+        self._not_for_andy: list[float] = []  # when utterances it wasn't called in ended: only the times, never words
         self.utterance_end = 0.0  # time.monotonic() when the last utterance ended
         self.busy = False  # a turn is running (on its own thread, so "stop" and "done" can still be heard)
         self._pending = None  # crisis words heard during a turn: answered straight after it
+
+    def listening(self) -> bool:
+        """Andy takes what's said next without its name: just after a reply, and only so many times in a row."""
+        return self._clock() <= self.awake_until and self.follow_ups_left > 0
+
+    def not_for_andy(self) -> None:
+        """An utterance Andy wasn't called in, or said over its answer: when it ended, never what it said."""
+        self._not_for_andy.append(self._clock())
+
+    def talking_room(self) -> bool:
+        """A conversation in the room that isn't with Andy: enough utterances lately that it wasn't called in."""
+        n, seconds = self.room_talking
+        now = self._clock()
+        self._not_for_andy = [t for t in self._not_for_andy if now - t <= seconds]
+        return len(self._not_for_andy) >= n
 
     def stops(self, text: str) -> bool:
         """Words that end what Andy is doing right now: "stop" a follow, "done" shuffling the cups."""
@@ -58,7 +87,10 @@ class VoiceLoop:
             called = HEY_WAKE.match(text) or next(reversed(list(HEY_LATER.finditer(text))), None)
         else:
             called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
-        if not text or (not called and self._clock() > self.awake_until):
+        urgent = crisis(text) or emergency(text)  # within the window these are always heard, follow-ups used up or not
+        if not text or (not called and not (self.listening() or (urgent and self._clock() <= self.awake_until))):
+            if text:
+                self.not_for_andy()
             return None  # not for Andy: dropped, never shown or kept
         rest = text[called.end():] if called else text
         if crisis(text):
@@ -84,6 +116,10 @@ class VoiceLoop:
                 reply = "Yes?"
                 self.andy.say(reply)
         self.awake_until = self._clock() + self.follow_up_s
+        self.follow_ups_left = self.follow_ups if called else max(0, self.follow_ups_left - 1)
+        if self.talking_room():  # a conversation it isn't part of: its name each time, unless it just asked something
+            asked = called and isinstance(reply, str) and reply.rstrip().endswith("?")
+            self.follow_ups_left = min(self.follow_ups_left, 1 if asked else 0)
         return reply
 
     def run(self, mic, voice, endpointer, stop) -> None:
@@ -100,7 +136,7 @@ class VoiceLoop:
             if ear is not None:
                 ear(samples, flag, yaw)  # loudness, tone and direction only, for "I'm ringing my phone" (companion/sound.py)
             utterance = endpointer.feed(samples, flag)
-            if gesture and not self.busy and endpointer.active != hearing and self._clock() <= self.awake_until:
+            if gesture and not self.busy and endpointer.active != hearing and self.listening():
                 hearing = endpointer.active
                 gesture("listening" if hearing else "idle")  # attentive while a follow-up is spoken
                 screen = getattr(self.andy, "screen", None)
@@ -132,6 +168,8 @@ class VoiceLoop:
                 stopped = self.stops(text)
                 if stopped:
                     self.andy.stop_following()  # no lock: the turn holds it, and this must reach it at once
+                else:
+                    self.not_for_andy()  # said over Andy's answer: most likely the room's own conversation
                 self._report(None, "Stopped." if stopped else None, utterance, endpointer)  # its length only
                 continue
             self.busy = True
@@ -151,7 +189,7 @@ class VoiceLoop:
         hey_only = getattr(andy, "hey_only", False)  # "Answer only to Hey Andy": a plain "Andy" may be a person
         wake, later = (HEY_WAKE, HEY_LATER) if hey_only else (WAKE, LATER)
         called = wake.match(text) or next(reversed(list(later.finditer(text))), None)
-        if not called and self._clock() > self.awake_until:
+        if not called and not self.listening():
             return text  # not for Andy
         current = getattr(andy, "language", "en")
         rest = text[called.end():] if called else text

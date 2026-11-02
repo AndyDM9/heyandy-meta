@@ -658,6 +658,12 @@ at all. 11 of the 21 turns sent nothing. With
 the network off, the same day sent nothing to the cloud, and Andy answered every turn. Both rerun on November 1 on the
 final code, with the same results.
 
+**A conversation it isn't part of** (`evals/room_talk.py`, November 2): a meeting went on near the robot, and Andy
+answered 38 times in two and a half hours (its name is the founder's, and each reply opened 20 s more for anything
+said). Now speech it wasn't called in, or said over its answers, tells it the room is talking: it answers its name and
+takes nothing after. The meeting's own timing replayed: 37 answers with the old rules, **4 now**; a quiet conversation
+keeps 6 of 8 follow-ups without the name ([§79](docs/research.md#79-a-conversation-andy-isnt-part-of-november-2-early-afternoon)).
+
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second
 shuffle replays in about 10 to 13 s.

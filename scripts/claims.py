@@ -223,6 +223,17 @@ def code_value(where: str, name: str):
     return obj.__dataclass_fields__[name].default
 
 
+def quiet_conversation() -> tuple[int, int]:
+    c = summary(newest("room-talk"))["a conversation with Andy in a quiet room, now"]
+    return c["answered without the name"], c["follow-ups said"]
+
+
+def code_constant(module: str, name: str):
+    import importlib
+
+    return getattr(importlib.import_module(module), name)
+
+
 def sound() -> str:
     d = _load(newest("sound"))
     return (f"{d['ringings_faced']} of {d['of']} ringings faced, within {max(d['spread_deg'].values()):.0f} degrees; "
@@ -392,6 +403,15 @@ FIGURES = [
                {1: "once", 2: "twice", 3: "three times"}[code_value("heyandy_meta.finder.search.Finder", "aim_corrections")])),
     Figure("slowed 8%", "voice-clarity-20261030 (the voice chosen)",
            lambda: re.search(r"slowed \d+%", _load("voice-clarity-20261030.json")["chosen"]).group(0)),
+    # the system card: a conversation it isn't part of
+    Figure("a real meeting near the robot, replayed: 37 answers became 4", "room-talk (latest)",
+           lambda: "a real meeting near the robot, replayed: {} answers became {}".format(
+               summary(newest("room-talk"))["replayed, the old rules"]["answered"],
+               summary(newest("room-talk"))["replayed, now"]["answered"])),
+    Figure("a quiet conversation keeps 6 of 8 follow-ups", "room-talk (latest)",
+           lambda: "a quiet conversation keeps {} of {} follow-ups".format(*quiet_conversation())),
+    Figure("at most six follow-ups in a row", "code: heyandy_meta.voice.loop.FOLLOW_UPS",
+           lambda: f"at most {['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'][code_constant('heyandy_meta.voice.loop', 'FOLLOW_UPS')]} follow-ups in a row"),
     Figure("0 of 72 drawn notes got through", "notes-in-view (latest)",
            lambda: "{} of {} drawn notes got through".format(*notes(newest("notes-in-view")))),
 ]

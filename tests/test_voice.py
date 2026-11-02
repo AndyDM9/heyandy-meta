@@ -111,7 +111,7 @@ def test_and_counts_as_andy_only_before_a_clear_request():
 def test_looping_speech_to_text_is_dropped():
     a = Andy()
     loop = VoiceLoop(a)
-    loop.awake_until = float("inf")
+    loop.awake_until, loop.follow_ups_left = float("inf"), loop.follow_ups  # just answered
     assert loop.heard("the state of " * 12) is None and a.heard == []
     assert loop.heard("and the remote, is it on the sofa or by the window or under the cushion") == "ok"
 
@@ -322,3 +322,119 @@ def test_soon_speech_never_waits_even_while_something_is_being_said():
     threading.Timer(0.2, gate.set).start()
     s("There it is!")
     assert played == ["I'm Andy, an AI robot.", "Let me look.", "There it is!"]
+
+
+class Chatty(Andy):
+    """Andy whose replies may ask something back, as Muse Glimmer's often do."""
+
+    def __init__(self, reply="ok"):
+        super().__init__()
+        self.reply = reply
+
+    def hear(self, text):
+        self.heard.append(text)
+        return self.reply
+
+
+def test_follow_ups_without_the_name_stop_after_six_in_a_row():
+    """November 2: each reply opened the window again, and a meeting near the robot kept it answering for 20 minutes."""
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    assert loop.heard("hey andy how are you") == "ok"
+    for i in range(loop.follow_ups):
+        t[0] += 10
+        assert loop.heard(f"tell me more {i}") == "ok"
+    t[0] += 10
+    assert loop.follow_ups == 6 and loop.heard("and what about the budget") is None and len(a.heard) == 7
+    assert loop.heard("andy what time is it") == "ok"  # the name again: a new conversation, its follow-ups again
+    t[0] += 10
+    assert loop.heard("and the date") == "ok"
+
+
+def test_in_a_room_already_talking_andy_answers_its_name_and_takes_nothing_after():
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    for i in range(5):  # a meeting: people talking, none of it to Andy
+        t[0] += 6
+        assert loop.heard(f"we should move the launch to friday {i}") is None
+    assert loop.talking_room()
+    assert loop.heard("andy can you check that") == "ok"  # a colleague called Andy, or Andy itself: answered once
+    t[0] += 8
+    assert loop.heard("yes I agree with that plan") is None  # and the meeting goes on without it
+    assert not loop.listening() and len(a.heard) == 1
+
+
+def test_a_room_that_went_quiet_gets_its_follow_ups_back():
+    t = [0.0]
+    loop = VoiceLoop(Andy(), follow_up_s=20, clock=lambda: t[0])
+    for i in range(5):
+        t[0] += 6
+        loop.heard(f"people talking {i}")
+    t[0] += 120  # past the room's 90 s
+    assert not loop.talking_room()
+    assert loop.heard("hey andy where are my glasses") == "ok"
+    t[0] += 10
+    assert loop.heard("and my keys") == "ok"
+
+
+def test_when_andy_asks_something_in_a_talking_room_one_answer_counts_and_no_chain():
+    t = [0.0]
+    a = Chatty("Which one do you mean?")
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    for i in range(5):
+        t[0] += 6
+        loop.heard(f"people talking {i}")
+    assert loop.heard("andy put that right") == "Which one do you mean?"
+    t[0] += 8
+    assert loop.heard("the blue one") == "Which one do you mean?"  # its answer, without the name
+    t[0] += 8
+    assert loop.heard("I think the quarter went well") is None  # a question back again doesn't open another
+
+
+def test_just_the_name_in_a_talking_room_still_gets_its_request():
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    for i in range(5):
+        t[0] += 6
+        loop.heard(f"people talking {i}")
+    assert loop.heard("Andy.") == "Yes?"
+    t[0] += 4
+    assert loop.heard("where are my glasses") == "ok" and a.heard == ["where are my glasses"]
+
+
+def test_crisis_words_just_after_a_reply_are_heard_even_with_the_follow_ups_used_up():
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    for i in range(5):
+        t[0] += 6
+        loop.heard(f"people talking {i}")
+    loop.heard("andy what's the weather")
+    t[0] += 5
+    assert not loop.listening()
+    assert loop.heard("I fell and I can't get up") == "ok" and a.heard[-1] == "I fell and I can't get up"
+
+
+def test_only_the_times_of_speech_not_for_andy_are_kept():
+    t = [0.0]
+    loop = VoiceLoop(Andy(), clock=lambda: t[0])
+    loop.heard("a private conversation about money")
+    assert loop._not_for_andy == [0.0]
+
+
+def test_talk_over_andys_answers_is_a_room_talking_and_ends_a_conversation_already_going():
+    """Once follow-ups run, everything is taken, so nothing is 'not for Andy': but a meeting keeps talking over Andy's
+    answers, which a person talking with Andy rarely does."""
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    assert loop.heard("hey andy how are you") == "ok"
+    t[0] += 10
+    for _ in range(5):  # said while Andy was answering the next one (run() counts these)
+        loop.not_for_andy()
+    assert loop.heard("so the numbers for the quarter") == "ok"  # taken: the window was open
+    t[0] += 10
+    assert loop.heard("let's move on to the next item") is None  # but not another

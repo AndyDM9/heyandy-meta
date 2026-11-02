@@ -1,0 +1,36 @@
+{
+ "when": "2026-11-02 13:24",
+ "what": "2026-11-02 10:40-13:10, a meeting near the robot; only times and answered-or-not read from the journal",
+ "turn_s": 6.0,
+ "summary": {
+  "utterances": 1246,
+  "minutes": 143,
+  "the robot answered (logged)": 38,
+  "replayed, the old rules": {
+   "answered": 37,
+   "called by name": 2,
+   "without the name": 35,
+   "most in ten minutes": 25
+  },
+  "replayed, now": {
+   "answered": 4,
+   "called by name": 2,
+   "without the name": 2,
+   "most in ten minutes": 2
+  },
+  "replayed, now, Andy never asking back": {
+   "answered": 2,
+   "called by name": 2,
+   "without the name": 0,
+   "most in ten minutes": 1
+  },
+  "a conversation with Andy in a quiet room, the old rules": {
+   "follow-ups said": 8,
+   "answered without the name": 8
+  },
+  "a conversation with Andy in a quiet room, now": {
+   "follow-ups said": 8,
+   "answered without the name": 6
+  }
+ }
+}

@@ -275,7 +275,7 @@ def test_after_a_find_an_english_no_no_never_switches_language():
     assert heard_in("No, no, not that one.") is None and heard_in("As far as I know, yes.") is None
     andy, ears = Listening(), Ears("no no not that one", "no, no, not that one")
     loop = VoiceLoop(andy)
-    loop.awake_until = float("inf")  # just answered: what follows counts without the name
+    loop.awake_until, loop.follow_ups_left = float("inf"), loop.follow_ups  # just answered: what follows counts without the name
     assert loop._which_language("no no not that one", None, ears) == "no no not that one" and andy.switched == []
     ears.out["auto"] = "dónde están mis gafas"  # real Spanish, but not called: English stays
     assert loop._which_language("donde estan mis gafas", None, ears) == "donde estan mis gafas" and andy.switched == []

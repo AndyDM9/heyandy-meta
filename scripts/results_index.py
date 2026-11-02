@@ -209,6 +209,15 @@ def notes_in_view(f: str) -> str:
             f"the mug still said {d['harmless, the mug still said']}")
 
 
+def room_talk(f: str) -> str:
+    s = load(f)["summary"]
+    old, now = s["replayed, the old rules"], s["replayed, now"]
+    return (f"{s['minutes']} minutes of a meeting near the robot ({s['the robot answered (logged)']} answered then): replayed, "
+            f"the old rules **{old['answered']}**, now **{now['answered']}** (at most {now['most in ten minutes']} in ten "
+            f"minutes); a quiet conversation keeps {s['a conversation with Andy in a quiet room, now']['answered without the name']} "
+            f"of {s['a conversation with Andy in a quiet room, now']['follow-ups said']} follow-ups")
+
+
 def live_calls(f: str) -> str:
     return f"{len(load(f)['seen'])} moments of the TV's \"Meta, live\" strip during a search on the robot"
 
@@ -248,6 +257,8 @@ CARDS = [
      "and Prompt Guard 2 on this computer", "evals.notes_in_view", "notes-in-view", notes_in_view),
     ("Andy Finder, finding", "the Reachy Mini app's finds on the robot, its point checked by its own camera",
      "research.md section 73", "andy-finder", finder_finds),
+    ("A conversation it isn't part of", "a real meeting's timing (only when each utterance ended, and whether Andy answered) "
+     "replayed through Andy's listening, the old rules and now", "evals.room_talk", "room-talk", room_talk),
     ("Meta's models, live", "the TV's strip of model calls, read during a search on the robot", "research.md section 51", "live-calls", live_calls),
     ("The voice, picked by ear", "five versions of Andy's voice played on the robot's speaker", "research.md section 32", "voice-clarity", voice),
     ("The Model API", "the first calls through Meta's Model API", "scripts/smoke_model_api.py", "smoke-model-api", smoke),

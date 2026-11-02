@@ -1754,3 +1754,27 @@ Found and fixed, each with a test:
   other 67 figures agreed with their files.
 - **Not checked yet:** the README below its "Proof" heading (its long tables, about 150 more figures, made from the
   same files and sections), and figures without a unit ("in 34 frames", "Meta's (11)").
+
+## 79. A conversation Andy isn't part of (November 2, early afternoon)
+
+- **What happened:** a meeting went on near the robot from about 10:40 to 13:10. Andy let nearly all of it pass (1,208
+  utterances it wasn't called in), but twice something woke it (its name is the founder's, and plain "Andy" calls it),
+  and each reply opened another 20 s in which anything said counted as for Andy: **38 turns answered**, 19 of them
+  between 13:00 and 13:10, each within 4 to 17 s of the last, until the robot's USB was unplugged. Only when each
+  utterance ended and whether Andy answered were read (the service's journal keeps no words).
+- **Why:** the follow-up window ("and my keys?" after a find, no name needed) had no end while the room kept talking.
+  The journal showed what gives a meeting away: people kept talking over Andy's answers, which someone talking with
+  Andy rarely does.
+- **Now** (`voice/loop.py`): speech Andy wasn't called in, or said over its answer, is counted (when, never what); five
+  in 90 s is a conversation Andy isn't part of, and then Andy answers its name and takes nothing after it, unless it
+  asked something (one answer, then the name again). And at most six follow-ups in a row without the name, as a
+  backstop. Crisis and emergency words just after a reply are still heard, follow-ups used up or not; "Andy." then
+  "where are my glasses?" still works in a busy room ("Yes?" asks).
+- **Measured** (`evals/room_talk.py`, `room-talk-20261102-1324`): the meeting's own timing replayed through Andy's
+  listening. With the old rules the replay answers 37 times (the robot answered 38: the replay holds); now **4**, at
+  most 2 in any ten minutes, and 2 if Andy never asks back. The price, in a quiet room: a conversation with Andy keeps 6
+  of 8 follow-ups without the name (the room rule alone also gave 4 on the meeting; the cap of six is for a room that
+  waits for Andy to finish).
+- **Also:** a home with someone called Andy can say "Andy, answer only to Hey Andy"; then a call in another script
+  (安迪) isn't heard either. The USB unplug left the daemon in "Motor communication error" and Andy's microphones on
+  the old device: `scripts/reset_robot_audio.py` brought both back (20 of 20 direction reads).
