@@ -66,3 +66,18 @@ def test_the_tv_lists_each_part():
                                         ("I'm not OK", "chat"), ("is everything home?", "home_check")])
 def test_asked_in_plain_words(text, kind):
     assert parse(text).kind == kind
+
+
+def test_ears_and_voice_that_stopped_answering_are_down_with_the_fix(tmp_path):
+    """November 2: the robot's USB audio stopped for half an hour; "are you OK?" now says so, and how to fix it."""
+    from types import SimpleNamespace
+
+    from heyandy_meta.robot.audio_watch import FIX, AudioWatch
+
+    a, _, _ = andy(tmp_path=tmp_path)
+    log = SimpleNamespace(stdout="usb 1-5.2.1: 1:0: usb_set_interface failed (-71)\n")
+    a.audio_watch = AudioWatch(SimpleNamespace(_raw=[], doa_failures=0), run=lambda cmd, **kw: log, where="1-5.2.1")
+    report = check(a)
+    ears = next(p for p in report.parts if p.key == "ears")
+    assert ears.status == "down" and ears.name == "my microphones and speaker" and FIX in ears.if_down
+    assert FIX in summary(report)

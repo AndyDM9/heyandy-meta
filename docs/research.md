@@ -1634,3 +1634,10 @@ Found and fixed, each with a test:
   device since the daemon started and fails on any of its USB errors; and `scripts/reset_robot_audio.py` does what
   worked: restarting the daemon and Andy didn't (247 errors in 40 s), a USB reset of the audio device alone did (the
   camera and motors untouched): 20 of 20 direction reads after, no kernel error since, preflight passing.
+- **Then Andy watches its own ears and voice** (`robot/audio_watch.py`). The failing interface that morning was the
+  speaker's (interface 1, the one endpoint out), so Andy was very likely mute as well as deaf, and only the kernel's
+  log showed it. Every 20 seconds now: new USB errors from the audio device in the kernel's log, no sound at all from
+  the microphones for 10 seconds (they always hear something), or failed reads of a voice's direction; any of them puts
+  a lasting line on the TV with the fix (`scripts/reset_robot_audio.py`) until a look finds none, and "are you OK?" says
+  "my microphones and speaker" are down, with the fix. Preflight reads the same signs. Running on the robot: no false
+  alarm in its first minutes.

@@ -12,6 +12,8 @@ import time
 import urllib.request
 from dataclasses import dataclass, field
 
+from ..robot.audio_watch import FIX
+
 
 @dataclass
 class Part:
@@ -108,8 +110,11 @@ def check(app) -> Report:
     report.parts.append(service("safety", "my safety check", "Llama Guard 3", endpoint(app.guard, "/health"),
                                 "My second safety check isn't answering; the first, built in, still works."))
 
-    ear = getattr(app, "ear", None)
-    if ear is None:
+    ear, watch = getattr(app, "ear", None), getattr(app, "audio_watch", None)
+    if watch is not None and watch.check():  # the robot's USB audio: what the kernel, the microphones and DoA say
+        report.parts.append(Part("ears", "my microphones and speaker", "", "down", "stopped answering",
+                                 f"I may not hear you, or be heard. Fix: {FIX}."))
+    elif ear is None:
         report.parts.append(Part("ears", "my microphones", "", "none", "not listening here"))
     else:
         heard = ear.since(ear.clock() - 5.0)

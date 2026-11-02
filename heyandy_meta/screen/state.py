@@ -87,6 +87,7 @@ class ScreenState:
         self.lost: list[dict] = []  # what a search missed and Andy keeps looking for: {"thing", "since", "looks"}
         self._help_until = 0.0
         self.quiet_text = ""  # "Quiet until 9:40", while Andy keeps quiet
+        self.trouble_text = ""  # what's broken, with the fix, while it is (robot/audio_watch.py)
         self.language = ""  # "Español", while Andy hears and speaks Spanish
         self.lang = "en"  # the TV's own labels follow it (page.html)
         self.words = None  # Andy's own words on the TV, in that language: a TVWords, or None for English
@@ -234,6 +235,11 @@ class ScreenState:
     def quiet(self, text: str) -> None:
         with self._lock:
             self.quiet_text = text
+
+    def trouble(self, text: str | None) -> None:
+        """A lasting line while a part Andy needs is broken (its ears and voice), with the fix; gone when it's fixed."""
+        with self._lock:
+            self.trouble_text = text or ""
 
     def notice(self, text: str, seconds: float = 6.0) -> None:
         """A change shown briefly, like a TV's own volume bar, then gone."""
@@ -461,7 +467,7 @@ class ScreenState:
                    "watching": list(self.watching), "map": list(self.watching_map), "lost": list(self.lost),
                    "help": self._clock() < self._help_until,
                    "staged": self.staged, "drawing": None,
-                   "quiet": self.quiet_text, "outbox": list(self.outbox), "language": self.language,
+                   "quiet": self.quiet_text, "trouble": self.trouble_text, "outbox": list(self.outbox), "language": self.language,
                    "notice": self._notice[0] if self._notice and self._clock() < self._notice[1] else "",
                    "game": None, "checklist": self.checklist, "privacy": self.privacy}
             if self._web and self._clock() >= self._web["until"]:

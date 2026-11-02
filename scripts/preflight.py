@@ -50,24 +50,8 @@ def drawn_mug() -> bytes:
     return out.getvalue()
 
 
-def audio_port(devices: Path = Path("/sys/bus/usb/devices")) -> str | None:
-    """The robot's audio device's USB port as the kernel names it ("1-5.2.1"), from its product name."""
-    for d in sorted(devices.glob("*")):
-        try:
-            if (d / "product").read_text().strip() == "Reachy Mini Audio":
-                return d.name
-        except OSError:
-            continue
-    return None
-
-
-AUDIO_FAULTS = ("usb_set_interface failed", "cannot submit urb", "cannot get freq", "clock source")
-
-
-def audio_usb_errors(kernel_log: str, port: str) -> int:
-    """The kernel's complaints about the robot's audio device: November 2 it stopped answering after the desktop woke
-    (thousands of these), the direction of a voice couldn't be read, and Andy's hearing stopped."""
-    return sum(1 for line in kernel_log.splitlines() if f"usb {port}:" in line and any(f in line for f in AUDIO_FAULTS))
+from heyandy_meta.robot.audio_watch import faults as audio_usb_errors  # noqa: E402 - Andy watches the same signs
+from heyandy_meta.robot.audio_watch import port as audio_port  # noqa: E402
 
 
 def main() -> None:

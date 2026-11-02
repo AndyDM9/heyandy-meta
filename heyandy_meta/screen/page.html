@@ -73,6 +73,9 @@
   .badge svg { width: 1.3rem; height: 1.3rem; }
   #offline { color: var(--accent); font-weight: 700; }
   #notice { color: var(--ink); font-weight: 700; font-size: 1.6rem; letter-spacing: 0.04em; }
+  /* a part Andy needs is broken: it stays until fixed, outlined so it reads as more than a passing note */
+  #trouble { color: var(--ink); font-weight: 700; border-radius: 0.9rem; box-shadow: inset 0 0 0 3px var(--accent);
+             max-width: 34rem; line-height: 1.25; }
   [hidden] { display: none !important; }
 
   main { display: grid; grid-template-columns: 31rem 1fr; grid-template-rows: minmax(0, 1fr); gap: 1.75rem; min-height: 0; }
@@ -533,6 +536,7 @@
       <div class="badges">
         <span class="badge" id="notice" role="status" hidden></span>
         <span class="badge" id="quiet" hidden></span>
+        <span class="badge trouble" id="trouble" role="alert" hidden></span>
         <span class="badge" id="lang" hidden></span>
         <span class="badge" id="offline" hidden>Offline: working on this computer</span>
         <span class="badge" id="private"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg><span id="t-private">Pictures and voice stay on this computer</span></span>
@@ -1798,6 +1802,7 @@
     $("offline").hidden = s.online;
     $("notice").hidden = !s.notice; $("notice").textContent = s.notice || "";
     $("quiet").hidden = !s.quiet; $("quiet").textContent = s.quiet || "";
+    $("trouble").hidden = !s.trouble; $("trouble").textContent = s.trouble || "";
     $("lang").hidden = !s.language; $("lang").textContent = s.language || "";
     $("private").hidden = s.staged; $("staged").hidden = !s.staged;
     side(s); card(s); models(s.models);

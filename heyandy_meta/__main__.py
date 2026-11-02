@@ -182,6 +182,11 @@ def main() -> None:
         ears = Endpointer()
         threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), ears, stop),
                          daemon=True).start()
+        from .robot.audio_watch import AudioWatch
+
+        # Its ears and voice, watched: November 2 they stopped for half an hour and nothing said so
+        andy.audio_watch = AudioWatch(andy.body, on_change=andy.screen.trouble)
+        threading.Thread(target=andy.audio_watch.watch, args=(stop,), daemon=True, name="audio-watch").start()
 
         def look_at_the_person():
             """During a conversation: SAM 3.1 finds the face and the head eases towards it."""
