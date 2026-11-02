@@ -107,3 +107,37 @@ def test_sweeping_the_room_waits_for_your_thing_and_looks_at_one_place_a_frame(p
       return E.places(E.likeness(thing, room), room, 1).length;
     }""")
     assert one == 1  # live, each frame looks again at only its best place (evals/eyes_live.py measures the whole sweep)
+
+
+def test_the_library_comes_from_this_sites_own_copy_when_the_cdn_cant_be_reached(page, tmp_path):
+    """November 2: the demo's libraries came only from jsDelivr, so a CDN that's down or blocked on a judge's network
+    would have stopped Andy's eyes and "Say it". Now eyes-core.js's library() tries the CDN, then vendor/ (the Space's
+    build copies it there, checked by SHA-256), and points the runtime's files at vendor/ too."""
+    import shutil
+
+    shutil.copy(files("heyandy_meta.screen").joinpath("eyes-core.js"), tmp_path / "eyes-core.js")
+    (tmp_path / "vendor").mkdir()
+    (tmp_path / "vendor" / "transformers.min.js").write_text(
+        'export const env = {backends: {onnx: {wasm: {}}}}; export const from = "vendor";')
+    (tmp_path / "index.html").write_text("<!doctype html><title>t</title>")
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(tmp_path))
+    handler.log_message = lambda *a: None
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    site = f"http://127.0.0.1:{server.server_address[1]}"
+    try:
+        pg = page.context.browser.new_page()  # the module's browser: one Playwright per module
+        pg.route("**/*", lambda r: r.abort() if not r.request.url.startswith(site) else r.continue_())  # no CDN
+        pg.goto(f"{site}/index.html")
+        got = pg.evaluate("import('./eyes-core.js').then(m => m.library()).then(T => [T.from, T.env.backends.onnx.wasm.wasmPaths])")
+        pg.close()
+    finally:
+        server.shutdown()
+    assert got == ["vendor", f"{site}/vendor/"]
+
+
+def test_the_models_are_pinned_to_a_commit_not_main():
+    core = files("heyandy_meta.screen").joinpath("eyes-core.js").read_text()
+    page = files("heyandy_meta.screen").joinpath("page.html").read_text()
+    assert 'REVISION = "ec7abea1a8757ec4f9f7b26399d31234ffaa6e6a"' in core and core.count("revision: REVISION") == 3
+    assert 'revision: "a19f851b3d42865797e410752b4c570c871e4825"' in page

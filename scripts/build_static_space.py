@@ -15,6 +15,37 @@ from importlib.resources import files
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+# The browser's libraries, also served from the Space itself, for when their CDN can't be reached (down, or blocked on
+# a visitor's network): fetched once into a cache and checked by SHA-256, so a build never ships other bytes. The CDN
+# stays first: it sends them compressed (the runtime 4 MB), where the Space sends its own copy whole (22 MB).
+CDN = "https://cdn.jsdelivr.net/npm/"
+VENDOR = {
+    "transformers.min.js": ("@huggingface/transformers@3.7.6/dist/transformers.min.js",
+                            "13746ae88695b62e431fc5ebe3beb10a080d2081406047670639ce8c10a9ba25"),
+    "ort-wasm-simd-threaded.jsep.mjs": ("@huggingface/transformers@3.7.6/dist/ort-wasm-simd-threaded.jsep.mjs",
+                                        "08fb86ec433c78bfb032c5d84a68b8e8e5a8d81268fa39e24314179a5767a5b9"),
+    "ort-wasm-simd-threaded.jsep.wasm": ("@huggingface/transformers@3.7.6/dist/ort-wasm-simd-threaded.jsep.wasm",
+                                         "c46655e8a94afc45338d4cb2b840475f88e5012d524509916e505079c00bfa39"),
+    "qrcode.js": ("qrcode-generator@1.4.4/qrcode.js", "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780"),
+}
+CACHE = Path.home() / ".cache" / "heyandy-meta" / "vendor"
+
+
+def vendored(name: str, fetch=None) -> bytes:
+    """One library file, from the cache or the CDN, only if its SHA-256 is the one recorded here."""
+    import hashlib
+    import urllib.request
+
+    path, digest = VENDOR[name]
+    cached = CACHE / name
+    data = cached.read_bytes() if cached.exists() else None
+    if data is None or hashlib.sha256(data).hexdigest() != digest:
+        data = (fetch or (lambda u: urllib.request.urlopen(u, timeout=60).read()))(CDN + path)
+        if hashlib.sha256(data).hexdigest() != digest:
+            raise SystemExit(f"{name} from {CDN + path} isn't the file recorded (SHA-256 differs): not building with it")
+        CACHE.mkdir(parents=True, exist_ok=True)
+        cached.write_bytes(data)
+    return data
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -77,6 +108,9 @@ def main() -> None:
     (OUT / "eyes.html").write_text(files("heyandy_meta.screen").joinpath("eyes.html").read_text())
     (OUT / "eyes-core.js").write_text(files("heyandy_meta.screen").joinpath("eyes-core.js").read_text())
     (OUT / "eyes").mkdir()
+    (OUT / "vendor").mkdir()
+    for name in VENDOR:  # the libraries' fallback copies, checked
+        (OUT / "vendor" / name).write_bytes(vendored(name))
     for name in ("cup.webp", "cups.webp", "cups-without.webp", "CREDITS.txt"):
         (OUT / "eyes" / name).write_bytes(files("heyandy_meta.screen").joinpath("eyes", name).read_bytes())
     for f in OUT.rglob("*"):

@@ -9,6 +9,22 @@
 // is compared with its view of your thing. The best of those is the answer, and only if it's close enough.
 
 export const MODEL = "onnx-community/dinov2-with-registers-small";
+// The model as it was on November 2, by its commit, not "main": what judges and visitors get can't change under them.
+export const REVISION = "ec7abea1a8757ec4f9f7b26399d31234ffaa6e6a";
+export const LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
+
+// transformers.js: from the CDN first (sent compressed, 4 MB, where this Space sends its own copy whole, 22 MB), and
+// from this site's own copy (vendor/, fetched and checked by SHA-256 when the Space is built) if the CDN can't be
+// reached: down, slow to fail, or blocked on the visitor's network. Either way the photos never leave the device.
+export async function library(base = (typeof location !== "undefined" ? location.href : "")) {
+  try {
+    return await import(LIB);
+  } catch (e) {
+    const T = await import(new URL("vendor/transformers.min.js", base).href);
+    T.env.backends.onnx.wasm.wasmPaths = new URL("vendor/", base).href;  // its runtime from here too
+    return T;
+  }
+}
 export const PATCH = 14;
 const MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];
 const REGISTERS = 4;  // DINOv2 with registers: the CLS token, 4 registers, then the squares
@@ -18,12 +34,12 @@ export async function load(transformers, onProgress) {
   const { AutoModel, env } = transformers;
   env.allowLocalModels = false;
   const gpu = typeof navigator !== "undefined" && navigator.gpu && await navigator.gpu.requestAdapter().catch(() => null);
-  const options = gpu ? { device: "webgpu", dtype: "fp16" } : { device: "wasm", dtype: "q8" };
+  const options = gpu ? { device: "webgpu", dtype: "fp16", revision: REVISION } : { device: "wasm", dtype: "q8", revision: REVISION };
   try {
     return { model: await AutoModel.from_pretrained(MODEL, { ...options, progress_callback: onProgress }), ...options };
   } catch (e) {
     if (!gpu) throw e;  // a WebGPU that can't run it: the CPU can
-    const cpu = { device: "wasm", dtype: "q8" };
+    const cpu = { device: "wasm", dtype: "q8", revision: REVISION };
     return { model: await AutoModel.from_pretrained(MODEL, { ...cpu, progress_callback: onProgress }), ...cpu };
   }
 }

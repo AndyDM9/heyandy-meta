@@ -944,10 +944,12 @@
   function earsReady(onProgress) {
     if (ears) return Promise.resolve(ears);
     earsLoading ??= (async () => {
-      const T = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6");
+      const { library } = await import("./eyes-core.js");  // the CDN first, this site's own copy if it can't be reached
+      const T = await library();
       T.env.allowLocalModels = false;
-      const model = await T.AutoModelForCTC.from_pretrained("Xenova/wav2vec2-base-960h",
-                                                            { dtype: "q8", device: "wasm", progress_callback: onProgress });
+      const model = await T.AutoModelForCTC.from_pretrained("Xenova/wav2vec2-base-960h", {
+        dtype: "q8", device: "wasm", progress_callback: onProgress,
+        revision: "a19f851b3d42865797e410752b4c570c871e4825" });  // as on November 2, by its commit: it can't change under a judge
       ears = { model, T };
       return ears;
     })().catch((e) => { earsLoading = null; throw e; });

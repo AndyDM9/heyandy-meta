@@ -1700,3 +1700,18 @@ Found and fixed, each with a test:
   can't read the kernel's log instead of taking that for "no errors". Tested on empty answers. **And a leak check before
   a long filming day:** the SAM 3.1 server (up 11.5 h, 12.8 GB of RAM: its weights) answered 60 finds and guard reads
   without growing by a megabyte, in RAM or on the GPU.
+
+## 76. The live demo, made to hold up through judging (November 2, late morning)
+
+- **What the Space fetched from elsewhere at runtime**, recorded in Chromium during a find with Andy's eyes and "Say
+  it": transformers.js 3.7.6 and its WebAssembly runtime from jsDelivr (pinned by version, no integrity check), and the
+  two models from Hugging Face at `main` (DINOv2 with registers, small; wav2vec 2.0 base). So a model repository
+  updated during judging would have changed what judges saw, and a CDN down or blocked on a judge's network would have
+  stopped both. The Space's own host (CloudFront) sends files uncompressed (no content-encoding), so serving the 22 MB
+  runtime only from the Space would have cost a phone five times jsDelivr's 4 MB.
+- **Now:** both models load at their commits of November 2 (`ec7abea1`, `a19f851b`), never `main`; the libraries come
+  from the CDN first and, if it can't be reached, from the Space's own copy (`vendor/`), which the build fetches once
+  and refuses to ship unless each file's SHA-256 is the one recorded. In Chromium: with the network as it is, the
+  libraries from jsDelivr and every model file at its pinned commit; with jsDelivr blocked, Andy's eyes and "Say it"
+  both still load, from `vendor/`, with no page error. Tests: the fallback (no network), the pins, and a build that
+  meets a different file stops.

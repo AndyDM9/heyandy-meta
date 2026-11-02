@@ -82,3 +82,21 @@ def test_no_answer_is_never_all_running_nor_all_capped():
         preflight.power_too_high("")
     assert preflight.power_too_high("0, 300.00\n1, 300.00\n") == []
     assert preflight.power_too_high("0, 420.00\n1, 300.00\n") == ["GPU 0 at 420 W"]
+
+
+def test_the_space_build_never_ships_a_library_file_it_didnt_check(tmp_path, monkeypatch):
+    import hashlib
+
+    import pytest
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    import build_static_space as b
+
+    monkeypatch.setattr(b, "CACHE", tmp_path)
+    good = b"export const env = {};"
+    monkeypatch.setitem(b.VENDOR, "x.js", ("pkg@1/x.js", hashlib.sha256(good).hexdigest()))
+    assert b.vendored("x.js", fetch=lambda url: good) == good and (tmp_path / "x.js").read_bytes() == good
+    assert b.vendored("x.js", fetch=lambda url: 1 / 0) == good  # from the cache now, no fetch
+    (tmp_path / "x.js").write_bytes(b"tampered")
+    with pytest.raises(SystemExit, match="SHA-256 differs"):
+        b.vendored("x.js", fetch=lambda url: b"something else")
