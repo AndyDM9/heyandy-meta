@@ -704,14 +704,15 @@ takes nothing after. The meeting's own timing replayed: 37 answers with the old 
 keeps 6 of 8 follow-ups without the name ([§79](docs/research.md#79-a-conversation-andy-isnt-part-of-november-2-early-afternoon)).
 
 **What it costs, and the breath it heard** (`scripts/energy.py`, `evals/ego_noise.py`, November 2): from Andy's own
-once-a-second GPU log, the two cards drew 188.1 W over 29.7 hours with Andy running: 4.51 kWh a day, $24.92 a month
+once-a-second GPU log, the two cards drew 188.1 W over 29.8 hours with Andy running: 4.51 kWh a day, $24.92 a month
 at the U.S. average price (EIA, August 2026; the cards only). GPU 1 hardly ever rested: 135.3 W through a night with
-nobody there, against 17.6 W resting. Overnight Andy let go 1,043 sounds an hour, and their times (never a sound or a
+no one talking to it, against 17.6 W resting. Overnight Andy let go 1,043 sounds an hour, and their times (never a sound or a
 word) kept the time of its own breathing, twice a breath as its motors turn back: z 1,926 at its rate, 5.1 at most at
 any other. Andy was hearing its own motors, and each sound started speech recognition and a look for a face. Now,
 ten minutes with no turn and nothing going on, Andy rests: still and quiet, SAM 3.1 asked only when the camera's
 picture changes, and woken by anyone there or any turn
-([§89](docs/research.md#89-what-andy-costs-to-keep-and-the-breath-it-heard-november-2-evening)).
+([§89](docs/research.md#89-what-andy-costs-to-keep-and-the-breath-it-heard-november-2-evening); [the night's
+picture](docs/images/breath-spike.png)).
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second

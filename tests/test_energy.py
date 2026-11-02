@@ -97,3 +97,30 @@ def test_rayleigh_is_zero_for_even_times_and_one_for_locked_ones():
     assert r == pytest.approx(1.0) and z == pytest.approx(100.0)
     assert ego_noise.rayleigh([], hz) == (0.0, 0.0)
     assert math.isclose(sum(ego_noise.phases(locked, hz)), 100)
+
+
+# --- the picture of it (scripts/breath_chart.py) ---
+
+def test_the_chart_labels_the_one_spike_and_the_most_anywhere_else():
+    import breath_chart
+
+    points = [(0.15 + i * 0.0001, 3.0 + (i % 7) * 0.5) for i in range(1501)]
+    points[700] = (points[700][0], 1926.0)
+    chart, figures = breath_chart.svg(points, points[700][0])
+    assert figures == {"peak at": round(points[700][0], 4), "z": 1926, "any other rate, at most": 6.0}
+    assert "z 1,926" in chart and "every other rate: 6 at most" in chart
+
+
+def test_the_chart_shows_the_night_the_scorecard_measured():
+    import json
+
+    from PIL import Image
+
+    import breath_chart
+    from scripts.claims import newest, summary
+
+    shown = json.loads(Image.open(breath_chart.OUT).text["figures"])
+    night = next(v for k, v in summary(newest("ego-noise")).items() if k.startswith("night"))
+    assert shown["sounds an hour"] == night["an hour"]
+    assert shown["z"] == round(night["with the breath (twice a breath)"]["z"])
+    assert shown["any other rate, at most"] == night["control"]["largest z at any other rate"]

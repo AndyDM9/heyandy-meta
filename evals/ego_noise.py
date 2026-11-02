@@ -113,7 +113,7 @@ def main() -> None:
     hz = Motion().breathe_hz
     windows = {args.label: (args.since, args.until)}
     if args.save:
-        windows = {"night, nobody there (Nov 2)": ("2026-11-02 00:00", "2026-11-02 05:30"),
+        windows = {"night, no turns (Nov 2)": ("2026-11-02 00:00", "2026-11-02 05:30"),
                    "day, people about (Nov 2)": ("2026-11-02 09:00", "2026-11-02 17:40")}
         if args.until or args.since != "2026-11-02 00:00":
             windows[args.label] = (args.since, args.until)

@@ -117,7 +117,7 @@ def main() -> None:
     resting = {g: summary(whole)["cards"][f"GPU {g}"]["resting W (median)"] for g in (0, 1)}
     windows = {args.label: (since, until)}
     if args.save:
-        windows = {"all": (since, until), "night (nobody there)": (datetime(2026, 11, 2, 0, 0), datetime(2026, 11, 2, 5, 30))}
+        windows = {"all": (since, until), "night (no turns)": (datetime(2026, 11, 2, 0, 0), datetime(2026, 11, 2, 5, 30))}
     result = {}
     for label, (a, b) in windows.items():
         secs = [s for s in whole if (a is None or s["t"] >= a) and (b is None or s["t"] < b)]

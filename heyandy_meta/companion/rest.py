@@ -1,7 +1,7 @@
 """Andy rests when nobody's there: still and quiet, its models idle, until someone comes or speaks to it.
 
 November 2 (docs/research.md section 89): between moves Andy breathes (robot/motion.py), and its microphones heard its
-own motors turn back, twice a breath, all night: 1,043 sounds an hour with nobody there, each heard by Omnilingual ASR
+own motors turn back, twice a breath, all night: 1,043 sounds an hour, not one for it, each heard by Omnilingual ASR
 and each starting SAM 3.1's look for a face, so GPU 1 never rested (135 W, against 18 W resting). So after a while with
 no turn, Andy rests: the breath fades out and the motors fall quiet. While it rests, SAM 3.1 is asked only when the
 camera's picture changes: the head being still, a changed picture is the room changing (compared on the processor, at

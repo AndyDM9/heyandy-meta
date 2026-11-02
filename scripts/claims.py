@@ -447,14 +447,14 @@ FIGURES = [
     Figure("the two cards drew 188.1 W ($24.92 a month at the U.S. average price)", "energy (latest)",
            lambda: f"the two cards drew {power()['all']['both cards']['watts']} W "
                    f"(${power()['all']['both cards']['dollars a month']} a month at the U.S. average price)"),
-    Figure("the two cards drew 188.1 W over 29.7 hours with Andy running: 4.51 kWh a day, $24.92 a month",
+    Figure("the two cards drew 188.1 W over 29.8 hours with Andy running: 4.51 kWh a day, $24.92 a month",
            "energy (latest)",
            lambda: "the two cards drew {watts} W over {h} hours with Andy running: {kwh} kWh a day, ${usd} a month".format(
                watts=power()["all"]["both cards"]["watts"], h=power()["all"]["hours"],
                kwh=power()["all"]["both cards"]["kWh a day"], usd=power()["all"]["both cards"]["dollars a month"])),
-    Figure("135.3 W through a night with nobody there, against 17.6 W resting", "energy (latest)",
-           lambda: f"{power()['night (nobody there)']['cards']['GPU 1']['average W']} W through a night with nobody "
-                   f"there, against {power()['all']['cards']['GPU 1']['resting W (median)']} W resting"),
+    Figure("135.3 W through a night with no one talking to it, against 17.6 W resting", "energy (latest)",
+           lambda: f"{power()['night (no turns)']['cards']['GPU 1']['average W']} W through a night with no one "
+                   f"talking to it, against {power()['all']['cards']['GPU 1']['resting W (median)']} W resting"),
     Figure("overnight 1,043 sounds an hour kept time with it", "ego-noise (latest)",
            lambda: f"overnight {breath()['an hour']} sounds an hour kept time with it" if breath()["kept"]
            else "overnight the sounds didn't keep time with it"),

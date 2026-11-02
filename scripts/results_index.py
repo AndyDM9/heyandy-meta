@@ -215,10 +215,10 @@ def gpu_budget(f: str) -> str:
 
 def energy(f: str) -> str:
     s = load(f)["summary"]
-    every, night = s["all"], s["night (nobody there)"]
+    every, night = s["all"], s["night (no turns)"]
     return (f"the two GPUs drew **{every['both cards']['watts']} W** over {every['hours']} h with Andy running "
             f"({every['both cards']['kWh a day']} kWh a day, ${every['both cards']['dollars a month']} a month at the U.S. "
-            f"average); at night with nobody there GPU 1 still drew {night['cards']['GPU 1']['average W']} W, against "
+            f"average); through a night with no turns GPU 1 still drew {night['cards']['GPU 1']['average W']} W, against "
             f"{every['cards']['GPU 1']['resting W (median)']} W resting")
 
 

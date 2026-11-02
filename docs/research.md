@@ -1948,28 +1948,29 @@ Found and fixed, each with a test:
 - **Why:** after what the whole Andy takes (section 87), the next question about two GPUs at home is what they cost to
   keep on. A logger has written each card's power, state and load once a second since October 31 (gpu-watch: numbers
   only), so the answer was already on disk.
-- **What it costs** (`scripts/energy.py`; `energy-20261102-1746`): over 29.7 hours with Andy running, the two cards
-  drew 188.1 W on average: 4.51 kWh a day, $24.92 a month at the U.S. residential average of 18.16 cents a kWh (EIA,
-  Electric Power Monthly, Table 5.6.A, August 2026). The cards only: the processor's meter needs root, and the rest of
-  the computer and the robot a meter at the wall. **GPU 1 rested 2% of the time.** With its models loaded it rests at
-  17.6 W (its lowest power state, logged on the rare minutes nothing asked it anything: nine minutes while the robot
-  was disconnected, just after 1 pm); otherwise it drew 112 to 160 W, day and night. From midnight to 5:30, nobody there, GPU 1
-  averaged 135.3 W at 20% load, and needed about 20 s with nothing asked to drop to rest (7 to 98 s, 11 drops logged).
-- **What kept it busy:** per process (nvidia-smi's own counts), SAM 3.1's server and the voice server, both working
-  most seconds. The journal says why, in numbers: overnight Andy let go 1,043 sounds an hour (one every 3.4 s), each
-  heard by Omnilingual ASR on GPU 1, and each opening the ears, which ran SAM 3.1's look for a face every second;
-  and while it keeps an eye on something, the noticer asked SAM 3.1 for a person every 5 s, there or not.
-- **Whose sounds** (`evals/ego_noise.py`, `ego-noise-20261102-1746`: the times of those lines only, never a sound or
-  a word): Andy breathes between moves, its head and antennas rising and falling 0.22 times a second, and its motors
-  turn back twice a breath. The night's sounds kept that time: their phase in the breath, at twice its rate, a
-  resultant of 0.579 and a Rayleigh z of 1,926, against at most 5.1 at any other rate from 0.15 to 0.30 a second
-  (scanned a ten-thousandth apart). Nothing in a room keeps a robot's own clock for five hours: **Andy was hearing its
-  own breathing.** In the day, with people about, z 70.7 (at most 11.2 elsewhere): about a quarter of the sounds let
-  go, by the phase histogram's excess over even. It's the robots' ego-noise problem (a robot's own motors in its
-  microphones), here found with no recording at all.
+- **What it costs** (`scripts/energy.py`; `energy-20261102-1805`, up to the fix at 17:49): over 29.8 hours with Andy
+  running, the two cards drew 188.1 W on average: 4.51 kWh a day, $24.92 a month at the U.S. residential average of
+  18.16 cents a kWh (EIA, Electric Power Monthly, Table 5.6.A, August 2026). The cards only: the processor's meter needs
+  root, and the rest of the computer and the robot a meter at the wall. **GPU 1 rested 2% of the time.** With its models
+  loaded it rests at 17.6 W (its lowest power state, logged on the rare minutes nothing asked it anything: nine minutes
+  while the robot was disconnected, just after 1 pm); otherwise it drew 112 to 160 W, day and night. From midnight to
+  5:30, no turns, GPU 1 averaged 135.3 W at 20% load, and needed about 20 s with nothing asked to drop to rest (7 to 98
+  s, 11 drops logged).
+- **What kept it busy:** per process (nvidia-smi's own counts), SAM 3.1's server and the voice server, both working most
+  seconds. The journal says why, in numbers: overnight Andy let go 1,043 sounds an hour (one every 3.4 s), each heard by
+  Omnilingual ASR on GPU 1, and each opening the ears, which ran SAM 3.1's look for a face every second; and while it
+  keeps an eye on something, the noticer asked SAM 3.1 for a person every 5 s, there or not.
+- **Whose sounds** (`evals/ego_noise.py`, `ego-noise-20261102-1805`: the times of those lines only, never a sound or a
+  word): Andy breathes between moves, its head and antennas rising and falling 0.22 times a second, and its motors turn
+  back twice a breath. The night's sounds kept that time: their phase in the breath, at twice its rate, a resultant of
+  0.579 and a Rayleigh z of 1,926, against at most 5.1 at any other rate from 0.15 to 0.30 a second (scanned a
+  ten-thousandth apart). Nothing in a room keeps a robot's own clock for five hours: **Andy was hearing its own
+  breathing.** In the day, with people about, z 70.7 (at most 11.2 elsewhere): about a quarter of the sounds let go, by
+  the phase histogram's excess over even. It's the robots' ego-noise problem (a robot's own motors in its microphones),
+  here found with no recording at all.
 - **Now** (`heyandy_meta/companion/rest.py`): ten minutes with no turn and nothing going on, Andy rests: the breath
   fades out over 2 s and the motors fall quiet; the noticer and the face-following stand down; every 3 s the camera's
   picture is compared with the room's on the processor (160 by 90, grey, never kept), and only a change asks SAM 3.1
-  whether someone's there. Someone there wakes it; so does any turn, filming (never resting in a take), a reminder
-  said, or following. A lamp going on costs one look. `--no-rest` turns it off; the journal says when it rested and
-  woke, and how often SAM was asked.
+  whether someone's there. Someone there wakes it; so does any turn, filming (never resting in a take), a reminder said,
+  or following. A lamp going on costs one look. `--no-rest` turns it off; the journal says when it rested and woke, and
+  how often SAM was asked.
