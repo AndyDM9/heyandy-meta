@@ -50,6 +50,26 @@ def drawn_mug() -> bytes:
     return out.getvalue()
 
 
+def audio_port(devices: Path = Path("/sys/bus/usb/devices")) -> str | None:
+    """The robot's audio device's USB port as the kernel names it ("1-5.2.1"), from its product name."""
+    for d in sorted(devices.glob("*")):
+        try:
+            if (d / "product").read_text().strip() == "Reachy Mini Audio":
+                return d.name
+        except OSError:
+            continue
+    return None
+
+
+AUDIO_FAULTS = ("usb_set_interface failed", "cannot submit urb", "cannot get freq", "clock source")
+
+
+def audio_usb_errors(kernel_log: str, port: str) -> int:
+    """The kernel's complaints about the robot's audio device: November 2 it stopped answering after the desktop woke
+    (thousands of these), the direction of a voice couldn't be read, and Andy's hearing stopped."""
+    return sum(1 for line in kernel_log.splitlines() if f"usb {port}:" in line and any(f in line for f in AUDIO_FAULTS))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cloud", action="store_true", help="also make one tiny Muse Spark call")
@@ -181,6 +201,21 @@ def main() -> None:
             raise RuntimeError(f"the daemon started without the robot's {' and '.join(missing)}: "
                                "systemctl --user restart heyandy-robot heyandy-app, then this again")
         return "both found"
+
+    @check("the robot's microphones and speaker, in the kernel's log since its daemon started")
+    def _():
+        port = audio_port()
+        if not port:
+            raise RuntimeError("no Reachy Mini Audio on USB: is the robot plugged in and its power on?")
+        since = subprocess.run(["systemctl", "--user", "show", "heyandy-robot", "-p", "ActiveEnterTimestamp",
+                                "--value"], capture_output=True, text=True).stdout.strip()
+        log = subprocess.run(["journalctl", "-k", "--since", since or "-1h", "--no-pager", "-o", "cat"],
+                             capture_output=True, text=True).stdout
+        bad = audio_usb_errors(log, port)
+        if bad:
+            raise RuntimeError(f"{bad} USB errors from the robot's audio ({port}): Andy may not hear -> "
+                               "uv run python scripts/reset_robot_audio.py, then this again")
+        return f"no USB errors ({port})"
 
     @check("GPU power capped (a full-power card fell off the bus once)")
     def _():

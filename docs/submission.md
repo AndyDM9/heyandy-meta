@@ -69,7 +69,7 @@ this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's
 
 - **A point checked by its own camera.** The camera showed the head sagging after its pointing nod, and that the base's
   turn was being added twice; the command is now corrected by what the frame shows (worst point 13.7 degrees off the
-  middle of the view before, under 9 after).
+  middle of the view before; on the final code, over 18 searches, a median 1.1 and 2.2 at worst).
 - **The room in 3D.** MapAnything alone made five looks 1.3 times too wide; with its depth, Andy's own rays and the
   head's measured angles, looks agree to a median 0.9 degrees, and scan to scan within 1.
 - **Every model Meta's, the voice too.** Meta's API has no voice, so Andy speaks with SeamlessM4T v2 (9% of words

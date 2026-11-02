@@ -60,3 +60,102 @@ def test_ring_it_hears_a_ringtone_and_not_a_voice():
     assert reading(rings, 0.01) == -20.0
     talk = [(i, 0.2, 0.05, 10.0) for i in range(8)] + [(9, 0.2, 0.004, 10.0)] * 3  # tonal only now and then
     assert reading(talk, 0.01) is None
+
+
+def test_the_app_store_app_turns_each_pixel_as_andy_does():
+    """Andy Finder's copy of finder/geometry.py's true ray: the same head direction for any pixel and view."""
+    from heyandy_meta.finder.geometry import LITE, pixel_to_angles
+
+    for x, y, yaw, pitch in [(100, 100, 0, 15), (1800, 1000, 30, 20), (960, 540, -40, 5), (50, 1050, 55, 25)]:
+        assert where_to_look(x, y, 1920, 1080, yaw, pitch) == pytest.approx(pixel_to_angles(x, y, yaw, pitch, LITE))
+    assert where_to_look(25, 525, 960, 540, 10, 15) == pytest.approx(pixel_to_angles(50, 1050, 10, 15, LITE), abs=1e-6)
+
+
+def test_how_far_off_a_point_is():
+    from andy_finder.main import off_middle
+
+    assert off_middle(953, 542, 1920, 1080) == pytest.approx(0.0)
+    assert off_middle(953 + 1054, 542, 1920, 1080) == pytest.approx(45.0)
+    assert off_middle(476.5, 271 + 527 * 0.1, 960, 540) == pytest.approx(5.71, abs=0.01)
+
+
+def test_the_head_read_back_from_the_daemon_pose():
+    from reachy_mini.utils import create_head_pose
+
+    from andy_finder.main import head_angles
+
+    assert head_angles(create_head_pose(yaw=25, pitch=12, degrees=True)) == pytest.approx((25, 12), abs=1e-6)
+
+
+def _v4l2(listing="Reachy Mini Camera: Reachy Mini (usb-0000:00:14.0-2):\n\t/dev/video0\n\t/dev/video1\n\n", auto=1):
+    """A stand-in for v4l2-ctl: records each call, answers the list and the autofocus reading."""
+    from types import SimpleNamespace
+
+    calls = []
+
+    def run(cmd, **kw):
+        calls.append(cmd)
+        if cmd == ["v4l2-ctl", "--list-devices"]:
+            return SimpleNamespace(stdout=listing)
+        if "--get-ctrl" in cmd:
+            return SimpleNamespace(stdout=f"focus_automatic_continuous: {auto}\n")
+        return SimpleNamespace(stdout="")
+    return run, calls
+
+
+def _jpeg(blur: float) -> bytes:
+    import io as io_
+
+    import numpy as np
+    from PIL import Image, ImageFilter
+
+    rng = np.random.default_rng(1)
+    img = Image.fromarray((rng.random((90, 160)) * 255).astype("uint8")).filter(ImageFilter.GaussianBlur(blur))
+    b = io_.BytesIO()
+    img.save(b, "JPEG", quality=95)
+    return b.getvalue()
+
+
+def test_the_focus_is_held_where_the_table_is_sharpest_and_given_back_as_it_was():
+    from andy_finder.main import Focus
+
+    run, calls = _v4l2(auto=1)
+    lens = {"at": 0}
+
+    def fake(cmd, **kw):
+        for i, a in enumerate(cmd):
+            if a == "-c" and cmd[i + 1].startswith("focus_absolute="):
+                lens["at"] = int(cmd[i + 1].split("=")[1])
+        return run(cmd, **kw)
+    focus = Focus(run=fake)
+    assert focus.dev == "/dev/video0"
+    looked = []
+    held = focus.hold(lambda y, p: looked.append((y, p)), lambda: _jpeg(abs(lens["at"] - 520) / 25), settle_s=0)
+    assert held in (500, 537) and looked == [(0.0, 15.0)]
+    assert ["v4l2-ctl", "-d", "/dev/video0", "-c", "focus_automatic_continuous=0"] in calls
+    assert calls[-1] == ["v4l2-ctl", "-d", "/dev/video0", "-c", f"focus_absolute={held}"]
+    focus.release()
+    assert calls[-1] == ["v4l2-ctl", "-d", "/dev/video0", "-c", "focus_automatic_continuous=1"]
+
+
+def test_a_blank_view_leaves_autofocus_on_and_no_camera_changes_nothing():
+    from andy_finder.main import Focus
+
+    run, calls = _v4l2()
+    assert Focus(run=run).hold(lambda y, p: None, lambda: _jpeg(1.0), settle_s=0) is None
+    assert calls[-1][-1] == "focus_automatic_continuous=1"
+    run, calls = _v4l2(listing="Integrated Webcam (usb-0000:00:14.0-5):\n\t/dev/video0\n\n")
+    focus = Focus(run=run)
+    assert focus.dev is None and focus.hold(lambda y, p: None, lambda: b"", settle_s=0) is None
+    focus.release()
+    assert calls == [["v4l2-ctl", "--list-devices"]]
+
+
+def test_focus_held_by_something_else_stays_held_after_the_app():
+    from andy_finder.main import Focus
+
+    run, calls = _v4l2(auto=0)
+    focus = Focus(run=run)
+    focus.hold(lambda y, p: None, lambda: _jpeg(1.0), settle_s=0)
+    focus.release()
+    assert calls[-1][-1] == "focus_automatic_continuous=0"

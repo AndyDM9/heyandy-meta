@@ -47,7 +47,7 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 1,400 words on what it is and what's new (`docs/submission.md`: fill its [brackets], the video's link;
        nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`).
-7. [ ] Publish Andy Finder (0.2.0: "Ring it" works with nothing set up) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
+7. [ ] Publish Andy Finder (0.3.0: "Ring it" works with nothing set up; finds with the focus held, the true ray and its own aim check) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
        `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space`. The `reachy_mini_python_app` tag lists it.
 8. [ ] After submitting: share the gallery page for the community vote.

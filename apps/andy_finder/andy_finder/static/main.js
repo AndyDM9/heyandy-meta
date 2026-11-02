@@ -107,7 +107,8 @@ function render(s) {
 
   if (phase === "looking" && s.look) {
     eyesTo(s.look.yaw);
-    $("scan-text").textContent = `Looking ${s.look.side} · ${s.look.boxes.length ? s.look.boxes.length + " possible" : "nothing yet"}`;
+    $("scan-text").textContent = s.look.pointing ? "Found it · turning to it, then checking my aim"
+      : `Looking ${s.look.side} · ${s.look.boxes.length ? s.look.boxes.length + " possible" : "nothing yet"}`;
     marks(s.look.w, s.look.h, s.look.boxes, null);
   } else if (phase === "found" && s.found) {
     eyesTo(s.found.yaw);
@@ -118,7 +119,9 @@ function render(s) {
       $("r-title").textContent = "Your " + s.found.thing;
       const nums = $("r-nums"); nums.replaceChildren();
       $("r-side").textContent = s.found.side[0].toUpperCase() + s.found.side.slice(1) + ".";
-      for (const [big, small] of [[s.found.seconds.toFixed(1) + " s", "to find it"], [Math.round(s.found.score * 100) + "%", "SAM 3.1 sure"]]) {
+      const figures = [[s.found.seconds.toFixed(1) + " s", "to find it"], [Math.round(s.found.score * 100) + "%", "SAM 3.1 sure"]];
+      if (s.found.aim != null) figures.push([s.found.aim.toFixed(1) + "°", "off, as my camera checked"]);
+      for (const [big, small] of figures) {
         const d = document.createElement("div"), b = document.createElement("b"), sp = document.createElement("span");
         b.textContent = big; sp.textContent = small; d.append(b, sp); nums.append(d);
       }

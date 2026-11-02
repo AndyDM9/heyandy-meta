@@ -1,0 +1,350 @@
+{
+ "when": "2026-11-02 08:31-08:37",
+ "what": "Andy Finder 0.3.0 on the Reachy Mini Lite, local SAM 3.1 (no picture left this computer); numbers only, no picture viewed",
+ "summary": {
+  "asked": 16,
+  "found": 15,
+  "checked": 14,
+  "within_1_7": 13,
+  "aim_median": 1.1,
+  "aim_worst": 5.4,
+  "seconds_median_middle_view": 5.2
+ },
+ "runs": [
+  {
+   "note": "0.3.0 before keys were asked as 'bunch of keys': the keys pointed at three different places (-62.6, -49.3; later -38.3), likely keyboard keys",
+   "finds": [
+    {
+     "thing": "cup",
+     "phase": "found",
+     "status": "There's your cup, to my right.",
+     "seconds": 5.1,
+     "score": 0.97,
+     "aim": 1.0,
+     "yaw": -46.5,
+     "views": [
+      [
+       0.0,
+       0.97
+      ]
+     ]
+    },
+    {
+     "thing": "glasses",
+     "phase": "found",
+     "status": "There's your glasses, a little to my right.",
+     "seconds": 5.2,
+     "score": 0.91,
+     "aim": 1.4,
+     "yaw": -14.4,
+     "views": [
+      [
+       0.0,
+       0.91
+      ]
+     ]
+    },
+    {
+     "thing": "keys",
+     "phase": "found",
+     "status": "There's your keys, to my right.",
+     "seconds": 13.0,
+     "score": 0.68,
+     "aim": 1.5,
+     "yaw": -62.6,
+     "views": [
+      [
+       0.0,
+       0.67
+      ],
+      [
+       28.0,
+       0.0
+      ],
+      [
+       -28.0,
+       0.68
+      ],
+      [
+       55.0,
+       0.0
+      ],
+      [
+       -55.0,
+       0.66
+      ]
+     ]
+    },
+    {
+     "thing": "watch",
+     "phase": "found",
+     "status": "There's your watch, to my right.",
+     "seconds": 5.1,
+     "score": 0.9,
+     "aim": 1.7,
+     "yaw": -43.6,
+     "views": [
+      [
+       0.0,
+       0.9
+      ]
+     ]
+    },
+    {
+     "thing": "cup",
+     "phase": "found",
+     "status": "There's your cup, a little to my right.",
+     "seconds": 5.2,
+     "score": 0.95,
+     "aim": 0.7,
+     "yaw": -28.9,
+     "views": [
+      [
+       0.0,
+       0.95
+      ]
+     ]
+    },
+    {
+     "thing": "glasses",
+     "phase": "found",
+     "status": "There's your glasses, a little to my right.",
+     "seconds": 5.2,
+     "score": 0.91,
+     "aim": 1.7,
+     "yaw": -20.7,
+     "views": [
+      [
+       0.0,
+       0.91
+      ]
+     ]
+    },
+    {
+     "thing": "keys",
+     "phase": "found",
+     "status": "There's your keys, to my right.",
+     "seconds": 12.1,
+     "score": 0.54,
+     "aim": 0.3,
+     "yaw": -49.3,
+     "views": [
+      [
+       0.0,
+       0.54
+      ],
+      [
+       28.0,
+       0.0
+      ],
+      [
+       -28.0,
+       0.47
+      ],
+      [
+       55.0,
+       0.0
+      ],
+      [
+       -55.0,
+       0.41
+      ]
+     ]
+    },
+    {
+     "thing": "watch",
+     "phase": "found",
+     "status": "There's your watch, to my right.",
+     "seconds": 5.1,
+     "score": 0.92,
+     "aim": 1.0,
+     "yaw": -44.0,
+     "views": [
+      [
+       0.0,
+       0.92
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "note": "with 'bunch of keys': the keys at one place three times (-38.3, -38.5, -38.3); the glasses not seen at any score in any view (likely picked up)",
+   "finds": [
+    {
+     "thing": "keys",
+     "phase": "found",
+     "status": "There's your keys, to my right.",
+     "seconds": 5.1,
+     "score": 0.82,
+     "aim": 0.9,
+     "yaw": -38.3,
+     "views": [
+      [
+       0.0,
+       0.82
+      ]
+     ]
+    },
+    {
+     "thing": "cup",
+     "phase": "found",
+     "status": "There's your cup, a little to my right.",
+     "seconds": 5.2,
+     "score": 0.94,
+     "aim": 1.0,
+     "yaw": -27.9,
+     "views": [
+      [
+       0.0,
+       0.94
+      ]
+     ]
+    },
+    {
+     "thing": "keys",
+     "phase": "found",
+     "status": "There's your keys, to my right.",
+     "seconds": 5.1,
+     "score": 0.79,
+     "aim": 1.2,
+     "yaw": -38.5,
+     "views": [
+      [
+       0.0,
+       0.79
+      ]
+     ]
+    },
+    {
+     "thing": "glasses",
+     "phase": "missing",
+     "status": "I couldn't see your glasses. Is it somewhere I can't look?",
+     "seconds": null,
+     "score": null,
+     "aim": null,
+     "yaw": null,
+     "views": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       28.0,
+       0.0
+      ],
+      [
+       -28.0,
+       0.0
+      ],
+      [
+       55.0,
+       0.0
+      ],
+      [
+       -55.0,
+       0.0
+      ]
+     ]
+    },
+    {
+     "thing": "keys",
+     "phase": "found",
+     "status": "There's your keys, to my right.",
+     "seconds": 11.8,
+     "score": 0.73,
+     "aim": 1.2,
+     "yaw": -38.3,
+     "views": [
+      [
+       0.0,
+       0.66
+      ],
+      [
+       28.0,
+       0.0
+      ],
+      [
+       -28.0,
+       0.73
+      ],
+      [
+       55.0,
+       0.0
+      ],
+      [
+       -55.0,
+       0.7
+      ]
+     ]
+    },
+    {
+     "thing": "watch",
+     "phase": "found",
+     "status": "There's your watch, to my right.",
+     "seconds": 5.2,
+     "score": 0.93,
+     "aim": 0.1,
+     "yaw": -44.0,
+     "views": [
+      [
+       0.0,
+       0.93
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "note": "the glasses back at lower scores in other views and the cup re-aimed to 5.4: things on the table were likely being moved; the re-aim then moved the head without reading it back (fixed after)",
+   "finds": [
+    {
+     "thing": "glasses",
+     "phase": "found",
+     "status": "There's your glasses, a little to my right.",
+     "seconds": 11.6,
+     "score": 0.62,
+     "aim": null,
+     "yaw": -23.0,
+     "views": [
+      [
+       0.0,
+       0.31
+      ],
+      [
+       28.0,
+       0.0
+      ],
+      [
+       -28.0,
+       0.46
+      ],
+      [
+       55.0,
+       0.0
+      ],
+      [
+       -55.0,
+       0.62
+      ]
+     ]
+    },
+    {
+     "thing": "cup",
+     "phase": "found",
+     "status": "There's your cup, a little to my right.",
+     "seconds": 6.3,
+     "score": 0.94,
+     "aim": 5.4,
+     "yaw": -22.0,
+     "views": [
+      [
+       0.0,
+       0.94
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

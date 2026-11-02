@@ -112,6 +112,9 @@ class ReachyBody:
         self._moved_at = -math.inf  # when the last move returned: a frame is fresh only ``fresh_s`` after it
         self.yaw = self.pitch = 0.0  # where the head is looking, measured when the robot can tell us
         self.speaking = False  # Andy's voice is playing
+        # November 2, 08:08: the desktop woke and the array's USB control stopped answering (EIO on every read);
+        # the direction read raised, nothing caught it, and Andy's hearing thread ended: Andy was deaf. Counted now.
+        self.doa_failures = 0
         self._sent = (0.0, 0.0, 0.0)  # the last head yaw, pitch and base yaw sent
         self.motion = Motion()
         self._emotions = None  # Pollen's recorded emotions, loaded the first time one is played
@@ -413,7 +416,14 @@ class ReachyBody:
                         self._raw.popleft()
                 if chunks and not getattr(self, "speaking", False) and time.monotonic() >= getattr(self, "_quiet_until", 0):
                     mono = raw
-                    doa = media.get_DoA()
+                    try:
+                        doa = media.get_DoA()
+                    except OSError as e:  # the array's USB control can fail: hearing goes on, by loudness only
+                        doa = None
+                        self.doa_failures += 1
+                        if self.doa_failures == 1:
+                            print(f"the microphones' direction can't be read ({e}): hearing by loudness only, "
+                                  "and not turning to the voice", flush=True)
                     flag = bool(doa and doa[1])
                     yaw = self.yaw + 90.0 - math.degrees(doa[0]) if flag else None
                     yield mono, flag, yaw

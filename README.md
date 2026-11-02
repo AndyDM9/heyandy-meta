@@ -26,6 +26,11 @@ Built on Meta's models for people who live at home, starting with older adults, 
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
 
+> **Built during the event:** everything in this repository, from its first commit on October 27 (the hackathon opened
+> October 26, 12 PM ET). **From before:** our own earlier object-finding prototype, kept outside this repository (none
+> of its code is here), the HeyAndy name and logo, and open-source pieces, all listed in
+> [Built during the event, and what came before](#built-during-the-event-and-what-came-before).
+
 **In 30 seconds:**
 - **Who it's for.** Three in four adults 50 and older want to stay in their own homes as they age
   ([AARP, 2024](https://www.aarp.org/press/releases/2024-12-10-new-aarp-report-majority-adults-50-plus-age-place-policies-communities-catch-up.html)),
@@ -148,6 +153,19 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 <p align="center"><img src="docs/images/tv-promises.webp" width="760" alt="Andy's TV after &quot;Hey Andy, what won't you do?&quot;: What I never do, my promises with today's receipts: no camera picture or sound has left this house today; no health advice, 2 health questions answered in my own words today; Llama Guard 3 read 41 sentences of the models' answers before I said them; crisis words get the 988 line from my code, before any model; every word sent to the cloud is on its receipt, 68 words today; I say I'm an AI at the start of every conversation"></p>
 <p align="center"><sub>"Hey Andy, what won't you do?" (the demo's sample day: on the robot, the counts are the day's own)</sub></p>
 
+### What Meta's models taught us
+
+Measured on the robot and in the demo, none of it what we expected, and what Andy does about each:
+
+| What we found | What Andy does now | Where |
+|---|---|---|
+| Asked for "keys", **SAM 3.1 outlined every key of a keyboard** (28 of 28 masks) | asks for "bunch of keys": the keys alone, 0.89 and 0.91 sure | [research §32](docs/research.md#32-the-last-days-before-filming-2026-10-29-and-30) |
+| **DINOv2 rates a blue and a red mug of one shape 0.94 alike** (it was trained to ignore colour) | "is this my mug?" is half DINOv2, half a colour fingerprint | [§19](docs/research.md#19-this-one-is-mine-knowing-the-persons-own-things-by-sight-2026-10-27-night) |
+| **MapAnything joined five looks about 1.3 times too wide**, trusting its own guess at the turns | its depth for each pixel, along Andy's own camera rays at the head's measured angles: looks agree within 1 degree | [§33](docs/research.md#33-the-room-in-3d-and-the-robots-own-lens-2026-10-31) |
+| **SAM 3.1's video path encodes a frame again for each name** asked | one encoding for all the names: a call 0.82 s to 0.30 s, a whole find 9.8 s to 7.8 s | [§72](docs/research.md#72-sam-31-was-encoding-each-frame-once-per-name-november-1-late) |
+| **Llama Guard 3, given "no health advice" as its own category, flagged none of Andy's 168 real answers** (Muse Glimmer, asked the same, flagged 25, seven of them finds) | Llama Guard reads each sentence a model writes before Andy says it | [§65](docs/research.md#65-llama-guard-3-reads-andys-answers-too-as-meta-built-it-to-november-1-evening) |
+| **wav2vec 2.0 writes what it hears letter by letter** ("HEY ANDY WHIRL MY KEITH") | the demo snaps a near-miss word to its own words: the right scene 15 of 24, then 21 | [§60](docs/research.md#60-say-it-the-public-demo-hears-you-with-metas-wav2vec-20-in-the-browser-november-1) |
+
 ## Proof
 
 | | Measured | |
@@ -204,8 +222,10 @@ found, "You're all set", in three sentences.
    turned up! It's a little to my right, about 3 feet away." The TV's side card and a paired phone show what Andy is
    still looking for; "I found it" or "stop looking" lets go (`memory/lost.py`). On the robot it found a watch it was
    told was lost, pointed 4.1 degrees off the middle and said so out loud, and kept quiet about a wallet that wasn't there.
-   **Andy Finder, for every Reachy Mini owner** (`apps/andy_finder`, the Reachy Mini app store): the same "Ring it" with
-   nothing to set up (no key, no GPU, no internet), and finding anything else with SAM 3.1.
+   **Andy Finder, for every Reachy Mini owner** (`apps/andy_finder`, for the Reachy Mini app store): the same "Ring it" with
+   nothing to set up (no key, no GPU, no internet), and finding anything else with SAM 3.1, with Andy's measured fixes
+   (the camera's focus held on the table, each pixel's true ray, the head read back after its nod) and its own camera
+   checking the point: on the robot, 13 of 14 checks within 1.7 degrees.
    **"I'm ringing my phone."** A phone under a cushion is invisible to a camera, but it rings. Andy turns its head
    towards the ringing until its microphones hear it straight ahead, as a person turns to a sound, then looks only
    around that way with SAM 3.1, and points: "I followed the ringing. There it is!" Can't see it? It points where the
@@ -339,9 +359,10 @@ words only](docs/images/architecture.svg)
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
 
 **What existed before:**
-- **Our own earlier object-finding prototype,** built before this event: **none of its code is in this repository,
-  and nothing here imports it.** The search, memory, voice, agents and screen here were all written during the event,
+- **Our own earlier object-finding prototype,** built separately and kept outside this repository (a vision-language
+  model on tiled views, no segmentation): **none of its code is in this repository, and nothing here imports it.** The search, memory, voice, agents and screen here were all written during the event,
   on Meta's models.
+- **The HeyAndy name and signature logo**, the company's own.
 - **Third-party open source**, used under its licences: Pollen Robotics' Reachy Mini SDK and daemon, simulation scene,
   published camera calibration and recorded-emotions library (Apache-2.0); llama.cpp; Meta's `meta-sam-parser`, `sam3`,
   `map-anything` and `omnilingual-asr` code; Playwright and Chromium (the web on the TV); the Atkinson Hyperlegible
@@ -395,7 +416,8 @@ words only](docs/images/architecture.svg)
 - **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
 - **Scorecards:** the search, simulated (fixed sweep, Glimmer and Spark planners, seeded rooms); the agent (12
   multi-part requests); Spanish (41 requests, written and spoken); thirteen more languages (104 requests, written and
-  spoken, and Andy's own answers heard back); and a physical one, built and waiting to be run.
+  spoken, and Andy's own answers heard back); and a physical one, judged by a person (13 of 15 right, never a point at the
+  wrong thing).
 
 ## Run it
 ```bash
@@ -576,7 +598,9 @@ once and held); each pixel's direction taken as two angles added, wrong at the f
 (now the pixel's true ray: sightings of one thing from different views agree within a median 1.0 degree, not 1.7); and
 the head stopping a median 3.9 degrees low after its nod (now read back and lifted, up to twice). The same 18 searches,
 from the same starts: **18 of 18, a median 0.9 degrees off, 2.1 at worst, none re-aimed, 9.8 s** (`unattended-20261101-2231`;
-with the true ray alone, 17 of 18, 2.2 and 5.8, 11 re-aimed, 12.8 s). **Turning far round, for real:** a sofa
+with the true ray alone, 17 of 18, 2.2 and 5.8, 11 re-aimed, 12.8 s). Then SAM 3.1 encoding each frame once for all
+its names (section 72), the final code: **18 of 18, a median 1.1 degrees off, 2.2 at worst, none re-aimed, 7.8 s**
+(`unattended-20261101-2300`). **Turning far round, for real:** a sofa
 at Andy's left, where the base turns 55 degrees under the head, was pointed at 8 of 8, a median 2.8 degrees off,
 1.21 to 1.38 m (`unattended-20261031-1212` and `-1213`, at 84 to 85 degrees); before the fix the head never faced past
 30. **Distances repeat within a run:** the same keyboard read 0.92 to 1.00 m and the chair 1.28 to 1.35 m

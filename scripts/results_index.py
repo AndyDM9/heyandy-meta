@@ -188,6 +188,12 @@ def finder_ring(f: str) -> str:
     return f"{len(runs)} runs of \"Ring it\" on the robot ({load(f)['how'][:60]}...)"
 
 
+def finder_finds(f: str) -> str:
+    d = load(f)["summary"]
+    return (f"{d['found']} of {d['asked']} found; {d['within_1_7']} of {d['checked']} points within 1.7 degrees by its own "
+            f"camera, a median {d['aim_median']}; about {d['seconds_median_middle_view']} s when the middle view sees it")
+
+
 def live_calls(f: str) -> str:
     return f"{len(load(f)['seen'])} moments of the TV's \"Meta, live\" strip during a search on the robot"
 
@@ -221,6 +227,8 @@ CARDS = [
     ("Noticing", "V-JEPA 2 on clips of an empty table: nothing noticed", "evals.notice", "notice-empty", notice),
     ("Filming mode", "\"take one\": the clap heard in the robot's own sound", "evals.filming", "filming", filming),
     ("Andy Finder", "the Reachy Mini app's \"Ring it\", on the robot", "research.md section 47", "finder-ring", finder_ring),
+    ("Andy Finder, finding", "the Reachy Mini app's finds on the robot, its point checked by its own camera",
+     "research.md section 73", "andy-finder", finder_finds),
     ("Meta's models, live", "the TV's strip of model calls, read during a search on the robot", "research.md section 51", "live-calls", live_calls),
     ("The voice, picked by ear", "five versions of Andy's voice played on the robot's speaker", "research.md section 32", "voice-clarity", voice),
     ("The Model API", "the first calls through Meta's Model API", "scripts/smoke_model_api.py", "smoke-model-api", smoke),

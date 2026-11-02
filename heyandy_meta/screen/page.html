@@ -762,7 +762,7 @@
     const again = el("button", "Replay the story"); again.onclick = startStory;
     const all = el("button", "Explore every screen"); all.onclick = exploreAll;
     go_.append(again, all); inner.append(go_);
-    inner.append(el("small", "Sample data: no robot, camera or home here; the pictures are drawn. Built by HeyAndy, Inc. Andy gives no health advice."));
+    inner.append(el("small", "Sample data: no robot, camera or home here; the pictures are drawn. Built by HeyAndy, Inc. during Meta's hackathon (October 26 to November 4, 2026); our own earlier object-finding prototype is kept outside this code. Andy gives no health advice."));
     end.append(inner); document.body.append(end);
   }
   addEventListener("keydown", e => {

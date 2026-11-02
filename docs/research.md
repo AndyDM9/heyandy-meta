@@ -1607,3 +1607,30 @@ Found and fixed, each with a test:
   now fails a cloud shot without the key or with any "connected" (`evals/rehearsal.py` `cloud_missed`), and that run's
   two cloud shots are re-judged in its file. Its other nine shots stand: the uncut find 12.7 s from the words to the
   answer, the keys offline 11.9 s, Mandarin 18.4 s, "I fell" to the phone pointed at 21.9 s.
+
+## 73. The app store's Andy Finder brought up to the night's fixes, and the morning Andy went deaf (November 2, morning)
+
+- **Andy Finder had none of section 70 and 71's fixes.** It's a slim copy of the search for every Reachy Mini owner, so
+  it still added two angles per pixel, left the camera's autofocus hunting, took a frame 0.35 s after a move, trusted
+  the head to stop where it was sent, and asked SAM 3.1 for "keys". Version 0.3.0 (`apps/andy_finder`): the focus
+  found on the table as it starts and held (463 here, as Andy found), and autofocus given back as it was when it stops;
+  frames half a second after a move, with the head's measured direction; the true ray (tested equal to
+  `finder/geometry.py` for any pixel and view); the head read back and lifted after its nod; "bunch of keys"; and its
+  own camera checking the point (one fresh frame, the outline nearest the middle; past 3 degrees, corrected once).
+- **On the robot** (local SAM 3.1, so no picture left this computer; numbers only, `andy-finder-20261102-0831`): 16
+  asks, 15 found; **13 of 14 points checked within 1.7 degrees, a median 1.1**; about 5 s when the middle view sees
+  it. Asked for "keys", the old way pointed three times at three different places, 13 degrees apart and more; with
+  "bunch of keys", three times at one (-38.3, -38.5, -38.3). The 14th check, 5.4 degrees, came after a re-aim that moved
+  the head without reading it back (now it does), while things on the table seemed to be moving (the glasses unseen
+  at any score, then back elsewhere): worth running again on a still table.
+- **Andy was deaf from 08:08.** Six seconds after the desktop's screen woke, the robot's audio device (the microphone
+  array, "Reachy Mini Audio" on USB) began refusing its interface changes (the kernel: "usb_set_interface failed
+  (-71)", then thousands of "cannot submit urb"), and every read of a voice's direction failed with an I/O error. Andy's
+  listening loop read the direction with nothing to catch an error (Pollen's SDK says it returns None when the read
+  fails; it raises), so at Andy's next start its hearing thread ended on the first read. No check would have said so
+  before filming: preflight reads Andy's log only for ten minutes, and nothing read the kernel's.
+- **Fixed:** a direction that can't be read is now no direction (Andy hears by loudness, and doesn't turn to the voice),
+  counted, and said once in the log (a test fails on the old code); preflight reads the kernel's log for the audio
+  device since the daemon started and fails on any of its USB errors; and `scripts/reset_robot_audio.py` does what
+  worked: restarting the daemon and Andy didn't (247 errors in 40 s), a USB reset of the audio device alone did (the
+  camera and motors untouched): 20 of 20 direction reads after, no kernel error since, preflight passing.

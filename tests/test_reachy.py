@@ -312,3 +312,27 @@ def test_a_point_that_lands_needs_no_correction():
     b, robot = body(ExactReachy())
     b.point(20.0, 10.0)
     assert len(robot.moves) == 3
+
+
+def test_hearing_goes_on_when_the_microphones_direction_cant_be_read():
+    """November 2, 08:08: the microphone array's USB control stopped answering (EIO on every read) and the read of the
+    voice's direction raised inside listen(): Andy's hearing thread ended, deaf until restarted. Now the sound still
+    comes through, with no direction (the endpointer hears by loudness), and the failures are counted."""
+    import threading
+
+    import numpy as np
+
+    b, robot = body()
+    stop, chunks = threading.Event(), iter([np.full((160, 2), 0.2, dtype=np.float32)] * 25)
+
+    def doa():
+        raise OSError(5, "Input/Output Error")  # what pyusb's USBError is
+
+    robot.media.start_recording = robot.media.stop_recording = lambda: None
+    robot.media.get_audio_sample, robot.media.get_DoA = (lambda: next(chunks, None)), doa
+    heard = []
+    for mono, flag, yaw in b.listen(stop):
+        heard.append((len(mono), flag, yaw))
+        if len(heard) == 2:
+            stop.set()
+    assert heard == [(1600, False, None)] * 2 and b.doa_failures == 2

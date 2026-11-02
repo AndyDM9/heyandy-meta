@@ -2,9 +2,13 @@
 rings, it turns to by ear, with nothing to set up.
 
 A slim version of HeyAndy's search (github.com/AndyDM9/heyandy-meta): five views, middle first; SAM 3.1 on each frame;
-the likeliest sighting becomes a head direction through the camera's published calibration; a confident sighting ends
-the sweep early. The pictures go to SAM 3.1 on this computer when it's there, else to Meta's Model API (the page says
-which). "Ring it" needs neither: the robot's own microphones say which side a ringing is on, and Reachy turns until it
+the likeliest sighting becomes a head direction through each pixel's true ray, with the lens HeyAndy measured; a
+confident sighting ends the sweep early. Then Reachy turns to it, nods, and its own camera checks the point: how many
+degrees off the thing is, corrected once if it's more than 3. Three things HeyAndy measured on a Lite (November 1) are
+built in: the camera's focus is held on the table (its continuous autofocus hunts after every turn of the head, and
+small things like keys went unseen), a frame is taken only once the picture has caught up with the head (half a
+second), and after the nod the head is read back and lifted (it sags about 4 degrees, and where it stops varies). The
+pictures go to SAM 3.1 on this computer when it's there, else to Meta's Model API (the page says which). "Ring it" needs neither: the robot's own microphones say which side a ringing is on, and Reachy turns until it
 hears it straight ahead (HeyAndy's companion/sound.py); with SAM 3.1 it then looks there. Nothing is saved.
 """
 import base64
@@ -12,6 +16,7 @@ import io
 import json
 import math
 import os
+import subprocess
 import threading
 import time
 import urllib.request
@@ -28,6 +33,12 @@ HEAD_REACH = 30.0  # past this the base turns too
 # At 1920x1080: Pollen publishes fx 1116 for the Lite; ours measured 1054 and 1049 (HeyAndy's evals/lens.py: the
 # published value put things up to 4.7 degrees out near the edges of the view). The centre as published.
 FX, CX, CY = 1054.0, 953.0, 542.0
+FRESH_S = 0.5  # the picture runs behind the head: frames are sharp 0.34 to 0.45 s after a move ends (measured)
+AIM_OK, AIM_NEAR = 3.0, 8.0  # a point this far off is corrected once; a thing further than this isn't the one pointed at
+FOCUS_STEPS = (350, 425, 500, 575, 650, 750)  # the Lite's lens on a desk: sharp only near 500 (of 0 to 1023)
+# SAM 3.1 asked for "keys" outlines each key of a keyboard too (28 of 28 masks on one, HeyAndy measured on the Lite);
+# "bunch of keys" finds only the keys (HeyAndy's models/common.py)
+ASK = {"keys": "bunch of keys", "key": "set of keys", "car keys": "bunch of keys", "house keys": "bunch of keys"}
 LOCAL = "http://127.0.0.1:8090"
 FOUND_SECONDS = 120  # the found shot stays on the page this long, in memory only
 
@@ -112,10 +123,114 @@ def turn_to(listen, turn, start: float, reach=(-150.0, 150.0), on_step=None) -> 
         return sum(zeros) / len(zeros), steps
     return (max(left) + STEP_DEG / 2) if left else (min(right) - STEP_DEG / 2), steps
 def where_to_look(x: float, y: float, w: int, h: int, yaw: float, pitch: float) -> tuple[float, float]:
-    """The head direction (degrees) that puts pixel (x, y) of a view taken at (yaw, pitch) in the middle."""
+    """The head direction (degrees, yaw left +, pitch down +) that puts pixel (x, y) of a view taken at (yaw, pitch) in
+    the middle: the pixel's ray in the room (HeyAndy's finder/geometry.py). Adding the pixel's two angles to the view's,
+    as this did before, is right only on the frame's middle row and column: with the head tilted down, a thing at the
+    side of the frame sits higher than that says (HeyAndy measured sightings of one thing disagreeing by a median 1.7
+    degrees that way, 1.0 with the true ray)."""
     s = w / 1920
-    return (yaw + math.degrees(math.atan2(CX * s - x, FX * s)),
-            pitch + math.degrees(math.atan2(y - CY * (h / 1080), FX * s)))
+    a, b = (x - CX * s) / (FX * s), (y - CY * (h / 1080)) / (FX * s)
+    ps, th = math.radians(yaw), math.radians(pitch)
+    forward = (math.cos(th) * math.cos(ps), math.cos(th) * math.sin(ps), -math.sin(th))  # x ahead, y left, z up
+    right = (math.sin(ps), -math.cos(ps), 0.0)
+    down = (-math.sin(th) * math.cos(ps), -math.sin(th) * math.sin(ps), -math.cos(th))
+    v = [forward[i] + a * right[i] + b * down[i] for i in range(3)]
+    return math.degrees(math.atan2(v[1], v[0])), math.degrees(math.atan2(-v[2], math.hypot(v[0], v[1])))
+
+
+def off_middle(x: float, y: float, w: int, h: int) -> float:
+    """How many degrees pixel (x, y) is from the middle of the view: how far off a point is."""
+    s = w / 1920
+    return math.degrees(math.atan(math.hypot(x - CX * s, y - CY * (h / 1080)) / (FX * s)))
+
+
+def head_angles(pose) -> tuple[float, float]:
+    """Yaw (left +) and pitch (down +) in degrees from the daemon's 4x4 head pose (in the room, the base's turn in it)."""
+    return math.degrees(math.atan2(pose[1][0], pose[0][0])), math.degrees(math.asin(-max(-1.0, min(1.0, pose[2][0]))))
+
+
+def camera_device(run=subprocess.run) -> str | None:
+    """The robot camera's video device, from v4l2-ctl's list; None without v4l2-ctl or a "Reachy Mini Camera" (a
+    wireless Reachy's camera isn't one: its focus is left alone)."""
+    try:
+        lines = run(["v4l2-ctl", "--list-devices"], capture_output=True, text=True, timeout=5).stdout.splitlines()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    for i, line in enumerate(lines):
+        if "Reachy Mini Camera" in line:
+            for dev in lines[i + 1:]:
+                if dev.strip().startswith("/dev/video"):
+                    return dev.strip()
+                if not dev.strip():
+                    break
+    return None
+
+
+def sharpness(jpeg: bytes) -> float:
+    """How sharp a frame is: the variance of its edges (a Laplacian) on a half-size grey copy. A number, no picture kept."""
+    g = Image.open(io.BytesIO(jpeg)).convert("L")
+    g = np.asarray(g.resize((max(1, g.width // 2), max(1, g.height // 2))), dtype=np.float32)
+    return float((4 * g[1:-1, 1:-1] - g[:-2, 1:-1] - g[2:, 1:-1] - g[1:-1, :-2] - g[1:-1, 2:]).var())
+
+
+class Focus:
+    """The camera's focus, held on the table while the app runs, and given back as it was when it stops. HeyAndy found
+    (November 1) that the Lite's continuous autofocus hunts for seconds after every turn of the head: a cup is found
+    out of focus, a bunch of keys isn't (7 of 16 frames facing them with autofocus, 13 of 16 with focus held). Each step
+    is tried (the lower of two fresh frames' sharpness), then half a step either side of the sharpest; if nothing stands
+    out (a blank wall in view), autofocus is left on. Without v4l2-ctl or the camera, nothing changes."""
+
+    def __init__(self, run=subprocess.run):
+        self.run, self.dev, self.was, self.held = run, camera_device(run), None, None
+
+    def _ctl(self, **kw) -> None:
+        self.run(["v4l2-ctl", "-d", self.dev] + [a for k, v in kw.items() for a in ("-c", f"{k}={v}")],
+                 check=True, capture_output=True, timeout=5)
+
+    def hold(self, look, fresh, steps=FOCUS_STEPS, settle_s: float = 0.6) -> int | None:
+        """look(yaw, pitch) turns the head, fresh() returns a JPEG taken after it; the focus held, or None."""
+        if not self.dev:
+            return None
+        try:
+            out = self.run(["v4l2-ctl", "-d", self.dev, "--get-ctrl", "focus_automatic_continuous"],
+                           capture_output=True, text=True, timeout=5).stdout
+            self.was = int(out.rsplit(":", 1)[1]) if ":" in out else 1
+            self._ctl(focus_automatic_continuous=0)
+        except (OSError, subprocess.SubprocessError, ValueError):
+            return None
+        tried: dict[int, float] = {}
+
+        def measure(focus: int) -> float:
+            if focus not in tried:
+                self._ctl(focus_absolute=focus)
+                time.sleep(settle_s)  # the lens moving, and the picture's delay behind it
+                fresh()  # may be from before the lens moved
+                tried[focus] = min(sharpness(fresh() or b"") for _ in range(2))
+            return tried[focus]
+
+        try:
+            look(0.0, 15.0)  # the table in front
+            best = max(steps, key=measure)
+            half = max(1, min(abs(a - b) for a, b in zip(steps, steps[1:])) // 2)
+            best = max((best - half, best, best + half), key=measure)
+            if tried[best] < 2.0 * min(tried.values()):  # nothing stood out: leave focusing to the camera
+                self._ctl(focus_automatic_continuous=1)
+                return None
+            self._ctl(focus_absolute=best)
+            self.held = best
+            return best
+        except (OSError, subprocess.SubprocessError, ValueError, RuntimeError):  # a frame that won't open: as it was
+            self.release()
+            return None
+
+    def release(self) -> None:
+        """Autofocus as it was before the app (on, unless something else had turned it off)."""
+        if self.dev and self.was is not None:
+            try:
+                self._ctl(focus_automatic_continuous=self.was)
+            except (OSError, subprocess.SubprocessError):
+                pass
+            self.held = None
 
 
 def side(yaw: float) -> str:
@@ -229,21 +344,74 @@ class AndyFinder(ReachyMiniApp):
             frame_now["jpeg"], frame_now["until"] = jpeg, time.monotonic() + keep_s
             state["frame_v"] += 1
 
+        moved = {"at": -math.inf}
+
         def look(yaw: float, pitch: float, duration: float = 0.8) -> None:
             # The daemon takes the head's direction in the room, the base's turn already in it: the head pose is the
             # whole yaw, and the base turns under it for what the head can't (HeyAndy found the base counted twice).
             head = max(-HEAD_REACH, min(HEAD_REACH, yaw))
             reachy_mini.goto_target(head=create_head_pose(yaw=yaw, pitch=pitch, degrees=True),
-                                    body_yaw=math.radians(yaw - head), duration=duration)
+                                    body_yaw=math.radians(yaw - head), duration=duration)  # returns when it's there
+            moved["at"] = time.monotonic()
 
-        def frame() -> bytes | None:
-            time.sleep(0.35)  # let the camera settle after the move
-            for _ in range(20):
+        def next_frame(wait_s: float = 1.0) -> bytes | None:
+            for _ in range(max(1, int(wait_s / 0.05))):
                 data = reachy_mini.media.get_frame_jpeg()
                 if data:
                     return data
                 time.sleep(0.05)
             return None
+
+        def fresh() -> bytes | None:
+            """A frame from after the last move: the picture runs behind the head (sharp 0.34 to 0.45 s after)."""
+            left = FRESH_S - (time.monotonic() - moved["at"])
+            if left > 0:
+                time.sleep(left)
+            stale = next_frame()  # the camera hands each frame over once: this one may be from mid-move
+            return next_frame(0.5) or stale
+
+        def measured() -> tuple[float, float] | None:
+            """Where the head really looks: it stops a few degrees from where it's sent, differently each time."""
+            try:
+                return head_angles(reachy_mini.get_current_head_pose())
+            except Exception:  # noqa: BLE001 - an older daemon: the direction it was sent is all there is
+                return None
+
+        def frame(yaw: float, pitch: float) -> tuple[bytes | None, float, float]:
+            """A fresh frame, and where the head really was for it."""
+            data = fresh()
+            now = measured()
+            return (data, *now) if now else (data, yaw, pitch)
+
+        def point(yaw: float, pitch: float, nod: bool = True) -> None:
+            """Turn to it and nod; then read the head back and correct it, up to twice: after the nod it sags (a median
+            3.9 degrees on HeyAndy's Lite), and where it stops varies by up to 8. Steady 0.3 s after each move."""
+            look(yaw, pitch, 0.8 if nod else 0.4)
+            if nod:
+                look(yaw, pitch + 8.0, 0.3)  # a nod towards it
+                look(yaw, pitch, 0.3)
+            sent = [yaw, pitch]
+            for _ in range(2):
+                time.sleep(0.3)
+                now = measured()
+                if not now or max(abs(yaw - now[0]), abs(pitch - now[1])) <= 1.5:
+                    return
+                sent = [sent[0] + max(-10.0, min(10.0, yaw - now[0])), sent[1] + max(-10.0, min(10.0, pitch - now[1]))]
+                look(*sent, 0.3)
+
+        def check_aim(thing: str, yaw: float, pitch: float) -> tuple[float | None, float, float]:
+            """Its own camera checks the point: one fresh frame from where the head now faces, SAM 3.1 on it, the
+            outline nearest the middle; how many degrees off the middle it is, and where it really is. (None, yaw,
+            pitch) if it can't tell: nothing near the middle, or no frame."""
+            jpeg, fy, fp = frame(yaw, pitch)
+            if jpeg is None:
+                return None, yaw, pitch
+            w, h = Image.open(io.BytesIO(jpeg)).size
+            seen = [m for m in sam.find(jpeg, ASK.get(thing, thing)) if m[2] >= 0.3]
+            near = min(seen, key=lambda m: off_middle(m[0], m[1], w, h), default=None)
+            if near is None or off_middle(near[0], near[1], w, h) > AIM_NEAR:
+                return None, yaw, pitch
+            return round(off_middle(near[0], near[1], w, h), 1), *where_to_look(near[0], near[1], w, h, fy, fp)
 
         def wiggle(times: int = 3) -> None:
             for i in range(times * 2):
@@ -260,16 +428,16 @@ class AndyFinder(ReachyMiniApp):
                     return "Stopped."
                 state["look"] = {"view": i, "yaw": yaw, "side": side(yaw), "boxes": [], "w": 0, "h": 0}
                 look(yaw, pitch)
-                jpeg = frame()
+                jpeg, fy, fp = frame(yaw, pitch)
                 if jpeg is None:
                     continue
                 w, h = Image.open(io.BytesIO(jpeg)).size
-                seen = sam.find(jpeg, thing)
+                seen = sam.find(jpeg, ASK.get(thing, thing))
                 show(jpeg)
                 state["look"].update(w=w, h=h, boxes=[[round(v) for v in box] + [round(score, 2)] for _, _, score, box in seen])
                 state["views"][i].update(seen=len(seen), best=round(max((sc for _, _, sc, _ in seen), default=0.0), 2), done=True)
                 for x, y, score, box in seen:
-                    at = where_to_look(x, y, w, h, yaw, pitch)
+                    at = where_to_look(x, y, w, h, fy, fp)  # from where the head really was
                     if near is not None and (abs(at[0] - near) > NEAR_RING_DEG or score < 0.5):
                         continue  # by its ring: one seen far from where it rang isn't the one ringing
                     # by its ring the nearest to where it rang (two monitors, the one by the speaker); else the surest
@@ -285,14 +453,18 @@ class AndyFinder(ReachyMiniApp):
                     look(y, 10.0, 0.25)
                 return f"I couldn't see your {thing}. Is it somewhere I can't look?"
             score, yaw, pitch, jpeg, box, w, h = best
-            look(yaw, pitch)
-            look(yaw, pitch + 8.0, 0.3)  # a nod towards it
-            look(yaw, pitch, 0.3)
+            state["look"] = {"view": -1, "yaw": yaw, "side": side(yaw), "boxes": [[round(v) for v in box] + [round(score, 2)]],
+                             "w": w, "h": h, "pointing": True}  # the page: found, turning to it, then checking the point
+            point(yaw, pitch)
+            aim, yaw, pitch = check_aim(thing, yaw, pitch)
+            if aim is not None and aim > AIM_OK:  # off: once more, by what the camera showed, without another nod
+                point(yaw, pitch, nod=False)
+                aim, yaw, pitch = check_aim(thing, yaw, pitch)
             seconds = round(time.monotonic() - started, 1)
             show(jpeg, FOUND_SECONDS)  # the shot it was found in, for the page's reveal; then it goes
             state.update(phase="found", look=None,
                          found={"thing": thing, "side": side(yaw), "yaw": round(yaw, 1), "score": round(score, 2),
-                                "box": [round(v) for v in box], "w": w, "h": h, "seconds": seconds})
+                                "box": [round(v) for v in box], "w": w, "h": h, "seconds": seconds, "aim": aim})
             state["history"] = ([{"thing": thing, "side": side(yaw), "at": time.time()}] + state["history"])[:6]
             wiggle()
             return f"There's your {thing}, {side(yaw)}."
@@ -369,21 +541,31 @@ class AndyFinder(ReachyMiniApp):
             return (f"I can hear it, but I can't see it: it's ringing {side(facing)}, where I'm looking. It may be under something."
                     if sam else f"It's ringing {side(facing)}, where I'm looking.")
 
-        while not stop_event.is_set():
-            thing, ringing = asked["thing"], asked["ring"]
-            if thing is None and ringing is None:
-                time.sleep(0.05)
-                continue
-            asked["thing"] = asked["ring"] = None
+        focus = Focus()
+        if sam and focus.dev:  # finding needs the camera sharp on the table; "Ring it" doesn't use it
+            state.update(busy=True, status="Getting my eyes ready: focusing on the table...")
             try:
-                if ringing is not None:
-                    state["status"] = ring(ringing)
-                else:
-                    state["status"] = search(thing) if sam else "I can't see yet: " + state["where"]
-            except Exception as e:  # noqa: BLE001 - say what went wrong on the page, and keep going
-                state.update(status=f"Something went wrong: {type(e).__name__}", phase="ready", look=None)
+                focus.hold(look, fresh)
             finally:
-                state["busy"] = False
+                state.update(busy=False, status="What should I find?")
+        try:
+            while not stop_event.is_set():
+                thing, ringing = asked["thing"], asked["ring"]
+                if thing is None and ringing is None:
+                    time.sleep(0.05)
+                    continue
+                asked["thing"] = asked["ring"] = None
+                try:
+                    if ringing is not None:
+                        state["status"] = ring(ringing)
+                    else:
+                        state["status"] = search(thing) if sam else "I can't see yet: " + state["where"]
+                except Exception as e:  # noqa: BLE001 - say what went wrong on the page, and keep going
+                    state.update(status=f"Something went wrong: {type(e).__name__}", phase="ready", look=None)
+                finally:
+                    state["busy"] = False
+        finally:
+            focus.release()  # the camera's autofocus as it was before the app
 
 
 if __name__ == "__main__":

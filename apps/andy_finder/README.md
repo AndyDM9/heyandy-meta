@@ -23,9 +23,20 @@ never taken for a ringing.
 ![Andy Finder after "Ring it": seen from above, each turn of Reachy's head, the side it heard the ringing on, and where it is](screenshot-ring.png)
 
 And for anything else: tap what you've lost (glasses, keys, phone, remote, wallet, mug, watch) or type any thing, and Reachy Mini looks around
-the room, finds it with Meta's SAM 3.1, turns to it and nods. The app's page shows what it sees as it looks (each view,
-every candidate SAM 3.1 outlined, five views lighting up), then the find: a spotlight on the thing, which way it is, how
-long it took and how sure SAM 3.1 was. If it can't see it, it shakes its head and says so.
+the room, finds it with Meta's SAM 3.1, turns to it and nods, then **checks its own point with its camera** and
+corrects it once if it's more than 3 degrees off. The app's page shows what it sees as it looks (each view, every
+candidate SAM 3.1 outlined, five views lighting up), then the find: a spotlight on the thing, which way it is, how long
+it took, how sure SAM 3.1 was, and how many degrees off its camera measured the point. If it can't see it, it shakes
+its head and says so.
+
+**What HeyAndy measured on a Reachy Mini Lite, built in (0.3.0):** the camera's continuous autofocus hunts for seconds
+after every turn of the head, and small things like keys went unseen, so the app focuses once on the table as it starts
+(about 10 s) and holds it, then gives the camera its autofocus back when it stops; a frame is taken only once the
+picture has caught up with the head (half a second); each pixel becomes a direction by its true ray (adding two angles
+is off by several degrees at the frame's sides when the head looks down); after the nod the head is read back and
+lifted (it sags about 4 degrees); and "keys" is asked as "bunch of keys" (asked for "keys", SAM 3.1 outlines every key
+of a keyboard). On HeyAndy's robot (November 2): 13 of 14 points checked by the camera within 1.7 degrees, a median 1.1;
+a find in about 5 s when the middle view sees it.
 
 ![Andy Finder after a find (a drawn sample picture)](screenshot.png) A small piece of
 [HeyAndy](https://github.com/AndyDM9/heyandy-meta), a robot for people who live at home, built for Meta's Global AI
