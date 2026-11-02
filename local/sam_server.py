@@ -346,6 +346,7 @@ def serve(predictor, host: str, port: int) -> None:
 
                         once[0] = Sam3Processor(predictor.model.detector, confidence_threshold=min_score)
                     found = masks_many_once(once[0], image, queries, min_score)
+                    torch.cuda.empty_cache()  # its working memory back to the voice and safety models sharing GPU 1
             del image
             seconds = round(time.monotonic() - start, 3)
             if self.path == "/segment":

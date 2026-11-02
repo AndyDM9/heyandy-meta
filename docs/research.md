@@ -1582,6 +1582,10 @@ Found and fixed, each with a test:
 - **Fixed** (`local/sam_server.py` `masks_many_once`): SAM 3's own image API (`Sam3Processor`: the frame encoded once,
   then each name) on the loaded 3.1 model's detector: the same weights, no more memory. Tracking (the cup game) keeps
   the video session. The old way stays at `/segment_many_session` to compare.
+  Its working memory is handed back after each frame (`torch.cuda.empty_cache()`, as tracking already did): without
+  it the SAM server held 8.4 GB of GPU 1 and the preflight failed (2.8 GB free, the cup game needs 4); with it, 4.2 GB
+  (6.6 free; 4.8 that morning with the old way), at 0.325 s a call against 0.296. The old way needed about 1 GB more
+  at its peak: run side by side with little memory free, it ran out (`_apply_object_wise_non_overlapping_constraints`).
 - **Measured on the robot's frames** (14 views, the keys, the cup and the glasses, the finder's names; each frame
   sent both ways, in alternating order; numbers only): **0.82 s a call -> 0.30**; seen 35 -> 37 of 42 (the 35 the
   same; 2 more), scores a median 0.007 apart, centres 0.2 px. The same 18 searches as section 71: a median **7.8 s**
