@@ -21,7 +21,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   <a href="#try-it-in-your-browser-and-in-fifteen-languages"><img alt="Andy speaks fifteen languages" src="https://img.shields.io/badge/Speaks-15%20languages-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml"><img alt="Tests: every push, the TV page in a real browser too" src="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml/badge.svg"></a>
-  <a href="evals/results"><img alt="250 of 253 unattended searches on the robot ended in a point" src="https://img.shields.io/badge/On%20the%20robot-250%20of%20253%20pointed-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
+  <a href="evals/results"><img alt="On the robot, judged by a person: 13 of 15 right, never a point at the wrong thing" src="https://img.shields.io/badge/Judged%20by%20a%20person-13%20of%2015%20right-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
 </p>
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
@@ -38,8 +38,8 @@ Built on Meta's models for people who live at home, starting with older adults, 
   ([Pew Research, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/)):
   when the glasses go missing, there's no one to ask. Andy is someone to ask, and it can show you.
 - **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
-  its camera, and says where, from where you stand. *250 of 253 unattended searches on the robot ended in a point;
-  moved round the desk and judged by a person, 13 of 15 right, and never a point at the wrong thing.*
+  its camera, and says where, from where you stand. *Moved round the desk and judged by a person, 13 of 15 right, and
+  never a point at the wrong thing; alone, its own camera judging, 250 of 253 unattended searches ended in a point.*
 - **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
   911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 to 27.1 s from the words, over four dress rehearsals.* Andy can't call
   anyone and doesn't watch for falls; it does what a robot that finds things can.
@@ -47,9 +47,12 @@ Built on Meta's models for people who live at home, starting with older adults, 
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
   the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
-- **Try it now, no robot needed:** [the 75-second story](https://huggingface.co/spaces/heyandy-ai/andy), then *Ask
-  Andy* anything, typed in any of its fifteen languages or **said** in English (tap 🎙: Meta's wav2vec 2.0 hears you, in your
-  browser); or **Andy's eyes, live**: show it your mug, sweep your phone round the room, and Meta's DINOv2 finds yours.
+- **Try it now, no robot needed:** [the 75-second story](https://huggingface.co/spaces/heyandy-ai/andy) is Andy's own
+  TV, its scenes recorded and replayed in your browser; *Ask Andy* plays the scene that matches what you type, in any of
+  its fifteen languages, or **say** in English (tap 🎙: Meta's wav2vec 2.0 hears you, in your browser). **Andy's eyes,
+  live** is the real thing: show it your mug, sweep your phone round the room, and Meta's DINOv2 finds yours.
+- **Run it yourself:** two commands on a laptop, no GPU and no robot ([Run it](#run-it)); the whole Andy, from this
+  repository, on a computer with two 24 GB GPUs.
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. That's kept in code, not asked
@@ -61,6 +64,31 @@ the words). It says it's an AI, and anyone who mentions a crisis gets the 988 li
 today's receipts on its TV: no camera picture has left the house, how many health questions got its own words, how
 many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud. **All of it on one page,
 with what it's for, what it isn't, and where it falls short: [Andy's system card](docs/system-card.md).**
+
+## Meta's models, and where each one runs
+
+| Model | Where | What it does |
+|---|---|---|
+| **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once |
+| **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Andy's fourteen other languages |
+| **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
+| **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
+| **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; fifteen languages |
+| **DINOv2** (open weights) | GPU 1, and in your browser on the public demo | Knows the person's own things by sight |
+| **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | Crisis words and health advice, in what's said and in each sentence a model writes; reads each web page before Muse Spark does |
+| **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers; computer use |
+| **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
+| **wav2vec 2.0** (open weights) | Your browser, on the public demo only | Hears "Say it" |
+
+Nine of Andy's eleven are open weights on our own two GPUs ([each one's source and licence](docs/open-weights.md));
+the camera and microphone reach only those.
+
+![What runs in the house and what goes to the cloud: the robot and the TV in the room; on the computer beside the
+robot, safety in code around every model (crisis words to 988, a fall to 911 and the phone found, health questions to
+Andy's own words, Llama Guard 3 reading what's said and each answer), hearing and speaking in fifteen languages, SAM
+3.1, DINOv2, MapAnything and V-JEPA 2 for seeing, Muse Glimmer for thinking offline, Andy's checked tools, and the web
+with Prompt Guard 2; in the cloud, Muse Spark gets words and screenshots of web pages asked for, and Muse Image gets
+words only](docs/images/architecture.svg)
 
 ## What Andy does
 
@@ -196,6 +224,8 @@ its earlier runs and how to rerun it: [`evals/results`](evals/results/README.md)
 `docs/research.md`.
 
 ## The details: what it does
+
+<details><summary>Every ability, how it works and what it was measured at (open)</summary>
 
 **New here? "Hey Andy, let's get started."** Three steps, spoken, the TV showing each: Andy says what it does and that
 what it sees and hears stays in the house, and measures the room in 3D; asks what you lose most ("my keys and my
@@ -351,14 +381,11 @@ found, "You're all set", in three sentences.
    One switch is the exception, for filming only: `--staged-scene`, in a staged room with nobody in it, sends the camera's
    pictures to SAM 3.1 through the Model API, and the TV and the receipt say so every time.
 
+</details>
+
 ## How it works
 
-![What runs in the house and what goes to the cloud: the robot and the TV in the room; on the computer beside the
-robot, safety in code around every model (crisis words to 988, a fall to 911 and the phone found, health questions to
-Andy's own words, Llama Guard 3 reading what's said and each answer), hearing and speaking in fifteen languages, SAM
-3.1, DINOv2, MapAnything and V-JEPA 2 for seeing, Muse Glimmer for thinking offline, Andy's checked tools, and the web
-with Prompt Guard 2; in the cloud, Muse Spark gets words and screenshots of web pages asked for, and Muse Image gets
-words only](docs/images/architecture.svg)
+The picture of what runs where is at the top: [Meta's models, and where each one runs](#metas-models-and-where-each-one-runs).
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
@@ -458,6 +485,9 @@ each "take one" gets a clap: two quick high notes, timed by Andy's own microphon
 `evals/results/filming-20261031-2112.json`, 8 of 8 claps heard.) The steps: `docs/demo-script.md`.
 
 ## Layout
+
+<details><summary>Where everything is in this repository (open)</summary>
+
 ```
 heyandy_meta/app.py        one turn: what was asked, what the robot does and says; `python -m heyandy_meta` runs it
 heyandy_meta/companion/    request rules, reminders, facing the person, answers with sources, AI disclosure, crisis protocol,
@@ -489,7 +519,11 @@ docs/                      the hackathon's rules, research, the video plan, open
 tests/
 ```
 
+</details>
+
 ## The screen beside Andy
+
+<details><summary>What the TV shows, and how to see it without a robot (open)</summary>
 
 A TV or monitor beside the robot shows, in large type read from across a room:
 - **the day and time;**
@@ -543,7 +577,11 @@ settles into the card below. Only for a find made just now; still, without the p
 same page on sample data (pick a scene at the top). Or locally, with no robot: `uv run python scripts/demo_screen.py
 --cycle`, then open http://127.0.0.1:8765. The picture in these is drawn by the script, not taken in a home.
 
+</details>
+
 ## Measured so far
+
+<details><summary>Every scorecard in detail, failures included (open; the readable page of all of them: evals/results)</summary>
 
 **Simulated scorecard** (`evals/sim.py`, seeded rooms; the camera model is the robot's, robot time is estimated from what
 was measured on it, and the noise is stated in the results). The fixed sweep runs on every plain request; an agent plans
@@ -670,6 +708,8 @@ shuffle replays in about 10 to 13 s.
 At the camera's 10 frames a second it picked the right cup in 3 of 5 runs with the detection batches that fit beside the
 safety models (4 of 5 with larger ones); at 5 frames a second it lost the cups in all 4. Not
 yet scored with real cups.
+
+</details>
 
 ## What doesn't work yet
 - **Not yet tried on the robot with real things or a person:** the cup game (tracking measured on synthetic shuffles;

@@ -1889,5 +1889,11 @@ Found and fixed, each with a test:
   where Andy stands: Amazon's Astro roams the home (by invitation; its business version was ended in 2024), ElliQ keeps
   company at the table, and NYU's OK-Robot fetches things with open models: 58.5% of pick-and-drop tasks in ten homes
   (Liu et al., 2024, https://arxiv.org/abs/2401.12202).
+- **Then the README:** the table of Meta's models and where each runs (it had none) and the picture of what runs where
+  (it was 350 lines down) now come straight after "In 30 seconds"; the badge and the summary lead with a person's
+  verdict (13 of 15, never a wrong point) and name 250 of 253 as the robot judging itself; the public demo says what
+  it is (the TV's recorded scenes, replayed; Ask Andy plays the one that matches; Andy's eyes are live); "Run it" is
+  one line from the top; the four long reference sections fold behind a click, their headings kept. Rendered by
+  GitHub's own renderer to check: six tables, every fold renders, no raw markdown left.
 - **Not done here** (the founder's): the video cut to fewer moments, the robot itself on the README's first screen
   (after a good take), and anyone Andy is for trying it.
