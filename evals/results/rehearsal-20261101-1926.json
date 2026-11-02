@@ -1,0 +1,171 @@
+{
+ "when": "2026-11-01 19:26",
+ "shots": [
+  {
+   "shot": "the uncut find",
+   "said": "Hey Andy, where are my glasses?",
+   "heard": "hey andy where are my glasses",
+   "andy said": [
+    "There they are! I see your glasses, a little to my right, about 4 feet away."
+   ],
+   "seconds": 13.4,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "follow the mug",
+   "said": "Hey Andy, follow the mug.",
+   "heard": "hey andy follow the mug",
+   "andy said": [
+    "Found it! I see your mug, a little to my right, about 4 feet away.",
+    "Following your mug. Say stop when you're done.",
+    "That's enough following for now. Your mug is a little to my right."
+   ],
+   "seconds": 50.2,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "several things at once",
+   "said": "Hey Andy, find the cup and remind me in two minutes to call Sam.",
+   "heard": "hey andy find the cup and remind me in two minutes to call sam",
+   "andy said": [
+    "Ah, there it is! I see your cup, a little to my right, about 4 feet away.",
+    "I see your cup a little to my right about 4 feet away! You're all set with a reminder for 7:25 to call Sam."
+   ],
+   "seconds": 25.6,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "the network unplugged",
+   "said": "Hey Andy, where are my keys?",
+   "heard": "hey andy where are my keys",
+   "andy said": [
+    "There they are! I see your keys, a little to my right, about 3 feet away."
+   ],
+   "seconds": 13.4,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "the room in 3D",
+   "said": "Hey Andy, show me the room.",
+   "heard": "hey andy show me the room",
+   "andy said": [
+    "Here's the room as I measured it, on the screen: your keyboard to my right, about 3 feet away; your keys a little to my right, about 3 feet away; your watch to my right, about 3 feet away. Its shape only, never a picture."
+   ],
+   "seconds": 30.1,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "a picture",
+   "said": "Hey Andy, draw me a lighthouse at dawn.",
+   "heard": "hey andy draw me a lighthouse at dawn",
+   "andy said": [
+    "Let me draw that. It takes a little while.",
+    "Here's your picture, on the screen. I've saved it in your Pictures folder. You can ask me to change it."
+   ],
+   "seconds": 18.0,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "the weather radar on the TV",
+   "said": "Hey Andy, show me the weather radar on the TV.",
+   "heard": "hey andy show me the weather radar on the tv",
+   "andy said": [
+    "Let me find that for you.",
+    "The TV is showing the National Weather Service radar with precipitation over the western US and the southeast. You can say scroll down, or go back."
+   ],
+   "seconds": 24.1,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "in Mandarin, nothing said in English first",
+   "said": "安迪，我的眼镜在哪里？",
+   "heard": "安迪我的眼睛在哪里",
+   "andy said": [
+    "好的，现在我说中文。",
+    "找到了！ 我看到您的眼镜，在我的右前方一点，大约1.5米远。"
+   ],
+   "seconds": 18.2,
+   "pointed": true,
+   "language after": "zh",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "back to English",
+   "said": "Andy, speak English.",
+   "heard": "——andy——speak english",
+   "andy said": [
+    "Okay, I'll speak English now."
+   ],
+   "seconds": 4.0,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "its promises",
+   "said": "Hey Andy, what won't you do?",
+   "heard": "hey andy what won't you do",
+   "andy said": [
+    "I never send a camera picture of your home to the cloud, I never give health advice, and I always say I'm an AI. And no camera picture has left this house today. It's on the screen, with the receipts."
+   ],
+   "seconds": 12.6,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "an emergency said (if it's in the video)",
+   "said": "Hey Andy, I fell and I can't get up.",
+   "heard": "hey andy i fell and i can't get up",
+   "andy said": [
+    "If you need help, please call 911 right away. I'll find your phone.",
+    "Ah, there it is! I see your phone, to my left, about 4 feet away."
+   ],
+   "seconds": 27.1,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": true
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": true
+}

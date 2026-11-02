@@ -1470,3 +1470,8 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   head landing 20 degrees off; a first frame that comes back empty; and a thing truly gone is still "not there".
 - **Then, on the robot:** 12 of 12 (`unattended-20261101-1914`). Since the aim fix, **135 of 136** unattended searches
   ended in a point.
+- **And the whole dress rehearsal on it, about 9 pm** (`rehearsal-20261101-1926`), every change of the day in it:
+  **READY TO FILM, 11 of 11**: the uncut find (the glasses, 13.4 s), follow, several things at once, the keys with the
+  network unplugged, the room, a picture, the weather radar, Mandarin with nothing said in English first (found and
+  said in metres), back to English, the promises, and "I fell" (911, then the phone, laid flat now: found and pointed).
+

@@ -127,7 +127,8 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    minute later in Mandarin), the remote still out of reach; the fall shot found the phone and pointed in 16.5 s. At
    about 8 pm, on the table as it will be filmed (glasses, the blue cup, keys, the watch): 24 of 24 searches pointed
    after one miss (`unattended-20261101-1903`, `-1914`); **the phone, upright in its stand between the two monitors,
-   0 of 3: lay it flat on the table, in the open,** for "I fell" and "I'm ringing my phone".
+   0 of 3: lay it flat on the table, in the open,** for "I fell" and "I'm ringing my phone" (laid flat: 3 of 3). Then
+   the whole rehearsal, about 9 pm: **READY TO FILM, 11 of 11** (`rehearsal-20261101-1926`).
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking another language, "Hey Andy, speak English".
 4. **Cameras:** the robot and the TV side by side in one shot, 1080p, normal speed. Start the TV recording just before
    each take: `uv run --with playwright python scripts/record_tv.py --seconds 200 --out film/tv-take1.webm --room-is-staged`
