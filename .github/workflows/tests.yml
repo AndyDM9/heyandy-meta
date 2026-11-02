@@ -12,5 +12,5 @@ jobs:
       # the TV page in a real browser (tests/test_page_runs.py and the eyes pages): they caught a page that stopped
       # drawing in Chinese, and skip without a browser
       - run: uv run playwright install --with-deps chromium
-      - run: uv run pytest -q
+      - run: uv run pytest -q -rs  # -rs: each skip says why, so a check that quietly stops running is seen
       - run: uv run ruff check heyandy_meta tests scripts evals local apps
