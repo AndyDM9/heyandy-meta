@@ -95,7 +95,8 @@ sweeping live (a video as the camera, on a CPU): found in both sweeps, at 15 and
 *On the robot, judged by a person* (three things, five places each on our desk, or hidden): **13 of 15** right;
 pointed at the thing 10 of 12 times, a median 2.5 degrees off; hidden, "not found" 3 of 3; **never a wrong point**
 (both misses were the keys: the camera's autofocus, now held). *Alone in the room:* **223 of 226** unattended searches ended in a
-point; on the final code a median **0.9 degrees** off, 2.1 at worst, and **7.8 s** a find.
+point; on the final code a median **1.1 degrees** off, 2.2 at worst, and **7.8 s** a find; from the words to Andy's
+spoken answer, 10.9 to 11.6 s (the dress rehearsal).
 Every result, failures included: `evals/results/` and `docs/research.md`.
 
 ## Safety and honesty

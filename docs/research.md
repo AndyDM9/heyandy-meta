@@ -1588,6 +1588,15 @@ Found and fixed, each with a test:
   a find (9.8 before; 7.1 to 8.8), aim a median 1.3 degrees, 1.9 at worst, none re-aimed (`unattended-20261101-2248`).
   The last search, for the glasses, said "not there": they had been taken off the desk (right after, SAM 3.1 scored
   them 0 in every view, the cup and the keys seen); counted as a miss. Since the aim fix, 223 of 226.
+  With the glasses back, the same 18 again (`unattended-20261101-2300`): **18 of 18, a median 7.8 s (7.1 to 9.6), 1.1
+  degrees off, 2.2 at worst, none re-aimed**. Since the aim fix, 241 of 244.
+- **Left for after the filming:** Pollen's daemon feeds the camera to apps on this computer at 10 frames a second
+  (`IPC_FPS`), though the camera captures 60 and the daemon used 27% of one core. Finding works from still frames; the
+  cup game might do better faster (section 29: 3 of 5 at 10, 0 of 4 at 5). `scripts/robot_daemon.py` raises the cap
+  when `HEYANDY_CAMERA_FPS` is set (off otherwise); not yet tried on the robot.
+- **The dress rehearsal on the final code, the key loaded** (`rehearsal-20261101-2304`): **READY TO FILM, 11 of 11**.
+  The uncut find 11.6 s from the words to the answer (12.7 that evening), the keys offline 10.9, Mandarin 17.5, a
+  picture 17.1, the weather radar 21.7, "I fell" to the phone pointed at 22.5.
 - **Also found that night:** the dress rehearsal (`rehearsal-20261101-2241`, run without the key) passed both cloud
   shots although Andy answered "I can only make pictures when I'm connected": the check's words missed it. The check
   now fails a cloud shot without the key or with any "connected" (`evals/rehearsal.py` `cloud_missed`), and that run's
