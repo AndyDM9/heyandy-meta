@@ -662,7 +662,8 @@ yet scored with real cups.
 - **Not yet tried on the robot with real things or a person:** the cup game (tracking measured on synthetic shuffles;
   identical cups crossing fast can still swap), "this is my mug" (measured on the robot's camera with things seen from
   other angles, not with two mugs), "what's that?" (Glimmer measured on public photos: 4 of 6), and "I'm going out"
-  (the robot simulated). Each has a founder's test written down.
+  (timed on the robot from typed requests, 37 to 42.5 s, but never with a person leaving and taking things). Each has a
+  founder's test written down.
 - **Andy's eyes, live, hasn't met a real phone in a real room yet:** it's measured with a video standing in for the
   camera, on a laptop's CPU (about a frame a second); a phone's processor is slower, its graphics chip faster.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
