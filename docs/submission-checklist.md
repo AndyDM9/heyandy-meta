@@ -18,7 +18,10 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [x] Muse Spark live (since October 27, on our billing until the credits come; `docs/going-live.md`).
 - [ ] Any last questions in Discord #questions (November 3 is the last full day for them).
 
-**On November 4, in this order**
+**On November 4, in this order** (first and last: `uv run python scripts/release_check.py --space`; it lists what's
+left and must end READY TO SUBMIT before step 6: the code pushed and its tests passed on GitHub, every figure, the
+results page and the shared-link card current, no bracket left, the video badge up, no key in the history, every link
+in the submission answering a visitor who isn't signed in, and the Space exactly the build)
 1. [ ] The video (the made cards: `uv run python scripts/film_cards.py --line "<the founder's words>"`; then the pieces and
        cards joined, sound evened out, length checked: `uv run python scripts/make_film.py cut film/cut.json --out film/andy.mp4`,
        `docs/demo-script.md` step 9): 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded

@@ -1929,3 +1929,16 @@ Found and fixed, each with a test:
   version, and the guard's 5.2 GB is the next saving to try. Andy Finder needs no GPU at all (section 75).
 - **The robot:** a Reachy Mini Lite was $299 at its launch in July 2025 (https://huggingface.co/blog/reachy-mini);
   Pollen's own announcement page lists it at $399 now (https://pollen-robotics.com/reachy-mini/blog/reachy-mini-announcement/).
+
+## 88. November 4 in one command (November 2, late afternoon)
+
+- **Why:** the day the form is sent is one deadline with many hand steps (two links to fill, a badge to uncomment, the
+  history to search for keys, the repository and the Space to make public, their links to try signed out); one missed
+  bracket or a dead link costs more than any feature.
+- **Now** (`scripts/release_check.py`): each checkable step as OK, TO DO (expected until the day) or FAIL: the code
+  committed and pushed and its tests passed on GitHub on that very commit; every figure (scripts/claims.py), the results
+  page and the shared-link card current; no bracket left in the submission (each named: "Video: [link]", "X: [link]");
+  the README's video badge up; no key in any commit of the history (git's own search, tested on a throwaway repository
+  with a key committed and removed); every link in the submission fetched as a visitor who isn't signed in; with
+  `--space`, the Space as uploaded exactly the build. On November 2: 0 failing, 5 to do (the two links, the badge, and
+  the three addresses still private).
