@@ -69,6 +69,14 @@ def crisis(f: str) -> str:
     return "; ".join(parts)
 
 
+def physical(f: str) -> str:
+    s = load(f)["summary"]
+    absent = s["trials"] - s["present"]
+    return (f"**{s['correct']} of {s['present']}** points judged at the thing by a person"
+            + (f"; hidden, said not found **{s['absent_correct']} of {absent}**" if absent else "")
+            + f"; pointed at something else: {s['false_finds']}; a median {s['seconds_median']} s")
+
+
 def no_advice(f: str) -> str:
     s = load(f)["summary"]
     own = s["answered by Andy's own words"]
@@ -194,6 +202,8 @@ CARDS = [
     ("On the robot", None, None, None, None),
     ("Unattended searches", "the real robot searching again and again for things always in the room: points, aim, time",
      "evals.unattended", "unattended", "unattended"),
+    ("Physical scorecard", "a person puts each thing somewhere (or hides it) and judges where Andy points",
+     "evals.physical", "physical", physical),
     ("Dress rehearsal", "each line of the video's storyboard as a whole spoken turn on the robot", "evals.rehearsal", "rehearsal", rehearsal),
     ("What it's told", "\"I'm putting my passport in the top drawer\", then \"where's my passport?\"", "evals.told", "told", told),
     ("Homes", "\"my keys live here\", then \"is everything home?\" with one thing away", "evals.home", "home", home),
