@@ -60,6 +60,9 @@ keeps what it sees and hears in the house.
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
 
+**Open weights, verified:** the Muse Glimmer file our own GPU serves has the same SHA-256 as Meta's published weights
+(`scripts/verify_open_weights.py`, run November 2; every model's source and licence in `docs/open-weights.md`).
+
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
 the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
 this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's. Unplug the network and Andy carries on.

@@ -149,6 +149,8 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
   day's receipts.
 - **Every model it runs is Meta's** (eleven): SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2, Omnilingual ASR,
   SeamlessM4T v2, Llama Guard 3 and Prompt Guard 2 on our hardware; Muse Spark and Muse Image through the Meta Model API.
+  [Each one's source, licence and where it runs](docs/open-weights.md); the Muse Glimmer file our GPU serves has the
+  same SHA-256 as Meta's published weights ([`open-weights-20261102-1118.json`](evals/results/open-weights-20261102-1118.json)).
 
 <p align="center"><img src="docs/images/tv-promises.webp" width="760" alt="Andy's TV after &quot;Hey Andy, what won't you do?&quot;: What I never do, my promises with today's receipts: no camera picture or sound has left this house today; no health advice, 2 health questions answered in my own words today; Llama Guard 3 read 41 sentences of the models' answers before I said them; crisis words get the 988 line from my code, before any model; every word sent to the cloud is on its receipt, 68 words today; I say I'm an AI at the start of every conversation"></p>
 <p align="center"><sub>"Hey Andy, what won't you do?" (the demo's sample day: on the robot, the counts are the day's own)</sub></p>

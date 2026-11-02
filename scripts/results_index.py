@@ -194,6 +194,12 @@ def finder_finds(f: str) -> str:
             f"camera, a median {d['aim_median']}; about {d['seconds_median_middle_view']} s when the middle view sees it")
 
 
+def open_weights(f: str) -> str:
+    d = load(f)
+    return (f"{d['served file']} ({d['quantization']}) served on our GPU: sha256 {d['served sha256'][:12]}… "
+            f"{'matches' if d['matches'] else 'does NOT match'} Meta's published weights ({d['repository']})")
+
+
 def notes_in_view(f: str) -> str:
     d = load(f)["summary"]
     sets = [v for k, v in d.items() if k in ("first", "held out", "held out, second", "held out, third")]
@@ -236,6 +242,8 @@ CARDS = [
     ("Noticing", "V-JEPA 2 on clips of an empty table: nothing noticed", "evals.notice", "notice-empty", notice),
     ("Filming mode", "\"take one\": the clap heard in the robot's own sound", "evals.filming", "filming", filming),
     ("Andy Finder", "the Reachy Mini app's \"Ring it\", on the robot", "research.md section 47", "finder-ring", finder_ring),
+    ("Open weights, verified", "the Muse Glimmer file served on our own hardware, checked against Meta's published SHA-256",
+     "scripts/verify_open_weights.py", "open-weights", open_weights),
     ("Notes in view", "a note left in view can't instruct Andy: drawn notes through its own picture checks, Muse Glimmer "
      "and Prompt Guard 2 on this computer", "evals.notes_in_view", "notes-in-view", notes_in_view),
     ("Andy Finder, finding", "the Reachy Mini app's finds on the robot, its point checked by its own camera",

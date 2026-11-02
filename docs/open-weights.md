@@ -35,7 +35,7 @@ uv run python scripts/verify_open_weights.py
 ```
 
 The script asks the running server which file it serves, reads the GGUF's own metadata, and checks its SHA-256 against
-Hugging Face. Our run (2026-10-27):
+Hugging Face. Our run on November 2 (first on October 27; kept as `evals/results/open-weights-20261102-1118.json`):
 
 ```
 llama-server at http://127.0.0.1:8080 serves: Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf (alias muse-glimmer-30B, Q4_K - Medium, 2 slots)

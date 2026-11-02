@@ -1,0 +1,13 @@
+{
+ "when": "2026-11-02 11:18",
+ "what": "scripts/verify_open_weights.py: the file Muse Glimmer's llama-server serves on GPU 0, against Meta's published weights",
+ "served file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+ "alias": "muse-glimmer-30B",
+ "quantization": "Q4_K - Medium",
+ "slots": 2,
+ "architecture": "muse-glimmer",
+ "repository": "meta-models/Muse-Glimmer-30B-GGUF",
+ "published sha256": "4cc57c0f51040a226e5a72cc47b7613f7772950e460a665f7083de89f183f60e",
+ "served sha256": "4cc57c0f51040a226e5a72cc47b7613f7772950e460a665f7083de89f183f60e",
+ "matches": true
+}
