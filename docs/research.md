@@ -1719,3 +1719,21 @@ Found and fixed, each with a test:
   size, the large LFS ones by SHA-256, nothing extra. It found Hugging Face's own template stylesheet from the Space's
   first commit (October 27) still there, unused (uploads add and replace, never remove): removed. The checklist's
   November 4 step runs it before the Space goes public.
+
+## 77. Why the robot's audio jammed: the monitor (November 2, noon)
+
+- **The pattern:** the screen never blanks by itself here (idle delay 0), so it reconnected only at boot on November 1
+  and then four times on the morning of November 2 (08:08, 08:17, 08:18, 08:24), someone turning it on or switching
+  it; each time, the robot's audio device logged USB errors within the same minute, and at no other time before the
+  restarts and reset of 08:31 to 08:41.
+- **The mechanism**, from the logs at 08:08: the desktop's default output was the monitor's DisplayPort audio; as the
+  monitor went, the desktop logged "Unable to get default sink", and a tenth of a second later playback on card 1, the
+  Reachy Mini Audio, failed ("snd_pcm_start: Broken pipe"), then the kernel's "usb_set_interface failed (-71)". With
+  the monitor's output gone, desktop sound fell back to the only other output, the robot's (its priority 1009 is above
+  the monitor's 616; the monitor was default only because it had been chosen), which the robot's daemon holds at 16
+  kHz; the device didn't survive being switched. The default input is the robot's microphone too.
+- **Until it's fixed:** don't switch the monitor off or change its input while filming; if it happens, Andy's TV now
+  says so and `scripts/reset_robot_audio.py` brings the device back (section 73). **The fix, prepared, not installed**
+  (it restarts the desktop's sound, so after filming): `deploy/audio/heyandy-desktop-fallback.conf`, a silent output
+  the desktop falls back to instead (priority 2000), and `deploy/audio/51-reachy-mini-audio.lua`, the robot's device at
+  the lowest priority, held at 16 kHz and never suspended. Not yet tried.
