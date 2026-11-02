@@ -90,8 +90,25 @@ def main() -> None:
 
         with urllib.request.urlopen("http://127.0.0.1:8765/state.json", timeout=5) as r:
             s = json.load(r)
-        return f"answering; {'online' if s['online'] else 'OFFLINE'}; language {s.get('lang', 'en')}" + \
+        if s.get("lang", "en") != "en":  # saved across restarts (voice.json): November 1 it was left in Arabic
+            raise RuntimeError(f"Andy is speaking '{s['lang']}', and will start in it again -> say \"Hey Andy, speak "
+                               "English\" (the film starts in English)")
+        return f"answering; {'online' if s['online'] else 'OFFLINE'}; in English" + \
             ("; STAGED SCENE" if s.get("staged") else "")
+
+    @check("the robot's camera focus")
+    def _():
+        from heyandy_meta.robot.reachy_mini import camera_device
+
+        dev = camera_device()
+        if not dev:
+            raise RuntimeError("no Reachy Mini camera in v4l2-ctl --list-devices")
+        out = subprocess.run(["v4l2-ctl", "-d", dev, "--get-ctrl", "focus_automatic_continuous", "--get-ctrl",
+                              "focus_absolute"], capture_output=True, text=True, timeout=5).stdout
+        ctl = dict(line.replace(" ", "").split(":", 1) for line in out.splitlines() if ":" in line)
+        if ctl.get("focus_automatic_continuous") != "0":  # autofocus hunts after each turn: small things are missed
+            raise RuntimeError("autofocus is on, so Andy didn't focus at startup -> systemctl --user restart heyandy-app")
+        return f"held at {ctl.get('focus_absolute')} (focused on the table at startup)"
 
     @check("SAM 3.1 finds a drawn mug")
     def _():

@@ -8,9 +8,23 @@ Measured on the Lite (2026-10-27): the base turns where it's told (39.6 for 40 d
 sags (asked for 55 it reached 40.5; asked for 0 it sat 2 to 5 degrees off). So the head takes only small turns, the
 adapter reads back where the head really is after each move, corrects once if it's more than ``tolerance`` off,
 and frames carry the measured direction, not the commanded one.
+
+Measured on the Lite (2026-11-01, evening, numbers only): the head stops about 0.15 s after a move returns, and its
+frames go on sharpening until about 0.35 to 0.45 s (the picture runs a little behind the head); a frame from sooner
+is the move, blurred. So ``capture`` takes a frame only once ``fresh_s`` has passed since the head last moved, the
+look's own settling counted.
+
+And the camera's continuous autofocus hunts after a turn of the head, sometimes for seconds (a whole view out of focus
+for 2.5 s), while its lens is sharp on a desk only near one setting (focus 500 of 0 to 1023: edge sharpness 530,
+against 188 at 400 and 178 at 650). A cup is found out of focus; a bunch of keys isn't: with autofocus on, the view
+facing the keys saw them in 7 frames of 16; with the focus held, 13 of 16, each frame as sharp as the next (the misses
+are SAM 3.1's own, frame to frame). So on the real robot the adapter focuses once, looking at the table, and
+holds that focus (``lock_focus``).
 """
+import io
 import math
 import struct
+import subprocess
 import threading
 import time
 from collections import deque
@@ -44,11 +58,42 @@ def _yaw_pitch(pose) -> tuple[float, float]:
 
 EMOTIONS = "pollen-robotics/reachy-mini-emotions-library"
 
+FOCUS_STEPS = (350, 425, 500, 575, 650, 750)  # the Lite's lens on a desk: sharp only near 500 (November 1)
+
+
+def camera_device(run=subprocess.run) -> str | None:
+    """The robot camera's video device, from v4l2-ctl's list; None without v4l2-ctl or the camera."""
+    try:
+        lines = run(["v4l2-ctl", "--list-devices"], capture_output=True, text=True, timeout=5).stdout.splitlines()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    for i, line in enumerate(lines):
+        if "Reachy Mini Camera" in line:
+            for dev in lines[i + 1:]:
+                if dev.strip().startswith("/dev/video"):
+                    return dev.strip()
+                if not dev.strip():
+                    break
+    return None
+
+
+def sharpness(jpeg: bytes) -> float:
+    """How sharp a frame is: the variance of its edges (a Laplacian) on a half-size grey copy."""
+    import numpy as np
+    from PIL import Image
+
+    g = Image.open(io.BytesIO(jpeg)).convert("L")
+    g = np.asarray(g.resize((max(1, g.width // 2), max(1, g.height // 2))), dtype=np.float32)
+    return float((4 * g[1:-1, 1:-1] - g[:-2, 1:-1] - g[2:, 1:-1] - g[1:-1, :-2] - g[1:-1, 2:]).var())
+
+
 class ReachyBody:
     def __init__(self, robot=None, reach: Reach = Reach(), head_yaw: float = 30.0, max_deg_s: float = 70.0,
                  settle_s: float = 0.3, tolerance: float = 1.5, pose=None, say=None, sleep=time.sleep,
-                 alive: bool | None = None):
+                 alive: bool | None = None, fresh_s: float = 0.5, clock=time.monotonic, focus: bool | None = None,
+                 run=subprocess.run):
         alive = robot is None if alive is None else alive
+        focus = robot is None if focus is None else focus
         if robot is None:
             from reachy_mini import ReachyMini
 
@@ -62,8 +107,9 @@ class ReachyBody:
 
             pose = lambda yaw, pitch, roll=0.0: create_head_pose(yaw=yaw, pitch=pitch, roll=roll, degrees=True)  # noqa: E731
         self.robot, self.reach, self.head_yaw, self.tolerance = robot, reach, head_yaw, tolerance
-        self.max_deg_s, self.settle_s = max_deg_s, settle_s
-        self._pose, self._say, self._sleep = pose, say, sleep
+        self.max_deg_s, self.settle_s, self.fresh_s = max_deg_s, settle_s, fresh_s
+        self._pose, self._say, self._sleep, self._clock, self._run = pose, say, sleep, clock, run
+        self._moved_at = -math.inf  # when the last move returned: a frame is fresh only ``fresh_s`` after it
         self.yaw = self.pitch = 0.0  # where the head is looking, measured when the robot can tell us
         self.speaking = False  # Andy's voice is playing
         self._sent = (0.0, 0.0, 0.0)  # the last head yaw, pitch and base yaw sent
@@ -76,6 +122,54 @@ class ReachyBody:
         self._raw_n = 0
         if alive and self._full_pose is not None:
             threading.Thread(target=self._live, daemon=True, name="body-language").start()
+        self.focus_at = self.lock_focus() if focus else None  # the camera's focus, held; None: autofocus as it was
+
+    def lock_focus(self, view: tuple[float, float] = (0.0, 15.0), steps=FOCUS_STEPS, settle_s: float = 0.6) -> int | None:
+        """Focus once, looking at the table, then hold it: continuous autofocus off, each of ``steps`` tried (two
+        fresh frames' edge sharpness, the lower kept), then half a step either side of the sharpest; the sharpest is
+        held. Nothing changes (``None``) without v4l2-ctl or the camera's focus control, and autofocus is put back on
+        if no setting stands out (a blank wall in view, say). Only numbers are kept; no picture."""
+        dev = camera_device(self._run)
+        if not dev:
+            return None
+
+        def ctl(**kw) -> None:
+            self._run(["v4l2-ctl", "-d", dev] + [a for k, v in kw.items() for a in ("-c", f"{k}={v}")],
+                      check=True, capture_output=True, timeout=5)
+
+        try:
+            ctl(focus_automatic_continuous=0)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        before = (self.yaw, self.pitch)
+        tried: dict[int, float] = {}
+
+        def measure(focus: int) -> float:
+            if focus not in tried:
+                ctl(focus_absolute=focus)
+                self._sleep(settle_s)  # the lens moving, and the picture's delay behind it
+                self.capture()  # a frame that may be from before the lens moved
+                tried[focus] = min(sharpness(self.capture().image) for _ in range(2))
+            return tried[focus]
+
+        try:
+            self.look(*view)
+            best = max(steps, key=measure)
+            half = max(1, min(abs(a - b) for a, b in zip(steps, steps[1:])) // 2)
+            best = max((best - half, best, best + half), key=measure)
+            if tried[best] < 2.0 * min(tried.values()):  # nothing stood out: leave focusing to the camera
+                ctl(focus_automatic_continuous=1)
+                return None
+            ctl(focus_absolute=best)
+            return best
+        except (OSError, subprocess.SubprocessError, RuntimeError):
+            try:
+                ctl(focus_automatic_continuous=1)
+            except (OSError, subprocess.SubprocessError):
+                pass
+            return None
+        finally:
+            self.look(*before, precise=False)
 
     def split(self, yaw: float) -> tuple[float, float]:
         """(head yaw, base yaw) for a direction: the head turns first, the base makes up the rest."""
@@ -95,6 +189,7 @@ class ReachyBody:
         with self._moving:
             self.robot.goto_target(head=self._pose(head + base, pitch), body_yaw=math.radians(base), duration=duration)
             self._sent = (head, pitch, base)
+            self._moved_at = self._clock()
 
     def _live(self, hz: float = 50.0) -> None:
         """The body-language loop: between moves, send the base pose plus Motion's layers, 50 times a second."""
@@ -157,6 +252,9 @@ class ReachyBody:
         return None
 
     def capture(self) -> Frame:
+        wait = self.fresh_s - (self._clock() - self._moved_at)
+        if wait > 0:  # the picture runs behind the head: a frame from sooner shows the move, blurred
+            self._sleep(wait)
         stale = self._next_frame()  # this one may be from before the move finished
         data = self._next_frame(0.5) or stale
         if not data:

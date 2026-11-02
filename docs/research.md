@@ -1507,7 +1507,34 @@ Found and fixed, each with a test:
   look that came back empty). Both took six looks and no closer look at all: in none of the sweep's six wide views did
   SAM 3.1 score "keys", "keychain" or "key" above the finder's 0.3, so there was nowhere to look closer, and Andy said
   it couldn't find them. Unattended, with the keys at one place, 2 of 3 and 3 of 3 that evening; moved to other
-  places, small and flat, the wide view is where they're lost. A numbers-only look at SAM 3.1's scores for keys at
-  those places comes next.
+  places, small and flat, the wide view is where they're lost. Why: section 70.
 - **The first attempt** stopped at trial 1: Enter pressed with no letter crashed the scorecard (`''` is in every
   string). Fixed: it asks again, and whatever stops a run, the trials judged are saved.
+
+
+## 70. The camera's autofocus was hiding the keys (November 1, about 10 pm)
+
+- **Why:** the physical scorecard's two misses (section 69), the keys never seen in the sweep. Numbers only: SAM 3.1's
+  scores, each frame's edge sharpness (the variance of a Laplacian), and where the head said it was; no picture kept
+  or seen.
+- **What the numbers said:** the same keys, in the same place, two minutes apart: 0.88 from the view facing them, then
+  nothing. Frame by frame after a move: the head stops about 0.15 s after the move returns, but frames went on
+  sharpening for up to 0.6 s; one view stayed soft for all 2.5 s measured (sharpness about 235, against about 530 for
+  the same view other times), and two went soft again after 1.3 and 1.9 s with the head still. The camera
+  (`v4l2-ctl`): continuous autofocus on. Autofocus off and the focus stepped from 0 to 1023: sharp only near 500 (530,
+  against 188 at 400 and 178 at 650). The cup was found at every focus, the glasses at most, the keys only between 400
+  and 800: why the scorecard found the cup and the glasses 8 of 8 and the keys 2 of 4.
+- **Fixed** (`robot/reachy_mini.py`): at startup Andy looks at its table, tries six focus settings and two finer ones,
+  and holds the sharpest (463 here), autofocus off: about 12 s, once. If no setting stands out (a blank wall in view),
+  autofocus is left on. And a frame counts only 0.5 s after a move: with the focus held, frames reach 95% of their
+  sharpness by 0.34 to 0.45 s, and the old frame came at about 0.4. The preflight now fails if the focus isn't held.
+- **Measured:** the view facing the keys, sixteen frames each way. With autofocus: keys in **7 of 16** (2 of 8 at the
+  old timing, 5 of 8 waiting 0.6 s). Focus held: **13 of 16**, every frame as sharp as the next (737 to 768); the three
+  misses are SAM 3.1's own flicker from frame to frame, which the sweep's overlapping views and the closer look's
+  second frame are there for. The other middle view, 16 of 16 both ways. Unattended with the focus held: **9 of 9**
+  (the keys, the cup, the glasses), a median 13.5 s and 4.8 degrees off (`unattended-20261101-2149`); since the aim
+  fix, 144 of 145.
+- **Not yet:** the physical scorecard again, a person judging, with the keys where they were missed.
+- **Found on the way:** Andy had been left speaking Arabic since 20:10, saved, so it would have started in Arabic for
+  the filming. Set back to English, and the preflight now fails unless Andy speaks English. The scorecards that drive
+  the robot directly now hold the head still while searching, as the app does (no breathing in the frames).

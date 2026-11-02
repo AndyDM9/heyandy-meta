@@ -41,6 +41,7 @@ def main() -> None:
     ap.add_argument("--out", default="evals/results")
     args = ap.parse_args()
     body, judge = ReachyBody(), GlimmerJudge()
+    body.motion.set_mode("searching")  # still, as the app holds it while it searches (no breathing in the frames)
     finder = Finder(body, LocalSam31(), check=judge.real)
     glimmer = None
     if args.policy == "glimmer":

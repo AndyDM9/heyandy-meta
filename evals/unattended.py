@@ -55,6 +55,7 @@ def main() -> None:
     args = ap.parse_args()
     rnd = random.Random(args.seed)
     body = ReachyBody()
+    body.motion.set_mode("searching")  # still, as the app holds it while it searches (no breathing in the frames)
     judge = None if args.no_check else GlimmerJudge()
     finder = Finder(body, LocalSam31(), check=judge.real if judge else None)
     depth = LocalDepth()

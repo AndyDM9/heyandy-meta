@@ -52,6 +52,8 @@ def build(args) -> Andy:
         from .robot.reachy_mini import ReachyBody
 
         body, segmenter, judge = ReachyBody(), LocalSam31(args.sam), GlimmerJudge(endpoint=args.glimmer)
+        print(f"camera focus: held at {body.focus_at}" if body.focus_at is not None
+              else "camera focus: left to the camera's autofocus", flush=True)
         if args.voice:
             from .voice.local import LocalVoice
             from .voice.speaker import Speaker

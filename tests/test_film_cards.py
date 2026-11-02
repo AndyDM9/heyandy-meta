@@ -9,7 +9,10 @@ import film_cards  # noqa: E402
 
 def test_the_figures_come_from_the_files_and_say_what_they_say():
     figs = {f["from"]: f["big"] for f in film_cards.figures()}
-    assert figs["evals/results/unattended-*"] == "135 of 136"  # since the aim fix; the one miss, Nov 1 evening, kept
+    assert figs["evals/results/unattended-*"] == "144 of 145"  # since the aim fix; the one miss, Nov 1 evening, kept
+    judged = [f for f in film_cards.figures() if f["from"].startswith("physical-fixed-")]
+    assert judged and "never at the wrong thing" in judged[0]["line"]  # a person's verdicts, second on the card
+    assert film_cards.figures()[1] is not None and film_cards.figures()[1]["from"].startswith("physical-fixed-")
     assert figs["privacy-audit"].startswith("0 of ")
     assert all(f["line"] and f["from"] for f in film_cards.figures())
 
