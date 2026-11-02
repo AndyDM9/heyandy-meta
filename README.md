@@ -59,7 +59,8 @@ pharmacist can; I can remind you to call them"), and no model answers it. Someon
 words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
 ([docs/crisis-protocol.md](docs/crisis-protocol.md)). Ask it **"Hey Andy, what won't you do?"** and it says so, with
 today's receipts on its TV: no camera picture has left the house, how many health questions got its own words, how
-many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud.
+many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud. **All of it on one page,
+with what it's for, what it isn't, and where it falls short: [Andy's system card](docs/system-card.md).**
 
 ## What Andy does
 

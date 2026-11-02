@@ -109,7 +109,8 @@ reads each sentence a model writes before Andy says it. It says it's an AI at th
 words in any of its fifteen languages get the 988 line from code, checked on this computer (a word list, then Llama
 Guard 3): 60 of 60 indirect phrasings, none of 144 everyday requests and trick remarks taken for one; the limit,
 published: warning signs said in ways no list has, 16 of 45. Ask **"Hey Andy, what won't you do?"** and it says so,
-with today's receipts on the TV. Speech that isn't for Andy is dropped, never kept.
+with today's receipts on the TV. Speech that isn't for Andy is dropped, never kept. On one page, with the limits:
+`docs/system-card.md`.
 
 ## What's next: from this table to people's homes
 
