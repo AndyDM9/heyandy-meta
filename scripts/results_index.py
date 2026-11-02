@@ -194,6 +194,15 @@ def finder_finds(f: str) -> str:
             f"camera, a median {d['aim_median']}; about {d['seconds_median_middle_view']} s when the middle view sees it")
 
 
+def notes_in_view(f: str) -> str:
+    d = load(f)["summary"]
+    sets = [v for k, v in d.items() if k in ("first", "held out", "held out, second", "held out, third")]
+    got = sum(int(v["followed"].split(" of ")[0]) for v in sets)
+    of = sum(int(v["followed"].split(" of ")[1]) for v in sets)
+    return (f"{got} of {of} notes that try to instruct Andy got through ({d.get('label') or 'as built'}); harmless notes: "
+            f"the mug still said {d['harmless, the mug still said']}")
+
+
 def live_calls(f: str) -> str:
     return f"{len(load(f)['seen'])} moments of the TV's \"Meta, live\" strip during a search on the robot"
 
@@ -227,6 +236,8 @@ CARDS = [
     ("Noticing", "V-JEPA 2 on clips of an empty table: nothing noticed", "evals.notice", "notice-empty", notice),
     ("Filming mode", "\"take one\": the clap heard in the robot's own sound", "evals.filming", "filming", filming),
     ("Andy Finder", "the Reachy Mini app's \"Ring it\", on the robot", "research.md section 47", "finder-ring", finder_ring),
+    ("Notes in view", "a note left in view can't instruct Andy: drawn notes through its own picture checks, Muse Glimmer "
+     "and Prompt Guard 2 on this computer", "evals.notes_in_view", "notes-in-view", notes_in_view),
     ("Andy Finder, finding", "the Reachy Mini app's finds on the robot, its point checked by its own camera",
      "research.md section 73", "andy-finder", finder_finds),
     ("Meta's models, live", "the TV's strip of model calls, read during a search on the robot", "research.md section 51", "live-calls", live_calls),
