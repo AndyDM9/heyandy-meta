@@ -218,6 +218,13 @@ def room_talk(f: str) -> str:
             f"of {s['a conversation with Andy in a quiet room, now']['follow-ups said']} follow-ups")
 
 
+def accessibility(f: str) -> str:
+    s = load(f)["summary"]
+    return (f"{s['pages and states']} page states (every scene, the story, its end card, Andy's eyes, under the hood; "
+            f"desktop and phone): axe violations in **{s['with an axe violation']}**; {s['texts measured from pixels']} "
+            f"texts' contrast measured from the pixels, **{s['texts below WCAG AA contrast']}** below AA")
+
+
 def live_calls(f: str) -> str:
     return f"{len(load(f)['seen'])} moments of the TV's \"Meta, live\" strip during a search on the robot"
 
@@ -286,6 +293,8 @@ CARDS = [
     ("Thirteen more languages", "eight everyday requests in each, written and spoken", "evals.languages", "languages", languages),
     ("Noticing the language", "called in one of fourteen languages, does Andy switch to it?", "evals.hear_language", "hear-language", hear),
     ("In the browser", None, None, None, None),
+    ("For people who see less well", "axe-core's WCAG 2.2 A and AA checks on the public demo, and text contrast measured "
+     "from the pixels where axe can't decide it", "evals.accessibility", "accessibility", accessibility),
     ("Andy's eyes", "DINOv2 in the browser, museum photos: yours among look-alikes, and not there at all", "evals.eyes", "eyes", eyes),
     ("Andy's eyes, live", "sweeping a camera (a video of one) over our cup and its look-alikes", "evals.eyes_live", "eyes-live", eyes_live),
     ("Say it", "the demo's microphone: Meta's wav2vec 2.0 in the browser, phrases scored by CTC", "evals.say_it", "say-it", say_it),

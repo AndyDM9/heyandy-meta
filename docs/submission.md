@@ -1,6 +1,6 @@
 # Submission text (for the form on November 4)
 
-*About 1,540 words, and 240 more in the table (trimmed again on November 2; longer versions are in this file's history). Fill in the
+*About 1,560 words, and 240 more in the table (trimmed again on November 2; longer versions are in this file's history). Fill in the
 [brackets] on the day. Every figure here is read from its source by `scripts/claims.py` and a test fails if one disagrees:
 run `uv run python scripts/claims.py` after any new run or edit.*
 
@@ -34,7 +34,8 @@ keeps what it sees and hears in the house.
   Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
   AI and the crisis reply are written by hand in each language.
 - **The public demo, in your browser.** Tap 🎙 and Meta's wav2vec 2.0 hears you (7 of 7 fresh clips); or show Andy's
-  eyes (DINOv2) your mug and sweep your phone round the room. Nothing leaves the browser.
+  eyes (DINOv2) your mug and sweep your phone round the room. Nothing leaves the browser. axe-core's WCAG 2.2 AA
+  checks pass on all 56 of its states, and none of 1,193 texts is below AA contrast.
 - **Meta's models, live.** The TV shows each model call as it happens, and each turn stage by stage: that showed the
   answer waiting for the point, so Andy now answers while pointing, 9.6 s sooner.
 - **It remembers, and doesn't give up.** What you tell it ("my passport is in the top drawer"); a missed search becomes

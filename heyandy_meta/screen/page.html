@@ -132,6 +132,7 @@
   .sonar .ripple { fill: none; stroke: var(--outline); stroke-width: 2.5; transform-box: fill-box; transform-origin: center;
                    animation: s-ripple 1.8s ease-out infinite; }
   .sonar text { font-size: 9px; fill: var(--muted); } .sonar .label { font-size: 12px; font-weight: 700; fill: var(--ink); }
+  .sonar text { paint-order: stroke; stroke: var(--solid); stroke-width: 3px; stroke-linejoin: round; }  /* a halo, as the dial's */
   .sonar small { font-size: 1.25rem; color: var(--muted); text-align: center; }
   @keyframes s-ripple { from { transform: scale(0.6); opacity: 0.9; } to { transform: scale(3.2); opacity: 0; } }
   #body:has(.sonar) { align-content: stretch; }
@@ -216,6 +217,8 @@
   .trail { fill: none; stroke: var(--muted); stroke-width: 4; stroke-dasharray: 2 10; stroke-linecap: round; opacity: 0.8; }
   .trail.chosen { stroke: var(--outline); stroke-dasharray: none; stroke-width: 6; opacity: 1; }
   .dial .name { fill: var(--ink); font-size: 11px; font-weight: 700; }
+  /* a halo of the panel's colour behind the dial's words, as on a map: a ring or a dot behind never touches a letter */
+  .dial text { paint-order: stroke; stroke: var(--solid); stroke-width: 3px; stroke-linejoin: round; }
   .dial:not(.big) .name { font-size: 16px; }
   .dial:not(.big) .front { font-size: 12px; }
   .memory { display: grid; grid-template-columns: 28rem 1fr; gap: 2.5rem; align-items: center; }
@@ -257,7 +260,7 @@
   #help .panel { width: 76vw; padding: 3rem 3.5rem; backdrop-filter: none; background: var(--solid); }  /* text on solid */
   #help h1 { margin: 0 0 0.5rem; font-size: 3.2rem; }
   #help .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.8rem; }
-  #help h3 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
+  #help h2 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
   #help p { margin: 0 0 0.9rem; font-size: 1.75rem; }
 
   /* Settings: a quiet gear, top right; its menu a solid panel (text never over glass) */
@@ -585,22 +588,22 @@
   <div class="time" id="a-time"></div><div class="day" id="a-day"></div><div class="say" id="a-say"></div>
   <div class="notes" id="a-notes"></div>
 </div></div>
-<div id="help" hidden><div class="panel" role="dialog" aria-label="What can I ask Andy?"><div id="help-en">
+<div id="help" hidden tabindex="0"><div class="panel" role="dialog" aria-label="What can I ask Andy?"><div id="help-en">
   <h1>What can I ask Andy?</h1>
   <div class="kicker">Start with “Andy”. These are ideas to say out loud. Any time: “speak up”, “speak more slowly”, “say that again”, “move less”, “be quiet for an hour”.</div>
   <div class="cols">
-    <div><h3>Find things</h3><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p><p>“Hey Andy, my keys live here.” · “Is everything home?”</p><p>“Hey Andy, I'm putting my passport in the top drawer.”</p><p>“Hey Andy, are you OK?” (it checks itself)</p></div>
-    <div><h3>Remember things</h3><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p><p>“Hey Andy, what won't you do?” (its promises, with today's receipts)</p></div>
-    <div><h3>Talk, look, make</h3><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p><p>“Andy, speak Mandarin.” (or Spanish, Russian, Korean: fifteen languages)</p></div>
+    <div><h2>Find things</h2><p>“Hey Andy, where are my glasses?”</p><p>“Hey Andy, the blue mug, next to the laptop.”</p><p>“Hey Andy, follow the mug.” (then move it; say “stop”)</p><p>“Hey Andy, help me reach it.” (it talks your hand onto it)</p><p>“Hey Andy, I'm ringing my phone.” (it turns to the sound)</p><p>“Hey Andy, my keys live here.” · “Is everything home?”</p><p>“Hey Andy, I'm putting my passport in the top drawer.”</p><p>“Hey Andy, are you OK?” (it checks itself)</p></div>
+    <div><h2>Remember things</h2><p>“Hey Andy, keep an eye on my keys.”</p><p>“Hey Andy, what do you remember?”</p><p>“Hey Andy, remind me at 3 pm to call Sam.”</p><p>“Hey Andy, what did you send to the cloud today?”</p><p>“Hey Andy, what won't you do?” (its promises, with today's receipts)</p></div>
+    <div><h2>Talk, look, make</h2><p>“Hey Andy, what am I holding?” · “What's on the table?”</p><p>“Hey Andy, what's the weather tomorrow?”</p><p>“Hey Andy, draw me a lighthouse at dawn.” (then “make it sunset”)</p><p>“Andy, speak Mandarin.” (or Spanish, Russian, Korean: fifteen languages)</p></div>
   </div>
 </div>
   <div id="help-es" hidden>
   <h1>¿Qué puedo pedirle a Andy?</h1>
   <div class="kicker">Empiece con “Andy”. Son ideas para decir en voz alta. En cualquier momento: “habla más alto”, “habla más despacio”, “repite eso”, “muévete menos”, “quédate callado una hora”.</div>
   <div class="cols">
-    <div><h3>Encontrar cosas</h3><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p><p>“Oye Andy, mis llaves viven aquí.” · “¿Está todo en su sitio?”</p><p>“Oye Andy, guardo mi pasaporte en el cajón de arriba.”</p><p>“Oye Andy, ¿estás bien?” (se revisa)</p></div>
-    <div><h3>Recordar cosas</h3><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p><p>“Oye Andy, ¿qué es lo que nunca harías?” (sus promesas, con los recibos de hoy)</p></div>
-    <div><h3>Hablar, mirar, crear</h3><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p><p>“Andy, speak English.” (o en otro de sus quince idiomas)</p></div>
+    <div><h2>Encontrar cosas</h2><p>“Oye Andy, ¿dónde están mis gafas?”</p><p>“Oye Andy, la taza azul, junto a la computadora.”</p><p>“Oye Andy, sigue la taza.” (muévala; diga “basta”)</p><p>“Oye Andy, guíe mi mano.” (le guía la mano hasta allí)</p><p>“Oye Andy, estoy llamando a mi teléfono.” (gira hacia el sonido)</p><p>“Oye Andy, mis llaves viven aquí.” · “¿Está todo en su sitio?”</p><p>“Oye Andy, guardo mi pasaporte en el cajón de arriba.”</p><p>“Oye Andy, ¿estás bien?” (se revisa)</p></div>
+    <div><h2>Recordar cosas</h2><p>“Oye Andy, vigila mis llaves.”</p><p>“Oye Andy, ¿qué recuerdas?”</p><p>“Oye Andy, recuérdame a las 3 de la tarde llamar a Sam.”</p><p>“Oye Andy, ¿qué enviaste a la nube hoy?”</p><p>“Oye Andy, ¿qué es lo que nunca harías?” (sus promesas, con los recibos de hoy)</p></div>
+    <div><h2>Hablar, mirar, crear</h2><p>“Oye Andy, ¿qué tengo en la mano?” · “¿Qué hay en la mesa?”</p><p>“Oye Andy, ¿qué tiempo hará mañana?”</p><p>“Oye Andy, dibújame un faro al amanecer.”</p><p>“Andy, speak English.” (o en otro de sus quince idiomas)</p></div>
   </div>
   </div></div></div>
 <script>
@@ -1140,8 +1143,9 @@
         : R * (0.95 - 0.5 * Math.min(Math.max(p.pitch, 0), 35) / 35);
       const x = -r * Math.sin(a), y = -r * Math.cos(a);
       const g = document.createElementNS(svgNS, "g");
-      g.setAttribute("opacity", p.ago_s < 600 ? 1 : p.ago_s < 7200 ? 0.75 : 0.5); svg.append(g);
+      svg.append(g);  // seen longer ago, a fainter dot; its name stays as clear as the rest (WCAG contrast)
       const dot = document.createElementNS(svgNS, "circle");
+      dot.setAttribute("opacity", p.ago_s < 600 ? 1 : p.ago_s < 7200 ? 0.75 : 0.5);
       dot.setAttribute("cx", x); dot.setAttribute("cy", y); dot.setAttribute("r", 5.5); dot.setAttribute("class", "dot"); g.append(dot);
       const t = document.createElementNS(svgNS, "text");
       t.setAttribute("x", x + (x < -40 ? -9 : 9)); t.setAttribute("y", y + 4); t.setAttribute("class", "name");

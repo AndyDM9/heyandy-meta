@@ -1793,3 +1793,28 @@ Found and fixed, each with a test:
   X's `summary_large_image`, so a link straight to Andy's eyes shows it too. Uploaded to the Space (still private): 58
   files match the build. GitHub's preview has no API: the November 4 checklist has it as a step by hand, and a check
   of the card in a draft post on X before anything is sent.
+
+## 81. The public demo, for people who see less well (November 2, afternoon)
+
+- **Why:** the Space is what judges and voters open, often on a phone, and Andy is for people who may see less well
+  or tap less surely. Touch targets were already 44 px (section 76); nothing had checked the rest.
+- **How** (`evals/accessibility.py`): axe-core 4.10.2 (Deque's checker for WCAG 2.2 A and AA and its best practices,
+  pinned by SHA-256, never shipped with the Space) in Chromium on 56 states: the story, its end card, all 24 scenes,
+  Andy's eyes and under the hood, each at a desktop's and a phone's width. axe can't decide the contrast of text over a
+  gradient, a picture or a drawing (1,193 texts here), so those are measured from the pixels: each line of the text
+  hidden, what's behind it photographed, the text's colour (its transparency and its ancestors' too) laid over each
+  pixel, and the 5th percentile against WCAG's 4.5:1 (3:1 for large text). Getting the measure right took five passes,
+  each a fault of the measure found by looking at the element: a finished animation photographed instead of the page
+  as it is (screenshots that "disable" animations jump them to their end, and a find's spotlight ends by fading out),
+  SVG text coloured by fill, a wrapped quote's box taking in the line before it, a pill's border, and a page that
+  redraws every second (a fault must now fail twice).
+- **Found, on the page as it was** (`accessibility-before-fixes`): the help's headings skipped a level, and on a phone
+  its scrolling panel couldn't be reached by keyboard; and 50 texts below AA in 46 of 56 states, from 4 elements: the
+  dial of where Andy last saw things faded a thing seen hours ago, its name included, to about 3:1 (it's on nearly every
+  scene), and the sound scene's labels sat on its rings at about 2.2:1.
+- **Now:** the help's headings are h2, its panel focusable; the dial fades only the dot (the list beside it says when),
+  and its words and the sound scene's have a halo of the panel's colour, as on a map. **No axe violation in 56 states,
+  and none of 1,193 texts below AA** (`accessibility-20261102-1401`). `tests/test_accessibility.py` runs the help, the
+  dial and the sound scene at both widths on every push, and fails on the page as it was.
+- **Not covered:** automated checks find only part of what a person with a screen reader or low vision meets; nobody
+  has used the demo that way yet.

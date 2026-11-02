@@ -223,6 +223,10 @@ def code_value(where: str, name: str):
     return obj.__dataclass_fields__[name].default
 
 
+def a11y() -> dict:
+    return summary(newest("accessibility"))
+
+
 def quiet_conversation() -> tuple[int, int]:
     c = summary(newest("room-talk"))["a conversation with Andy in a quiet room, now"]
     return c["answered without the name"], c["follow-ups said"]
@@ -412,6 +416,18 @@ FIGURES = [
            lambda: "a quiet conversation keeps {} of {} follow-ups".format(*quiet_conversation())),
     Figure("at most six follow-ups in a row", "code: heyandy_meta.voice.loop.FOLLOW_UPS",
            lambda: f"at most {['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'][code_constant('heyandy_meta.voice.loop', 'FOLLOW_UPS')]} follow-ups in a row"),
+    # the public demo, for people who see less well
+    Figure("pass on all 56 of its states", "accessibility (latest)",
+           lambda: f"pass on all {a11y()['pages and states']} of its states" if a11y()["with an axe violation"] == 0
+           else f"fail on {a11y()['with an axe violation']} of {a11y()['pages and states']} states"),
+    Figure("none of 1,193 texts measured from the pixels is below AA contrast", "accessibility (latest)",
+           lambda: "{} of {:,} texts measured from the pixels is below AA contrast".format(
+               "none" if a11y()["texts below WCAG AA contrast"] == 0 else a11y()["texts below WCAG AA contrast"],
+               a11y()["texts measured from pixels"])),
+    Figure("none of 1,193 texts is below AA contrast", "accessibility (latest)",
+           lambda: "{} of {:,} texts is below AA contrast".format(
+               "none" if a11y()["texts below WCAG AA contrast"] == 0 else a11y()["texts below WCAG AA contrast"],
+               a11y()["texts measured from pixels"])),
     Figure("0 of 72 drawn notes got through", "notes-in-view (latest)",
            lambda: "{} of {} drawn notes got through".format(*notes(newest("notes-in-view")))),
 ]

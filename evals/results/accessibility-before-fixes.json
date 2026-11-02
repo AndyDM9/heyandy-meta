@@ -1,0 +1,615 @@
+{
+ "when": "2026-11-02 14:03",
+ "what": "the page as committed before the fixes (3212ba9), audited with the final method",
+ "summary": {
+  "pages and states": 56,
+  "with an axe violation": 2,
+  "rules violated": [
+   "heading-order",
+   "scrollable-region-focusable"
+  ],
+  "texts below WCAG AA contrast": 50,
+  "states with one": 46,
+  "below, distinct": [
+   "#watching > .dial[viewBox=\"-110 -110 220 220\"][role=\"img\"] > g[opacity=\"0.5\"] > ",
+   ".big > g[opacity=\"0.5\"] > text[x=\"-30.924390222011162\"][y=\"-31.948082422023994\"]",
+   ".label",
+   "text[x=\"-30.924390222011162\"]"
+  ]
+ },
+ "states": [
+  {
+   "state": "story",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.97
+    ]
+   ]
+  },
+  {
+   "state": "story",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "end card",
+   "width": "desktop",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "end card",
+   "width": "phone",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "scene: start",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: start",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: idle",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: idle",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: finding",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: finding",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: found",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: found",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: guide",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: guide",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: turned",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: turned",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: sound",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ],
+    [
+     ".label",
+     2.41
+    ]
+   ]
+  },
+  {
+   "state": "scene: sound",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ],
+    [
+     ".label",
+     2.17
+    ]
+   ]
+  },
+  {
+   "state": "scene: home",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: home",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: told",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: told",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: checked",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: checked",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: mine",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: mine",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: cups",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: cups",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: out",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: out",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: spanish",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.96
+    ]
+   ]
+  },
+  {
+   "state": "scene: spanish",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.98
+    ]
+   ]
+  },
+  {
+   "state": "scene: mandarin",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: mandarin",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: web",
+   "width": "desktop",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "scene: web",
+   "width": "phone",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "scene: answer",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: answer",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: drawing",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: drawing",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: memory",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "#watching > .dial[viewBox=\"-110 -110 220 220\"][role=\"img\"] > g[opacity=\"0.5\"] > ",
+     2.99
+    ],
+    [
+     ".big > g[opacity=\"0.5\"] > text[x=\"-30.924390222011162\"][y=\"-31.948082422023994\"]",
+     2.84
+    ]
+   ]
+  },
+  {
+   "state": "scene: memory",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "#watching > .dial[viewBox=\"-110 -110 220 220\"][role=\"img\"] > g[opacity=\"0.5\"] > ",
+     3.0
+    ],
+    [
+     ".big > g[opacity=\"0.5\"] > text[x=\"-30.924390222011162\"][y=\"-31.948082422023994\"]",
+     2.85
+    ]
+   ]
+  },
+  {
+   "state": "scene: room",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.98
+    ]
+   ]
+  },
+  {
+   "state": "scene: room",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: story",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.98
+    ]
+   ]
+  },
+  {
+   "state": "scene: story",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: privacy",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.98
+    ]
+   ]
+  },
+  {
+   "state": "scene: privacy",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: promises",
+   "width": "desktop",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     2.99
+    ]
+   ]
+  },
+  {
+   "state": "scene: promises",
+   "width": "phone",
+   "violations": {},
+   "too low": [
+    [
+     "text[x=\"-30.924390222011162\"]",
+     3.0
+    ]
+   ]
+  },
+  {
+   "state": "scene: help",
+   "width": "desktop",
+   "violations": {
+    "heading-order": [
+     "#help-en > .cols > div:nth-child(1) > h3"
+    ]
+   },
+   "too low": []
+  },
+  {
+   "state": "scene: help",
+   "width": "phone",
+   "violations": {
+    "heading-order": [
+     "#help-en > .cols > div:nth-child(1) > h3"
+    ],
+    "scrollable-region-focusable": [
+     "#help"
+    ]
+   },
+   "too low": []
+  },
+  {
+   "state": "Andy's eyes",
+   "width": "desktop",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "Andy's eyes",
+   "width": "phone",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "under the hood",
+   "width": "desktop",
+   "violations": {},
+   "too low": []
+  },
+  {
+   "state": "under the hood",
+   "width": "phone",
+   "violations": {},
+   "too low": []
+  }
+ ]
+}
