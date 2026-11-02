@@ -48,7 +48,7 @@ def figures() -> list[dict]:
     sound = _load("sound-20261031-1856.json")
     out = [
         {"big": f"{pointed} of {trials}", "line": "unattended searches on the robot ended in a point",
-         "from": "evals/results/unattended-*", "ok": trials >= 100 and pointed == trials},
+         "from": "evals/results/unattended-*", "ok": trials >= 100 and pointed >= 0.95 * trials},  # a miss is shown, as it is
         {"big": f"{final['aim_deg_median']}°", "line": "median off the middle, checked by its own camera after each point",
          "from": "unattended-20261031-1106", "ok": final["pointed"] == final["trials"]},
         {"big": f"{privacy['camera_pictures_to_cloud']} of {privacy['camera_pictures_taken']}",

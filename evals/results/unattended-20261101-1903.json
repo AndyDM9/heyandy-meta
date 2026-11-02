@@ -1,0 +1,276 @@
+{
+ "things": "glasses,cup,keys,watch",
+ "check": true,
+ "summary": {
+  "trials": 12,
+  "errors": 0,
+  "pointed": 11,
+  "seconds_median": 12.5,
+  "looks_median": 2,
+  "aim_deg_median": 5.3,
+  "aim_deg_worst": 7.7,
+  "reaimed": 9,
+  "aim_not_seen": 1,
+  "metres_by_thing": {
+   "cup": [
+    1.24,
+    1.26,
+    1.42
+   ],
+   "glasses": [
+    1.31,
+    1.35,
+    1.56
+   ],
+   "keys": [
+    0.97,
+    1.07
+   ],
+   "watch": [
+    1.16,
+    1.2,
+    1.22
+   ]
+  }
+ },
+ "note": "nobody checked what was pointed at: this measures the robot, not the finding",
+ "trials": [
+  {
+   "round": 1,
+   "thing": "glasses",
+   "from": [
+    -17.6,
+    -1.2
+   ],
+   "pointed": true,
+   "seconds": 12.4,
+   "looks": 2,
+   "aim_deg": 6.6,
+   "reaimed": true,
+   "at": [
+    -15.5,
+    12.8
+   ],
+   "metres": 1.56,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "cup",
+   "from": [
+    15.1,
+    -3.2
+   ],
+   "pointed": true,
+   "seconds": 12.2,
+   "looks": 2,
+   "aim_deg": 6.7,
+   "reaimed": true,
+   "at": [
+    -25.7,
+    10.7
+   ],
+   "metres": 1.42,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "keys",
+   "from": [
+    3.6,
+    4.1
+   ],
+   "pointed": false,
+   "seconds": 20.9,
+   "looks": 8,
+   "aim_deg": null,
+   "reaimed": false,
+   "at": null,
+   "metres": null,
+   "why": "not there",
+   "error": null
+  },
+  {
+   "round": 1,
+   "thing": "watch",
+   "from": [
+    -44.2,
+    7.7
+   ],
+   "pointed": true,
+   "seconds": 9.8,
+   "looks": 3,
+   "aim_deg": null,
+   "reaimed": false,
+   "at": [
+    -42.3,
+    15.9
+   ],
+   "metres": 1.2,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "glasses",
+   "from": [
+    -46.3,
+    5.8
+   ],
+   "pointed": true,
+   "seconds": 8.6,
+   "looks": 2,
+   "aim_deg": 2.6,
+   "reaimed": false,
+   "at": [
+    -15.4,
+    12.8
+   ],
+   "metres": 1.31,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "cup",
+   "from": [
+    -43.0,
+    -2.7
+   ],
+   "pointed": true,
+   "seconds": 12.8,
+   "looks": 2,
+   "aim_deg": 6.8,
+   "reaimed": true,
+   "at": [
+    -25.3,
+    10.6
+   ],
+   "metres": 1.26,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "keys",
+   "from": [
+    -7.5,
+    15.7
+   ],
+   "pointed": true,
+   "seconds": 12.9,
+   "looks": 2,
+   "aim_deg": 5.3,
+   "reaimed": true,
+   "at": [
+    -18.2,
+    18.4
+   ],
+   "metres": 1.07,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 2,
+   "thing": "watch",
+   "from": [
+    -37.6,
+    0.6
+   ],
+   "pointed": true,
+   "seconds": 13.1,
+   "looks": 3,
+   "aim_deg": 4.4,
+   "reaimed": true,
+   "at": [
+    -41.9,
+    15.7
+   ],
+   "metres": 1.16,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "glasses",
+   "from": [
+    12.7,
+    18.7
+   ],
+   "pointed": true,
+   "seconds": 11.7,
+   "looks": 2,
+   "aim_deg": 3.2,
+   "reaimed": true,
+   "at": [
+    -15.8,
+    12.7
+   ],
+   "metres": 1.35,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "cup",
+   "from": [
+    7.7,
+    4.9
+   ],
+   "pointed": true,
+   "seconds": 12.5,
+   "looks": 2,
+   "aim_deg": 7.7,
+   "reaimed": true,
+   "at": [
+    -25.3,
+    11.2
+   ],
+   "metres": 1.24,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "keys",
+   "from": [
+    47.6,
+    -3.8
+   ],
+   "pointed": true,
+   "seconds": 13.5,
+   "looks": 3,
+   "aim_deg": 4.3,
+   "reaimed": true,
+   "at": [
+    -18.2,
+    17.8
+   ],
+   "metres": 0.97,
+   "why": "",
+   "error": null
+  },
+  {
+   "round": 3,
+   "thing": "watch",
+   "from": [
+    35.8,
+    2.2
+   ],
+   "pointed": true,
+   "seconds": 12.9,
+   "looks": 3,
+   "aim_deg": 3.7,
+   "reaimed": true,
+   "at": [
+    -42.5,
+    15.0
+   ],
+   "metres": 1.22,
+   "why": "",
+   "error": null
+  }
+ ]
+}

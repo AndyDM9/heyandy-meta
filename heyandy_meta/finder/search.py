@@ -6,6 +6,7 @@ of the view (correcting the head's aim if not), so every find says how far off i
 returned in memory, for the TV, and never saved.
 """
 import math
+import time
 from dataclasses import dataclass, field
 from typing import Callable, Protocol
 
@@ -60,6 +61,7 @@ class Finder:
     verify: bool = True  # after pointing, look once more: is it in the middle of the view?
     aim_tolerance: float = 3.0  # degrees off the middle before the head's command is corrected
     aim_corrections: int = 2  # at most this many, each from what the last frame showed
+    settle_s: float = 0.5  # a closer look that came back empty: a fresh frame this long after, before saying no
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None,
              usual: tuple[float, float] | None = None) -> Found | None:
@@ -118,17 +120,30 @@ class Finder:
         return [Sighting(*pixel_to_angles(*m.center, frame.yaw, frame.pitch, self._cam(frame)),
                          m.score if m.score is not None else 0.5) for m in masks]
 
-    def confirm(self, label: str, yaw: float, pitch: float) -> Found | None:
-        """Look straight at a place; it counts only if the thing is near the centre of that frame."""
+    def confirm(self, label: str, yaw: float, pitch: float, again: bool = True) -> Found | None:
+        """Look straight at a place; it counts only if the thing is near the centre of that frame. Not there: once
+        more, only then (a found thing costs nothing extra). On the robot about one closer look in ten came back
+        empty though the sweep had seen the thing clearly (November 1, evening): the head lands up to about 7 degrees
+        from where it's sent, and a frame can be taken while it settles. So: a fresh frame a moment later, from the
+        same place; and if the thing is in view but off the middle, one look straight at it."""
         self.why = ""
         frame = self._look(yaw, pitch)
         cam = self._cam(frame)
         masks = self._masks(frame, label)
         if self.on_frame:
             self.on_frame(frame, masks)
-        near = [m for m in masks
-                if abs(m.center[0] - cam.cx) <= self.confirm_within_px * frame.width
-                and abs(m.center[1] - cam.cy) <= self.confirm_within_px * frame.width]
+        near = self._near(masks, frame, cam)
+        if not near and again:
+            time.sleep(self.settle_s)
+            frame = self.body.capture()  # the same place, settled: not one more look in the search
+            cam = self._cam(frame)
+            masks = self._masks(frame, label)
+            if self.on_frame:
+                self.on_frame(frame, masks)
+            near = self._near(masks, frame, cam)
+            if not near and masks:  # in view, off the middle: the head landed a few degrees off
+                best = max(masks, key=lambda m: m.score if m.score is not None else 0.5)
+                return self.confirm(label, *pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam), again=False)
         if not near:
             self.why = "not there"
             return None
@@ -139,6 +154,11 @@ class Finder:
             return None
         y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)
+
+    def _near(self, masks: list[Mask], frame: Frame, cam) -> list[Mask]:
+        return [m for m in masks
+                if abs(m.center[0] - cam.cx) <= self.confirm_within_px * frame.width
+                and abs(m.center[1] - cam.cy) <= self.confirm_within_px * frame.width]
 
     def point(self, found: Found) -> Found:
         self.last_found = found

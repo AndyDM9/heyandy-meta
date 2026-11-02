@@ -33,7 +33,7 @@ SHOTS = [
     ("the uncut find", "en", "Hey Andy, where are my glasses?", "point"),
     ("follow the mug", "en", "Hey Andy, follow the mug.", "follow"),
     ("several things at once", "en", "Hey Andy, find the cup and remind me in two minutes to call Sam.", "point"),
-    ("the network unplugged", "en", "Hey Andy, where's the remote?", "point offline"),
+    ("the network unplugged", "en", "Hey Andy, where are my keys?", "point offline"),  # the remote if one's in front
     ("the room in 3D", "en", "Hey Andy, show me the room.", ""),
     ("a picture", "en", "Hey Andy, draw me a lighthouse at dawn.", "cloud"),
     ("the weather radar on the TV", "en", "Hey Andy, show me the weather radar on the TV.", "cloud"),

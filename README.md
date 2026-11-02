@@ -21,7 +21,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   <a href="#try-it-in-your-browser-and-in-fifteen-languages"><img alt="Andy speaks fifteen languages" src="https://img.shields.io/badge/Speaks-15%20languages-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml"><img alt="Tests: every push, the TV page in a real browser too" src="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml/badge.svg"></a>
-  <a href="evals/results"><img alt="112 of 112 unattended searches on the robot ended in a point" src="https://img.shields.io/badge/On%20the%20robot-112%20of%20112%20pointed-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
+  <a href="evals/results"><img alt="135 of 136 unattended searches on the robot ended in a point" src="https://img.shields.io/badge/On%20the%20robot-135%20of%20136%20pointed-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
 </p>
 
 <sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
@@ -33,7 +33,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   ([Pew Research, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/)):
   when the glasses go missing, there's no one to ask. Andy is someone to ask, and it can show you.
 - **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
-  its camera, and says where, from where you stand. *112 of 112 unattended searches on the robot ended in a point.*
+  its camera, and says where, from where you stand. *135 of 136 unattended searches on the robot ended in a point.*
 - **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
   911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 s from the words.* Andy can't call
   anyone and doesn't watch for falls; it does what a robot that finds things can.
@@ -60,7 +60,7 @@ many sentences Llama Guard 3 read before Andy said them, every word sent to the 
 | Finds it, and points | Guides your hand | Turns to a ringing |
 |---|---|---|
 | ![Found: the drawn mug outlined, "ahead of you, on your left, about 2 steps from you, at your 11 o'clock", a little map from where you stand](docs/images/tv-found.webp) | ![Guiding a hand: the mug and the hand outlined, a big arrow, "15 in from your hand"](docs/images/tv-guide.webp) | ![Listening for a phone: each turn of the head seen from above, and where it rings](docs/images/tv-sound.webp) |
-| **"Hey Andy, where's my mug?"** SAM 3.1 finds it, Andy points and checks its own aim, and says it from where you stand: "ahead of you, on your left, about 2 steps, at your 11 o'clock". *112 of 112 searches on the robot ended in a point.* | **"Help me reach it."** For someone who can't see well: it watches your hand and the thing, and talks your hand in ("Toward you, and right") with notes that rise as you near it. *On the robot: no hand made up, in 34 frames of an empty table.* | **"I'm ringing my phone."** It turns until its microphones hear the ringing straight ahead, looks there, and points, even at a phone under a cushion. *6 of 6 ringings faced, within 20 degrees; a voice never.* |
+| **"Hey Andy, where's my mug?"** SAM 3.1 finds it, Andy points and checks its own aim, and says it from where you stand: "ahead of you, on your left, about 2 steps, at your 11 o'clock". *135 of 136 searches on the robot ended in a point.* | **"Help me reach it."** For someone who can't see well: it watches your hand and the thing, and talks your hand in ("Toward you, and right") with notes that rise as you near it. *On the robot: no hand made up, in 34 frames of an empty table.* | **"I'm ringing my phone."** It turns until its microphones hear the ringing straight ahead, looks there, and points, even at a phone under a cushion. *6 of 6 ringings faced, within 20 degrees; a voice never.* |
 | **It doesn't give up** | **Where things live** | **What you tell it** |
 | ![It turned up: "Good news: your mug turned up!", and a wallet it's still looking for](docs/images/tv-turned.webp) | ![Is everything home? Two things home, the keys away, where they are and where they live](docs/images/tv-home.webp) | ![You told me: "I put my passport in the top drawer of the desk"](docs/images/tv-told.webp) |
 | A miss becomes "I'll keep looking", and when the thing turns up, Andy points and says so, unprompted. *On the robot: a "lost" watch found later, 4.1 degrees off, said out loud.* | **"My keys live here." "Is everything home?"** It checks each home, points at what's away, then at where it lives; every evening at 9. *On the robot: the keys found away, pointed at, then their home.* | **"I'm putting my passport in the top drawer."** What no camera sees, it keeps in your words and answers at once: "You told me on Tuesday at 3:12". *On the robot: answered without a single look.* |
@@ -151,7 +151,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 
 | | Measured | |
 |---|---|---|
-| On the robot, alone in the room | **112 of 112** unattended searches ended in a point, every run since the aim fix (the one run before it: 3 of 4); a median **5.2°** off the middle of the view on the final code | [`unattended-*`](evals/results) |
+| On the robot, alone in the room | **135 of 136** unattended searches ended in a point since the aim fix (the run before it: 3 of 4; the one miss since, the keys on Nov 1, made a closer look try again, then 12 of 12); a median **5.2°** off the middle of the view on the final code | [`unattended-*`](evals/results) |
 | Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 80 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
 | Several things at once | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
 | Privacy, a day of 21 requests | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |

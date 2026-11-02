@@ -135,3 +135,59 @@ def test_what_a_search_passed_over_is_kept_for_andys_words():
     assert any("picture" in why for why in f.passed)
     f.find("glasses")
     assert f.passed == []  # each search starts afresh
+
+
+class FarOffBody(SimBody):
+    """A head that lands far off where it's sent, once, past the near-the-middle limit (about 15 degrees here), as the
+    real one sometimes did; the frame says where it really is."""
+
+    def __init__(self, room, off=20.0):
+        super().__init__(room)
+        self.off, self.looked = off, 0
+
+    def look(self, yaw, pitch, precise=True):
+        self.looked += 1
+        super().look(yaw + (self.off if self.looked == 5 else 0.0), pitch, precise)  # the closer look, after four views
+
+
+def test_a_closer_look_that_lands_off_the_middle_looks_straight_at_it_once():
+    room = Room([Thing("glasses", 30.0, 20.0, score=0.6)])  # not sure: four views, then the closer look
+    body = FarOffBody(room)
+    found = Finder(body, SimSegmenter(room), settle_s=0.0, closer_looks=1).find("glasses")
+    assert found is not None and found.yaw == pytest.approx(30.0, abs=1.0)  # found, where it really is
+
+
+class EmptyOnce(SimSegmenter):
+    """SAM 3.1 sees nothing in the first frame taken looking straight at the thing (the closer look's, taken while
+    the head settled), then sees it again."""
+
+    def __init__(self, room, at=(30.0, 20.0)):
+        super().__init__(room)
+        self.at, self.blurred = at, None
+
+    def find(self, frame, query):
+        if abs(frame.yaw - self.at[0]) < 1 and abs(frame.pitch - self.at[1]) < 1 and self.blurred in (None, id(frame)):
+            self.blurred = id(frame)
+            return []
+        return super().find(frame, query)
+
+
+def test_an_empty_first_frame_of_a_closer_look_is_taken_again():
+    room = Room([Thing("glasses", 30.0, 20.0, score=0.6)])
+    body = SimBody(room)
+    found = Finder(body, EmptyOnce(room), settle_s=0.0, closer_looks=1).find("glasses")  # one closer look only
+    assert found is not None and found.looks == 5  # the fresh frame is from the same place: not one more look
+
+
+def test_a_thing_truly_gone_is_still_not_there():
+    f, body, room = finder(Thing("glasses", 30.0, 20.0, score=0.6), settle_s=0.0)
+    seen = f._sightings
+
+    def then_gone(label, yaw, pitch):
+        out = seen(label, yaw, pitch)
+        if yaw == -55.0:  # the last sweep view: taken away before the closer look
+            room.things.clear()
+        return out
+
+    f._sightings = then_gone
+    assert f.find("glasses") is None and f.why == "not there" and pointed(body) == []

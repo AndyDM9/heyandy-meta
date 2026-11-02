@@ -1449,3 +1449,24 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   questions answered in Andy's own words, sentences of the models' answers Llama Guard 3 read). Counted and answered on
   this computer: asking sends nothing. How many crisis replies there were is never shown: a TV is seen by anyone in
   the room. The public demo has it as a scene ("what won't you do?" in Ask Andy).
+
+## 67. The filming table, measured the night before (November 1, about 8 pm)
+
+- **Why:** in the evening's rehearsal the glasses were missed in English and found a minute later in Mandarin. Before
+  filming, the table as it will be filmed (glasses, the blue cup, keys, the watch, the phone), measured by numbers
+  only: SAM 3.1's scores in the sweep and in the closer look, never a picture kept or seen.
+- **What the numbers said:** the room was well lit (each view's mean brightness 88 to 100 of 255). Glasses 0 of 6
+  while they were off the table, then 4 of 4 when back (SAM 3.1 at 0.93 to 0.96); the cup, keys and watch found in
+  0.8 to 0.95. Showing SAM 3.1 the middle of the frame enlarged made no difference that mattered (0.96 against 0.95), so
+  it wasn't added. **The phone, upright in a dark stand between two lit monitors: 0 of 3** (one weak sighting, 0.61).
+  The search already asks for "phone", "cell phone" and "smartphone"; it's the place. For filming: the phone flat on
+  the table, in the open.
+- **The one real fault:** about one closer look in ten came back empty though the sweep had just seen the thing clearly
+  (the watch once, the keys once in the scorecard: `unattended-20261101-1903`, 11 of 12). Logged: the head lands up to
+  about 7 degrees from where it's sent in each direction, and the closer look counts a thing only within about 15 of the
+  middle; a frame can also be taken while the head settles. **Fixed** (`finder/search.py` `confirm`): an empty closer
+  look takes a fresh frame half a second later from the same place, and if the thing is in view but off the middle,
+  looks straight at it once. Only after a miss: a found thing costs nothing more. Tests that fail on the old code: a
+  head landing 20 degrees off; a first frame that comes back empty; and a thing truly gone is still "not there".
+- **Then, on the robot:** 12 of 12 (`unattended-20261101-1914`). Since the aim fix, **135 of 136** unattended searches
+  ended in a point.
