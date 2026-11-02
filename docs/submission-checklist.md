@@ -35,7 +35,9 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
        (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the story opens on
        about 10 s of the robot itself, `docs/demo-script.md`; then
-       `hf upload heyandy-ai/andy dist/space-static . --repo-type space`), then make it public:
+       `hf upload heyandy-ai/andy dist/space-static . --repo-type space`; then
+       `uvx --from huggingface_hub python scripts/verify_space.py` must say none missing, extra or different), then make
+       it public:
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
        the story (about 75 seconds) should play, end on the card, and "Watch the 3-minute video" should open the video;
        type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find; tap 🎙 and say it (wav2vec 2.0

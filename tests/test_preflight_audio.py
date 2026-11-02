@@ -100,3 +100,24 @@ def test_the_space_build_never_ships_a_library_file_it_didnt_check(tmp_path, mon
     (tmp_path / "x.js").write_bytes(b"tampered")
     with pytest.raises(SystemExit, match="SHA-256 differs"):
         b.vendored("x.js", fetch=lambda url: b"something else")
+
+
+def test_the_space_is_compared_with_the_build_file_by_file(tmp_path):
+    """November 2: uploads add and replace, never remove, and Hugging Face's own template stylesheet from the Space's
+    first commit was still there; scripts/verify_space.py says what differs."""
+    import hashlib
+    from types import SimpleNamespace
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from verify_space import compare
+
+    for name, data in (("index.html", b"<html>"), ("vendor/rt.wasm", b"\0asm" * 9)):
+        (tmp_path / name).parent.mkdir(exist_ok=True)
+        (tmp_path / name).write_bytes(data)
+    local = {str(p.relative_to(tmp_path)): p for p in tmp_path.rglob("*") if p.is_file()}
+    entry = lambda size, sha=None: SimpleNamespace(size=size, lfs=SimpleNamespace(sha256=sha) if sha else None)  # noqa: E731
+    good = hashlib.sha256(b"\0asm" * 9).hexdigest()
+    assert compare(local, {"index.html": entry(6), "vendor/rt.wasm": entry(36, good), ".gitattributes": entry(9)}) == \
+        {"missing": [], "extra": [], "size": [], "sha256": []}
+    assert compare(local, {"index.html": entry(5), "vendor/rt.wasm": entry(36, "0" * 64), "style.css": entry(3)}) == \
+        {"missing": [], "extra": ["style.css"], "size": ["index.html"], "sha256": ["vendor/rt.wasm"]}

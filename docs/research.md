@@ -1715,3 +1715,7 @@ Found and fixed, each with a test:
   libraries from jsDelivr and every model file at its pinned commit; with jsDelivr blocked, Andy's eyes and "Say it"
   both still load, from `vendor/`, with no page error. Tests: the fallback (no network), the pins, and a build that
   meets a different file stops.
+- **And the upload checked against the build** (`scripts/verify_space.py`): every built file on the Space at the same
+  size, the large LFS ones by SHA-256, nothing extra. It found Hugging Face's own template stylesheet from the Space's
+  first commit (October 27) still there, unused (uploads add and replace, never remove): removed. The checklist's
+  November 4 step runs it before the Space goes public.
