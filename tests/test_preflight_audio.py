@@ -10,7 +10,7 @@ usb 1-5.2.1: cannot submit urb 0, error -2: endpoint not enabled
 usb 1-5.2.4: cannot submit urb 0, error -2: endpoint not enabled
 usb 1-5.2.1: uac_clock_source_is_valid(): cannot get clock validity for id 1
 usb 1-5.2.1: reset high-speed USB device number 12 using xhci_hcd
-nvidia-nvlink: Nvlink Core is being initialized"""
+xhci_hcd 0000:00:14.0: xHCI Host Controller"""
 
 
 def test_the_robot_audio_devices_complaints_are_counted_and_no_others():
