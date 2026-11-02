@@ -1570,3 +1570,26 @@ Found and fixed, each with a test:
   the aim fix, 206 of 208 unattended searches ended in a point.
 - **Not yet:** a person judging the points again (section 69's scorecard), and the simulated search's figures (they
   were made with the old geometry; the simulated camera now uses the new one).
+
+
+## 72. SAM 3.1 was encoding each frame once per name (November 1, late)
+
+- **Why:** the stage timing of a real find (`hood-20261031-2036`) gave SAM 3.1 0.73 to 0.76 s a frame, four frames a
+  find; the preflight's one name took 0.40.
+- **Found:** the server asked for a thing's few names ("keys": "bunch of keys", "keychain", "set of keys") in one SAM
+  3.1 video session, resetting it between names, and SAM 3's reset drops the encoded frame (`reset_state`:
+  `backbone_out = None`, the feature cache cleared). So the frame was encoded once per name; the comment said once.
+- **Fixed** (`local/sam_server.py` `masks_many_once`): SAM 3's own image API (`Sam3Processor`: the frame encoded once,
+  then each name) on the loaded 3.1 model's detector: the same weights, no more memory. Tracking (the cup game) keeps
+  the video session. The old way stays at `/segment_many_session` to compare.
+- **Measured on the robot's frames** (14 views, the keys, the cup and the glasses, the finder's names; each frame
+  sent both ways, in alternating order; numbers only): **0.82 s a call -> 0.30**; seen 35 -> 37 of 42 (the 35 the
+  same; 2 more), scores a median 0.007 apart, centres 0.2 px. The same 18 searches as section 71: a median **7.8 s**
+  a find (9.8 before; 7.1 to 8.8), aim a median 1.3 degrees, 1.9 at worst, none re-aimed (`unattended-20261101-2248`).
+  The last search, for the glasses, said "not there": they had been taken off the desk (right after, SAM 3.1 scored
+  them 0 in every view, the cup and the keys seen); counted as a miss. Since the aim fix, 223 of 226.
+- **Also found that night:** the dress rehearsal (`rehearsal-20261101-2241`, run without the key) passed both cloud
+  shots although Andy answered "I can only make pictures when I'm connected": the check's words missed it. The check
+  now fails a cloud shot without the key or with any "connected" (`evals/rehearsal.py` `cloud_missed`), and that run's
+  two cloud shots are re-judged in its file. Its other nine shots stand: the uncut find 12.7 s from the words to the
+  answer, the keys offline 11.9 s, Mandarin 18.4 s, "I fell" to the phone pointed at 21.9 s.

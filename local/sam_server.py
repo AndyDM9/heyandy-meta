@@ -223,7 +223,8 @@ def masks(predictor, image: Image.Image, query: str, min_score: float) -> list[d
 
 
 def masks_many(predictor, image: Image.Image, queries: list[str], min_score: float) -> dict[str, list[dict]]:
-    """Several things in one frame: one session, so the image is encoded once and each prompt reuses it."""
+    """Several things in one frame, as a video session: reset between names, which in SAM 3 drops the encoded frame, so
+    the frame is encoded once per name (kept at /segment_many_session to compare; finding uses masks_many_once)."""
     sid = uuid.uuid4().hex
     # Registered directly: start_session in sam3 at f1647e8 passes offload_state_to_cpu, which the 3.1 model rejects.
     predictor._all_inference_states[sid] = {"state": predictor.model.init_state(resource_path=[image]),
@@ -237,6 +238,24 @@ def masks_many(predictor, image: Image.Image, queries: list[str], min_score: flo
             found[q] = _masks(out)
     finally:
         predictor.handle_request(dict(type="close_session", session_id=sid))
+    return found
+
+
+def masks_many_once(processor, image: Image.Image, queries: list[str], min_score: float) -> dict[str, list[dict]]:
+    """Several names in one frame, the frame encoded once for all of them: SAM 3's image API on the 3.1 model's own
+    detector (the same weights, no more memory). masks_many's session is reset between names, and SAM 3's reset drops
+    the encoded frame (reset_state: backbone_out = None, feature_cache cleared), so it encoded the frame once per name.
+    Measured on the robot's frames, November 1 (42 asks, the finder's names): 0.82 s a call -> 0.30; seen 35 -> 37
+    (all 35 the same), scores a median 0.007 apart, centres 0.2 px."""
+    found = {}
+    with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+        state = processor.set_image(image)
+        for q in queries:
+            processor.reset_all_prompts(state)
+            processor.confidence_threshold = min_score
+            out = processor.set_text_prompt(q, state)
+            ms = [_mask(m[0].cpu().numpy(), float(prob)) for prob, m in zip(out["scores"], out["masks"])]
+            found[q] = sorted((m for m in ms if m), key=lambda m: -m["score"])
     return found
 
 
@@ -287,6 +306,7 @@ def track(predictor, frames: list[Image.Image], query: str, min_score: float) ->
 
 def serve(predictor, host: str, port: int) -> None:
     lock = threading.Lock()  # one GPU, one frame at a time
+    once = [None]  # SAM 3's image processor on the loaded model's detector, made on first use
     looks = Looks()
     guard = Guard()
     actions = Actions()
@@ -296,7 +316,7 @@ def serve(predictor, host: str, port: int) -> None:
             self._send(200, {"status": "ok"} if self.path == "/health" else {"error": "not found"})
 
         def do_POST(self):
-            if self.path not in ("/segment", "/segment_many", "/track", "/embed", "/guard", "/action"):
+            if self.path not in ("/segment", "/segment_many", "/segment_many_session", "/track", "/embed", "/guard", "/action"):
                 return self._send(404, {"error": "not found"})
             n = int(self.headers.get("Content-Length") or 0)
             if not 0 < n <= (MAX_CLIP_BODY if self.path in ("/track", "/action") else MAX_BODY):
@@ -312,13 +332,20 @@ def serve(predictor, host: str, port: int) -> None:
             try:
                 req = json.loads(self.rfile.read(n))
                 image = Image.open(io.BytesIO(base64.b64decode(req["image"]))).convert("RGB")
-                queries = [str(q)[:80] for q in (req["queries"] if self.path == "/segment_many" else [req["query"]])][:8]
+                queries = [str(q)[:80] for q in (req["queries"] if self.path != "/segment" else [req["query"]])][:8]
                 min_score = float(req.get("min_score", 0.3))
             except (ValueError, KeyError, OSError):
                 return self._send(400, {"error": "need a base64 JPEG 'image' and a 'query'"})
             start = time.monotonic()
             with lock, torch.inference_mode():
-                found = masks_many(predictor, image, queries, min_score)
+                if self.path == "/segment_many_session":  # the old way, kept to compare (it encodes once per name)
+                    found = masks_many(predictor, image, queries, min_score)
+                else:
+                    if once[0] is None:
+                        from sam3.model.sam3_image_processor import Sam3Processor
+
+                        once[0] = Sam3Processor(predictor.model.detector, confidence_threshold=min_score)
+                    found = masks_many_once(once[0], image, queries, min_score)
             del image
             seconds = round(time.monotonic() - start, 3)
             if self.path == "/segment":

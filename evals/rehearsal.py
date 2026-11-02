@@ -68,6 +68,16 @@ def build():
         voice_url="http://127.0.0.1:8092", depth="http://127.0.0.1:8096", voice_name="eng", home="", staged_scene=False))
 
 
+OFFLINE_WORDS = ("connected", "can't look", "can't draw", "can't show", "offline")
+
+
+def cloud_missed(reply: str) -> bool:
+    """A cloud shot that didn't reach the cloud: no key, or Andy's own offline words. November 1, a rehearsal run
+    without the key passed both cloud shots: Andy said "I can only make pictures when I'm connected", which no word
+    here caught."""
+    return not os.environ.get("MODEL_API_KEY") or any(w in reply.lower() for w in OFFLINE_WORDS)
+
+
 def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
     said: list[str] = []
     say = andy.body.say
@@ -99,7 +109,7 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
         problems.append(FIX["point"].format(thing=f"the {thing}" if thing else "it"))
     if "follow" in needs and not any("follow" in s_.lower() or "watching" in s_.lower() for s_ in said + [reply]):
         problems.append(FIX["follow"])
-    if "cloud" in needs and any(w in reply.lower() for w in ("not connected", "can't look", "can't draw", "can't show", "offline")):
+    if "cloud" in needs and cloud_missed(reply):
         problems.append(FIX["cloud"])
     if "zh" in needs and andy.language != "zh":
         problems.append(FIX["zh"])

@@ -1,0 +1,172 @@
+{
+ "when": "2026-11-01 22:41",
+ "shots": [
+  {
+   "shot": "the uncut find",
+   "said": "Hey Andy, where are my glasses?",
+   "heard": "hey andy where are my glasses",
+   "andy said": [
+    "There they are! I see your glasses, a little to my right, about 5 feet away."
+   ],
+   "seconds": 12.7,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "follow the mug",
+   "said": "Hey Andy, follow the mug.",
+   "heard": "hey andy follow the mug",
+   "andy said": [
+    "Found it! I see your mug, a little to my right, about 4 feet away.",
+    "Following your mug. Say stop when you're done.",
+    "That's enough following for now. Your mug is a little to my right."
+   ],
+   "seconds": 49.4,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "several things at once",
+   "said": "Hey Andy, find the cup and remind me in two minutes to call Sam.",
+   "heard": "hey andy find the cup and remind me in two minutes to call sam",
+   "andy said": [
+    "Ah, there it is! I see your cup, a little to my right, about 4 feet away.",
+    "Found your cup a little to my right, about 4 feet away. I’ve set a reminder for 10:41 to call Sam."
+   ],
+   "seconds": 29.9,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "the network unplugged",
+   "said": "Hey Andy, where are my keys?",
+   "heard": "hey andy where are my keys",
+   "andy said": [
+    "There they are! I see your keys, a little to my right, about 3 feet away."
+   ],
+   "seconds": 11.9,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "the room in 3D",
+   "said": "Hey Andy, show me the room.",
+   "heard": "hey andy show me the room",
+   "andy said": [
+    "Here's the room as I measured it, on the screen: your keyboard to my right, about 2 feet away; your keys a little to my right, about 3 feet away; your watch to my right, about 3 feet away. Its shape only, never a picture."
+   ],
+   "seconds": 31.6,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "a picture",
+   "said": "Hey Andy, draw me a lighthouse at dawn.",
+   "heard": "hey andy draw me a lighthouse at dawn",
+   "andy said": [
+    "I can only make pictures when I'm connected."
+   ],
+   "seconds": 3.6,
+   "pointed": false,
+   "language after": "en",
+   "ok": false,
+   "fix": [],
+   "optional": false,
+   "problem": "re-judged the same night: run without MODEL_API_KEY, so Andy answered offline (\"... when I'm connected\"), which the check of the time missed (fixed: evals/rehearsal.py cloud_missed)"
+  },
+  {
+   "shot": "the weather radar on the TV",
+   "said": "Hey Andy, show me the weather radar on the TV.",
+   "heard": "hey andy show me the weather radar on the tv",
+   "andy said": [
+    "I can only use the web when I'm connected."
+   ],
+   "seconds": 3.7,
+   "pointed": false,
+   "language after": "en",
+   "ok": false,
+   "fix": [],
+   "optional": false,
+   "problem": "re-judged the same night: run without MODEL_API_KEY, so Andy answered offline (\"... when I'm connected\"), which the check of the time missed (fixed: evals/rehearsal.py cloud_missed)"
+  },
+  {
+   "shot": "in Mandarin, nothing said in English first",
+   "said": "安迪，我的眼镜在哪里？",
+   "heard": "安迪我的眼睛在哪里",
+   "andy said": [
+    "好的，现在我说中文。",
+    "找到了！ 我看到您的眼镜，在我的右前方一点，大约1.5米远。"
+   ],
+   "seconds": 18.4,
+   "pointed": true,
+   "language after": "zh",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "back to English",
+   "said": "Andy, speak English.",
+   "heard": "——andy——speak english",
+   "andy said": [
+    "Okay, I'll speak English now."
+   ],
+   "seconds": 4.1,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "its promises",
+   "said": "Hey Andy, what won't you do?",
+   "heard": "hey andy what won't you do",
+   "andy said": [
+    "I never send a camera picture of your home to the cloud, I never give health advice, and I always say I'm an AI. And no camera picture has left this house today. It's on the screen, with the receipts."
+   ],
+   "seconds": 12.5,
+   "pointed": false,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  },
+  {
+   "shot": "an emergency said (if it's in the video)",
+   "said": "Hey Andy, I fell and I can't get up.",
+   "heard": "hey andy i fell and i can't get up",
+   "andy said": [
+    "If you need help, please call 911 right away. I'll find your phone.",
+    "Ah, there it is! I see your phone, to my left, about 5 feet away."
+   ],
+   "seconds": 21.9,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": true
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": false,
+ "rejudged": "2026-11-01 23:00: the two cloud shots, by the corrected check; Andy's words unchanged"
+}
