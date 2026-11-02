@@ -114,12 +114,12 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default="", help="rehearse only the shots whose name has this in it ('promises')")
-    only = ap.parse_args().only
+    only = ap.parse_args().only.lower()
     andy = build()
     loop = VoiceLoop(andy)
     rows = []
     for name, code, line, needs in SHOTS:
-        if only not in name:
+        if only not in name.lower():
             continue
         r = shot(andy, loop, name, code, line, needs)
         r["optional"] = OPTIONAL in name  # only if it's in the video: reported, never holding up READY TO FILM
@@ -130,6 +130,8 @@ def main() -> None:
             print(f"      -> {f}", flush=True)
         time.sleep(2.0)
     andy.body.look(0, 0)
+    if not rows:
+        raise SystemExit(f"no shot's name has {only!r} in it: " + ", ".join(s[0] for s in SHOTS))
     for n in NOT_HERE:
         print(f"NOT REHEARSED: {n}")
     out = Path("evals/results") / f"rehearsal{'-only' if only else ''}-{time.strftime('%Y%m%d-%H%M')}.json"  # one shot: not the rehearsal

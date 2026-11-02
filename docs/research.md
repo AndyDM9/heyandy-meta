@@ -1475,3 +1475,19 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
   network unplugged, the room, a picture, the weather radar, Mandarin with nothing said in English first (found and
   said in metres), back to English, the promises, and "I fell" (911, then the phone, laid flat now: found and pointed).
 
+
+## 68. A third review, of the evening's code (November 1, late)
+
+Found and fixed, each with a test:
+- **The closer look's retry could accept the wrong thing.** After two empty frames it took the best match anywhere in
+  view (up to about 42 degrees off): keys 35 degrees from their home were called "home", and a pointed-at cup could
+  turn into the other one. Now only a place the sweep glimpsed is looked at again, only the match nearest the middle,
+  and only within about 22 degrees; a remembered place, a home or a pointed-at place is there or not there.
+- **"Can I trust you to remind me to take my pills at 8 pm?"** got the promises and set no reminder: "what won't you
+  do?" and the rest now count only as the whole question.
+- **A promise that wasn't quite true:** "Llama Guard 3 reads every answer a model writes" didn't cover the agent's
+  answer (several things at once, the morning briefing), what's on the web page, "what am I holding?" or "what's
+  that?". Now each is read, sentence by sentence; one called advice is left out and Andy's health line said once,
+  what Andy did and found kept. A sentence Llama Guard didn't answer is no longer counted as read.
+- **A translated count could change:** a row of the day's receipts whose numbers come back different from the
+  translator stays in English. `evals/rehearsal.py --only` ignores case and says when it matched nothing.

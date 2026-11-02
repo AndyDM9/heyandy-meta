@@ -62,6 +62,7 @@ class Finder:
     aim_tolerance: float = 3.0  # degrees off the middle before the head's command is corrected
     aim_corrections: int = 2  # at most this many, each from what the last frame showed
     settle_s: float = 0.5  # a closer look that came back empty: a fresh frame this long after, before saying no
+    reaim_within_px: float = 0.22  # a sweep's place, landed off: looked at again only this near the middle (about 22°)
 
     def find(self, label: str, last_seen: tuple[float, float] | None = None,
              usual: tuple[float, float] | None = None) -> Found | None:
@@ -86,7 +87,7 @@ class Finder:
                     math.hypot(place.yaw - t.yaw, place.pitch - t.pitch) <= 6.0 for t in tried):
                 return None  # a place already looked at closely, or enough closer looks for one search
             tried.append(place)
-            return self.confirm(label, place.yaw, place.pitch)
+            return self.confirm(label, place.yaw, place.pitch, reaim=True)  # a glimpse: may be a little off
 
         for views in (self.views, self.behind):
             sightings: list[Sighting] = []
@@ -120,12 +121,15 @@ class Finder:
         return [Sighting(*pixel_to_angles(*m.center, frame.yaw, frame.pitch, self._cam(frame)),
                          m.score if m.score is not None else 0.5) for m in masks]
 
-    def confirm(self, label: str, yaw: float, pitch: float, again: bool = True) -> Found | None:
+    def confirm(self, label: str, yaw: float, pitch: float, again: bool = True, reaim: bool = False) -> Found | None:
         """Look straight at a place; it counts only if the thing is near the centre of that frame. Not there: once
         more, only then (a found thing costs nothing extra). On the robot about one closer look in ten came back
         empty though the sweep had seen the thing clearly (November 1, evening): the head lands up to about 7 degrees
         from where it's sent, and a frame can be taken while it settles. So: a fresh frame a moment later, from the
-        same place; and if the thing is in view but off the middle, one look straight at it."""
+        same place; and, for a place the sweep only glimpsed (``reaim``), if the thing is in view a little past the
+        middle, one look straight at it: the one nearest the middle, never one far off (a review found that could
+        call keys 35 degrees from their home "home"). A place that means "here" (where it was last seen, where it
+        lives, where the person pointed) is never swapped for another."""
         self.why = ""
         frame = self._look(yaw, pitch)
         cam = self._cam(frame)
@@ -141,8 +145,9 @@ class Finder:
             if self.on_frame:
                 self.on_frame(frame, masks)
             near = self._near(masks, frame, cam)
-            if not near and masks:  # in view, off the middle: the head landed a few degrees off
-                best = max(masks, key=lambda m: m.score if m.score is not None else 0.5)
+            close = self._near(masks, frame, cam, within=self.reaim_within_px) if reaim else []
+            if not near and close:  # in view, a little off the middle: the head landed a few degrees off
+                best = min(close, key=lambda m: (m.center[0] - cam.cx) ** 2 + (m.center[1] - cam.cy) ** 2)
                 return self.confirm(label, *pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam), again=False)
         if not near:
             self.why = "not there"
@@ -155,10 +160,9 @@ class Finder:
         y, p = pixel_to_angles(*best.center, frame.yaw, frame.pitch, cam)
         return Found(label, y, p, best.score if best.score is not None else 0.5, frame, best, self.looks)
 
-    def _near(self, masks: list[Mask], frame: Frame, cam) -> list[Mask]:
-        return [m for m in masks
-                if abs(m.center[0] - cam.cx) <= self.confirm_within_px * frame.width
-                and abs(m.center[1] - cam.cy) <= self.confirm_within_px * frame.width]
+    def _near(self, masks: list[Mask], frame: Frame, cam, within: float | None = None) -> list[Mask]:
+        within = (self.confirm_within_px if within is None else within) * frame.width
+        return [m for m in masks if abs(m.center[0] - cam.cx) <= within and abs(m.center[1] - cam.cy) <= within]
 
     def point(self, found: Found) -> Found:
         self.last_found = found

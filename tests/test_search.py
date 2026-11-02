@@ -191,3 +191,17 @@ def test_a_thing_truly_gone_is_still_not_there():
 
     f._sightings = then_gone
     assert f.find("glasses") is None and f.why == "not there" and pointed(body) == []
+
+
+def test_a_place_that_means_here_is_never_swapped_for_one_far_off():
+    """Found by review: the second look took the best match anywhere in view, and called keys 35 degrees from their
+    home "home". A remembered place, a home, where the person pointed: there, or not there."""
+    f, body, _ = finder(Thing("keys", 35.0, 20.0), settle_s=0.0)
+    assert f.confirm("keys", 0.0, 20.0) is None and f.why == "not there"
+
+
+def test_a_sweeps_glimpse_is_looked_at_again_only_when_it_is_near():
+    room = Room([Thing("glasses", 30.0, 20.0, score=0.6)])
+    body = FarOffBody(room, off=40.0)  # landed 40 degrees off: too far to be the same glimpse
+    found = Finder(body, SimSegmenter(room), settle_s=0.0, closer_looks=1).find("glasses")
+    assert found is None  # not taken from 40 degrees away: one closer look, and it says so

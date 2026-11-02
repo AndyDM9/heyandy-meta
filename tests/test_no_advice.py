@@ -255,3 +255,31 @@ def test_the_promises_card_follows_the_language(tmp_path):
     a.screen.new_turn()
     assert a.screen.privacy["title"] == "我从不做的事" and a.screen.privacy["promises"] is True
     assert ("What I never do", False) in a.translator.asked or ("What I never do", True) in a.translator.asked
+
+
+def test_the_agents_answer_is_read_too_and_only_an_advising_sentence_goes(tmp_path):
+    """Found by review: the promise "Llama Guard 3 reads every answer a model writes" didn't hold for the agent's."""
+    a, body, _ = andy(tmp_path=tmp_path)
+    a.guard = Guard(advice=["two aspirin"])
+    out = a._without_advice("find my cup and tell me what to take", "I found your cup on your left. Take two aspirin.")
+    assert out == f"I found your cup on your left. {HEALTH_REPLY}"
+    assert a._without_advice("find my cup", "I found your cup on your left.") == "I found your cup on your left."
+
+
+def test_a_sentence_llama_guard_did_not_answer_is_not_counted_as_read(tmp_path):
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.guard = SimpleNamespace(advice=lambda asked, answer: None, self_harm=lambda text: False)
+    a._advice("hi", "Hello there.")
+    a.screen.new_turn()
+    assert a.screen.day().answers_read == 0
+
+
+def test_a_translated_count_that_changed_stays_in_english(tmp_path):
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.translator = Glimmer({"No health advice: 2 health questions answered in my own words today, never a model's":
+                            "没有健康建议：今天用我自己的话回答了三个健康问题"})  # the 2 came back as a word
+    a.voice = SimpleNamespace(voice="eng", speed=1.0, loudness=-21.0)
+    a.language = "zh"
+    a._privacy_card("What I never do", [("✓", "No health advice: 2 health questions answered in my own words today, "
+                                              "never a model's")], promises=True)
+    assert a.screen.privacy["rows"][0]["text"].startswith("No health advice: 2")

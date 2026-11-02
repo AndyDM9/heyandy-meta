@@ -149,11 +149,13 @@ PRIVACY = re.compile(r"\bwhat (?:did|have) you (?:send|sent|shared?)\b|\bwhat(?:
                      r"(?:the|this|my) (?:house|home)\b|\bwhat (?:went|goes|has gone) (?:to|up to|out to) the "
                      r"(?:cloud|internet)\b|\bprivacy (?:report|summary|receipt)s?\b|\bwhat do you send\b", re.I)
 # "What won't you do?": Andy's promises, each with today's receipts (app.py promises)
-PROMISES = re.compile(r"\bwhat (?:won'?t|wouldn'?t|will you not|would you never|do you never|will you never) (?:you )?(?:ever )?do\b|"
-                      r"\bwhat\b[^.?!]{0,20}\byou (?:would|will|'d) (?:\w+ )?never do\b|\bwhat do you refuse to do\b|"
-                      r"\bwhat (?:would|will) you (?:\w+ )?never do\b|"
-                      r"\bwhat are your (?:rules|promises)\b|\bcan i trust you\b|\bwhat do you promise\b|"
-                      r"\bwhat (?:are|aren'?t) you (?:not )?allowed to do\b", re.I)
+# Only as the whole question: "can I trust you to remind me at 8?" is a reminder (found by review, November 1)
+PROMISES = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:"
+                      r"what (?:won'?t|wouldn'?t|will you not|would you never|do you never|will you never) (?:you )?(?:ever )?do|"
+                      r"what\b[^.?!]{0,20}\byou (?:would|will|'d) (?:\w+ )?never do|what do you refuse to do|"
+                      r"what (?:would|will) you (?:\w+ )?never do|"
+                      r"what are your (?:rules|promises)|can i (?:really )?trust you|what do you promise|"
+                      r"what (?:are|aren'?t) you (?:not )?allowed to do)(?: for me)?\W*$", re.I)
 MINE = [re.compile(r"\b(?:this|that|here)(?:'s| is) (?:my|our) " + THING + r"(?:\?|$|[,.!]| (?:please|now))", re.I),
         re.compile(r"\b(?:this|that) " + THING + r" is (?:mine|ours)\b", re.I),
         re.compile(r"\b(?:learn|remember) what (?:my|our) " + THING + r" looks? like\b", re.I),

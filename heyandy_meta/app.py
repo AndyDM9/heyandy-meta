@@ -52,6 +52,7 @@ from .models.depth_local import how_far
 from .models.sam_local import LocalUnavailable
 from .models.retry import CloudUnavailable
 from .private import write_private
+from .models.openai_chat import sentences
 from .router import Router, decide
 from .robot.body import Body
 from .screen.hood import Hood
@@ -518,20 +519,21 @@ class Andy:
                 self.screen.clear()
                 return "Okay, I've closed it."
             if WEB_MORE.search(text):
-                return self.use_the_web(text, more=True)
-        if i.kind == "pointing":
-            return self.pointed_at()
+                return self._without_advice(text, self.use_the_web(text, more=True))
+        if i.kind == "pointing":  # a model says what it sees: read by Llama Guard 3 before it's said, as every answer is
+            return self._without_advice(text, self.pointed_at())
         if i.kind == "going_out":
             return self.going_out()
         if i.kind == "things_map":
             return self.draw_my_things()
         if i.kind == "web":
-            return self.use_the_web(text)
+            return self._without_advice(text, self.use_the_web(text))
         again, self._again_until = self.clock() <= self._again_until and AGAIN.match(text), 0.0
         if i.kind == "game" or (again and i.kind == "chat"):
             return self.cup_game()
         if i.kind == "describe":
-            return self.describe(i.thing, holding="hold" in text.lower() or bool(re.search(r"\bthis\b", text, re.I)))
+            return self._without_advice(text, self.describe(i.thing, holding="hold" in text.lower()
+                                                            or bool(re.search(r"\bthis\b", text, re.I))))
         if i.kind == "draw":
             return self.draw(i.text)
         if self._drawing and time.time() - self._drawing.made < REFINE_WITHIN_S and REFINE.search(text):
@@ -545,15 +547,33 @@ class Andy:
             return self.look_up(text)
         return self.talk(text)
 
+    def _without_advice(self, asked: str, answer: str) -> str:
+        """An answer made whole (the agent's): each sentence read by Llama Guard 3; one it calls health advice is
+        left out, and Andy's own health line said once instead. What Andy did and found stays."""
+        kept, advised, checking = [], False, True
+        for sentence in sentences(answer) or [answer]:
+            verdict = self._advice(asked, " ".join(kept + [sentence])) if checking else False
+            checking = verdict is not None
+            if verdict:
+                advised = True
+                continue
+            kept.append(sentence)
+        if advised:
+            self._reason += "; Llama Guard 3 read health advice in the answer, so Andy's own words instead"
+            kept.append(HEALTH_REPLY)
+        return " ".join(kept)
+
     def _advice(self, asked: str, answer: str) -> bool | None:
         """Llama Guard 3, on this computer, reads a model's answer before Andy says it (0.04 s): health advice? None if
         it couldn't be asked (the sentence is said: the word rule and the instructions still stand)."""
         if self.guard is None or not hasattr(self.guard, "advice"):
             return False
         self.screen.used("Llama Guard 3 (checking the answer)", "device")
-        self.screen.answer_read()
         verdict = self.guard.advice(asked, answer)
-        return None if verdict is None else bool(verdict)
+        if verdict is None:
+            return None
+        self.screen.answer_read()  # counted for "what won't you do?" only when Llama Guard really read it
+        return bool(verdict)
 
     def _say_now(self, part: str) -> None:
         """Say part of this turn's reply as soon as it's ready (the hear() at the end says only the rest)."""
@@ -644,7 +664,9 @@ class Andy:
         """The day's receipts, or Andy's promises, on the TV in the person's language (the TV follows the language;
         Glimmer on this computer, each line cached): the counts are Andy's own, only the words are translated."""
         if self.language != "en" and self.translator is not None:
-            say = lambda t: self.translator.spoken(t, self.language, DISCLOSURE, CRISIS_REPLY)  # noqa: E731
+            def say(text: str) -> str:  # a line whose numbers came back changed stays in English: a count is never wrong
+                said = self.translator.spoken(text, self.language, DISCLOSURE, CRISIS_REPLY)
+                return said if re.findall(r"\d+", said) == re.findall(r"\d+", text) else text
             title, rows = say(title), [(mark, say(text)) for mark, text in rows]
         self.screen.privacy_day(title, rows, promises)
 
@@ -1031,7 +1053,7 @@ class Andy:
             self.screen.used(f"{name} (agent)", where, turn.calls)
             self._source = where
             self._reason = f"{name} planned it with Andy's abilities ({len(turn.steps)} steps)"
-            return turn.reply or "Done."
+            return self._without_advice(request, turn.reply or "Done.")
         return None
 
     def follow(self, thing: str, seconds: float = 30.0) -> str:

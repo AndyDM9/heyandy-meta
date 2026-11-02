@@ -128,3 +128,12 @@ def test_asking_andy_what_it_wont_do(said):
 
 def test_saying_you_would_never_do_something_is_conversation():
     assert parse("I would never do that").kind == "chat" and parse("I won't do it").kind == "chat"
+
+
+@pytest.mark.parametrize("said, kind", [("Can I trust you to remind me to take my pills at 8 pm?", "remind"),
+                                        ("Remind me at 8 pm to take my pills, can I trust you?", "remind"),
+                                        ("Can I trust you to find my glasses?", "find"),
+                                        ("Where are my keys? Can I trust you?", "find")])
+def test_a_request_with_can_i_trust_you_in_it_is_the_request(said, kind):
+    """Found by review (Nov 1): promises took these, and no reminder was set."""
+    assert parse(said).kind == kind
