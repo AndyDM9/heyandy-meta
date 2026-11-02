@@ -1,0 +1,259 @@
+{
+ "policy": "fixed",
+ "light": "evening",
+ "layout": "desk",
+ "summary": {
+  "trials": 15,
+  "present": 12,
+  "correct": 10,
+  "absent_correct": 3,
+  "false_finds": 0,
+  "off": 0,
+  "missed": 2,
+  "aim_deg_median": 2.5,
+  "reaimed": 8,
+  "seconds_median": 13.6
+ },
+ "trials": [
+  {
+   "n": 1,
+   "thing": "cup",
+   "place": 1,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 8.4,
+   "looks": 2,
+   "why": "",
+   "aim_deg": 0.4,
+   "reaimed": false,
+   "pointed": [
+    -24.3,
+    11.2
+   ]
+  },
+  {
+   "n": 2,
+   "thing": "cup",
+   "place": 2,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 13.7,
+   "looks": 3,
+   "why": "",
+   "aim_deg": 0.7,
+   "reaimed": true,
+   "pointed": [
+    -47.2,
+    14.8
+   ]
+  },
+  {
+   "n": 3,
+   "thing": "cup",
+   "place": 3,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 12.3,
+   "looks": 2,
+   "why": "",
+   "aim_deg": 1.6,
+   "reaimed": true,
+   "pointed": [
+    -18.7,
+    18.4
+   ]
+  },
+  {
+   "n": 4,
+   "thing": "cup",
+   "place": null,
+   "absent": true,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 15.9,
+   "looks": 6,
+   "why": "",
+   "aim_deg": null,
+   "reaimed": false,
+   "pointed": null
+  },
+  {
+   "n": 5,
+   "thing": "cup",
+   "place": 5,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 11.9,
+   "looks": 2,
+   "why": "",
+   "aim_deg": 6.0,
+   "reaimed": true,
+   "pointed": [
+    -23.4,
+    11.2
+   ]
+  },
+  {
+   "n": 6,
+   "thing": "keys",
+   "place": 1,
+   "absent": false,
+   "hint": "",
+   "verdict": "missed",
+   "seconds": 15.9,
+   "looks": 6,
+   "why": "",
+   "aim_deg": null,
+   "reaimed": false,
+   "pointed": null
+  },
+  {
+   "n": 7,
+   "thing": "keys",
+   "place": 2,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 16.1,
+   "looks": 5,
+   "why": "",
+   "aim_deg": null,
+   "reaimed": false,
+   "pointed": [
+    -20.8,
+    17.7
+   ]
+  },
+  {
+   "n": 8,
+   "thing": "keys",
+   "place": null,
+   "absent": true,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 16.0,
+   "looks": 6,
+   "why": "",
+   "aim_deg": null,
+   "reaimed": false,
+   "pointed": null
+  },
+  {
+   "n": 9,
+   "thing": "keys",
+   "place": 4,
+   "absent": false,
+   "hint": "",
+   "verdict": "missed",
+   "seconds": 15.7,
+   "looks": 6,
+   "why": "",
+   "aim_deg": null,
+   "reaimed": false,
+   "pointed": null
+  },
+  {
+   "n": 10,
+   "thing": "keys",
+   "place": 5,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 13.1,
+   "looks": 3,
+   "why": "",
+   "aim_deg": 3.4,
+   "reaimed": true,
+   "pointed": [
+    -21.8,
+    22.4
+   ]
+  },
+  {
+   "n": 11,
+   "thing": "glasses",
+   "place": 1,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 11.8,
+   "looks": 2,
+   "why": "",
+   "aim_deg": 5.5,
+   "reaimed": true,
+   "pointed": [
+    -14.5,
+    13.3
+   ]
+  },
+  {
+   "n": 12,
+   "thing": "glasses",
+   "place": null,
+   "absent": true,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 15.8,
+   "looks": 6,
+   "why": "",
+   "aim_deg": null,
+   "reaimed": false,
+   "pointed": null
+  },
+  {
+   "n": 13,
+   "thing": "glasses",
+   "place": 3,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 13.6,
+   "looks": 3,
+   "why": "",
+   "aim_deg": 2.5,
+   "reaimed": true,
+   "pointed": [
+    -45.8,
+    17.5
+   ]
+  },
+  {
+   "n": 14,
+   "thing": "glasses",
+   "place": 4,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 12.5,
+   "looks": 2,
+   "why": "",
+   "aim_deg": 4.8,
+   "reaimed": true,
+   "pointed": [
+    -24.6,
+    24.1
+   ]
+  },
+  {
+   "n": 15,
+   "thing": "glasses",
+   "place": 5,
+   "absent": false,
+   "hint": "",
+   "verdict": "correct",
+   "seconds": 12.1,
+   "looks": 2,
+   "why": "",
+   "aim_deg": 1.8,
+   "reaimed": true,
+   "pointed": [
+    -26.1,
+    15.5
+   ]
+  }
+ ]
+}

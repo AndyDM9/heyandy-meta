@@ -33,7 +33,8 @@ Built on Meta's models for people who live at home, starting with older adults, 
   ([Pew Research, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/)):
   when the glasses go missing, there's no one to ask. Andy is someone to ask, and it can show you.
 - **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
-  its camera, and says where, from where you stand. *135 of 136 unattended searches on the robot ended in a point.*
+  its camera, and says where, from where you stand. *135 of 136 unattended searches on the robot ended in a point;
+  moved round the desk and judged by a person, 13 of 15 right, and never a point at the wrong thing.*
 - **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
   911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 s from the words.* Andy can't call
   anyone and doesn't watch for falls; it does what a robot that finds things can.
@@ -151,6 +152,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 
 | | Measured | |
 |---|---|---|
+| On the robot, judged by a person | each thing put in five places on our desk (or hidden), one evening: **13 of 15** right. Out where it could be seen, **10 of 12** pointed at, a median **2.5°** off the middle of the view (the cup and the glasses 8 of 8, the keys 2 of 4: twice the sweep never saw them, and Andy said so); hidden, **3 of 3** "not found"; **never** a point at something else | [`physical-fixed-20261101-2115.json`](evals/results/physical-fixed-20261101-2115.json) |
 | On the robot, alone in the room | **135 of 136** unattended searches ended in a point since the aim fix (the run before it: 3 of 4; the one miss since, the keys on Nov 1, made a closer look try again, then 12 of 12); a median **5.2°** off the middle of the view on the final code | [`unattended-*`](evals/results) |
 | Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 80 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
 | Several things at once | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
@@ -624,7 +626,7 @@ swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a se
 shuffle replays in about 10 to 13 s.
 At the camera's 10 frames a second it picked the right cup in 3 of 5 runs with the detection batches that fit beside the
 safety models (4 of 5 with larger ones); at 5 frames a second it lost the cups in all 4. Not
-yet scored with real cups. The physical scorecard (`evals/physical.py`) comes next.
+yet scored with real cups.
 
 ## What doesn't work yet
 - **Not yet tried on the robot with real things or a person:** the cup game (tracking measured on synthetic shuffles;
@@ -635,9 +637,9 @@ yet scored with real cups. The physical scorecard (`evals/physical.py`) comes ne
   camera, on a laptop's CPU (about a frame a second); a phone's processor is slower, its graphics chip faster.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
-- **The physical scorecard isn't done yet.** On the robot Andy has found real things, delivered a reminder in person,
-  and held conversations; the scored runs come next
-  (`docs/research.md` sections 8 to 11).
+- **Judged by a person once: one desk, one evening, one person** (13 of 15). Small things are the hard ones: at two of
+  the keys' four places SAM 3.1 never saw them in the sweep's wide views, and Andy said it couldn't find them rather
+  than point somewhere wrong. Other rooms, lights and people come next (`docs/research.md` section 69).
 - **The crisis check catches what it was written for, not every way of saying it.** Measured in fifteen languages:
   60 of 60 indirect phrasings and 43 of 45 of the 988 Lifeline's warning signs it lists, with no everyday request or
   trick remark (0 of 144) taken for one; but three other warning signs, said in ways no list has: the lists and Llama

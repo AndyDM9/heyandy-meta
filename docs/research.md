@@ -1491,3 +1491,23 @@ Found and fixed, each with a test:
   what Andy did and found kept. A sentence Llama Guard didn't answer is no longer counted as read.
 - **A translated count could change:** a row of the day's receipts whose numbers come back different from the
   translator stays in English. `evals/rehearsal.py --only` ignores case and says when it matched nothing.
+
+
+## 69. The physical scorecard: a person judging where Andy points (November 1, about 9 pm)
+
+- **How:** `evals/physical.py`, the fixed search on the robot, the filming desk in the evening light. The founder put
+  the cup, then the keys, then the glasses in five places of their choosing (every fourth trial hidden instead), stepped
+  back, and judged each point: at the thing, near it but off, or at something else. Only numbers are kept.
+- **13 of 15 right** (`physical-fixed-20261101-2115`). Out where it could be seen, **10 of 12 pointed at**: the cup 4 of
+  4, the glasses 4 of 4, the keys 2 of 4. A median **2.5 degrees** off the middle of the view after pointing (0.4 to
+  6.0; one find of the keys wasn't measured, the look after pointing didn't see them in the middle). Hidden, **3 of 3**
+  "not found". **No point at something else, and none near but off.** Eight of the ten finds had their aim corrected
+  once by the look after pointing. A find took 8.4 to 16.1 s; "not found", about 16 s (all six views).
+- **The two misses were the keys, and of a different kind from the evening's earlier fault** (section 67: a closer
+  look that came back empty). Both took six looks and no closer look at all: in none of the sweep's six wide views did
+  SAM 3.1 score "keys", "keychain" or "key" above the finder's 0.3, so there was nowhere to look closer, and Andy said
+  it couldn't find them. Unattended, with the keys at one place, 2 of 3 and 3 of 3 that evening; moved to other
+  places, small and flat, the wide view is where they're lost. A numbers-only look at SAM 3.1's scores for keys at
+  those places comes next.
+- **The first attempt** stopped at trial 1: Enter pressed with no letter crashed the scorecard (`''` is in every
+  string). Fixed: it asks again, and whatever stops a run, the trials judged are saved.

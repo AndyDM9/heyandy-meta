@@ -72,9 +72,13 @@ def crisis(f: str) -> str:
 def physical(f: str) -> str:
     s = load(f)["summary"]
     absent = s["trials"] - s["present"]
-    return (f"**{s['correct']} of {s['present']}** points judged at the thing by a person"
+    aim = s.get("aim_deg_median")
+    return (f"out where it could be seen, pointed at the thing **{s['correct']} of {s['present']}** (judged by a person;"
+            f" not found {s['missed']}, near but off {s['off']})"
             + (f"; hidden, said not found **{s['absent_correct']} of {absent}**" if absent else "")
-            + f"; pointed at something else: {s['false_finds']}; a median {s['seconds_median']} s")
+            + f"; pointed at something else: {s['false_finds']}"
+            + (f"; a median {aim}° off the middle of the view" if aim is not None else "")
+            + f"; a median {s['seconds_median']} s")
 
 
 def no_advice(f: str) -> str:

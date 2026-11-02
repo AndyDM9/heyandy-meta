@@ -92,9 +92,10 @@ run, 100, showed rules missing); said aloud by Andy's voice and heard back, 36 o
 the fourteen, Andy switched to it 31 times in 42, never to a wrong one.
 *Andy's eyes in the browser* (museum photos): found 20 of 24, never a wrong one; never "found" without it (24 tables);
 sweeping live (a video as the camera, on a CPU): found in both sweeps, at 15 and 34 s; never in 90 frames without it.
-*On the robot, alone in the room:* **135 of 136** unattended searches since the aim fix ended in a point; on the final
-code, a median 5.2 degrees off the middle of the view, 8.3 at worst, 11.7 s. A find from request to spoken answer, 13
-to 19 s. [The physical scorecard, judged by a person: N of M.]
+*On the robot, judged by a person* (three things, five places each on our desk, or hidden): **13 of 15** right;
+pointed at the thing 10 of 12 times, a median 2.5 degrees off; hidden, "not found" 3 of 3; **never a wrong point**
+(both misses were the keys, unseen in the sweep). *Alone in the room:* **135 of 136** unattended searches ended in a
+point, a median 5.2 degrees off. A find from request to spoken answer, 13 to 19 s.
 Every result, failures included: `evals/results/` and `docs/research.md`.
 
 ## Safety and honesty

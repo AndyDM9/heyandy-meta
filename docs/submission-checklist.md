@@ -11,7 +11,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [ ] The dress rehearsal says READY TO FILM, the room as it will be filmed (`docs/demo-script.md` step 2b).
 - [ ] Film: the uncut find, follow the mug (or the cup game), several things at once, the network unplugged, a reminder
       (`docs/demo-script.md`). Recording the TV needs `uv run --with playwright playwright install ffmpeg` once.
-- [ ] The physical scorecard (`evals/physical.py`), and its numbers in the README.
+- [x] The physical scorecard (`evals/physical.py`), and its numbers in the README and the form text (November 1,
+      evening: 13 of 15, `physical-fixed-20261101-2115`).
 - [ ] The 30-second clip on X as soon as a take is good (Most Viral counts engagement through November 8): the uncut
       find or the cup game, captions burned in. Keep its link for the form (step 6).
 - [x] Muse Spark live (since October 27, on our billing until the credits come; `docs/going-live.md`).
@@ -44,9 +45,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too; then "Sweep the room, live" on the
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
-       about 1,400 words on what it is and what's new (`docs/submission.md`: fill its [brackets], the video's link and
-       the physical scorecard's "N of M"; if the scorecard wasn't run, delete that sentence: nothing goes in with a
-       bracket), and the open-weights note (`docs/open-weights.md`).
+       about 1,400 words on what it is and what's new (`docs/submission.md`: fill its [brackets], the video's link;
+       nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`).
 7. [ ] Publish Andy Finder (0.2.0: "Ring it" works with nothing set up) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
        `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space`. The `reachy_mini_python_app` tag lists it.
