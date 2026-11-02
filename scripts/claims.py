@@ -223,6 +223,10 @@ def code_value(where: str, name: str):
     return obj.__dataclass_fields__[name].default
 
 
+def gpu() -> dict:
+    return summary(newest("gpu-budget"))
+
+
 def a11y() -> dict:
     return summary(newest("accessibility"))
 
@@ -420,6 +424,15 @@ FIGURES = [
            lambda: "a quiet conversation keeps {} of {} follow-ups".format(*quiet_conversation())),
     Figure("at most six follow-ups in a row", "code: heyandy_meta.voice.loop.FOLLOW_UPS",
            lambda: f"at most {['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'][code_constant('heyandy_meta.voice.loop', 'FOLLOW_UPS')]} follow-ups in a row"),
+    # what it takes: GPU memory at rest
+    Figure("Measured at rest: 40.5 GB, of which the language model (Muse Glimmer) is 17.6 GB", "gpu-budget (latest)",
+           lambda: f"Measured at rest: {gpu()['total GB']} GB, of which the language model (Muse Glimmer) is "
+                   f"{gpu()['language model GB']} GB"),
+    Figure("(seeing, hearing, the voice, the guards, how far) 22.9 GB, one card's worth", "gpu-budget (latest)",
+           lambda: f"(seeing, hearing, the voice, the guards, how far) {gpu()['everything else GB']} GB, "
+                   + ("one card's worth" if gpu()["everything else fits one 24 GB card"] else "more than one card")),
+    Figure("40.5 GB at rest, the language model 17.6 GB of it", "gpu-budget (latest)",
+           lambda: f"{gpu()['total GB']} GB at rest, the language model {gpu()['language model GB']} GB of it"),
     # the open weights, every file
     Figure("54 of 54 files", "open-weights-all (latest)",
            lambda: "{matched} of {files} files".format(**summary(newest("open-weights-all")))

@@ -1,0 +1,56 @@
+{
+ "when": "2026-11-02 15:51",
+ "what": "each service's GPU memory, at rest between turns (nvidia-smi per process)",
+ "summary": {
+  "by service, GB": {
+   "Muse Glimmer 30B (language)": 17.6,
+   "SeamlessM4T v2 (Andy's voice)": 3.5,
+   "the robot's daemon (Pollen's: camera and sound)": 0.2,
+   "MapAnything (how far)": 2.9,
+   "Llama Guard 3 8B (the guard)": 5.2,
+   "Omnilingual ASR (hearing)": 4.9,
+   "SAM 3.1, DINOv2, Prompt Guard 2, V-JEPA 2 (seeing)": 6.2
+  },
+  "total GB": 40.5,
+  "language model GB": 17.6,
+  "everything else GB": 22.9,
+  "everything else fits one 24 GB card": true
+ },
+ "processes": [
+  {
+   "what": "Muse Glimmer 30B (language)",
+   "gpu": 0,
+   "GB": 17.6
+  },
+  {
+   "what": "SeamlessM4T v2 (Andy's voice)",
+   "gpu": 0,
+   "GB": 3.5
+  },
+  {
+   "what": "the robot's daemon (Pollen's: camera and sound)",
+   "gpu": 0,
+   "GB": 0.2
+  },
+  {
+   "what": "MapAnything (how far)",
+   "gpu": 1,
+   "GB": 2.9
+  },
+  {
+   "what": "Llama Guard 3 8B (the guard)",
+   "gpu": 1,
+   "GB": 5.2
+  },
+  {
+   "what": "Omnilingual ASR (hearing)",
+   "gpu": 1,
+   "GB": 4.9
+  },
+  {
+   "what": "SAM 3.1, DINOv2, Prompt Guard 2, V-JEPA 2 (seeing)",
+   "gpu": 1,
+   "GB": 6.2
+  }
+ ]
+}

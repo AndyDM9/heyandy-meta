@@ -76,7 +76,8 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   mug" with two mugs, guiding a hand, "I'm going out" with someone leaving, V-JEPA 2 noticing a thing put down. The
   public demo's story labels each chapter "on the robot" or "not yet".
 - **The note-in-view defence** is measured on drawn notes, not real handwriting through the robot's camera.
-- **It needs today's hardware:** two 24 GB GPUs for the whole of Andy (Andy Finder needs none, through the Model API).
+- **It needs today's hardware:** two 24 GB GPUs for the whole of Andy: 40.5 GB at rest, the language model 17.6 GB of
+  it (`scripts/gpu_budget.py`); Andy Finder needs none, through the Model API.
 - **Its name is a person's name:** plain "Andy" calls it. A home with an Andy can make it answer only "Hey Andy"; then
   a call in another script (安迪) isn't heard either.
 - **Where it's been measured:** one desk, one home, one robot.

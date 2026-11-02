@@ -130,10 +130,12 @@ with today's receipts on the TV. Speech that isn't for Andy is dropped, never ke
 
 ## What's next: from this table to people's homes
 
-- **Now, for anyone with a Reachy Mini:** Andy Finder, in its app store from November 4, finds with SAM 3.1 through
+- **Now, for anyone with a Reachy Mini** ($299 at its launch): Andy Finder, in its app store from November 4, finds with SAM 3.1 through
   Meta's Model API, no GPU: two pictures a find (seven at most), about half a cent at Meta's $2.50 per 1,000 images.
   Its pictures go to Meta's API, so it's for rooms you're happy to share; the whole Andy keeps them home.
-- **The whole Andy** runs on two 24 GB GPUs today so pictures and voice stay home; next, fewer, smaller models in one box.
+- **The whole Andy** runs on two 24 GB GPUs today so pictures and voice stay home. Measured at rest: 40.5 GB, of which
+  the language model (Muse Glimmer) is 17.6 GB and everything else (seeing, hearing, the voice, the guards, how far)
+  22.9 GB, one card's worth. Next, one box: those on one card, and a smaller language model beside them.
 - **Our own robot body** (in design) behind the same body interface; each language tried with people who speak it;
   the physical scorecard in more homes, with the people Andy is for.
 - **Where it stands:** home robots roam the house (Amazon's Astro, by invitation) or keep company at the table

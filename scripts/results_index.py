@@ -207,6 +207,12 @@ def open_weights_all(f: str) -> str:
             f"published, at the revision Andy loads (" + ", ".join(r["model"] for r in d["models"]) + ")")
 
 
+def gpu_budget(f: str) -> str:
+    s = load(f)["summary"]
+    return (f"**{s['total GB']} GB** at rest on the two GPUs: the language model {s['language model GB']} GB, everything "
+            f"else **{s['everything else GB']} GB**" + (" (one 24 GB card's worth)" if s["everything else fits one 24 GB card"] else ""))
+
+
 def notes_in_view(f: str) -> str:
     d = load(f)["summary"]
     sets = [v for k, v in d.items() if k in ("first", "held out", "held out, second", "held out, third")]
@@ -265,6 +271,8 @@ CARDS = [
     ("Noticing", "V-JEPA 2 on clips of an empty table: nothing noticed", "evals.notice", "notice-empty", notice),
     ("Filming mode", "\"take one\": the clap heard in the robot's own sound", "evals.filming", "filming", filming),
     ("Andy Finder", "the Reachy Mini app's \"Ring it\", on the robot", "research.md section 47", "finder-ring", finder_ring),
+    ("What it takes", "each service's GPU memory at rest between turns (nvidia-smi per process): the language model, "
+     "and everything else", "scripts/gpu_budget.py", "gpu-budget", gpu_budget),
     ("Open weights, every file", "each of the nine open-weight models' files on this computer against Meta's published "
      "hashes: Hugging Face's SHA-256 and git hashes at the pinned revision, Omnilingual ASR's against Meta's download server",
      "scripts/verify_all_weights.py", "open-weights-all", open_weights_all),

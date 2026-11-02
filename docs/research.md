@@ -1913,3 +1913,19 @@ Found and fixed, each with a test:
 - **Result:** all nine, **54 of 54 files** (`open-weights-all-20261102-1535`), and each revision is still the
   repository's current main. The first run had counted `.gitattributes` as ours; it's Meta's, and matches too. 3.2
   minutes for about 60 GB.
+
+## 87. What the whole Andy takes, measured (November 2, afternoon)
+
+- **Why:** the judge's read (section 85) scored impact lowest and asked first: two 24 GB GPUs and a TV, who buys that?
+  The honest answer starts with what each part really holds.
+- **Measured** (`scripts/gpu_budget.py`, each service's memory from nvidia-smi, between turns; `gpu-budget-20261102-1551`):
+  Muse Glimmer 17.6 GB; SAM 3.1 with DINOv2, Prompt Guard 2 and V-JEPA 2, 6.2; Llama Guard 3, 5.2; Omnilingual ASR,
+  4.9; SeamlessM4T v2, 3.5; MapAnything, 2.9; the robot's daemon, 0.2 (Andy itself holds none): 40.5 GB in all.
+  **Everything but the language model is 22.9 GB: one 24 GB card's worth**, at rest (the cup game's tracking needs more
+  while it runs: GPU 1 peaked at 20.0 GB, section 29).
+- **So the one-box path is the language model:** a smaller one of Meta's beside the rest on one card, or Muse Spark
+  through the Model API when online (conversation then needs the network; pictures still stay home, since seeing and
+  the picture checks would run on the card). Neither is measured on Andy's scorecards yet; Llama Guard 3 has a 1B
+  version, and the guard's 5.2 GB is the next saving to try. Andy Finder needs no GPU at all (section 75).
+- **The robot:** a Reachy Mini Lite was $299 at its launch in July 2025 (https://huggingface.co/blog/reachy-mini);
+  Pollen's own announcement page lists it at $399 now (https://pollen-robotics.com/reachy-mini/blog/reachy-mini-announcement/).
