@@ -110,6 +110,8 @@ def main() -> None:
     ap.add_argument("--depth", default="http://127.0.0.1:8096", help="MapAnything on this computer: how far away")
     ap.add_argument("--voice-name", default="eng", help="eng or spa (Meta's SeamlessM4T v2 voice)")
     ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
+    ap.add_argument("--no-rest", action="store_true", help="never rest: keep breathing and looking for faces however "
+                    "long nobody's there (companion/rest.py)")
     ap.add_argument("--home", default=os.environ.get("HEYANDY_HOME", ""),
                     help="where the person lives, e.g. 'Miami, Florida' (or HEYANDY_HOME), for the weather; never guessed")
     ap.add_argument("--staged-scene", action="store_true",
@@ -180,6 +182,9 @@ def main() -> None:
                 print(f"\nheard> {text}\nandy> {reply}  {wait}", flush=True)
 
         loop = VoiceLoop(andy, on_heard=shown)
+        from .companion.rest import Rest, check
+
+        rest = andy.rest = Rest(after_s=float("inf") if args.no_rest else Rest().after_s, woke_at=andy.clock())
         ears = Endpointer()
         threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), ears, stop),
                          daemon=True).start()
@@ -196,7 +201,8 @@ def main() -> None:
             talking = time.monotonic() <= loop.awake_until or ears.active or getattr(andy.body, "speaking", False)
             # Never during a search (it needs the camera and a still head); never waiting on a turn either: reading a
             # frame and easing the gaze don't get in the way of anything else.
-            if not talking or andy.body.motion.mode in ("searching", "thinking") or andy.following or andy.quiet():
+            if (not talking or andy.body.motion.mode in ("searching", "thinking") or andy.following or andy.quiet()
+                    or rest.resting):  # resting: only a change in the picture asks SAM (rest_when_nobody_is_there)
                 return
             found = follow_face(andy.body, andy.segmenter)
             if found:
@@ -225,7 +231,7 @@ def main() -> None:
             while not stop.wait(5.0):
                 try:
                     busy = (time.monotonic() <= loop.awake_until or ears.active or loop.busy or andy.following
-                            or andy.playing or andy.quiet() or getattr(andy.body, "speaking", False))
+                            or andy.playing or andy.quiet() or getattr(andy.body, "speaking", False) or rest.resting)
                     if busy or not andy.places.watching() or not hasattr(andy.segmenter, "action"):
                         continue
                     frame = andy.body.grab()
@@ -253,6 +259,18 @@ def main() -> None:
                     pass
 
         threading.Thread(target=notice_things, daemon=True).start()
+
+        def rest_when_nobody_is_there():
+            """No turn for ten minutes and nothing going on: Andy rests (companion/rest.py), still and quiet. Every 3 s
+            while it rests, the camera's picture is compared with the room's on the processor; only a change asks SAM
+            3.1 for a person, and someone there wakes it, as does any turn."""
+            while not stop.wait(3.0):
+                try:
+                    check(rest, andy, loop, ears)
+                except Exception:  # noqa: BLE001 - a missed check is fine: the next is 3 s away
+                    pass
+
+        threading.Thread(target=rest_when_nobody_is_there, daemon=True, name="rest").start()
         print("Listening: say \"Andy, ...\"")
     if args.voice and not sys.stdin.isatty():
         stop.wait()  # voice only: no keyboard attached

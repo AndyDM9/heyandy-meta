@@ -29,7 +29,8 @@ LINKS = re.compile(r"https://(?:github\.com|huggingface\.co|[a-z0-9-]+\.static\.
 
 
 def git(*args, run=subprocess.run) -> str:
-    return run(["git", *args], capture_output=True, text=True, cwd=ROOT).stdout.strip()
+    # rstrip only: a porcelain status line starts with a space (" M README.md"), part of the file's place in the line
+    return run(["git", *args], capture_output=True, text=True, cwd=ROOT).stdout.rstrip()
 
 
 def committed(run=subprocess.run) -> tuple[str, str]:

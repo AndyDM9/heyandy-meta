@@ -55,6 +55,8 @@ def fake_git(outputs):
 
 def test_uncommitted_or_unpushed_work_fails():
     assert rc.committed(fake_git({"status --porcelain": " M README.md"}))[0] == rc.FAIL
+    status, detail = rc.committed(fake_git({"status --porcelain": " M docs/research.md\n M README.md\n"}))
+    assert detail.endswith(": docs/research.md, README.md")  # each named whole (November 2 it said "ocs/research.md")
     assert rc.committed(fake_git({"rev-list --count": "2"}))[0] == rc.FAIL
     assert rc.committed(fake_git({"rev-list --count": "0", "rev-parse --short": "abc1234"}))[0] == rc.OK
 

@@ -227,6 +227,16 @@ def gpu() -> dict:
     return summary(newest("gpu-budget"))
 
 
+def power() -> dict:
+    return summary(newest("energy"))
+
+
+def breath() -> dict:
+    night = next(v for k, v in summary(newest("ego-noise")).items() if k.startswith("night"))
+    return {"an hour": f"{night['an hour']:,}", "z": f"{night['with the breath (twice a breath)']['z']:,.0f}",
+            "other": night["control"]["largest z at any other rate"], "kept": night["keeps time with the breath"]}
+
+
 def a11y() -> dict:
     return summary(newest("accessibility"))
 
@@ -433,6 +443,25 @@ FIGURES = [
                    + ("one card's worth" if gpu()["everything else fits one 24 GB card"] else "more than one card")),
     Figure("40.5 GB at rest, the language model 17.6 GB of it", "gpu-budget (latest)",
            lambda: f"{gpu()['total GB']} GB at rest, the language model {gpu()['language model GB']} GB of it"),
+    # what it costs to keep, and the breath it heard
+    Figure("the two cards drew 188.1 W ($24.92 a month at the U.S. average price)", "energy (latest)",
+           lambda: f"the two cards drew {power()['all']['both cards']['watts']} W "
+                   f"(${power()['all']['both cards']['dollars a month']} a month at the U.S. average price)"),
+    Figure("the two cards drew 188.1 W over 29.7 hours with Andy running: 4.51 kWh a day, $24.92 a month",
+           "energy (latest)",
+           lambda: "the two cards drew {watts} W over {h} hours with Andy running: {kwh} kWh a day, ${usd} a month".format(
+               watts=power()["all"]["both cards"]["watts"], h=power()["all"]["hours"],
+               kwh=power()["all"]["both cards"]["kWh a day"], usd=power()["all"]["both cards"]["dollars a month"])),
+    Figure("135.3 W through a night with nobody there, against 17.6 W resting", "energy (latest)",
+           lambda: f"{power()['night (nobody there)']['cards']['GPU 1']['average W']} W through a night with nobody "
+                   f"there, against {power()['all']['cards']['GPU 1']['resting W (median)']} W resting"),
+    Figure("overnight 1,043 sounds an hour kept time with it", "ego-noise (latest)",
+           lambda: f"overnight {breath()['an hour']} sounds an hour kept time with it" if breath()["kept"]
+           else "overnight the sounds didn't keep time with it"),
+    Figure("Overnight Andy let go 1,043 sounds an hour", "ego-noise (latest)",
+           lambda: f"Overnight Andy let go {breath()['an hour']} sounds an hour"),
+    Figure("z 1,926 at its rate, 5.1 at most at any other", "ego-noise (latest)",
+           lambda: f"z {breath()['z']} at its rate, {breath()['other']} at most at any other"),
     # the open weights, every file
     Figure("54 of 54 files", "open-weights-all (latest)",
            lambda: "{matched} of {files} files".format(**summary(newest("open-weights-all")))

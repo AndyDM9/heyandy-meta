@@ -213,6 +213,28 @@ def gpu_budget(f: str) -> str:
             f"else **{s['everything else GB']} GB**" + (" (one 24 GB card's worth)" if s["everything else fits one 24 GB card"] else ""))
 
 
+def energy(f: str) -> str:
+    s = load(f)["summary"]
+    every, night = s["all"], s["night (nobody there)"]
+    return (f"the two GPUs drew **{every['both cards']['watts']} W** over {every['hours']} h with Andy running "
+            f"({every['both cards']['kWh a day']} kWh a day, ${every['both cards']['dollars a month']} a month at the U.S. "
+            f"average); at night with nobody there GPU 1 still drew {night['cards']['GPU 1']['average W']} W, against "
+            f"{every['cards']['GPU 1']['resting W (median)']} W resting")
+
+
+def ego_noise(f: str) -> str:
+    s = load(f)["summary"]
+    night = next(v for k, v in s.items() if k.startswith("night"))
+    twice = night["with the breath (twice a breath)"]
+    after = {k: v for k, v in s.items() if not k.startswith(("night", "day"))}
+    line = (f"overnight, {night['an hour']:,} sounds an hour Andy let go kept time with its own breathing (z "
+            f"{twice['z']:,.0f}; any other rate {night['control']['largest z at any other rate']} at most)")
+    for k, v in after.items():
+        line += (f"; {k}: {v['an hour']:,} an hour, " + ("still with the breath" if v["keeps time with the breath"]
+                                                          else "no sign of the breath"))
+    return line
+
+
 def notes_in_view(f: str) -> str:
     d = load(f)["summary"]
     sets = [v for k, v in d.items() if k in ("first", "held out", "held out, second", "held out, third")]
@@ -273,6 +295,10 @@ CARDS = [
     ("Andy Finder", "the Reachy Mini app's \"Ring it\", on the robot", "research.md section 47", "finder-ring", finder_ring),
     ("What it takes", "each service's GPU memory at rest between turns (nvidia-smi per process): the language model, "
      "and everything else", "scripts/gpu_budget.py", "gpu-budget", gpu_budget),
+    ("What it costs", "each GPU's power from Andy's own once-a-second log, priced at the U.S. residential average (EIA)",
+     "scripts/energy.py", "energy", energy),
+    ("Hearing its own breath", "the times of the sounds Andy let go (never a sound or a word), against the 0.22-a-second "
+     "breath of its head and antennas, and every other rate", "evals.ego_noise", "ego-noise", ego_noise),
     ("Open weights, every file", "each of the nine open-weight models' files on this computer against Meta's published "
      "hashes: Hugging Face's SHA-256 and git hashes at the pinned revision, Omnilingual ASR's against Meta's download server",
      "scripts/verify_all_weights.py", "open-weights-all", open_weights_all),

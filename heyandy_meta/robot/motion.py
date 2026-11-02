@@ -1,7 +1,8 @@
 """Body language between moves: the robot is never frozen.
 
 A small set of layers, added on top of where the head was last sent (pointing at a thing, or facing the person):
-- **breathing**, always: a slow rise and fall of the head and a mirrored sway of the antennas;
+- **breathing**, always (but resting: companion/rest.py): a slow rise and fall of the head and a mirrored sway of
+  the antennas;
 - **listening**: the antennas spread a little and hold, like attention;
 - **thinking**: the antennas lean together to one side and back, and the head tilts, so a pause never looks dead;
 - **speaking**: the head moves with Andy's own words (Pollen's wobbler supplies the offsets); the antennas swing
@@ -18,6 +19,7 @@ from dataclasses import dataclass, field
 UPRIGHT = (-0.1745, 0.1745)  # antennas (right, left), radians: Pollen's resting position
 MODES = ("idle", "listening", "thinking", "speaking", "searching")
 FADE_S = 0.5
+REST_FADE_S = 2.0  # the breath fades out this slowly when Andy rests, and back in when it wakes
 
 
 @dataclass
@@ -40,10 +42,12 @@ class Motion:
     think_roll: float = 6.0
     liveliness: float = 1.0  # "move less": every layer scaled down (older participants liked calmer motion: ELEGNT)
     mode: str = "idle"
+    resting: bool = False  # nobody's been here a while (companion/rest.py): the breath fades out, the motors fall quiet
     speech: tuple = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)  # Pollen's wobbler: x, y, z (m), roll, pitch, yaw (rad)
     _weights: dict = field(default_factory=lambda: {m: 0.0 for m in MODES})
     _last_t: float | None = None
     _wiggle_until: float = 0.0
+    _rest_w: float = 0.0
 
     def set_mode(self, mode: str) -> None:
         if mode not in MODES:
@@ -61,13 +65,15 @@ class Motion:
             w = self._weights[m]
             step = dt / FADE_S
             self._weights[m] = min(target, w + step) if target > w else max(target, w - step)
+        step = dt / REST_FADE_S
+        self._rest_w = min(1.0, self._rest_w + step) if self.resting else max(0.0, self._rest_w - step)
         return self._weights
 
     def pose(self, now: float, base: Pose) -> Pose:
         """Where to send the head and antennas at time ``now``, around ``base``."""
         w = self._fade(now)
         k = self.liveliness
-        alive = (1.0 - w["searching"]) * k
+        alive = (1.0 - w["searching"]) * k * (1.0 - self._rest_w)  # resting: no breath, so no sound of motors
         phase = math.sin(2 * math.pi * self.breathe_hz * now)
         out = Pose(base.yaw, base.pitch + alive * self.breathe_pitch * phase, base.roll,
                    base.z + alive * self.breathe_z * phase, base.antennas)

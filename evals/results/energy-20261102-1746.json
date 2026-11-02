@@ -1,0 +1,67 @@
+{
+ "when": "2026-11-02 17:46",
+ "what": "What Andy costs to keep at home, from its own GPU log: each card's power at rest and between turns, a day's",
+ "price": "EIA Electric Power Monthly, Table 5.6.A: U.S. residential average, August 2026, 18.16 cents per kWh",
+ "cents per kWh": 18.16,
+ "not measured": "the processor (its meter needs root), the rest of the computer and the robot: a meter at the wall would add them",
+ "summary": {
+  "all": {
+   "hours": 29.7,
+   "from": "2026-11-01 10:13",
+   "to": "2026-11-02 17:46",
+   "cards": {
+    "GPU 0": {
+     "average W": 60.6,
+     "share of time resting": 0.696,
+     "resting W (median)": 37.0,
+     "load % (average)": 22.0
+    },
+    "GPU 1": {
+     "average W": 127.5,
+     "share of time resting": 0.024,
+     "resting W (median)": 17.6,
+     "load % (average)": 15.4
+    }
+   },
+   "both cards": {
+    "watts": 188.1,
+    "kWh a day": 4.51,
+    "dollars a month": 24.92
+   },
+   "both cards resting": {
+    "watts": 54.6,
+    "kWh a day": 1.31,
+    "dollars a month": 7.23
+   }
+  },
+  "night (nobody there)": {
+   "hours": 5.2,
+   "from": "2026-11-02 00:00",
+   "to": "2026-11-02 05:29",
+   "cards": {
+    "GPU 0": {
+     "average W": 29.1,
+     "share of time resting": 1.0,
+     "resting W (median)": 29.2,
+     "load % (average)": 0.7
+    },
+    "GPU 1": {
+     "average W": 135.3,
+     "share of time resting": 0.0,
+     "resting W (median)": null,
+     "load % (average)": 20.1
+    }
+   },
+   "both cards": {
+    "watts": 164.4,
+    "kWh a day": 3.95,
+    "dollars a month": 21.78
+   },
+   "both cards resting": {
+    "watts": 46.8,
+    "kWh a day": 1.12,
+    "dollars a month": 6.2
+   }
+  }
+ }
+}

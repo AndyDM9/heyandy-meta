@@ -77,7 +77,12 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   public demo's story labels each chapter "on the robot" or "not yet".
 - **The note-in-view defence** is measured on drawn notes, not real handwriting through the robot's camera.
 - **It needs today's hardware:** two 24 GB GPUs for the whole of Andy: 40.5 GB at rest, the language model 17.6 GB of
-  it (`scripts/gpu_budget.py`); Andy Finder needs none, through the Model API.
+  it (`scripts/gpu_budget.py`); Andy Finder needs none, through the Model API. Kept on, the two cards drew 188.1 W
+  ($24.92 a month at the U.S. average price; the cards only, `scripts/energy.py`). Resting when nobody's there is new
+  on November 2: its saving over a night isn't measured yet.
+- **It hears some of its own breathing:** its motors turning back, twice a breath; overnight 1,043 sounds an hour kept
+  time with it (`evals/ego_noise.py`), each heard on this computer and let go. Resting stops it; awake, with people
+  about, roughly a quarter of the sounds let go still do.
 - **Its name is a person's name:** plain "Andy" calls it. A home with an Andy can make it answer only "Hey Andy"; then
   a call in another script (安迪) isn't heard either.
 - **Where it's been measured:** one desk, one home, one robot.
