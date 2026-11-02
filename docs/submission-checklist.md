@@ -23,7 +23,9 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        cards joined, sound evened out, length checked: `uv run python scripts/make_film.py cut film/cut.json --out film/andy.mp4`,
        `docs/demo-script.md` step 9): 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
        where anyone can watch it signed out.
-2. [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
+2. [ ] `uv run python scripts/claims.py`: every figure in the submission, the system card and the README's top says what
+       its file says (a new run that changes one shows here; change the words, never the file).
+   [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
        the link in it), the measured results, what was pre-existing, the limits; refresh the
        "What's new here" list up to date. The form text: `docs/submission.md`.
 3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures

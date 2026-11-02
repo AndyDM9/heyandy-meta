@@ -1737,3 +1737,20 @@ Found and fixed, each with a test:
   (it restarts the desktop's sound, so after filming): `deploy/audio/heyandy-desktop-fallback.conf`, a silent output
   the desktop falls back to instead (priority 2000), and `deploy/audio/51-reachy-mini-audio.lua`, the robot's device at
   the lowest priority, held at 16 kHz and never suspended. Not yet tried.
+
+## 78. Every figure, read from its source (November 2, afternoon)
+
+- **Why:** the submission said "check every number against `evals/results/` first", by hand, the day it's sent. Now
+  `scripts/claims.py` lists every figure the submission, the system card and the README's top state (69 of them: "250
+  of 253", "7.8 s", "9%", and the values the code sets, such as "past 3 degrees, at most twice"), each with its source:
+  a scorecard's file (its latest run, unless the sentence names an earlier one), a value in the code, or for a one-off
+  measurement the section here that records it. `tests/test_claims.py` fails when a document states a figure with no
+  source, or one its source no longer says. HTML and link targets aren't prose; a badge is read as what it says.
+- **What it found on its first run:** "I fell and I can't get up": the phone found and pointed at in **16.5 s**, in the
+  submission, the README, the public demo and the crisis protocol, was the fastest of the four dress rehearsals that
+  had the shot (16.5, 27.1, 21.9, and 22.5 in the last, the phone moved). Now "16.5 to 27.1 s, over four dress
+  rehearsals" everywhere, and the demo script allows a labelled time cut. And the README's "the latest 18" searches
+  weren't the latest (9 more came after, with the memory handed back): now "on the final code, 18 searches". The
+  other 67 figures agreed with their files.
+- **Not checked yet:** the README below its "Proof" heading (its long tables, about 150 more figures, made from the
+  same files and sections), and figures without a unit ("in 34 frames", "Meta's (11)").

@@ -1,6 +1,7 @@
 # The scorecards' results
 
-Every number in the README and the submission is read from a file here. Failures are kept: an earlier run
+The submission's, the system card's and the README's headline figures are read from these files (or a section of
+`docs/research.md`) by `scripts/claims.py`, and a test fails if a document and its file disagree. Failures are kept: an earlier run
 stays beside the latest under its own name (`-before-fixes`, `-oct28`, a date), and `docs/research.md` says what
 changed because of it. This page is made from the files (`scripts/results_index.py`); a test checks it's current.
 Pictures and sounds are never kept: only words, numbers and timings.

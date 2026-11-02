@@ -2,7 +2,8 @@
 
 One page on what Andy is for, what it must not be used for, where your pictures and words go, how it was tested and
 where it falls short. Every figure links to its evidence: the scorecards in [`evals/results/`](../evals/results/README.md)
-(failures included) and the day-by-day record in [`docs/research.md`](research.md). HeyAndy, Inc., November 2026.
+(failures included) and the day-by-day record in [`docs/research.md`](research.md); each is read from its file by
+[`scripts/claims.py`](../scripts/claims.py), and a test fails if this page and the file disagree. HeyAndy, Inc., November 2026.
 
 ## What it is
 

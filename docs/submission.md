@@ -1,7 +1,8 @@
 # Submission text (for the form on November 4)
 
-*About 1,520 words, and 240 more in the table (trimmed again on November 2; longer versions are in this file's history). Fill in the
-[brackets] on the day; check every number against `evals/results/` first.*
+*About 1,540 words, and 240 more in the table (trimmed again on November 2; longer versions are in this file's history). Fill in the
+[brackets] on the day. Every figure here is read from its source by `scripts/claims.py` and a test fails if one disagrees:
+run `uv run python scripts/claims.py` after any new run or edit.*
 
 ---
 
@@ -28,7 +29,7 @@ keeps what it sees and hears in the house.
   about 5 feet away" (MapAnything measures how far). It skips a picture of glasses on the TV, and picks "the blue cup"
   from look-alikes.
 - **"Hey Andy, I fell and I can't get up."** "If you need help, please call 911 right away. I'll find your phone."
-  Andy searches for the phone and points at it (16.5 s on the robot): it can't call anyone, but it can find the phone.
+  Andy searches for the phone and points at it (16.5 to 27.1 s on the robot, over four dress rehearsals): it can't call anyone, but it can find the phone.
 - **In fifteen languages, and it notices which.** Say "安迪，我的眼镜在哪里？" and Andy switches and answers in Mandarin:
   Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
   AI and the crisis reply are written by hand in each language.
@@ -98,7 +99,7 @@ pointed at the thing 10 of 12 times, a median 2.5 degrees off; hidden, "not foun
 (both misses were the keys: the camera's autofocus, now held). *Alone in the room:* **250 of 253** unattended searches ended in a
 point; on the final code a median **1.1 degrees** off, 2.2 at worst, and **7.8 s** a find; from the words to Andy's
 spoken answer, 10.9 to 11.6 s (the dress rehearsal).
-Every result, failures included: `evals/results/` and `docs/research.md`.
+Every result, failures included: `evals/results/` and `docs/research.md`; every figure here is checked against its file by a test.
 
 ## Safety and honesty
 

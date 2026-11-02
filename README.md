@@ -41,7 +41,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   its camera, and says where, from where you stand. *250 of 253 unattended searches on the robot ended in a point;
   moved round the desk and judged by a person, 13 of 15 right, and never a point at the wrong thing.*
 - **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
-  911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 s from the words.* Andy can't call
+  911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 to 27.1 s from the words, over four dress rehearsals.* Andy can't call
   anyone and doesn't watch for falls; it does what a robot that finds things can.
 - **It speaks your language.** Fifteen of them, and it notices which one it's called in: "安迪，我的眼镜在哪里？" gets
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
@@ -55,8 +55,8 @@ Built on Meta's models for people who live at home, starting with older adults, 
 It finds things, remembers where they are, and delivers the reminders the person set. That's kept in code, not asked
 of a model: a health question, in any of its fifteen languages, gets Andy's own words, written by hand ("your doctor or
 pharmacist can; I can remind you to call them"), and no model answers it. Someone who says they've fallen hears
-"please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 s from the
-words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
+"please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 to 27.1 s from
+the words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
 ([docs/crisis-protocol.md](docs/crisis-protocol.md)). Ask it **"Hey Andy, what won't you do?"** and it says so, with
 today's receipts on its TV: no camera picture has left the house, how many health questions got its own words, how
 many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud. **All of it on one page,
@@ -67,7 +67,7 @@ with what it's for, what it isn't, and where it falls short: [Andy's system card
 | Finds it, and points | Guides your hand | Turns to a ringing |
 |---|---|---|
 | ![Found: the drawn mug outlined, "ahead of you, on your left, about 2 steps from you, at your 11 o'clock", a little map from where you stand](docs/images/tv-found.webp) | ![Guiding a hand: the mug and the hand outlined, a big arrow, "15 in from your hand"](docs/images/tv-guide.webp) | ![Listening for a phone: each turn of the head seen from above, and where it rings](docs/images/tv-sound.webp) |
-| **"Hey Andy, where's my mug?"** SAM 3.1 finds it, Andy points and checks its own aim, and says it from where you stand: "ahead of you, on your left, about 2 steps, at your 11 o'clock". *250 of 253 searches on the robot ended in a point; the latest 18, a median 7.8 s and 1.1 degrees.* | **"Help me reach it."** For someone who can't see well: it watches your hand and the thing, and talks your hand in ("Toward you, and right") with notes that rise as you near it. *On the robot: no hand made up, in 34 frames of an empty table.* | **"I'm ringing my phone."** It turns until its microphones hear the ringing straight ahead, looks there, and points, even at a phone under a cushion. *6 of 6 ringings faced, within 20 degrees; a voice never.* |
+| **"Hey Andy, where's my mug?"** SAM 3.1 finds it, Andy points and checks its own aim, and says it from where you stand: "ahead of you, on your left, about 2 steps, at your 11 o'clock". *250 of 253 searches on the robot ended in a point; on the final code, 18 searches: a median 7.8 s and 1.1 degrees.* | **"Help me reach it."** For someone who can't see well: it watches your hand and the thing, and talks your hand in ("Toward you, and right") with notes that rise as you near it. *On the robot: no hand made up, in 34 frames of an empty table.* | **"I'm ringing my phone."** It turns until its microphones hear the ringing straight ahead, looks there, and points, even at a phone under a cushion. *6 of 6 ringings faced, within 20 degrees; a voice never.* |
 | **It doesn't give up** | **Where things live** | **What you tell it** |
 | ![It turned up: "Good news: your mug turned up!", and a wallet it's still looking for](docs/images/tv-turned.webp) | ![Is everything home? Two things home, the keys away, where they are and where they live](docs/images/tv-home.webp) | ![You told me: "I put my passport in the top drawer of the desk"](docs/images/tv-told.webp) |
 | A miss becomes "I'll keep looking", and when the thing turns up, Andy points and says so, unprompted. *On the robot: a "lost" watch found later, 4.1 degrees off, said out loud.* | **"My keys live here." "Is everything home?"** It checks each home, points at what's away, then at where it lives; every evening at 9. *On the robot: the keys found away, pointed at, then their home.* | **"I'm putting my passport in the top drawer."** What no camera sees, it keeps in your words and answers at once: "You told me on Tuesday at 3:12". *On the robot: answered without a single look.* |

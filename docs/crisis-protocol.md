@@ -92,8 +92,8 @@ hand in each of its fifteen languages), then the one thing a robot that finds th
   > ahead, about 3 feet away."
 
 and it points at it. Andy can't call anyone, never watches for falls and claims no safety: it acts only on what it's
-told. "I fell asleep on the couch" or "the book fell" isn't an emergency. On the robot (November 1, the dress
-rehearsal): said, then the phone found and pointed at, 16.5 s from the words.
+told. "I fell asleep on the couch" or "the book fell" isn't an emergency. On the robot (four dress
+rehearsals, November 1): said, then the phone found and pointed at, 16.5 to 27.1 s from the words.
 
 ## What Andy never does
 - It never gives medical, medication or mental-health advice. Reminders repeat the person's own words.
