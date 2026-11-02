@@ -63,6 +63,30 @@ def services_down(answer: str, services=SERVICES) -> list[str]:
     return [s for s, state in zip(services, states) if state != "active"]
 
 
+# Every port of Andy's: the robot's daemon, Glimmer, SAM 3.1 and the rest, the voice, Llama Guard, MapAnything, the TV
+PORTS = {8000: "the robot's daemon", 8080: "Muse Glimmer", 8090: "SAM 3.1 and the vision models", 8092: "the voice",
+         8094: "Llama Guard 3", 8096: "MapAnything", 8765: "the TV (its camera pictures)"}
+
+
+def listening_wide(answer: str, ports=PORTS) -> list[str]:
+    """From `ss -ltnH`: each of Andy's ports listening anywhere but this computer (the home network, a VPN, all
+    addresses). Raises on an answer that lists none of them: nothing read is not a pass."""
+    seen, wide = set(), []
+    for line in answer.splitlines():
+        cols = line.split()
+        if len(cols) < 4:
+            continue
+        host, _, port = cols[3].rpartition(":")
+        if not port.isdigit() or int(port) not in ports:
+            continue
+        seen.add(int(port))
+        if host.strip("[]") not in ("127.0.0.1", "::1") and not host.startswith("127."):
+            wide.append(f"{ports[int(port)]} on {cols[3]}")
+    if not seen:
+        raise RuntimeError("no listening port of Andy's in the answer: can't tell where they listen")
+    return wide
+
+
 def power_too_high(answer: str, cap: float = 300.0, cards: int = 2) -> list[str]:
     """The cards above the cap, from nvidia-smi's index,power.limit; nothing read is an error, not "none too high"."""
     rows = [r for r in answer.strip().splitlines() if r.strip()]
@@ -103,6 +127,13 @@ def main() -> None:
         if down:
             raise RuntimeError("not running: " + ", ".join(down) + " (systemctl --user start ...)")
         return f"all {len(SERVICES)} running"
+
+    @check("Andy's ports listen on this computer only (not the home network)")
+    def _():
+        wide = listening_wide(subprocess.run(["ss", "-ltnH"], capture_output=True, text=True).stdout)
+        if wide:
+            raise RuntimeError("reachable from the network: " + "; ".join(wide) + " (bind it to 127.0.0.1)")
+        return f"all on 127.0.0.1 ({len(PORTS)} ports)"
 
     @check("the robot (Reachy Mini daemon)")
     def _():

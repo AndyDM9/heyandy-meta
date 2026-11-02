@@ -229,3 +229,46 @@ def test_an_ordinary_page_goes_on():
     spark = Spark([message("Here it is.")])
     run = web.use_the_web(spark, Page(), "show me a recipe", lambda *a: None, guard=lambda texts: [0.001] * len(texts))
     assert run.answer == "Here it is." and not run.stopped
+
+
+def test_a_page_that_came_from_this_computer_is_never_photographed_whatever_its_name_said():
+    """DNS rebinding: a name that pointed at the web when it was checked and at this computer when the browser
+    connected. The page's own address decides, from the browser's connection."""
+    from types import SimpleNamespace as NS
+
+    from heyandy_meta.companion.web import Browser as Real
+    from heyandy_meta.companion.web import BrowserTrouble
+
+    shots, went = [], []
+    b = Real.__new__(Real)
+    b.page = NS(url="https://news.example.com/story", goto=went.append, screenshot=lambda **kw: shots.append(1) or b"jpeg",
+                wait_for_timeout=lambda ms: None)
+    for address, allowed in (("93.184.215.14", True), ("127.0.0.1", False), ("192.168.1.10", False),
+                             ("100.100.55.127", False), (None, True)):
+        b.served_from = address
+        if allowed:
+            assert b._screenshot() == b"jpeg"
+        else:
+            with pytest.raises(BrowserTrouble):
+                b._screenshot()
+    assert len(shots) == 2 and went == ["about:blank"] * 3
+
+
+def test_the_page_on_show_notes_the_address_it_came_from():
+    from types import SimpleNamespace as NS
+
+    from heyandy_meta.companion.web import Browser as Real
+
+    b = Real.__new__(Real)
+    main = object()
+    b.page = NS(main_frame=main)
+    b.served_from = None
+    nav = lambda ip, frame=main, navigation=True: NS(request=NS(is_navigation_request=lambda: navigation), frame=frame,  # noqa: E731
+                                                       server_addr=lambda: {"ipAddress": ip, "port": 443})
+    b._served(nav("127.0.0.1"))
+    assert b.served_from == "127.0.0.1"
+    b._served(nav("93.184.215.14", navigation=False))  # a picture on the page: not the page
+    b._served(nav("93.184.215.14", frame=object()))  # a frame inside it: not the page
+    assert b.served_from == "127.0.0.1"
+    b._served(nav("93.184.215.14"))
+    assert b.served_from == "93.184.215.14"

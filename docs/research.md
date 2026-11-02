@@ -1834,3 +1834,22 @@ Found and fixed, each with a test:
   ASR on this computer to listen for the name; what's for Andy may be kept only as words, and only what it's asked to
   remember. Checked before saying it: the code writes no audio anywhere (the only WAV it writes is its own chimes,
   exported for the docs) and the voice service stores nothing.
+
+## 83. Who on the network can reach Andy (November 2, afternoon)
+
+- **Why:** "your home's pictures stay in your home" is only true if nothing of Andy's can be reached from the home
+  network (anyone on the Wi-Fi), a VPN on this computer (Tailscale here), or a web page Andy's own browser opens.
+- **Checked, as it is:** all seven of Andy's ports (the robot's daemon, Muse Glimmer, SAM 3.1 and the vision models,
+  the voice, Llama Guard 3, MapAnything, the TV) listen on 127.0.0.1 only: not the home network's 192.168.1.10, not
+  Tailscale's address. A page that tricks a browser into using Andy's own address under another name (DNS rebinding)
+  gets nothing: the TV answers only to its own names ("421 not this name", and its state holds the last camera
+  picture), and the robot's daemon (Pollen's) refused a foreign name too (400). Neither model server shows a web page
+  of its own (`--no-webui`). Andy's browser ("show me ... on the TV") already refused this computer and the home network
+  by name and by where a name resolves (Tailscale's 100.64.0.0/10 too), checked every request, blocked service workers,
+  and re-checked after redirects.
+- **Closed:** that check resolves a name once and remembers it; the browser resolves it again when it connects, and a
+  name can answer differently the second time. Now the page's own address, from the browser's connection
+  (`server_addr`), decides too: a page whose bytes came from this computer or the home network is never photographed,
+  so never sent to Muse Spark. Tried in the real browser on a public page (its address noted, the page captured) and
+  in tests (loopback, home network, Tailscale: refused). And preflight now fails if any of Andy's ports ever listens
+  beyond this computer (`listening_wide`; it fails too if it reads none of them).

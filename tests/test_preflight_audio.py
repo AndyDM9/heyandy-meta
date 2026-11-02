@@ -121,3 +121,18 @@ def test_the_space_is_compared_with_the_build_file_by_file(tmp_path):
         {"missing": [], "extra": [], "size": [], "sha256": []}
     assert compare(local, {"index.html": entry(5), "vendor/rt.wasm": entry(36, "0" * 64), "style.css": entry(3)}) == \
         {"missing": [], "extra": ["style.css"], "size": ["index.html"], "sha256": ["vendor/rt.wasm"]}
+
+
+def test_andys_ports_must_listen_on_this_computer_only():
+    import pytest
+
+    from preflight import listening_wide
+
+    ok = ("LISTEN 0 128 127.0.0.1:8765 0.0.0.0:*\nLISTEN 0 128 127.0.0.1:8080 0.0.0.0:*\n"
+          "LISTEN 0 128 0.0.0.0:22 0.0.0.0:*\nLISTEN 0 128 [::1]:8000 [::]:*\n")
+    assert listening_wide(ok) == []
+    wide = listening_wide(ok + "LISTEN 0 128 0.0.0.0:8090 0.0.0.0:*\nLISTEN 0 128 [::]:8092 [::]:*\n"
+                               "LISTEN 0 128 192.168.1.10:8096 0.0.0.0:*\n")
+    assert [w.split(" on ")[0] for w in wide] == ["SAM 3.1 and the vision models", "the voice", "MapAnything"]
+    with pytest.raises(RuntimeError, match="no listening port"):
+        listening_wide("LISTEN 0 128 0.0.0.0:22 0.0.0.0:*\n")  # nothing of Andy's read: not a pass

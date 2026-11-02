@@ -142,6 +142,7 @@ class Browser:
         self._thread: threading.Thread | None = None
         self._typing: list[str] | None = None  # after ctrl+l: the address being typed
         self.page = None
+        self.served_from = None  # the address the page on show really came from (not where its name pointed before)
 
     def _run(self) -> None:
         from playwright.sync_api import sync_playwright
@@ -155,6 +156,7 @@ class Browser:
                 # Nothing on this computer or the home network, whatever a page links to: the web only.
                 ctx.route("**/*", lambda route: route.abort() if at_home(route.request.url) else route.continue_())
                 self.page = ctx.new_page()
+                self.page.on("response", self._served)
                 self.page.goto(self.start)
             except Exception as e:  # noqa: BLE001 - say so to whoever is waiting, at once
                 log.warning("the browser didn't start: %s", e)
@@ -193,8 +195,20 @@ class Browser:
     def screenshot(self) -> bytes:
         return self._call(self._screenshot)
 
+    def _served(self, response) -> None:
+        """Where the page itself came from, by the address the browser connected to: a name that pointed at the web
+        when checked and at this computer a moment later (DNS rebinding) shows here."""
+        try:
+            if response.request.is_navigation_request() and response.frame == self.page.main_frame:
+                addr = response.server_addr()
+                self.served_from = addr["ipAddress"] if addr else None
+        except Exception:  # noqa: BLE001 - a page that went away meanwhile: nothing to note
+            pass
+
     def _screenshot(self) -> bytes:
-        if at_home(self.page.url):  # a redirect the request check didn't see: never photographed, never sent
+        if at_home(self.page.url) or (self.served_from and _private(self.served_from)):
+            # a redirect the request check didn't see, or a page whose bytes came from this computer or the home
+            # network whatever its name said: never photographed, never sent
             self.page.goto("about:blank")
             raise BrowserTrouble("the page led to this computer or the home network")
         for _ in range(3):  # a page in the middle of a redirect can't be captured: a moment later it can
