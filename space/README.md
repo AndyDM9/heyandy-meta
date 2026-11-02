@@ -7,6 +7,7 @@ sdk: docker
 app_port: 7860
 license: apache-2.0
 short_description: The TV beside Andy, a tabletop robot built on Meta's models
+thumbnail: https://huggingface.co/spaces/heyandy-ai/andy/resolve/main/card.png
 ---
 
 # The TV beside Andy

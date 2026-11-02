@@ -32,14 +32,15 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        (`git log -p | grep -E "MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}"` finds nothing). Never rewrite the history: its
        dates show the work was done during the event.
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics) and
-       check a fresh clone passes its tests. First check
+       check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload
+       `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. First check
        GitHub Support has purged the old commits (the founder's ticket of November 1; the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
        (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the story opens on
        about 10 s of the robot itself, `docs/demo-script.md`; then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`; then
        `uvx --from huggingface_hub python scripts/verify_space.py` must say none missing, extra or different), then make
-       it public:
+       it public (if a scorecard changed since, `uv run python scripts/social_card.py` first: a test says so):
        `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
        the story (about 75 seconds) should play, end on the card, and "Watch the 3-minute video" should open the video;
        type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find; tap 🎙 and say it (wav2vec 2.0
@@ -48,6 +49,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
        things": "No photo to hand? Use our cup", then "Our four cups" should end "There's your cup." (DINOv2 downloads
        once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too; then "Sweep the room, live" on the
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
+       And the card a shared link shows: paste the Space's link into a new post on X, and don't send it: Andy's card
+       (`docs/images/social-card.png`), not Hugging Face's plain one; the same with the GitHub link once its preview is set.
 6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 1,400 words on what it is and what's new (`docs/submission.md`: fill its [brackets], the video's link;
        nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`).

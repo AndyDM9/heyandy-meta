@@ -55,6 +55,37 @@ from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
 OUT = ROOT / "dist" / "space-static"
 KEYS = re.compile(r"MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}")
+HOST = "https://heyandy-ai-andy.static.hf.space"  # the Space's own address (its pages, and the card)
+SPACE_URL = "https://huggingface.co/spaces/heyandy-ai/andy"
+# What a shared link to each page says, with the card (scripts/social_card.py): (title, description, the page's address)
+SHARED = {
+    "index.html": ("Andy: finds what you've lost, and points at it",
+                   "The TV beside Andy, a tabletop robot built on Meta's models: a 75-second story, then ask it yourself. "
+                   "Your home's pictures and voice stay in your home.", SPACE_URL),
+    "eyes.html": ("Andy's eyes, on your things",
+                  "Show Andy's eyes your mug once, then sweep your phone round the room: Meta's DINOv2 in your browser. "
+                  "Nothing leaves it.", f"{HOST}/eyes.html"),
+    "hood.html": ("Under the hood · Andy", "A search on the robot, stage by stage, and which of Meta's models did each.",
+                  f"{HOST}/hood.html"),
+}
+
+
+def shared(html: str, name: str) -> str:
+    """The page's description, and the card a shared link shows (Open Graph, read by X, LinkedIn, Slack and the rest)."""
+    from html import escape
+
+    from social_card import ALT, SIZE
+
+    title, description, url = SHARED[name]
+    tags = [f'<meta name="description" content="{escape(description)}">',
+            '<meta property="og:type" content="website">', '<meta property="og:site_name" content="HeyAndy">',
+            f'<meta property="og:title" content="{escape(title)}">',
+            f'<meta property="og:description" content="{escape(description)}">',
+            f'<meta property="og:url" content="{url}">', f'<meta property="og:image" content="{HOST}/card.png">',
+            f'<meta property="og:image:width" content="{SIZE[0]}">', f'<meta property="og:image:height" content="{SIZE[1]}">',
+            f'<meta property="og:image:alt" content="{escape(ALT)}">', '<meta name="twitter:card" content="summary_large_image">',
+            f'<meta name="twitter:image:alt" content="{escape(ALT)}">']
+    return html.replace("</title>", "</title>\n" + "\n".join(tags), 1)
 
 
 def main() -> None:
@@ -79,7 +110,7 @@ def main() -> None:
         flags += (f" window.HEYANDY_CLIP = 'robot.mp4'; window.HEYANDY_CLIP_SECONDS = {min(20.0, round(seconds, 1))};"
                   f" window.HEYANDY_CLIP_CAPTION = {json.dumps(args.clip_caption)};")
     html = page().replace("<script>", f"<script>{flags}</script>\n<script>", 1)
-    (OUT / "index.html").write_text(html)
+    (OUT / "index.html").write_text(shared(html, "index.html"))
     for name in FONTS:
         (OUT / "fonts" / name).write_bytes(files("heyandy_meta.screen").joinpath("fonts", name).read_bytes())
     shutil.copy(files("heyandy_meta.screen").joinpath("fonts", "OFL.txt"), OUT / "fonts" / "OFL.txt")
@@ -101,11 +132,12 @@ def main() -> None:
     shutil.copy(ROOT / "docs" / "images" / "sample-web.jpg", OUT / "web.jpg")  # the "On the web" scene (Wikipedia)
     (OUT / "room.bin").write_bytes(sample_room()[0])  # the "room" scene: a made-up room's shape
     # under the hood: the page, and a sample of turns timed on the robot (it says it's a sample)
-    (OUT / "hood.html").write_text(files("heyandy_meta.screen").joinpath("hood.html").read_text())
+    (OUT / "hood.html").write_text(shared(files("heyandy_meta.screen").joinpath("hood.html").read_text(), "hood.html"))
     sample = json.loads(files("heyandy_meta.screen").joinpath("hood_sample.json").read_text())
     (OUT / "hood.json").write_text(json.dumps({**sample, "sample": True}))
     # Andy's eyes, on the visitor's own things: DINOv2 in the browser, and our cups for anyone without a photo
-    (OUT / "eyes.html").write_text(files("heyandy_meta.screen").joinpath("eyes.html").read_text())
+    (OUT / "eyes.html").write_text(shared(files("heyandy_meta.screen").joinpath("eyes.html").read_text(), "eyes.html"))
+    shutil.copy(ROOT / "docs" / "images" / "social-card.png", OUT / "card.png")  # what a shared link shows
     (OUT / "eyes-core.js").write_text(files("heyandy_meta.screen").joinpath("eyes-core.js").read_text())
     (OUT / "eyes").mkdir()
     (OUT / "vendor").mkdir()

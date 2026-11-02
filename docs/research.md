@@ -1778,3 +1778,18 @@ Found and fixed, each with a test:
 - **Also:** a home with someone called Andy can say "Andy, answer only to Hey Andy"; then a call in another script
   (安迪) isn't heard either. The USB unplug left the daemon in "Motor communication error" and Andy's microphones on
   the old device: `scripts/reset_robot_audio.py` brought both back (20 of 20 direction reads).
+
+## 80. The card a shared link shows (November 2, afternoon)
+
+- **Why:** Most Viral is judged on X engagement, and the Community Vote on people opening the Space; a link to either
+  showed a plain card (Hugging Face's own, made from the Space's title and emoji), and the Space's pages had no
+  description or social tags at all.
+- **Now:** `scripts/social_card.py` makes one card, 1280 by 640 (the 2:1 that X's large card and GitHub's social
+  preview ask for; 230 KB, under GitHub's 1 MB): what Andy does, its TV at a find (the drawn demo scene, never a home),
+  and three figures made where the documents' are (the unattended searches from their files, the languages from the
+  code, the models from the submission's table). It keeps those figures in the PNG itself, and a test fails when the
+  scorecards have moved on since it was made. The Space's README names it as its `thumbnail:` (Hugging Face's
+  documented field for social sharing), and the build gives the Space's three pages a description, Open Graph tags and
+  X's `summary_large_image`, so a link straight to Andy's eyes shows it too. Uploaded to the Space (still private): 58
+  files match the build. GitHub's preview has no API: the November 4 checklist has it as a step by hand, and a check
+  of the card in a draft post on X before anything is sent.
