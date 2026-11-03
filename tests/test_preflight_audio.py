@@ -139,17 +139,18 @@ def test_andys_ports_must_listen_on_this_computer_only():
 
 
 def test_preflight_catches_microphones_too_faint_to_hear_the_name():
-    """November 3, about 10:36: the robot's microphone array gave Andy sound ten times too faint, Omnilingual ASR wrote
-    nonsense from it (more words a second than anyone says), and Andy answered nothing until the audio was reset."""
+    """November 3, about 10:36: the robot's microphone array gave Andy sound ten times too faint (the room near-silent,
+    the array's gain at 0.96), and Andy answered nothing until the audio was reset. A quiet room turns the gain up
+    (19.99), and its faint noises alone mustn't fail it; nor must the minutes after a reset, nor a room Andy answers."""
     import preflight
 
-    faint = "\n".join(f"(heard {s}s of speech, room level 0.002, its own {lv}, {n} words heard, closest to its name 0.40; "
-                      "not for Andy)" for s, lv, n in [(1.2, 0.004, 41), (1.1, 0.004, 8), (8.3, 0.004, 78), (1.5, 0.005, 11),
-                                                       (4.4, 0.005, 61), (1.4, 0.003, 6)])
-    assert preflight.hearing_faint(faint)[0]
-    normal = "\n".join(f"(heard {s}s of speech, room level 0.004, its own {lv}, peak 0.61, {n} words heard, closest to "
-                       "its name 0.25; not for Andy)" for s, lv, n in [(2.1, 0.075, 5), (8.1, 0.067, 27), (1.9, 0.059, 3),
-                                                                       (1.7, 0.062, 4), (3.2, 0.095, 10)])
-    assert not preflight.hearing_faint(normal)[0]
-    assert preflight.hearing_faint("(heard 1.2s of speech, room level 0.002, its own 0.004, 41 words heard)") == \
+    faint = "\n".join("(heard 1.2s of speech, room level 0.002, its own 0.004, 41 words heard, closest to its name 0.40; "
+                      "not for Andy)" for _ in range(10))
+    assert preflight.hearing_faint(faint, 0.96, up_s=3600)[0]
+    assert not preflight.hearing_faint(faint, 19.99, up_s=3600)[0]  # a quiet room, the gain up: healthy
+    assert not preflight.hearing_faint(faint, 1.2, up_s=120)[0]  # just reset: the gain climbs
+    assert not preflight.hearing_faint(faint + "\nturn answered [first word 1.2s after]", 0.96, up_s=3600)[0]
+    normal = faint.replace("room level 0.002", "room level 0.022")
+    assert not preflight.hearing_faint(normal, 0.96, up_s=3600)[0]
+    assert preflight.hearing_faint("(heard 1.2s of speech, room level 0.002, its own 0.004; not for Andy)", 0.5, 3600) == \
         (False, "1 sounds lately: too few to tell")

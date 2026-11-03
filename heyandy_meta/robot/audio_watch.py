@@ -8,7 +8,11 @@ very likely mute, for half an hour, and nothing on its TV or in its log said so 
 
 - the kernel's log since the last look: any new USB error from the audio device;
 - the microphones: no sound at all from them for 10 seconds (they always hear something, even a quiet room);
-- the direction of a voice: reads that fail (robot/reachy_mini.py counts them).
+- the direction of a voice: reads that fail (robot/reachy_mini.py counts them);
+
+And `faint`, for scripts/preflight.py: what Andy hears too faint to make out (November 3: from about 10:36 the array's
+sound fell tenfold and Omnilingual ASR wrote nonsense from it, so Andy never heard its name). Not on the TV: replayed
+over the day, it also flagged a quiet room's faint noises while Andy was answering normally.
 
 Any of them puts a lasting line on the TV with the fix, until a look finds none; "are you OK?" says it too.
 """
@@ -31,6 +35,23 @@ def port(devices: Path = Path("/sys/bus/usb/devices")) -> str | None:
         except OSError:
             continue
     return None
+
+
+def faint(rooms, gain: float | None, answered: int = 0, up_s: float = 0.0, least: int = 8) -> tuple[bool, str]:
+    """Has the microphone array gone too faint to hear by, as on November 3? rooms: the room's level beside each sound
+    Andy let go lately (numbers only); gain: the array's own automatic gain now (PP_AGCGAIN, from its daemon). The fault's
+    signature: a near-silent room level (under 0.003) with the gain barely on (under 2), where a quiet room turns the
+    gain up (19.99 at noon); no turn answered lately (one answered: it hears its name); and the daemon up ten minutes
+    (the gain starts low after a reset and climbs). Replayed over the day, the loudness of the sounds alone also
+    flagged a quiet room's faint noises, so it isn't used. Fewer than `least` sounds: too few to tell."""
+    rooms = sorted(rooms)
+    if answered:
+        return False, f"{answered} turns answered lately: it hears its name"
+    if len(rooms) < least:
+        return False, f"{len(rooms)} sounds lately: too few to tell"
+    room = rooms[len(rooms) // 2]
+    said = f"room level {room:.3f} (median of {len(rooms)}), the array's gain {'unread' if gain is None else f'{gain:.2f}'}"
+    return (gain is not None and gain < 2.0 and room < 0.003 and up_s >= 600), said
 
 
 def faults(kernel_log: str, where: str) -> int:

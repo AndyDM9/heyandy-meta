@@ -2429,10 +2429,12 @@ Found and fixed, each with a test:
   First, my own instruction: I asked the founder to say "I fell and I can't get up" without "Hey Andy", and outside the
   seconds after a reply Andy answers only when called (`_heard`; the filming script has the name). Second, about 10:36
   the sound from the robot's microphone array fell about tenfold (the room's level 0.02 to 0.002; a voice 0.003 to
-  0.009), and Omnilingual ASR, given that faint sound, wrote nonsense (78 "words" in 8 s): the array's own automatic gain
-  read 0.96 of 64, with no USB fault in the kernel's log. A USB reset of the audio device (`scripts/reset_robot_audio.py`)
-  brought voices back to 0.04 to 0.14; from 10:57, called by name, Andy answered seven times in five minutes. Which of
-  the two kept it silent between 10:36 and 10:57 can't be told apart from the numbers kept. Found on the way: the robot's
+  0.009), with no USB fault in the kernel's log. Andy still answered twice, at 10:39:48 and 10:40:05, just after its
+  speaker was turned up (the founder heard it, too quietly, and asked for louder; I missed those two lines at first and
+  told the founder it hadn't answered since the morning). After Andy restarted at 10:41 (for the numbers below), it
+  answered nothing: Omnilingual ASR, given that faint sound, wrote nonsense (78 "words" in 8 s), and the array's own
+  automatic gain read 0.96 of 64. A USB reset of the audio device (`scripts/reset_robot_audio.py`) brought voices back
+  to 0.04 to 0.14; from 10:57, called by name, Andy answered seven times in five minutes. Found on the way: the robot's
   speaker was set 25 dB below full (58%); the founder couldn't hear it well: 90% now (-6 dB, at every start), their choice by ear after trying 80% and 100%.
 - **What the journal now says of a sound Andy lets go**, so the next silence is diagnosed in minutes: its length, the
   room's level, its own loudness and peak (and how much sits at the ceiling: distortion), how many words were heard, and
@@ -2440,9 +2442,12 @@ Found and fixed, each with a test:
   root, only its daemon and Andy are connected to it, and nothing else starts at boot that can.
 - **Ready for filming** (November 3, afternoon): in filming mode the director's cues ("take two", "next take", "cut",
   "that's a wrap") are heard without the name, and only they are: before, a bare "take two" was let go once the
-  follow-up window had closed or the room had talked, and with it the clap the edit lines up on. Preflight reads the
-  last fifteen minutes of let-go sounds and fails when the microphones are too faint to hear the name (the morning's
-  fault: a median loudness under 0.012 and most sounds faster than anyone speaks), naming the reset. The demo script's
+  follow-up window had closed or the room had talked, and with it the clap the edit lines up on. Preflight fails on the
+  morning's fault, naming the reset: the room's level near-silent (under 0.003, from the let-go sounds of the last
+  fifteen minutes) with the array's own gain barely on (under 2; a quiet room turns it up, 19.99 at noon), no turn
+  answered, and the daemon up ten minutes (the gain starts low after a reset). A first rule, by the sounds' loudness and
+  words a second, replayed over the day, also flagged a quiet room's faint noises while Andy answered normally, so it
+  was replaced before use; and it never goes on the TV, where a false alarm would be in shot. The demo script's
   standalone lines all start with "Hey Andy"; a follow-up is marked as one. Checked for tonight: preflight with the
   cloud READY; no GPU fault since the computer started (November 1); the TV recording (5.8 s, its start time beside
   it); a piece burned from a made-up take (badge, the TV beside the robot, captions; wide and vertical).
