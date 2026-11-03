@@ -534,7 +534,26 @@
   #welcome .in { box-sizing: border-box; min-height: 100%; width: min(120rem, 90vw); margin: 0 auto; padding: 3.4rem 0 2.8rem;
                  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); grid-template-rows: auto 1fr auto;
                  column-gap: 5rem; animation: w-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-  #welcome .sig { grid-column: 1 / -1; height: 2.6rem; width: auto; color: #F5F3EF; opacity: 0.9; }
+  #welcome .top { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  #welcome .sig { height: 2.6rem; width: auto; color: #F5F3EF; opacity: 0.9; }
+  /* Andy's languages: each in its own name and script, never a flag (a language isn't a country) */
+  #welcome .pick { position: relative; }
+  #welcome .langbtn { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; padding: 0.5rem 1.1rem;
+                      border-radius: 99rem; cursor: pointer; color: #F5F3EF; background: rgba(245, 243, 239, 0.08);
+                      border: 0.12rem solid rgba(245, 243, 239, 0.38); font: 700 1.35rem/1 "Atkinson Next", sans-serif; }
+  #welcome .langbtn:hover { background: rgba(245, 243, 239, 0.18); }
+  #welcome .langbtn:focus-visible { outline: 0.25rem solid #F5F3EF; outline-offset: 0.3rem; }
+  #welcome .langbtn svg { width: 1.5rem; height: 1.5rem; flex: none; }
+  #welcome .langs { position: absolute; right: 0; top: calc(100% + 0.6rem); z-index: 3; width: min(36rem, 88vw); padding: 0.8rem;
+                    border-radius: 1.4rem; background: #F5F3EF; color: #0f1814; box-shadow: 0 1.4rem 3.4rem rgba(0, 0, 0, 0.55);
+                    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.25rem; }
+  #welcome .langs[hidden] { display: none; }
+  #welcome .langs button { text-align: left; min-height: 44px; padding: 0.55rem 0.9rem; border: 0; border-radius: 0.9rem;
+                           cursor: pointer; color: #0f1814; background: none; font: 650 1.45rem/1.15 "Atkinson Next", sans-serif; }
+  #welcome .langs button:hover, #welcome .langs button:focus-visible { background: rgba(15, 24, 20, 0.09); outline: none; }
+  #welcome .langs button[aria-pressed="true"] { background: var(--outline); font-weight: 800; }
+  #welcome .langs button span { display: block; font: 600 1.05rem/1.2 "Atkinson Next", sans-serif; color: #3d4c45; }
+  #welcome .langs p { grid-column: 1 / -1; margin: 0.4rem 0.9rem 0.3rem; font-size: 1.15rem; line-height: 1.35; color: #3d4c45; }
   #welcome .pitch { align-self: center; padding: 3rem 0; }
   #welcome h1 { margin: 0; font-size: clamp(3.6rem, 6.4vw, 8.6rem); font-weight: 800; line-height: 0.95; letter-spacing: -0.035em; }
   #welcome h1 em { display: block; font-style: normal; color: var(--outline); }
@@ -673,6 +692,7 @@
 <div id="menu" hidden role="menu" aria-label="Settings">
   <button type="button" role="menuitem" id="m-hood"><b>Under the hood</b><span>Each turn, step by step: which of Meta's models did what, and how long it took</span></button>
   <button type="button" role="menuitem" id="m-help"><b>What can I ask?</b><span>Things to say to Andy</span></button>
+  <p id="m-lang"></p>
   <p>Say <b>“Hey Andy, are you OK?”</b> and Andy checks itself.</p>
 </div>
 <div id="flash" aria-hidden="true"></div>
@@ -903,12 +923,40 @@
   const ASK_LANGS = { en: "English", es: "Español", zh: "中文", tl: "Tagalog", vi: "Tiếng Việt", ko: "한국어", ru: "Русский",
                  ar: "العربية", hi: "हिन्दी", pt: "Português", fr: "Français", it: "Italiano", pl: "Polski", de: "Deutsch",
                  uk: "Українська" };
+  const LANG_CODES = ["en", "es", "zh", "tl", "vi", "ko", "ru", "ar", "hi", "pt", "fr", "it", "pl", "de", "uk"];
+  const LANG_ENGLISH = { es: "Spanish", zh: "Mandarin", tl: "Tagalog", vi: "Vietnamese", ko: "Korean", ru: "Russian", ar: "Arabic",
+                         hi: "Hindi", pt: "Portuguese", fr: "French", it: "Italian", pl: "Polish", de: "German", uk: "Ukrainian" };
+  function visitorLanguage() {  // the first of the browser's own languages that Andy speaks (never guessed from a place)
+    for (const l of navigator.languages || [navigator.language || "en"]) {
+      const p = String(l || "").toLowerCase().split("-")[0], code = p === "fil" ? "tl" : p;
+      if (LANG_CODES.includes(code)) return code;
+    }
+    return "en";
+  }
+  let chosenLang = null;
+  try { chosenLang = localStorage.getItem("andy-lang"); } catch (e) { /* a private window: this visit only */ }
+  if (!LANG_CODES.includes(chosenLang)) chosenLang = null;
+  function storyIn(code) {  // the story's "Your language" chapter: the TV in the visitor's language (Mandarin for English)
+    const at = STORY.findIndex(c => c[2] === "Your language");
+    if (at < 0) return;
+    const scene = code === "es" ? "spanish" : code === "zh" || code === "en" ? "mandarin" : `in-${code}`;
+    STORY[at][0] = scene;
+    STORY[at][3] = scene === "mandarin"
+      ? "It hears and speaks fifteen languages, from Spanish to Mandarin; Muse Glimmer translates on the computer beside the robot."
+      : `It hears and speaks fifteen languages, yours too: ${ASK_LANGS[code]}. Muse Glimmer translates on the computer beside the robot.`;
+    if (scene !== "mandarin") PROOF[scene] = ["not", `On the robot so far in Mandarin; this TV in ${ASK_LANGS[code]} is its own code's, recorded`];
+  }
   let welcomed = null;  // {timers, look}
   function welcome() {
     const w = el("div"); w.id = "welcome"; w.setAttribute("role", "dialog"); w.setAttribute("aria-modal", "true");
     w.setAttribute("aria-labelledby", "w-title");
-    const inner = el("div", null, "in"), sig = document.querySelector("header .brand")?.cloneNode(true);
-    if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }
+    const inner = el("div", null, "in"), sig = document.querySelector("header .brand")?.cloneNode(true), top = el("div", null, "top");
+    if (sig) { sig.setAttribute("class", "sig"); top.append(sig); }
+    const pick = el("div", null, "pick"), langbtn = el("button", null, "langbtn"), langs = el("div", null, "langs");
+    langbtn.type = "button"; langbtn.setAttribute("aria-haspopup", "true"); langbtn.setAttribute("aria-expanded", "false");
+    langs.id = "w-langs"; langs.hidden = true; langs.setAttribute("role", "group"); langs.setAttribute("aria-label", "Andy's languages");
+    langbtn.setAttribute("aria-controls", "w-langs");
+    pick.append(langbtn, langs); top.append(pick); inner.append(top);
     const pitch = el("div", null, "pitch"), h1 = el("h1");
     h1.id = "w-title"; h1.append("Lost something? ", el("em", "Andy points at it."));
     const cta = el("a", "Find something of yours ", "cta"); cta.href = "eyes.html?find";  // straight to the camera
@@ -941,6 +989,8 @@
     } else if (voices) { talk.append(face); andy.append(talk, bubble); }
     else andy.append(face, bubble);
     if (voices) andy.append(el("p", "Tap Andy to hear its own voice, in the bubble's language", "tip"));
+    const greet = !chosenLang && visitorLanguage() !== "en" && voices;  // the browser speaks one of Andy's languages
+    if (greet) andy.querySelector(".tip").textContent = `Andy speaks ${ASK_LANGS[visitorLanguage()]} too: tap Andy to hear it`;
     inner.append(pitch, andy);
     if (window.HEYANDY_FIGURES) {
       const proof = el("ul", null, "proof"); proof.setAttribute("aria-label", "Measured");
@@ -953,7 +1003,7 @@
     document.body.append(w); document.body.classList.add("welcoming");
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches, eyes = face.querySelector(".eyes"), timers = [];
     w.tabIndex = -1;  // focus starts in the front door (Tab reaches its first button), with no ring on a mouse's first look
-    let i = 0, current = "en", cycle = 0, playing = null;
+    let i = 0, current = "en", cycle = 0, playing = null, fixed = chosenLang || (visitorLanguage() !== "en" ? visitorLanguage() : null);
     const swap = () => { if (!still) { bubble.classList.remove("swap"); void bubble.offsetWidth; bubble.classList.add("swap"); } };
     const name = (code) => (voices && voices[code] ? code : "en");
     const label = () => { const n = ASK_LANGS[name(current)] || "English";
@@ -963,8 +1013,36 @@
       current = code; said.textContent = text; said.dir = "auto"; lang.textContent = ASK_LANGS[code] || code;
       bubble.classList.remove("own"); label(); swap();
     };
-    const go = () => { clearInterval(cycle); if (!still) cycle = setInterval(say, 2600); };
-    say(); go();
+    const go = () => { clearInterval(cycle); if (!still && !fixed) cycle = setInterval(say, 2600); };
+    const showLang = (code) => {  // a language chosen (or the browser's): the bubble stays in it, and Andy speaks it
+      const ask = ASKS.find(a => a[0] === code) || ASKS[0];
+      current = ask[0]; said.textContent = ask[1]; said.dir = "auto"; lang.textContent = ASK_LANGS[current] || current;
+      bubble.classList.remove("own"); label(); swap();
+    };
+    const globe = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.95a15.7 15.7 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.9 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14a8.2 8.2 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.08 16zm2.95-8H5.08a7.99 7.99 0 0 1 4.33-3.56A15.7 15.7 0 0 0 8.03 8zM12 19.96A14.1 14.1 0 0 1 10.09 16h3.82A14.1 14.1 0 0 1 12 19.96zM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14a16.5 16.5 0 0 0 0-4h3.38a8.2 8.2 0 0 1 0 4h-3.38z"/></svg>';
+    const button = () => { const n = ASK_LANGS[fixed || "en"];
+      langbtn.innerHTML = globe; langbtn.append(n);
+      langbtn.setAttribute("aria-label", `Andy's language: ${n}. Choose another of its fifteen`); };
+    const open = (on) => { langs.hidden = !on; langbtn.setAttribute("aria-expanded", String(on));
+      if (on) (langs.querySelector('[aria-pressed="true"]') || langs.querySelector("button")).focus({ preventScroll: true }); };
+    w.addEventListener("pointerdown", (e) => { if (!langs.hidden && !pick.contains(e.target)) open(false); });  // a tap elsewhere
+    for (const code of LANG_CODES) {  // each in its own name and script; English beside the others, for a reader of English
+      const b = el("button"); b.type = "button"; b.lang = code; b.append(ASK_LANGS[code]);
+      if (code !== "en") b.append(el("span", LANG_ENGLISH[code]));
+      b.onclick = () => {
+        fixed = chosenLang = code; try { localStorage.setItem("andy-lang", code); } catch (e) { /* this visit only */ }
+        playing?.stop(); clearInterval(cycle); showLang(code); button(); storyIn(code);
+        langs.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+        open(false); langbtn.focus({ preventScroll: true });
+      };
+      b.setAttribute("aria-pressed", String(code === (fixed || "en")));
+      langs.append(b);
+    }
+    langs.append(el("p", "Andy hears and speaks all fifteen. Tap Andy to hear it in yours; on the robot, say “Andy, speak Spanish”, or call it in that language. No flags: a language isn't a country."));
+    langbtn.onclick = () => open(langs.hidden);
+    button();
+    if (fixed) { showLang(fixed); storyIn(fixed); } else say();
+    go();
     let ctx = null;
     const speak = () => {  // Andy's own voice (SeamlessM4T v2, made on our computer), in the bubble's language
       if (!voices) return;
@@ -976,7 +1054,7 @@
       let raf = 0, done = false;
       const end = () => {
         if (done) return; done = true; cancelAnimationFrame(raf); w.style.setProperty("--talk", "0"); playing = null;
-        timers.push(setTimeout(() => { if (welcomed) { say(); go(); } }, 1400));
+        timers.push(setTimeout(() => { if (welcomed) { if (fixed) showLang(fixed); else say(); go(); } }, 1400));
       };
       playing = { stop: () => { audio.pause(); end(); } };
       try {  // its face moves with how loud its words are, as the robot's head does when it speaks
@@ -1005,7 +1083,7 @@
       target.addEventListener("pointerenter", () => look(target)); target.addEventListener("focus", () => look(target));
       target.addEventListener("pointerleave", () => look(null)); target.addEventListener("blur", () => look(null));
     }
-    welcomed = { timers, behind, stop: () => { clearInterval(cycle); playing?.stop(); } };
+    welcomed = { timers, behind, stop: () => { clearInterval(cycle); playing?.stop(); }, langs: () => open(false), open: () => !langs.hidden };
     w.focus({ preventScroll: true });
   }
   function leaveWelcome(toStory) {
@@ -1014,7 +1092,11 @@
     welcomed = null; document.getElementById("welcome")?.remove(); document.body.classList.remove("welcoming");
     if (toStory) startStory();
   }
-  addEventListener("keydown", e => { if (welcomed && e.key === "Escape") leaveWelcome(true); });
+  addEventListener("keydown", e => {
+    if (!welcomed || e.key !== "Escape") return;
+    if (welcomed.open()) { welcomed.langs(); document.querySelector("#welcome .langbtn")?.focus(); }  // the list first
+    else leaveWelcome(true);
+  });
   addEventListener("keydown", e => {
     if (!story || e.target.closest?.("form.ask")) return;
     if (e.key === "ArrowRight") go(story.at + 1); else if (e.key === "ArrowLeft") go(story.at - 1);
@@ -2053,6 +2135,12 @@
     $("quiet").hidden = !s.quiet; $("quiet").textContent = s.quiet || "";
     $("trouble").hidden = !s.trouble; $("trouble").textContent = s.trouble || "";
     $("lang").hidden = !s.language; $("lang").textContent = s.language || "";
+    const speaking = ASK_LANGS[s.lang || "en"] || "English";  // the TV's settings: which language, and how to change it
+    if ($("m-lang").dataset.lang !== speaking) {
+      $("m-lang").dataset.lang = speaking;
+      $("m-lang").replaceChildren("Language: ", el("b", speaking), ". Andy hears and speaks fifteen: to change, say ",
+                                  el("b", "“Andy, speak Spanish”"), ", or call it in that language.");
+    }
     $("private").hidden = s.staged; $("staged").hidden = !s.staged;
     side(s); card(s); models(s.models);
     $("why").textContent = s.reason ? T("Why: ") + s.reason : "";
@@ -2076,7 +2164,10 @@
       scenes = s.demo;
       const q = new URLSearchParams(location.search);
       if (q.get("ask")) ask(q.get("ask"));  // a shared link that asks: ?ask=I'm ringing my phone
-      else if (!chosen && !q.has("explore") && scenes.includes("room")) { if (q.has("story")) startStory(); else welcome(); }
+      else if (!chosen && !q.has("explore") && scenes.includes("room")) {
+        storyIn(chosenLang || visitorLanguage());  // its "Your language" chapter in the visitor's
+        if (q.has("story")) startStory(); else welcome();
+      }
       else demoBar();
     }
   }

@@ -63,8 +63,8 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
 - **Finding, judged by a person:** 13 of 15 right (things moved round the desk or hidden), never a point at the wrong
   thing ([§69](research.md#69-the-physical-scorecard-a-person-judging-where-andy-points-november-1-about-9-pm)).
 - **Languages:** 104 of 104 written requests in thirteen more languages reach the right ability, 89 of 104 spoken.
-- **The public demo, for people who see less well:** axe-core's WCAG 2.2 A and AA checks pass on all 62 of its states,
-  at a desktop's and a phone's width, and none of 1,411 texts measured from the pixels is below AA contrast; automated
+- **The public demo, for people who see less well:** axe-core's WCAG 2.2 A and AA checks pass on all 64 of its states,
+  at a desktop's and a phone's width, and none of 1,441 texts measured from the pixels is below AA contrast; automated
   checks find only part of what people meet ([§81](research.md#81-the-public-demo-for-people-who-see-less-well-november-2-afternoon)).
 
 ## Known limits

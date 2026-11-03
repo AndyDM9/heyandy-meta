@@ -239,8 +239,8 @@ def test_the_story_opens_only_the_public_demo():
 
     page = files("heyandy_meta.screen").joinpath("page.html").read_text()
     assert 'if (s.demo && !scenes) {' in page
-    assert ('else if (!chosen && !q.has("explore") && scenes.includes("room")) { if (q.has("story")) startStory(); '
-            'else welcome(); }') in page  # the front door first (page.html welcome), or the story when a link asks
+    assert 'else if (!chosen && !q.has("explore") && scenes.includes("room")) {' in page
+    assert 'if (q.has("story")) startStory(); else welcome();' in page  # the front door first, or the story when asked
     assert 'if (q.get("ask")) ask(q.get("ask"));' in page  # a link that asks plays that scene instead
     import re
 

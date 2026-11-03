@@ -2086,3 +2086,28 @@ Found and fixed, each with a test:
   audit has Andy speaking as a state of its own; it found the speaking bubble sharing a class name with the face's
   column (its padding gone, its words over the edge on a phone), fixed before this shipped. The whole demo again
   (`accessibility-20261102-2034`): no axe violation in 62 states, none of 1,411 texts below AA.
+
+## 95. Your language, chosen: no flags (November 2, night)
+
+- **Why:** the founder asked whether fifteen languages need an indicator with a country's flag, and how the language is
+  changed. No flags: a language isn't a country (Spanish is spoken in twenty, Portuguese differs between Brazil and
+  Portugal, Arabic spans many, and a flag for Mandarin, Russian or Ukrainian says something political); the practice
+  is each language in its own name and script ("Español", "中文", "Українська"), as Andy's TV already labels them. On the
+  robot the language changes by voice ("Andy, speak Spanish", or "Andy, habla español"), or by itself when Andy is
+  called in another of its languages (section 57), remembered after a restart; the TV shows it in a badge ("Español · en
+  esta computadora"). But nothing said so where a person looks for it, and the public demo had no way to choose at all.
+- **Now, the public demo** (`heyandy_meta/screen/page.html`): a globe button at the front door's top right names the
+  language and opens Andy's fifteen, each in its own script with its English name under it, the chosen one marked
+  (Escape or a tap elsewhere closes the list). A browser whose own languages include one of Andy's (navigator.languages;
+  never guessed from where someone is) gets it at once: the bubble in it, "Andy speaks 한국어 too: tap Andy to hear it",
+  and Andy's voice in it. The choice is remembered in the browser. The story's "Your language" chapter plays the TV in
+  the visitor's language (Mandarin for English), saying under it that on the robot it's been tried in Mandarin and
+  that this TV is its own code's, recorded.
+- **Now, Andy's TV:** its settings (the gear) say which language Andy speaks and how to change it. Only said, not a
+  switch: the TV's server answers nothing but reads, and a setting changed from a page would need a way in that a web
+  page elsewhere on the computer couldn't use; the voice stays the way, as it is for everything else.
+- **Checked** (`tests/test_page_runs.py`): a Korean browser gets Korean (the button, the bubble, the voice's label, the
+  story's chapter); the list has fifteen, no flag; Escape closes the list, not the door; French chosen is French and
+  remembered after a reload; English is as before. Tab reaches the language first, then the main action (focus in the
+  order things are seen). The accessibility audit has the open list as a state of its own; the whole demo again
+  (`accessibility-20261102-2056`): no axe violation in 64 states, none of 1,441 texts below AA.

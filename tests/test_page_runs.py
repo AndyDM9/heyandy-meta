@@ -336,7 +336,9 @@ def test_the_public_demo_opens_on_a_front_door_with_one_thing_to_try_first(brows
                        behind: [...document.body.children].filter(e => e.id !== 'welcome').every(e => e.inert),
                        storying: document.body.classList.contains('storying'), focused: document.activeElement === w } }""")
             page.keyboard.press("Tab")
-            seen[width]["tab"] = page.evaluate("document.activeElement.className")
+            first = page.evaluate("document.activeElement.className")
+            page.keyboard.press("Tab")
+            seen[width]["tab"] = [first, page.evaluate("document.activeElement.className")]
             page.keyboard.press("Escape")
             page.wait_for_timeout(200)
             seen[width]["after escape"] = page.evaluate("""() => [!!document.getElementById('welcome'), document.body.classList.contains('storying'),
@@ -361,7 +363,7 @@ def test_the_public_demo_opens_on_a_front_door_with_one_thing_to_try_first(brows
         s = seen[width]
         assert s["errors"] == [] and s["title"] == "Lost something? Andy points at it." and s["cta"] == "eyes.html?find"
         assert s["ctaAbove"] and s["tall"] >= 44 and not s["wide"] and s["figures"] == 1  # the action on the first screen
-        assert s["behind"] and not s["storying"] and s["focused"] and s["tab"] == "cta"
+        assert s["behind"] and not s["storying"] and s["focused"] and s["tab"] == ["langbtn", "cta"]  # the top, then the action
         assert s["after escape"] == [False, True, False]  # Escape: into the story, nothing left inert
     assert not any(seen[q] for q in ("?story", "?scene=found", "?explore", "?ask=where are my glasses"))
     assert seen["clip"] == [True, False]
@@ -413,3 +415,57 @@ def test_andys_own_tv_never_shows_the_front_door(browser):
     finally:
         server.shutdown()
     assert shown is False
+
+
+def test_the_front_door_speaks_the_visitors_language_and_lets_them_choose_another(browser):
+    """November 2, the founder: "if we have multiple languages, do we need an indicator with a country flag?" No flag (a
+    language isn't a country): each of Andy's fifteen in its own name and script. A browser that speaks one of them
+    gets it on the front door (the bubble, Andy's voice, the story's "Your language" chapter); a globe button chooses."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    base = f"http://127.0.0.1:{server.server_address[1]}/"
+    init = """window.HEYANDY_ASKS = [['ko', '내 안경 어디 있어?'], ['fr', 'Où sont mes lunettes ?']];
+              window.HEYANDY_VOICES = { en: { text: "I'm Andy, an AI robot.", file: 'voice/en.mp3' },
+                                        ko: { text: '저는 앤디, 인공지능 로봇이에요.', file: 'voice/ko.mp3' } };"""
+    try:
+        ctx = browser.new_context(viewport={"width": 1440, "height": 900}, locale="ko-KR")
+        page = ctx.new_page()
+        page.add_init_script(init)
+        page.goto(base)
+        page.wait_for_selector("#welcome .langbtn", timeout=10000)
+        korean = page.evaluate("""() => [document.querySelector('#welcome .langbtn').textContent, document.querySelector('#welcome .bubble q').textContent,
+                                        document.querySelector('#welcome .hear').getAttribute('aria-label'), document.querySelector('#welcome .tip').textContent,
+                                        STORY.find(c => c[2] === 'Your language')[0]]""")
+        page.click("#welcome .langbtn")
+        listed = page.eval_on_selector_all("#w-langs button", "els => els.map(e => [e.lang, e.childNodes[0].textContent, e.getAttribute('aria-pressed')])")
+        flags = page.evaluate("/[\\u{1F1E6}-\\u{1F1FF}]/u.test(document.getElementById('w-langs').textContent)")
+        page.keyboard.press("Escape")  # closes the list, not the front door
+        still_open = page.evaluate("[!!document.getElementById('welcome'), document.getElementById('w-langs').hidden]")
+        page.click("#welcome .langbtn")
+        page.click("#w-langs button[lang=fr]")
+        french = page.evaluate("""() => [document.querySelector('#welcome .langbtn').textContent, document.querySelector('#welcome .bubble q').textContent,
+                                        localStorage.getItem('andy-lang'), STORY.find(c => c[2] === 'Your language')[0]]""")
+        page.reload()
+        page.wait_for_selector("#welcome .langbtn", timeout=10000)
+        remembered = page.text_content("#welcome .langbtn")
+        ctx.close()
+        english = browser.new_context(viewport={"width": 1440, "height": 900}, locale="en-US").new_page()
+        english.add_init_script(init)
+        english.goto(base)
+        english.wait_for_selector("#welcome .langbtn", timeout=10000)
+        plain = [english.text_content("#welcome .langbtn"), english.evaluate("STORY.find(c => c[2] === 'Your language')[0]")]
+        english.context.close()
+    finally:
+        server.shutdown()
+    assert korean == ["한국어", "내 안경 어디 있어?", "Hear Andy introduce itself, in 한국어", "Andy speaks 한국어 too: tap Andy to hear it", "in-ko"]
+    assert len(listed) == 15 and ["ko", "한국어", "true"] in listed and ["uk", "Українська", "false"] in listed and not flags
+    assert still_open == [True, True]
+    assert french == ["Français", "Où sont mes lunettes ?", "fr", "in-fr"] and remembered == "Français"
+    assert plain == ["English", "mandarin"]  # English: the story's chapter as it was, the bubble going round

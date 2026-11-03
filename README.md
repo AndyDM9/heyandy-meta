@@ -148,7 +148,8 @@ and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.
 
 **Ask Andy yourself, in the browser.** The demo opens on a front door (Andy's face, one line, what's been measured,
 and one thing to try first: Andy's eyes on your own things; tap the face and Andy introduces itself in its own voice,
-Meta's SeamlessM4T v2, in whichever of its fifteen languages the bubble shows), its 75-second story a press away (`?story` skips the door,
+Meta's SeamlessM4T v2, in whichever of its fifteen languages the bubble shows; a browser in one of them gets it at
+once, and a globe button chooses another, each in its own script, never a flag), its 75-second story a press away (`?story` skips the door,
 as a link naming a scene or asking does); type what you'd say to Andy at any point
 ("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
 TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои

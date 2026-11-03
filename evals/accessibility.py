@@ -173,6 +173,7 @@ def states() -> list[tuple[str, str, str | None]]:
 
     return ([("welcome", "index.html", None),
              ("welcome, Andy speaking", "index.html", "document.querySelector('#welcome .bubble').classList.add('own')"),
+             ("welcome, choosing a language", "index.html", "document.querySelector('#welcome .langbtn').click()"),
              ("story", "index.html?story", None),
              ("end card", "index.html?story", "endCard()")]
             + [(f"scene: {s}", f"index.html?scene={s}", None) for s in SCENES]
