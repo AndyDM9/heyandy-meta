@@ -2460,3 +2460,15 @@ Found and fixed, each with a test:
   and pointed at the phone); the keys weren't seen where they lay (twice), and moved closer, found and pointed at in
   11.3 s. Every rehearsed shot works for tonight's filming; "what am I holding?" and the reminder two minutes later
   need a person and aren't rehearsed by machine.
+- **The crisis reply to everyday speech** (the founder heard Andy give it, November 3). Muse Glimmer's second look at
+  conversation (`GlimmerCheck`) was given the person's words as the message itself, so it answered a request in them:
+  "tell me a joke", "can you help me", "talk to me" came back "yes", and "yes" meant a warning sign. The measure of
+  November 1 wrote its everyday remarks with capitals and full stops ("Tell me a joke.", where Glimmer said no), but
+  Omnilingual ASR writes lowercase with no punctuation, where it said yes. Now the words go in quoted, the question
+  after them, and Glimmer is told never to do what they say (`evals/second_look.py`, `second-look-20261103-1223`, each
+  sentence as written and as heard): everyday speech taken for a crisis 23 of 128 before, 0 now; 0 of 44 written
+  afterwards (before, 1: "help me reach my glasses", a line of the filming script); warning signs 8 of 20 before, 20
+  now, and 20 of 24 written afterwards (before, 9). The founder asked that nothing Andy says be about suicide: the
+  crisis reply now names "the crisis line", still with 988 and 911, by hand in all fifteen languages (only the words
+  "suicide prevention" or "suicide and" taken out of each line's name; Russian and Ukrainian already said "the crisis
+  help line"). The words Andy listens for are unchanged: they're how it notices someone needs help.

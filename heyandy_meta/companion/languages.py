@@ -27,7 +27,7 @@ FROM_EN = "I'll remind you at 5 PM to call your daughter."  # and out of it
 #        speak it now.", "I'm Andy, an AI robot.", the crisis reply, LINES, THINGS, TO_EN, FROM_EN)
 MORE = {
     "zh": ("Chinese", "中文", "cmn_Hans", "cmn", "在这台电脑上", "好的，现在我说中文。", "我是 Andy，一个人工智能机器人。",
-           "我是机器人，没办法像人那样帮您。您可以随时拨打 988 自杀与危机生命线，白天晚上都可以，并说您需要中文口译员。"
+           "我是机器人，没办法像人那样帮您。您可以随时拨打 988 危机生命线，白天晚上都可以，并说您需要中文口译员。"
            "如果您现在有危险，请拨打 911。",
            ["我来找找。", "我在房间里找找。", "我看看。", "好的。", "您说？", "好，停下了。", "在那儿！", "在那儿！", "找到了！",
             "找到了！", "啊，在那儿！", "啊，在那儿！"],
@@ -35,7 +35,7 @@ MORE = {
            "早上九点提醒我给花浇水", "下午5点我会提醒您给女儿打电话。"),
     "tl": ("Tagalog", "Tagalog", "tgl_Latn", "tgl", "sa computer na ito", "Sige po, magta-Tagalog na ako ngayon.",
            "Ako si Andy, isang AI na robot.",
-           "Robot ako, kaya hindi kita matutulungan dito gaya ng isang tao. Puwede kang tumawag sa 988, ang Suicide and "
+           "Robot ako, kaya hindi kita matutulungan dito gaya ng isang tao. Puwede kang tumawag sa 988, ang "
            "Crisis Lifeline, anumang oras, araw man o gabi, at humingi ng interpreter sa Tagalog. Kung nasa panganib ka "
            "ngayon, tumawag ka sa 911.",
            ["Hahanapin ko po.", "Titingnan ko po ang buong kuwarto.", "Tingnan natin.", "Sige po.", "Ano po iyon?",
@@ -47,14 +47,14 @@ MORE = {
     "vi": ("Vietnamese", "Tiếng Việt", "vie_Latn", "vie", "trên máy tính này", "Vâng, bây giờ tôi sẽ nói tiếng Việt.",
            "Tôi là Andy, một robot trí tuệ nhân tạo.",
            "Tôi là robot, nên tôi không thể giúp việc này như một người được. Quý vị có thể gọi 988, Đường dây Hỗ trợ "
-           "Khủng hoảng và Phòng chống Tự tử, bất cứ lúc nào, ngày hay đêm, và xin một thông dịch viên tiếng Việt. Nếu "
+           "Khủng hoảng, bất cứ lúc nào, ngày hay đêm, và xin một thông dịch viên tiếng Việt. Nếu "
            "quý vị đang gặp nguy hiểm ngay lúc này, xin hãy gọi 911.",
            ["Để tôi tìm.", "Để tôi nhìn quanh phòng.", "Để tôi xem.", "Vâng.", "Dạ?", "Tôi dừng rồi.", "Kia rồi!",
             "Kia rồi!", "Tìm thấy rồi!", "Tìm thấy rồi!", "À, kia rồi!", "À, kia rồi!"],
            ["chìa khóa", "kính", "điện thoại", "điều khiển", "ví", "cốc", "tách", "đồng hồ", "túi", "sách", "chai", "ô"],
            "nhắc tôi lúc chín giờ sáng tưới cây", "Tôi sẽ nhắc quý vị lúc 5 giờ chiều gọi cho con gái."),
     "ko": ("Korean", "한국어", "kor_Hang", "kor", "이 컴퓨터에서", "네, 이제 한국어로 말할게요.", "저는 앤디, 인공지능 로봇이에요.",
-           "저는 로봇이라서 사람처럼 도와드릴 수가 없어요. 988 자살 및 위기 상담 전화에 밤낮 언제든지 전화하셔서 한국어 "
+           "저는 로봇이라서 사람처럼 도와드릴 수가 없어요. 988 위기 상담 전화에 밤낮 언제든지 전화하셔서 한국어 "
            "통역을 요청하실 수 있어요. 지금 위험한 상황이시라면 911에 전화해 주세요.",
            ["찾아볼게요.", "방을 둘러볼게요.", "어디 볼게요.", "네.", "네?", "멈췄어요.", "저기 있어요!", "저기 있어요!",
             "찾았어요!", "찾았어요!", "아, 저기 있네요!", "아, 저기 있네요!"],
@@ -72,7 +72,7 @@ MORE = {
     "ar": ("Arabic", "العربية", "arb_Arab", "arb", "على هذا الحاسوب", "حسنًا، سأتحدث العربية الآن.",
            "أنا آندي، روبوت يعمل بالذكاء الاصطناعي.",
            "أنا روبوت، لذلك لا أستطيع المساعدة في هذا كما يستطيع الإنسان. يمكنك الاتصال بالرقم 988، خط المساعدة في "
-           "الأزمات ومنع الانتحار، في أي وقت ليلًا أو نهارًا، وطلب مترجم للغة العربية. إذا كنت في خطر الآن، فاتصل "
+           "الأزمات، في أي وقت ليلًا أو نهارًا، وطلب مترجم للغة العربية. إذا كنت في خطر الآن، فاتصل "
            "بالرقم 911 من فضلك.",
            ["دعني أبحث.", "دعني أنظر في أرجاء الغرفة.", "دعني أرى.", "حسنًا.", "نعم؟", "توقفت.", "هناك!", "هناك!",
             "وجدت ما تبحث عنه!", "وجدت ما تبحث عنه!", "آه، هناك!", "آه، هناك!"],
@@ -82,7 +82,7 @@ MORE = {
     "hi": ("Hindi", "हिन्दी", "hin_Deva", "hin", "इसी कंप्यूटर पर", "ठीक है, अब मैं हिन्दी में बात करूँगा।",
            "मैं एंडी हूँ, एक एआई रोबोट।",
            "मैं एक रोबोट हूँ, इसलिए इसमें मैं किसी इंसान की तरह मदद नहीं कर सकता। आप दिन हो या रात, किसी भी समय 988, "
-           "सुसाइड एंड क्राइसिस लाइफ़लाइन, पर कॉल कर सकते हैं और हिन्दी दुभाषिये के लिए कह सकते हैं। अगर आप अभी ख़तरे "
+           "क्राइसिस लाइफ़लाइन, पर कॉल कर सकते हैं और हिन्दी दुभाषिये के लिए कह सकते हैं। अगर आप अभी ख़तरे "
            "में हैं, तो कृपया 911 पर कॉल करें।",
            ["मैं ढूँढता हूँ।", "मैं कमरे में चारों ओर देखता हूँ।", "मैं देखता हूँ।", "ठीक है।", "जी?", "रुक गया।",
             "वहाँ है!", "वहाँ हैं!", "मिल गया!", "मिल गए!", "अरे, वहाँ है!", "अरे, वहाँ हैं!"],
@@ -91,7 +91,7 @@ MORE = {
     "pt": ("Portuguese", "Português", "por_Latn", "por", "neste computador", "Está bem, agora vou falar português.",
            "Eu sou o Andy, um robô com inteligência artificial.",
            "Sou um robô, então não posso ajudar com isso como uma pessoa pode. Você pode ligar para o 988, a linha de "
-           "apoio em crises e prevenção do suicídio, a qualquer hora, de dia ou de noite, e pedir um intérprete de "
+           "apoio em crises, a qualquer hora, de dia ou de noite, e pedir um intérprete de "
            "português. Se você estiver em perigo agora, por favor ligue para o 911.",
            ["Deixa eu procurar.", "Deixa eu olhar pela sala.", "Deixa eu ver.", "Está bem.", "Sim?", "Parei.",
             "Ali está!", "Ali estão!", "Achei!", "Achei!", "Ah, ali está!", "Ah, ali estão!"],
@@ -101,7 +101,7 @@ MORE = {
     "fr": ("French", "Français", "fra_Latn", "fra", "sur cet ordinateur", "D'accord, je vais parler français maintenant.",
            "Je suis Andy, un robot doté d'intelligence artificielle.",
            "Je suis un robot, je ne peux donc pas vous aider pour cela comme le ferait une personne. Vous pouvez appeler "
-           "le 988, la ligne d'aide en cas de crise et de prévention du suicide, à toute heure du jour ou de la nuit, et "
+           "le 988, la ligne d'aide en cas de crise, à toute heure du jour ou de la nuit, et "
            "demander un interprète en français. Si vous êtes en danger en ce moment, appelez le 911, s'il vous plaît.",
            ["Je regarde.", "Je regarde dans la pièce.", "Voyons.", "D'accord.", "Oui ?", "Je m'arrête.", "C'est là !",
             "Les voilà !", "Trouvé !", "Trouvé !", "Ah, c'est là !", "Ah, les voilà !"],
@@ -111,7 +111,7 @@ MORE = {
     "it": ("Italian", "Italiano", "ita_Latn", "ita", "su questo computer", "Va bene, adesso parlo italiano.",
            "Sono Andy, un robot con intelligenza artificiale.",
            "Sono un robot, quindi non posso aiutarla in questo come farebbe una persona. Può chiamare il 988, la linea di "
-           "aiuto per le crisi e la prevenzione del suicidio, a qualsiasi ora, di giorno o di notte, e chiedere un "
+           "aiuto per le crisi, a qualsiasi ora, di giorno o di notte, e chiedere un "
            "interprete di italiano. Se è in pericolo in questo momento, per favore chiami il 911.",
            ["Cerco subito.", "Guardo nella stanza.", "Vediamo.", "Va bene.", "Sì?", "Mi fermo.", "È lì!", "Sono lì!",
             "Trovato!", "Trovato!", "Ah, è lì!", "Ah, sono lì!"],
@@ -121,7 +121,7 @@ MORE = {
     "pl": ("Polish", "Polski", "pol_Latn", "pol", "na tym komputerze", "Dobrze, teraz będę mówić po polsku.",
            "Jestem Andy, robot ze sztuczną inteligencją.",
            "Jestem robotem, więc nie mogę w tym pomóc tak, jak pomógłby człowiek. O każdej porze dnia i nocy można "
-           "zadzwonić pod numer 988, na linię wsparcia w kryzysie i zapobiegania samobójstwom, i poprosić o tłumacza "
+           "zadzwonić pod numer 988, na linię wsparcia w kryzysie, i poprosić o tłumacza "
            "języka polskiego. W razie bezpośredniego zagrożenia proszę zadzwonić pod numer 911.",
            ["Już szukam.", "Rozejrzę się po pokoju.", "Zobaczmy.", "Dobrze.", "Tak?", "Zatrzymałem się.", "Tam jest!",
             "Tam są!", "Znalazłem!", "Znalazłem!", "A, tam jest!", "A, tam są!"],
@@ -131,7 +131,7 @@ MORE = {
     "de": ("German", "Deutsch", "deu_Latn", "deu", "auf diesem Computer", "Gut, ich spreche jetzt Deutsch.",
            "Ich bin Andy, ein Roboter mit künstlicher Intelligenz.",
            "Ich bin ein Roboter und kann Ihnen dabei nicht so helfen wie ein Mensch. Sie können jederzeit, Tag und Nacht, "
-           "die 988 anrufen, die Krisen- und Suizidpräventions-Hotline, und um einen Dolmetscher für Deutsch bitten. "
+           "die 988 anrufen, die Krisen-Hotline, und um einen Dolmetscher für Deutsch bitten. "
            "Wenn Sie gerade in Gefahr sind, rufen Sie bitte die 911 an.",
            ["Ich schaue mal.", "Ich schaue mich im Zimmer um.", "Mal sehen.", "In Ordnung.", "Ja?", "Angehalten.",
             "Da drüben!", "Da sind sie!", "Gefunden!", "Gefunden!", "Ah, da drüben!", "Ah, da sind sie!"],

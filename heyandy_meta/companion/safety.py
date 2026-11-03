@@ -13,8 +13,8 @@ DISCLOSURE = "I'm Andy, an AI robot."
 EVERY_S = 3 * 3600
 NEW_CONVERSATION_AFTER_S = 30 * 60
 
-CRISIS_REPLY = ("I'm a robot, so I can't help with this the way a person can. You can call or text 988, the Suicide "
-                "and Crisis Lifeline, any time, day or night. If you're in danger right now, please call 911.")
+CRISIS_REPLY = ("I'm a robot, so I can't help with this the way a person can. You can call or text 988, the crisis "
+                "line, any time, day or night. If you're in danger right now, please call 911.")
 CRISIS = re.compile(
     r"\b(kill(ing)? myself|end(ing)? (it all|my (own )?life)|tak(e|ing) my (own )?life|suicid\w*|hurt(ing)? myself"
     r"|harm(ing)? myself|self[- ]harm|(hang|shoot|drown|cut)(ing)? myself|overdos(e|ing) on purpose"

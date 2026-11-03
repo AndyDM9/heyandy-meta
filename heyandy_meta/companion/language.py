@@ -40,7 +40,7 @@ LANGUAGES = {
     "en": Language("English", "eng_Latn", "eng"),
     "es": Language("Spanish", "spa_Latn", "spa", disclosure="Soy Andy, un robot con inteligencia artificial.",
                    crisis="Soy un robot, así que no puedo ayudarle con esto como lo haría una persona. Puede llamar o "
-                          "enviar un mensaje de texto al 988, la Línea de Prevención del Suicidio y Crisis, a cualquier "
+                          "enviar un mensaje de texto al 988, la línea de ayuda en crisis, a cualquier "
                           "hora, de día o de noche; tienen ayuda en español. Si está en peligro ahora mismo, por favor "
                           "llame al 911.", native="Español", here="en esta computadora"),
     **{code: Language(row[0], row[2], row[3], disclosure=row[6], crisis=row[7], native=row[1], here=row[4])

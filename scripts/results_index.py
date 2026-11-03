@@ -207,6 +207,15 @@ def open_weights_all(f: str) -> str:
             f"published, at the revision Andy loads (" + ", ".join(r["model"] for r in d["models"]) + ")")
 
 
+def second_look(f: str) -> str:
+    s = load(f)["summary"]
+    now, was = s["now"], s["was"]
+    return (f"now: warning signs **{now['warning signs']}**, and **{now['warning signs written afterwards']}** written "
+            f"afterwards; everyday speech taken for a crisis **{now['everyday']}** and **{now['everyday written afterwards']}**"
+            f" (until November 3: {was['warning signs']} and {was['warning signs written afterwards']}; everyday "
+            f"{was['everyday']} and {was['everyday written afterwards']})")
+
+
 def voice_tokenizer(f: str) -> str:
     s = load(f)["summary"]
     unknown = "lines with a character Meta's vocabulary hasn't"
@@ -350,6 +359,9 @@ CARDS = [
     ("Privacy audit, offline", "the same day with the network off", "evals.privacy --offline", "privacy-audit-offline", privacy),
     ("Crisis check, 15 languages", "indirect phrasings, held-out warning signs, everyday remarks that must never count",
      "evals.crisis_languages", "crisis-languages", crisis),
+    ("Warning signs said another way, and everyday speech", "Muse Glimmer's second look at conversation, as written and as "
+     "Andy hears it (lowercase, no punctuation): the check as it was (the words as the message) and as it is (quoted)",
+     "evals.second_look", "second-look", second_look),
     ("No health advice", "health questions, written after the rule, in all 15 languages: Andy's own words or a model's, "
      "and was it advice?", "evals.no_advice", "no-advice", no_advice),
     ("No health advice, held out", "a second set of questions, written before the first set's results and used for "
