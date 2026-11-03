@@ -1,0 +1,24 @@
+{
+ "when": "2026-11-03 12:09",
+ "shots": [
+  {
+   "shot": "the network unplugged",
+   "said": "Hey Andy, where are my keys?",
+   "heard": "hey andy where are my keys",
+   "andy said": [
+    "There they are! I see your keys, a little to my right, about 4 feet away."
+   ],
+   "seconds": 11.3,
+   "pointed": true,
+   "language after": "en",
+   "ok": true,
+   "fix": [],
+   "optional": false
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": true
+}

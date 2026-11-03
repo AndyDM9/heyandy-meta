@@ -2454,3 +2454,9 @@ Found and fixed, each with a test:
   that way. `scripts/robot_daemon.py` now never starts it (and won't start if Pollen's code no longer has the step it
   replaces); the system card says so.
 
+- **The dress rehearsal, November 3 at noon, on the day's code** (`rehearsal-20261103-1155`, then
+  `rehearsal-only-20261103-1209`): ten of eleven shots at once (the find 12.7 s and pointed; follow the mug; several
+  things; the room in 3D; Muse Image's picture; the weather radar; Mandarin and back; the promises; the fall, 24.6 s
+  and pointed at the phone); the keys weren't seen where they lay (twice), and moved closer, found and pointed at in
+  11.3 s. Every rehearsed shot works for tonight's filming; "what am I holding?" and the reminder two minutes later
+  need a person and aren't rehearsed by machine.
