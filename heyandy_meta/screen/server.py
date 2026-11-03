@@ -1,6 +1,8 @@
 """Serve the TV page on this computer only. It reads the screen state; nothing on the network can change it."""
+import hmac
 import ipaddress
 import json
+import secrets
 import threading
 from urllib.parse import parse_qs, urlsplit
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -35,8 +37,10 @@ def _home_address(host_header: str) -> bool:
     return ip.is_private or ip.is_loopback
 
 
-def page() -> str:
-    html = files(__package__).joinpath("page.html").read_text()
+def page(token: str = "") -> str:
+    """The TV's page. token: the settings' own key, made each time the TV starts and only written into this page, so
+    only this page can change a setting (another site's page can't read it); empty, the TV changes nothing."""
+    html = files(__package__).joinpath("page.html").read_text().replace("{{settings_token}}", token)
     for part, colours in THEMES.items():
         for name, value in colours.items():
             html = html.replace("{{" + f"{part}_{name}" + "}}", value)
@@ -53,11 +57,15 @@ def hood_json(state: ScreenState, sample: bool = False) -> dict:
 
 
 def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes: dict | None = None,
-          frame_ancestors: str = "'none'", any_host: bool = False, listed: list | None = None) -> ThreadingHTTPServer:
-    """The TV page and its state, read-only. scenes (the public demo only): name -> a snapshot made on request, so
-    each visitor picks a scene for themselves and nobody can change what anyone else sees; listed: the ones the
-    demo's bar offers (default all; the others are played when asked for, as a find in each of Andy's languages)."""
-    body = page().encode()
+          frame_ancestors: str = "'none'", any_host: bool = False, listed: list | None = None,
+          on_language=None, languages=()) -> ThreadingHTTPServer:
+    """The TV page and its state, read-only but for one setting. scenes (the public demo only): name -> a snapshot
+    made on request, so each visitor picks a scene for themselves and nobody can change what anyone else sees; listed:
+    the ones the demo's bar offers (default all; the others are played when asked for, as a find in each of Andy's
+    languages). on_language (Andy's own TV): the settings' language list switches Andy's language, as "Andy, speak
+    Spanish" does; only from this page (its key, its own origin, JSON) and only to one of `languages`."""
+    token = secrets.token_urlsafe(24) if on_language else ""
+    body = page(token).encode()
     hood_page = files(__package__).joinpath("hood.html").read_text().encode()
     # Only asked for by its own name: a page that tricks a browser into "andy.localhost" (DNS rebinding) gets nothing,
     # because the TV's state holds the last camera picture. The public sample demo (any_host) has no pictures.
@@ -94,6 +102,36 @@ def serve(state: ScreenState, host: str = "127.0.0.1", port: int = 8765, scenes:
                            cache="max-age=86400")
             else:
                 self._send(404, "text/plain", b"not found")
+
+        def do_POST(self):
+            """The one setting the TV can change, Andy's language: from this page only. Its Host is one of the TV's own
+            names (no rebinding), its Origin this TV (no other site), its body JSON (no plain form from elsewhere), with
+            the key written into this page when the TV started (another site can't read it), and a language Andy has."""
+            bound = self.server.server_address[1]
+            names = {f"{h}:{bound}" for h in hosts} | set(hosts)
+            asked = (self.headers.get("Host") or "").lower()
+            if urlsplit(self.path).path != "/language" or not on_language or any_host:
+                return self._send(404, "text/plain", b"not found")
+            if asked not in names:
+                return self._send(421, "text/plain", b"not this name")
+            if (self.headers.get("Origin") or "").lower() != f"http://{asked}":
+                return self._send(403, "text/plain", b"not from this page")
+            if not (self.headers.get("Content-Type") or "").startswith("application/json"):
+                return self._send(415, "text/plain", b"json only")
+            size = int(self.headers.get("Content-Length") or 0)
+            if not 0 < size <= 512:
+                return self._send(413, "text/plain", b"too long")
+            try:
+                asked_for = json.loads(self.rfile.read(size))
+                key, to = str(asked_for.get("token", "")), str(asked_for.get("to", ""))
+            except (ValueError, AttributeError):
+                return self._send(400, "text/plain", b"not json")
+            if not hmac.compare_digest(key.encode(), token.encode()):
+                return self._send(403, "text/plain", b"not this page's key")
+            if to not in languages:
+                return self._send(400, "text/plain", b"not one of Andy's languages")
+            threading.Thread(target=on_language, args=(to,), daemon=True, name="tv-language").start()  # it speaks
+            self._send(202, "application/json", b'{"ok": true}')
 
         def _send(self, code, kind, data, cache="no-store"):
             self.send_response(code)

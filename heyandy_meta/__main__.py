@@ -137,7 +137,9 @@ def main() -> None:
 
     if not is_local(f"http://{args.tv_host}"):
         raise SystemExit(f"--tv-host must be this computer or a home-network address, not {args.tv_host}")
-    serve(andy.screen, host=args.tv_host, port=args.tv_port)
+    from .companion.language import LANGUAGES
+
+    serve(andy.screen, host=args.tv_host, port=args.tv_port, on_language=andy.language_from_tv, languages=tuple(LANGUAGES))
     if args.remote:
         from .screen.remote import Pairing, home_address, serve_remote
 

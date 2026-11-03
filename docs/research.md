@@ -2111,3 +2111,20 @@ Found and fixed, each with a test:
   remembered after a reload; English is as before. Tab reaches the language first, then the main action (focus in the
   order things are seen). The accessibility audit has the open list as a state of its own; the whole demo again
   (`accessibility-20261102-2056`): no axe violation in 64 states, none of 1,441 texts below AA.
+
+## 96. The language from the TV's settings, safely (November 2, night)
+
+- **Why:** the founder said yes to a language list in the TV's settings (section 95 had only said which language and
+  how to change it by voice). The TV's server answered nothing but reads; a setting changed from a page needs a way in
+  that no other page can use: the TV runs in a browser on a computer whose browser also visits the web, and a page
+  elsewhere could otherwise send the TV's server a request of its own (cross-site request forgery).
+- **Now** (`heyandy_meta/screen/server.py` POST `/language`, `page.html`'s settings): "Change language" lists Andy's
+  fifteen in their own names, the current one marked; choosing one switches Andy as "Andy, speak Korean" does (hearing,
+  voice, the TV; remembered), and Andy says so, in it, after any turn running then. The request is taken only with all
+  of: one of the TV's own names in its Host (no rebound name), its own origin in Origin (no other site), a JSON body
+  (no plain form from elsewhere, which also can't be sent across sites without asking first), the key written into the
+  TV's page when it started (24 random bytes, new each start, compared in constant time: another site's page can't read
+  it), and one of Andy's fifteen. The public demo's page has no key and its server no such way in.
+- **Checked** (`tests/test_tv_language.py`): a rebound name, another site's origin, no origin, a form, a guessed key, a
+  language Andy hasn't, and a body too long are each refused, and nothing changes; the right request switches it; the
+  public demo's page carries no key; in a browser, the settings list switches it, and the menu closes.

@@ -458,7 +458,9 @@ The picture of what runs where is at the top: [Meta's models, and where each one
   action is replaced); speech not for Andy is dropped; a hard cap on Model API spend; a note left in view can't
   instruct it (0 of 72 drawn notes got through, research.md section 74); and Andy watches its own microphones and
   speaker, saying on its TV when they stop (section 73).
-- **The TV page,** read-only and on this computer, and the same page as a Hugging Face Space on sample data.
+- **The TV page,** on this computer, read-only but for Andy's language (chosen in its settings, from its own page
+  only: a key written into the page each time it starts, its own origin, JSON), and the same page as a Hugging Face
+  Space on sample data, where nothing can be changed.
 - **Scorecards:** the search, simulated (fixed sweep, Glimmer and Spark planners, seeded rooms); the agent (12
   multi-part requests); Spanish (41 requests, written and spoken); thirteen more languages (104 requests, written and
   spoken, and Andy's own answers heard back); and a physical one, judged by a person (13 of 15 right, never a point at the

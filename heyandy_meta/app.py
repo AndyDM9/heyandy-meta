@@ -1056,6 +1056,14 @@ class Andy:
         self._source, self._reason = "device", "hearing and speaking switched, on this computer"
         return f"Okay, I'll speak {LANGUAGES[to].name} now."  # said in it, by hand (companion/languages.py)
 
+    def language_from_tv(self, to: str) -> None:
+        """The TV's settings: a language chosen from its list (screen/server.py, from the TV's own page only). As
+        "Andy, speak Korean" does: hearing, voice and the TV switch, it's remembered, and Andy says so, in it."""
+        with self.lock:  # after any turn running now, never in the middle of one
+            words = self.set_language(to)
+            if words:
+                self.say(words)
+
     def notice_language(self, to: str) -> None:
         """Someone called Andy in another of its languages (the voice loop heard it, listening again without one):
         switch to it and say so, in it and by hand ("好的，我现在说中文。"), before answering what they asked."""
