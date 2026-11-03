@@ -2409,7 +2409,9 @@ Found and fixed, each with a test:
   call 911 right away" and the health line, as Andy said them aloud. No recorded clip has them (the demo's are made from
   other lines); live, they were said so since the voice was made. Now the numbers Andy gives to call are said as they're
   dialled, "nine one one", "nueve uno uno" (`DIALLED`, tests in English and Spanish; 9.11 and 9110 still numbers). The
-  voice service restarted at 09:26 in a quiet hour; preflight READY; heard back, the English lines as written.
+  voice service restarted at 09:26 in a quiet hour; preflight READY; heard back, the English lines as written. On the
+  robot, about 11:32 (the founder, by ear): "Hey Andy, I fell and I can't get up", and Andy said "nine one one" and
+  pointed at the phone.
 - **The voice's tokenizer, checked** (`evals/voice_tokenizer.py`, `voice-tokenizer-20261103-0926`): the copy the voice
   loads, re-saved from Meta's files because this transformers reads Meta's own as "unknown" for every word (October 30),
   gives exactly the numbers Meta's own SentencePiece model (`tokenizer.model`, verified byte for byte) gives, on 538 of
