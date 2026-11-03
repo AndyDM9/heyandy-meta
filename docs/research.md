@@ -2044,3 +2044,24 @@ Found and fixed, each with a test:
   the screen with no sideways scroll, and a model that can't load says so on the page; without a camera, the page says
   what to do; the share copies a line and the address, nothing else. The accessibility audit again
   (`accessibility-20261102-1956`): no axe violation in 58 states, none of 1,222 texts below AA.
+
+## 93. Under the hood, played back (November 2, evening)
+
+- **Why:** Meta's tooling is a quarter of the judging and technical depth a fifth, and the page made for both, under
+  the hood (section 49), was a still chart: a real search on the robot laid out stage by stage, eleven of Meta's models
+  and the robot's own motors, to scale. True and dense; a judge, or someone scrolling past on X, had to read a Gantt
+  chart to see the point of Andy: Meta's models handing work to each other in one 12.8-second find.
+- **Now** (`heyandy_meta/screen/hood.html`): the turn plays back at its own speed when the page opens, once (not with
+  reduced motion): a gold playhead across the stages, each bar dim until its model starts and glowing while it works,
+  the 12.8 counting up from 0, and under it the model at work named ("Seeing · SAM 3.1, on this computer"); "▶ Watch it
+  again, at its own speed" plays it once more. On the robot's TV ("show me under the hood") it's the turn just finished.
+  The chart is drawn once per turn now, not again every second, and during the playback the number's text changes in
+  place and the words only when the model at work does (the accessibility audit had been measuring elements the page
+  had already replaced). A screen reader hears that it's playing back and when it's done, not each frame.
+- **For the README and for sharing:** `scripts/readme_shots.py hood` records the page as it plays: an animated WebP in
+  the README's "Under the hood" (in place of the still), and a 15-second MP4 (`docs/images/hood-replay.mp4`, 1440 by
+  640, about 0.7 MB) for a post.
+- **Checked** (`tests/test_hood.py`): it plays as the page opens, names Seeing and Speaking as they work, ends on 12.8 s
+  with nothing left lit, doesn't redraw the chart between polls, doesn't play with reduced motion, and fits a phone;
+  the accessibility audit has it playing back as a state of its own: the whole demo again
+  (`accessibility-20261102-2015`), no axe violation in 60 states, none of 1,384 texts below AA.

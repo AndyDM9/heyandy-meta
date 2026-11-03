@@ -161,3 +161,68 @@ def test_the_tv_state_carries_the_strip(tmp_path):
     a.hear("where are my keys?")
     calls = a.screen.snapshot()["calls"]
     assert any(d["model"] == "SAM 3.1" for d in calls["done"]) and all(d["stage"] != "move" for d in calls["done"])
+
+
+def test_the_turn_plays_back_at_its_own_speed_with_each_model_lit_as_it_works(tmp_path):
+    """November 2: the hood was a still chart a judge had to read. Now the turn plays back when the page opens (not with
+    reduced motion): a playhead across the stages, each bar lit as its model works, the number counting up and the
+    model at work named; "Watch it again" plays it once more. The chart is drawn once per turn, not every second."""
+    import functools
+    import http.server
+    import shutil
+    import threading
+    from importlib.resources import files
+
+    playwright = pytest.importorskip("playwright.sync_api")
+    screen = files("heyandy_meta.screen")
+    shutil.copy(screen.joinpath("hood.html"), tmp_path / "hood.html")
+    sample = json.loads(screen.joinpath("hood_sample.json").read_text())
+    (tmp_path / "hood.json").write_text(json.dumps({**sample, "sample": True}))
+
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(tmp_path)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    url = f"http://127.0.0.1:{server.server_address[1]}/hood.html"
+    try:
+        with playwright.sync_playwright() as p:
+            try:
+                browser = p.chromium.launch()
+            except Exception as e:  # noqa: BLE001 - no browser here: skip
+                pytest.skip(f"no Chromium for Playwright: {e}")
+            page = browser.new_page(viewport={"width": 1440, "height": 900})
+            errors = []
+            page.on("pageerror", lambda e: errors.append(str(e)))
+            page.goto(url)
+            page.wait_for_selector(".playhead", timeout=5000)  # it plays as the page opens
+            page.evaluate("window.hoodReplay(40)")  # again, forty times as fast
+            seen = set()
+            for _ in range(60):
+                seen.add(page.text_content("#doing"))
+                if "Done" in page.text_content("#status"):
+                    break
+                page.wait_for_timeout(25)
+            status = page.text_content("#status")
+            first = page.query_selector(".seg")
+            page.wait_for_timeout(2300)  # two polls of hood.json
+            after = page.evaluate("""() => ({ head: !!document.querySelector('.playhead'), total: document.getElementById('total').textContent,
+                                              button: document.getElementById('replay').textContent, lit: document.querySelectorAll('.seg.on').length })""")
+            redrawn = not first.evaluate("e => e.isConnected")
+            still = browser.new_page(viewport={"width": 1440, "height": 900}, reduced_motion="reduce")
+            still.goto(url)
+            still.wait_for_selector(".seg", timeout=5000)
+            still.wait_for_timeout(1500)
+            autoplay_when_reduced = bool(still.query_selector(".playhead"))
+            phone = browser.new_page(viewport={"width": 390, "height": 844})
+            phone.goto(url)
+            phone.wait_for_selector(".seg", timeout=5000)
+            wide = phone.evaluate("document.documentElement.scrollWidth > innerWidth")
+            browser.close()
+    finally:
+        server.shutdown()
+    assert errors == [] and status == "Done: 12.8 seconds from the end of the words."
+    assert any(s and s.startswith("Seeing") for s in seen) and any(s and s.startswith("Speaking") for s in seen)
+    assert after == {"head": False, "total": "12.8s", "button": "▶ Watch it again, at its own speed", "lit": 0}
+    assert not redrawn and not autoplay_when_reduced and not wide

@@ -9,6 +9,7 @@ docs/images, so the README shows what the TV shows today.
     uv run python scripts/readme_shots.py guide sound     # some
     uv run python scripts/readme_shots.py eyes            # Andy's eyes, finding our cup (downloads DINOv2 once)
     uv run python scripts/readme_shots.py sweep           # Andy's eyes sweeping live, with a camera that's a video
+    uv run python scripts/readme_shots.py hood            # under the hood, the sample turn played back (WebP and MP4)
 """
 import io
 import subprocess
@@ -151,8 +152,58 @@ def sweep() -> None:
         server.shutdown()
 
 
+def hood() -> None:
+    """Under the hood's replay of the sample turn (screen/hood.html, the Space's hood.json), recorded as the page plays
+    it: an MP4 for sharing (1440 wide, 30 frames a second) and an animated WebP for the README (960 wide, 12)."""
+    import functools
+    import http.server
+    import tempfile
+    import threading
+
+    from playwright.sync_api import sync_playwright
+
+    site = ROOT / "dist" / "space-static"
+    if not (site / "hood.html").exists():
+        raise SystemExit("build the Space first: uv run python scripts/build_static_space.py")
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args) -> None:
+            pass
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(site)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        with tempfile.TemporaryDirectory() as tmp, sync_playwright() as p:
+            browser = p.chromium.launch()
+            ctx = browser.new_context(viewport={"width": 1440, "height": 640}, record_video_dir=tmp,
+                                      record_video_size={"width": 1440, "height": 640})
+            page = ctx.new_page()
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/hood.html")
+            page.wait_for_function("document.querySelector('.playhead')", timeout=10000)
+            started = page.evaluate("performance.now()") / 1000
+            page.wait_for_function("!document.querySelector('.playhead')", timeout=30000)
+            page.wait_for_timeout(1200)
+            video = page.video.path()
+            ctx.close()
+            browser.close()
+            mp4 = OUT / "hood-replay.mp4"
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{max(0.0, started - 0.2):.2f}", "-i", str(video),
+                            "-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-crf", "20", "-preset", "slow",
+                            "-movflags", "+faststart", "-an", str(mp4)], check=True)
+            frames = Path(tmp) / "frames"
+            frames.mkdir()
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(mp4), "-vf", "fps=12,scale=960:-2:flags=lanczos",
+                            str(frames / "f%04d.png")], check=True)
+            shots = [Image.open(f).convert("RGB") for f in sorted(frames.glob("f*.png"))]
+            out = OUT / "hood-replay.webp"
+            shots[0].save(out, "WEBP", save_all=True, append_images=shots[1:] + [shots[-1]] * 24, duration=83, loop=0,
+                          quality=60, method=6)  # the finished turn held 2 s before it plays again
+            print(f"saved {mp4} and {out} ({len(shots)} frames)")
+    finally:
+        server.shutdown()
+
+
 def main() -> None:
-    wanted = sys.argv[1:] or [*SCENES, "demo", "eyes", "sweep"]
+    wanted = sys.argv[1:] or [*SCENES, "demo", "eyes", "sweep", "hood"]
     tv([n for n in wanted if n in SCENES])
     if "demo" in wanted:
         demo()
@@ -160,6 +211,8 @@ def main() -> None:
         eyes()
     if "sweep" in wanted:
         sweep()
+    if "hood" in wanted:
+        hood()
 
 
 if __name__ == "__main__":

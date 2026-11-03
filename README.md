@@ -110,7 +110,10 @@ again); never a home. The numbers in italics are from the robot, with their file
 
 ### Under the hood
 
-![Under the hood: a search on the robot laid out stage by stage, to scale: hearing (Omnilingual ASR) 0.13 s, the safety check (Llama Guard 3), the head and base moving five times, the camera, SAM 3.1 seeing at each look, Muse Glimmer checking the picture, MapAnything measuring, SeamlessM4T v2 speaking; 12.8 s in all, the first sound at 0.13 s](docs/images/hood.webp)
+![Under the hood: a search on the robot laid out stage by stage, to scale: hearing (Omnilingual ASR) 0.13 s, the safety check (Llama Guard 3), the head and base moving five times, the camera, SAM 3.1 seeing at each look, Muse Glimmer checking the picture, MapAnything measuring, SeamlessM4T v2 speaking; 12.8 s in all, the first sound at 0.13 s, played back at its own speed, a playhead across it and each model lit as it works](docs/images/hood-replay.webp)
+
+*The turn plays back at its own speed when the page opens, each of Meta's models lit as it works ("▶ Watch it again"
+on the [page](https://heyandy-ai-andy.static.hf.space/hood.html); [the clip](docs/images/hood-replay.mp4), to share).*
 
 **Meta's models, live, on the TV.** While a turn runs, the find's card shows each of Meta's models as it works: a
 pulsing dot and its seconds so far, then how long it took ("SAM 3.1 seeing 0.76 s · Muse Glimmer checking the picture

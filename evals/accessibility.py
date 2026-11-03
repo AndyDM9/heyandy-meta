@@ -174,7 +174,8 @@ def states() -> list[tuple[str, str, str | None]]:
     return ([("welcome", "index.html", None), ("story", "index.html?story", None),
              ("end card", "index.html?story", "endCard()")]
             + [(f"scene: {s}", f"index.html?scene={s}", None) for s in SCENES]
-            + [("Andy's eyes", "eyes.html", None), ("under the hood", "hood.html", None)])
+            + [("Andy's eyes", "eyes.html", None), ("under the hood", "hood.html", None),
+               ("under the hood, playing back", "hood.html", "window.hoodReplay(0.003)")])  # held near its start
 
 
 # The page as it rests: every animation with an end (a fade in, a find's spotlight) waited out, the endless ones (the

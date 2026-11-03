@@ -65,6 +65,25 @@
   .legend { display: flex; flex-wrap: wrap; gap: 0.6vh 1.4vw; margin-top: 1.4vh; color: var(--soft); font-size: clamp(12px, 0.95vw, 16px); }
   .legend i { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 3px; margin-right: 0.4em; vertical-align: -0.05em; }
   .empty { color: var(--soft); font-size: clamp(16px, 1.3vw, 22px); }
+  /* The replay: the turn played back at its own speed, a playhead across the stages, each bar lighting as its model
+     works and the number counting up; once when the page opens (not with reduced motion), and whenever asked. */
+  .replay { margin: 1.8vh 0 0; font: 700 clamp(14px, 1.05vw, 18px)/1 "Atkinson Next", sans-serif; color: #12241d;
+            background: var(--gold); border: 0; border-radius: 99em; padding: 0.8em 1.3em; cursor: pointer; min-height: 44px; }
+  .replay:hover { background: #ffd97f; } .replay:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .replay[hidden] { display: none; }
+  .fall { position: relative; }
+  .playhead { position: absolute; top: -0.8vh; bottom: 0; width: 2px; background: var(--gold); pointer-events: none;
+              box-shadow: 0 0 12px 2px rgba(255, 207, 92, 0.55); border-radius: 2px; }
+  .playhead::before { content: ""; position: absolute; top: -6px; left: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); }
+  .fall.replaying .seg { opacity: 0.18; transition: opacity 0.25s, box-shadow 0.25s; }
+  .fall.replaying .seg.on { opacity: 1; }
+  .fall.replaying .seg.act { box-shadow: 0 0 14px 2px currentColor; }
+  .fall.replaying .row.act b { color: var(--gold); }
+  .doing { font-size: clamp(17px, 1.45vw, 26px); margin: 1.2vh 0 0; line-height: 1.3; max-width: 24ch; min-height: 2.6em; }
+  .doing b { color: var(--gold); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .fall.replaying .seg { transition: none; } }
+  @media (max-width: 900px) { .playhead { display: none; } }  /* one column: the line would cross the names; the bars light up */
   @media (max-width: 900px) {
     .latest, .now { grid-template-columns: 1fr; } .row, .axis { grid-template-columns: 1fr 4.5rem; } .row > div:first-child { grid-column: 1 / -1; }
     .axis > :first-child { display: none; } .row .track { grid-column: 1; } .axis div { grid-column: 1; }
@@ -79,9 +98,12 @@
       Only numbers and names are kept, in memory: never your words, never a picture.</p>
   </header>
   <main>
-  <section class="latest" aria-live="polite">
+  <section class="latest">
     <div><p class="big num" id="total">–</p><p class="what" id="what">Waiting for a turn: say “Hey Andy, where are my keys?”</p>
-      <p class="first" id="first"></p></div>
+      <p class="doing" id="doing" hidden aria-hidden="true"></p>
+      <p class="first" id="first"></p>
+      <button type="button" class="replay" id="replay" hidden>▶ Watch it again, at its own speed</button>
+      <p class="sr" id="status" aria-live="polite"></p></div>
     <div><div class="fall" id="fall"></div><div class="axis" id="axis" hidden><span></span><div><span>0</span><span id="axis-end"></span></div><span></span></div></div>
   </section>
   <section class="now">
@@ -98,11 +120,59 @@
   const fromAndy = new URLSearchParams(location.search).has("from");
   let seenShow = false;
   const s1 = x => x < 10 ? x.toFixed(2) : x.toFixed(1);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let shownSig = "", latest = null, stages = {}, playing = null;
+  function stopReplay() {
+    if (!playing) return;
+    cancelAnimationFrame(playing.raf); playing = null;
+    const fall = $("fall"); fall.classList.remove("replaying"); fall.querySelector(".playhead")?.remove();
+    fall.querySelectorAll(".on, .act").forEach(e => e.classList.remove("on", "act"));
+    if (latest) $("total").replaceChildren(s1(latest.total), el("small", "s"));
+    $("what").hidden = false; $("doing").hidden = true; $("replay").textContent = "▶ Watch it again, at its own speed";
+  }
+  function startReplay(speed = 1) {
+    if (!latest) return;
+    stopReplay();
+    const fall = $("fall"), total = Math.max(latest.total, 0.01), head = el("div", null, "playhead");
+    const track = fall.querySelector(".track"); if (!track) return;
+    fall.classList.add("replaying"); fall.append(head);
+    $("what").hidden = true; $("doing").hidden = false; $("replay").textContent = "■ Stop";
+    $("status").textContent = `Playing the turn back: ${s1(total)} seconds, stage by stage.`;
+    const t0 = performance.now(), segs = [...fall.querySelectorAll(".seg")], rows = [...fall.querySelectorAll(".row")];
+    playing = { raf: 0, stage: null };
+    const frame = () => {
+      const t = Math.min(total, (performance.now() - t0) / 1000 * speed), f = fall.getBoundingClientRect(), k = track.getBoundingClientRect();
+      head.style.left = `${k.left - f.left + k.width * t / total}px`;
+      let now = null;
+      for (const g of segs) {
+        const a = +g.dataset.a, b = +g.dataset.b, on = a <= t, active = on && t < Math.max(b, a + 0.12);
+        g.classList.toggle("on", on); g.classList.toggle("act", active);
+        if (active && (!now || a >= +now.dataset.a)) now = g;  // the newest at work, of those working now
+      }
+      for (const r of rows) {
+        r.classList.toggle("on", !!r.querySelector(".seg.on")); r.classList.toggle("act", !!now && r.contains(now));
+      }
+      const tot = $("total");  // the number's own text, changed in place: no new element sixty times a second
+      if (tot.firstChild && tot.firstChild.nodeType === Node.TEXT_NODE) tot.firstChild.nodeValue = s1(t);
+      else tot.replaceChildren(s1(t), el("small", "s"));
+      const stage = now ? now.closest(".row").dataset.stage : "", [label, model, where] = stages[stage] || [];
+      if (stage !== playing.stage) {  // the words only when the model at work changes
+        playing.stage = stage;
+        $("doing").replaceChildren(...(stage ? [el("b", label), ` · ${model}${where ? ", " + where : ""}`] : ["…"]));
+      }
+      if (t >= total) { stopReplay(); $("status").textContent = `Done: ${s1(total)} seconds from the end of the words.`; return; }
+      playing.raf = requestAnimationFrame(frame);
+    };
+    playing.raf = requestAnimationFrame(frame);
+  }
+  window.hoodReplay = startReplay;  // for the tests (faster than real time) and for a recording
   function render(h) {
     const st = h.stages || {}, L = h.latest;
     if (h.sample) $("lede").replaceChildren(el("span", "A sample: ", "sample"),
       "a search recorded on the robot (October 31), timed as Andy times every turn. On the robot it's live, and only the numbers are kept, never the words.");
-    if (L) {
+    const sig = L ? JSON.stringify(L) : "";
+    if (L && sig !== shownSig) {  // a new turn (not every second's poll): drawn, and played back once
+      shownSig = sig; latest = L; stopReplay();
       $("total").replaceChildren(s1(L.total), el("small", "s"));
       $("what").textContent = `From the end of your words to done: ${L.what}`;
       $("first").replaceChildren(...(L.first_sound != null ? ["Andy's first sound at ", el("b", s1(L.first_sound) + " s")] : []));
@@ -112,11 +182,14 @@
       for (const r of Object.values(rows).sort((x, y) => Math.min(...x.spans.map(s => s[0])) - Math.min(...y.spans.map(s => s[0])))) {
         const [label, , where] = st[r.stage] || [r.stage, "", ""], row = el("div", null, "row"), name = el("div"), track = el("div", null, "track");
         name.append(el("b", label), el("span", [r.model, where].filter(Boolean).join(" · ")));
-        for (const [a, b] of r.spans) { const g = el("i", null, "seg"); g.style.left = (100 * Math.max(0, a) / total) + "%"; g.style.width = (100 * Math.max(0, b - a) / total) + "%"; g.style.background = `var(--${r.stage}, #ccc)`; track.append(g); }
+        for (const [a, b] of r.spans) { const g = el("i", null, "seg"); g.style.left = (100 * Math.max(0, a) / total) + "%"; g.style.width = (100 * Math.max(0, b - a) / total) + "%"; g.style.background = `var(--${r.stage}, #ccc)`; g.style.color = `var(--${r.stage}, #ccc)`; g.dataset.a = a; g.dataset.b = b; track.append(g); }
+        row.dataset.stage = r.stage;
         const sum = r.spans.reduce((t, [a, b]) => t + (b - a), 0);
         row.append(name, track, el("span", s1(sum) + " s", "t num")); fall.append(row);
       }
       $("axis").hidden = false; $("axis-end").textContent = s1(L.total) + " s";
+      $("replay").hidden = false; stages = st;
+      if (!still) setTimeout(() => startReplay(1), 700);  // once, as it opens: the turn at its own speed
     }
     $("services").replaceChildren(...(h.services || []).map(v => { const li = el("li", null, v.ok ? "" : "off"); li.append(el("i"), el("span", v.model), el("small", v.ok ? (v.ms != null ? v.ms + " ms" : "") : "not answering")); return li; }));
     const n = h.since || {}, since = [["turns", n.turns], ["SAM 3.1 looks", n.see], ["camera frames", n.camera], ["head moves", n.move],
@@ -142,6 +215,7 @@
     $("legend").replaceChildren(...ORDER.filter(k => st[k]).map(k => { const d = el("span"); const i = el("i"); i.style.background = `var(--${k})`; d.append(i, `${st[k][0]} (${st[k][1]})`); return d; }));
     if (fromAndy) { if (h.show_s > 0) seenShow = true; else if (seenShow) location.href = "./"; }  // opened by voice: back after
   }
+  $("replay").onclick = () => (playing ? stopReplay() : startReplay(1));
   async function tick() { try { render(await (await fetch("hood.json", { cache: "no-store" })).json()); } catch (e) {} setTimeout(tick, 1000); }
   tick();
 </script>
