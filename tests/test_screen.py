@@ -303,4 +303,4 @@ def test_a_card_with_more_than_its_room_shrinks_together_and_pictures_give_way_f
     assert "function fitAll()" in page and "fit(card, [$(\"body\")]); fit(side, []);" in page and "let lo = 0.6, hi = 1;" in page
     assert "    fitAll();\n    ambient(s);" in page  # after every render; it only works when what's shown changes
     assert ".split > figure svg { height: 100%; width: auto; max-width: 100%; }" in page
-    assert "#help { place-items: start center; overflow-y: auto;" in page  # a phone scrolls the help instead
+    assert "#help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: flex;" in page and "overflow-y: auto;" in page  # the help scrolls

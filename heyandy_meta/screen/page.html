@@ -256,9 +256,13 @@
   #captions.on { opacity: 1; }
   #captions.long { font-size: 2.1rem; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 
-  #help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: grid; place-items: center; background: rgba(10, 18, 15, 0.55); }
+  /* centred when it fits, from its top and scrolling when it doesn't (taller than a TV, it was cut at both ends), and
+     below the public demo's band, which covered its title (November 3) */
+  #help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; align-items: center;
+          overflow-y: auto; padding: 2rem 0; background: rgba(10, 18, 15, 0.55); }
+  body.exploring #help { padding-top: calc(var(--band-h, 0px) + 1.5rem); }
   #help[hidden] { display: none; }
-  #help .panel { width: 76vw; padding: 3rem 3.5rem; backdrop-filter: none; background: var(--solid); }  /* text on solid */
+  #help .panel { width: 76vw; padding: 3rem 3.5rem; margin: auto 0; flex: none; backdrop-filter: none; background: var(--solid); }  /* text on solid */
   #help h1 { margin: 0 0 0.5rem; font-size: 3.2rem; }
   #help .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.8rem; }
   #help h2 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--accent); }
@@ -521,7 +525,7 @@
     .split, .memory, .story, .does, #help .cols { grid-template-columns: 1fr; }
     .split.guide { grid-template-columns: 1fr; } .guide .way { order: -1; }
     #body > .split, .split > figure { height: auto; } .split > figure svg { height: auto; width: 100%; }
-    #help { place-items: start center; overflow-y: auto; padding: 1rem 0; } #help .panel { width: 92vw; padding: 1.6rem 1.4rem; }
+    #help { padding: 1rem 0; } #help .panel { width: 92vw; padding: 1.6rem 1.4rem; }
     .facts.withplan { grid-template-columns: minmax(0, 1fr) auto; }
     .try { font-size: 2.4rem; } .answer { font-size: 1.9rem; }
     .room canvas { height: 72vw; } #body:has(.room) { align-content: start; }
@@ -1302,6 +1306,7 @@
     if (nav.hidden) return;
     const h = nav.getBoundingClientRect().height;
     document.documentElement.style.setProperty("--band-scale", Math.max(0.6, Math.min(1, (innerHeight - h - 12) / innerHeight)).toFixed(3));
+    document.documentElement.style.setProperty("--band-h", h + "px");  // what's laid over the TV starts below it
   }
   addEventListener("resize", bandScale);
 

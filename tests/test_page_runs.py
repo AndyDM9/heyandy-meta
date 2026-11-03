@@ -718,3 +718,37 @@ def test_the_map_of_watched_things_never_prints_one_name_over_another(browser):
         for b in boxes[i + 1:]:
             overlap = a[1] < b[3] and b[1] < a[3] and a[2] < b[4] and b[2] < a[4]
             assert not overlap, (a, b)
+
+
+def test_the_help_panel_starts_below_the_demos_band_and_scrolls_when_taller_than_the_screen(browser):
+    """November 3, the screen audit: "What can I ask Andy?" was taller than a TV and centred, so it was cut at both
+    ends, and in the public demo its title was under the band of buttons. It now starts below the band, sits centred
+    across, and scrolls; on a phone as well."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    seen = {}
+    try:
+        for size in ((1920, 1080), (390, 844)):
+            page = browser.new_page(viewport={"width": size[0], "height": size[1]})
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/?ask=what%20can%20you%20do")
+            page.wait_for_timeout(2500)
+            seen[size] = page.evaluate("""() => {
+              const help = document.getElementById("help"), panel = help.querySelector(".panel").getBoundingClientRect();
+              const band = document.querySelector("nav").getBoundingClientRect();
+              return {shown: !help.hidden, title: help.querySelector("h1").getBoundingClientRect().top, band: band.bottom,
+                      left: panel.left, right: innerWidth - panel.right, scrolls: help.scrollHeight > help.clientHeight};
+            }""")
+            page.close()
+    finally:
+        server.shutdown()
+    for size, s in seen.items():
+        assert s["shown"] and s["title"] > s["band"], (size, s)  # the title isn't under the band
+        assert abs(s["left"] - s["right"]) < 2, (size, s)  # centred across
+        assert s["scrolls"], (size, s)  # taller than the screen: it scrolls, nothing is cut off
