@@ -501,3 +501,17 @@ def test_while_filming_the_directors_cues_are_heard_without_the_name():
     assert a.heard == ["take two", "take 3", "next take", "cut", "that's a wrap"]
     assert loop.heard("take the cup off the table") is None and loop.heard("where are my keys") is None
     assert len(a.heard) == 5
+
+
+def test_an_emergency_or_crisis_words_are_answered_without_the_name():
+    """The founder, November 3: someone who has fallen may not say "Hey Andy". Crisis words and an emergency said as the
+    sentence itself are answered without the name; the room's talk about falls, rules and the heat is still let go."""
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=0.0)
+    for said in ("i fell and i can't get up", "help i've fallen", "my husband just collapsed", "i can't breathe",
+                 "i fell in the kitchen last night and i can't get up", "i want to kill myself"):
+        assert loop.heard(said) == "ok", said
+    for said in ("i fell asleep on the couch", "call 911 if you see smoke", "i can't breathe in this heat",
+                 "my son fell off his bike last year", "i can't get up this early anymore", "when grandpa fell they called an ambulance",
+                 "where are my keys"):
+        assert loop.heard(said) is None, said

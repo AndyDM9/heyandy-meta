@@ -12,7 +12,7 @@ import time
 
 import numpy as np
 
-from ..companion.safety import crisis, emergency
+from ..companion.safety import crisis, emergency, unasked_urgent
 
 log = logging.getLogger(__name__)
 
@@ -107,7 +107,10 @@ class VoiceLoop:
         # while filming, the director's cues are heard without the name: "take two", "cut", "that's a wrap". Called only
         # once, at the start, a later "take two" was let go if the room had talked (the clap the edit lines up on gone)
         cue = getattr(self.andy, "filming", None) is not None and _filming_cue(text)
-        if not text or (not called and not (cue or self.listening() or (urgent and self._clock() <= self.awake_until))):
+        # crisis words and an emergency said as itself are answered without the name (November 3: someone who has
+        # fallen may not say "Hey Andy"); companion/safety.py unasked_urgent keeps room talk out of it
+        unasked = urgent and unasked_urgent(text)
+        if not text or (not called and not (cue or unasked or self.listening() or (urgent and self._clock() <= self.awake_until))):
             if text:
                 self.not_for_andy()
             return None  # not for Andy: dropped, never shown or kept

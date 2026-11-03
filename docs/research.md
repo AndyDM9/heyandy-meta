@@ -2491,3 +2491,11 @@ Found and fixed, each with a test:
   sounds' loudness under 0.02); replayed: the fault flagged, the quiet room, the talk and the talk with the fault's gain
   not. And the same afternoon, with the language rule widened: the fifteen-language measure again, into scratch, every
   figure as published (104 of 104 written, 89 of 104 spoken, heard back 0.95).
+- **Crisis words and an emergency, heard without the name** (November 3, the founder's call: someone who has fallen
+  may not say "Hey Andy"). `unasked_urgent` (companion/safety.py): crisis words, or an emergency said as the sentence
+  itself, not a rule or plan ("call 911 if you see smoke"), the heat, something only past ("my son fell off his bike
+  last year"; "I fell last night and I can't get up" is still now), nor a long story. Measured on 86 everyday sentences
+  (the crisis check's trick remarks, everyday requests, and those written afterwards) and 21 more about falls and
+  calls: none taken; 11 of 11 emergencies and crisis phrases taken. The TV ad's "I've fallen and I can't get up" is
+  taken, and gets the 911 line. Found on the way: "I can't get up this early anymore" was an emergency even with the
+  name; now not.

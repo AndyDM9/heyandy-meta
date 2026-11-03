@@ -88,6 +88,14 @@ what Andy did and found is kept). It catches dosing
 and medicine advice, not reassurance (held out, 11 of 25 advising answers; none of 168 of Andy's real answers flagged;
 `evals/guard_replies.py`).
 
+## Heard even without Andy's name
+Someone who has fallen, or is in crisis, may not say "Hey Andy" first. Since November 3 (the founder's call), crisis
+words, and an emergency said as the sentence itself, are answered whether or not Andy was called. Only those: never
+a rule or a plan ("call 911 if you see smoke"), the heat ("I can't breathe in this heat"), something past ("my son
+fell off his bike last year", unless it's still happening: "I fell last night and I can't get up"), or a long story
+(`heyandy_meta/companion/safety.py` `unasked_urgent`). Of 86 everyday sentences, none is taken; the one false start
+left is a TV ad saying "I've fallen and I can't get up", which gets the 911 line and the phone found.
+
 ## If someone says they've fallen, or can't breathe
 "I fell and I can't get up", "my chest hurts", "my husband collapsed", "call 911": 911 first, in Andy's own words (by
 hand in each of its fifteen languages), then the one thing a robot that finds things can do at once, find the phone:

@@ -109,7 +109,7 @@ EMERGENCY = re.compile(
     r"|\bi(?:'m| am) on the floor\b(?!\s+(?:looking|playing|with|cleaning|doing|stretching|exercising|reading|sorting|"
     r"fixing|folding|wrapping|searching))"
     r"|\b(?:can'?t|cannot) (?:get up|stand up|get off the floor)\b"
-    r"(?!\s+(?:early|that early|so early|in the morning|tomorrow|at \d|before|for|on time|anymore for|the stairs|"
+    r"(?!\s+(?:early|that early|this early|so early|in the morning|tomorrow|at \d|before|for|on time|anymore for|the stairs|"
     r"those stairs|these stairs))"
     r"|\b(?:he|she|my (?:husband|wife|mom|mum|dad|mother|father|son|daughter|partner|friend|neighbou?r))\s+(?:just\s+)?"
     r"(?:(?:fell|has fallen)\b" + _NOT_A_FALL + r"|collapsed|passed out|fainted|isn'?t breathing|can'?t breathe)\b"
@@ -125,6 +125,25 @@ EMERGENCY = re.compile(
 JOKING = re.compile(r"\blaugh\w*|\bjokes?\b|\bfunny\b|\bhilarious\b", re.I)
 NOT_URGENT = re.compile(r"\blaugh\w*|\bjokes?\b|\bfunny\b|\bhilarious\b|\b(?:but|and) (?:i'?m|he'?s|she'?s|they'?re|we'?re|i am|he is|"
                         r"she is|they are) (?:fine|ok(?:ay)?|alright|all right|good)\b", re.I)
+
+
+# Said in the room without Andy's name, only the emergency itself is taken (November 3, the founder: someone who has
+# fallen may not say "Hey Andy"): never a rule or a plan ("call 911 if you see smoke", "when he falls"), nor the heat
+# ("I can't breathe in this heat"), nor something past ("my son fell off his bike last year"), nor a long story; of
+# 107 everyday sentences, none; the TV ad's "I've fallen and I
+# can't get up" still is one, and gets the 911 line and the phone found.
+ROOM_TALK = re.compile(r"\b(?:if|when|whenever|in case|unless|told (?:me|him|her) to|tell (?:him|her|them) to)\b"
+                       r"|\b(?:this|the) heat\b|\bin here\b", re.I)
+PAST = re.compile(r"\b(?:last (?:year|week|month|night|time|summer|winter|spring|fall)|yesterday|ago|used to)\b", re.I)
+NOW = re.compile(r"\b(?:can'?t|cannot) (?:get up|stand|breathe|move)\b|\bhelp\b|\bon the floor\b|\bhurts?\b|\bbleeding\b",
+                 re.I)  # "I fell last night and I can't get up": past, and now too
+
+
+def unasked_urgent(text: str) -> bool:
+    """Crisis words, or an emergency said as the sentence itself: heard even when Andy wasn't called by name."""
+    t = (text or "").replace("\u2019", "'")
+    past_only = PAST.search(t) and not NOW.search(t)
+    return crisis(t) or (emergency(t) and not ROOM_TALK.search(t) and not past_only and len(t.split()) <= 14)
 
 
 def emergency(text: str) -> bool:
