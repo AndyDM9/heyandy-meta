@@ -124,3 +124,13 @@ def test_the_chart_shows_the_night_the_scorecard_measured():
     assert shown["sounds an hour"] == night["an hour"]
     assert shown["z"] == round(night["with the breath (twice a breath)"]["z"])
     assert shown["any other rate, at most"] == night["control"]["largest z at any other rate"]
+
+
+def test_the_morning_after_compares_only_a_finished_night_after_andy_rested(monkeypatch):
+    import night
+
+    for date, said in (("2026-11-02", "before Andy rested"), ("2999-01-01", "isn't over yet")):
+        monkeypatch.setattr(sys, "argv", ["night.py", "--date", date])
+        with pytest.raises(SystemExit) as stop:
+            night.main()
+        assert said in str(stop.value)
