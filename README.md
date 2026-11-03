@@ -147,6 +147,10 @@ and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.
 
 <p align="center"><img src="docs/images/eyes-live.webp" width="49%" alt="Andy's eyes sweeping live: on the left, my cup shown once; on the right, the camera's view of four cups with a red Live dot, DINOv2's view glowing gold over one cup, a solid box on it and the warmer meter almost full: &quot;That looks like it. Let me look closer…&quot;"> <img src="docs/images/eyes.webp" width="49%" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
 
+**Every number, on the demo too.** The Space's [Andy, measured](https://heyandy-ai-andy.static.hf.space/proof.html) has
+every scorecard below as a card (its latest result, the command that runs it again, its file), and the claims check as
+it stood when the Space was built.
+
 **Ask Andy yourself, in the browser.** The demo opens on a front door (Andy's face, one line, what's been measured,
 and one thing to try first: Andy's eyes on your own things; tap the face and Andy introduces itself in its own voice,
 Meta's SeamlessM4T v2, in whichever of its fifteen languages the bubble shows; a browser in one of them gets it at

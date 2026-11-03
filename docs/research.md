@@ -2169,3 +2169,22 @@ Found and fixed, each with a test:
   press turns it off, and a direct link asks (`tests/test_page_runs.py`); on 390 and 360-pixel phones the story's
   buttons don't overlap and none is under 44 pixels. The accessibility audit again (`accessibility-20261102-2135`): no
   axe violation in 64 states, none of 1,442 texts below AA.
+
+## 99. Andy, measured: every scorecard on the public demo (November 2, night)
+
+- **Why:** what most sets Andy apart for a judge is that every number is measured and every figure the documents state
+  is read from its file by code (section 78), failures kept. On the public demo none of that showed: it lived in a
+  markdown table on GitHub (`evals/results/README.md`) and a script.
+- **Now** (`scripts/proof_page.py`, the Space's `proof.html`): "Andy, measured." Above, the claims check as it stands
+  when the Space is built (the figures in the submission, the system card and the README read from their files by
+  `scripts/claims.py`, and how many disagree: none), then the shared card's figures and the open weights' (54 of 54
+  files). Then every scorecard in its section (on the robot, simulated, privacy and safety, languages, in the browser),
+  each a card: what it measures, its latest result with its numbers large, the command that runs it again, its file
+  (in the repository) and how many earlier runs are kept. Made from the very data the markdown page is made from:
+  `results_index.cards()`, which the markdown page now renders too (unchanged, a test checks it's current). Static,
+  no script. Linked from the front door ("Every number, measured") and the story's end card ("See every measurement").
+- **Checked** (`tests/test_proof_page.py`): every scorecard on the page with its file and its command (a one-off run
+  says so), every section in the jump bar, no markdown left, the claims count and the figures read when it's made, a
+  result's text escaped. The accessibility audit has the page as a state of its own: it found its top outside any
+  landmark (fixed: a header and a labelled navigation). The whole demo again (`accessibility-20261102-2153`): no axe
+  violation in 66 states, none of 1,493 texts below AA.

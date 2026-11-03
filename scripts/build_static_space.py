@@ -65,6 +65,8 @@ SHARED = {
     "eyes.html": ("Andy's eyes, on your things",
                   "Show Andy's eyes your mug once, then sweep your phone round the room: Meta's DINOv2 in your browser. "
                   "Nothing leaves it.", f"{HOST}/eyes.html"),
+    "proof.html": ("Andy, measured", "Every scorecard Andy has run, on the robot and off it: the latest result, the command "
+                   "that runs it again, and its file. Failures kept.", f"{HOST}/proof.html"),
     "hood.html": ("Under the hood · Andy", "A search on the robot, stage by stage, and which of Meta's models did each.",
                   f"{HOST}/hood.html"),
 }
@@ -165,6 +167,9 @@ def main() -> None:
     (OUT / "eyes.html").write_text(shared(files("heyandy_meta.screen").joinpath("eyes.html").read_text(), "eyes.html"))
     shutil.copy(ROOT / "docs" / "images" / "social-card.png", OUT / "card.png")  # what a shared link shows
     (OUT / "eyes-core.js").write_text(files("heyandy_meta.screen").joinpath("eyes-core.js").read_text())
+    import proof_page  # Andy, measured: every scorecard, from the same files as evals/results/README.md
+
+    (OUT / "proof.html").write_text(shared(proof_page.page(), "proof.html"))
     (OUT / "voice").mkdir()  # Andy's own voice, introducing itself in each language (the front door)
     for code in voices():
         (OUT / "voice" / f"{code}.mp3").write_bytes(files("heyandy_meta.screen").joinpath("voice", f"{code}.mp3").read_bytes())

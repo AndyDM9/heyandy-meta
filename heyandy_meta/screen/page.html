@@ -963,6 +963,7 @@
     const go_ = el("div", null, "go"), link = (label, href, main) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; if (main) a.className = "main"; go_.append(a); };
     if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO, true);
     link("Try Andy's eyes on your own things", "eyes.html?find", !window.HEYANDY_VIDEO);  // Meta's DINOv2, camera first
+    if (window.HEYANDY_STATIC) link("See every measurement", "proof.html", false);
     link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", false);
     const again = el("button", "Replay the story"); again.onclick = startStory;
     const all = el("button", "Explore every screen"); all.onclick = exploreAll;
@@ -1025,6 +1026,7 @@
     const play = el("button", `Watch Andy's story · ${minutes} min`); play.onclick = () => leaveWelcome(true); more.append(play);
     const link = (label, href) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; more.append(a); };
     if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO);
+    if (window.HEYANDY_STATIC) { const m = el("a", "Every number, measured"); m.href = "proof.html"; more.append(m); }  // Andy, measured
     link("How it's built", "https://github.com/AndyDM9/heyandy-meta");
     pitch.append(more);
     const andy = el("div", null, "andy"), face = document.querySelector("#ambient .face").cloneNode(true);

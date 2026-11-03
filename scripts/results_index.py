@@ -381,19 +381,13 @@ def latest(names: list[str], stem: str) -> str:
     return max(own or names, key=date)
 
 
-def build() -> str:
-    lines = ["# The scorecards' results",
-             "",
-             "The submission's, the system card's and the README's headline figures are read from these files (or a section of",
-             "`docs/research.md`) by `scripts/claims.py`, and a test fails if a document and its file disagree. Failures are kept: an earlier run",
-             "stays beside the latest under its own name (`-before-fixes`, `-oct28`, a date), and `docs/research.md` says what",
-             "changed because of it. This page is made from the files (`scripts/results_index.py`); a test checks it's current.",
-             "Pictures and sounds are never kept: only words, numbers and timings.",
-             ""]
+def cards() -> list[tuple[str, list[dict]]]:
+    """Each section's scorecards, as data: title, what it measures, how to run it, its latest result (markdown, bold only),
+    its file and the earlier runs kept beside it. The markdown page (build) and the Space's page (proof.html) read it."""
+    out: list[tuple[str, list[dict]]] = []
     for title, what, module, stem, head in CARDS:
-        if what is None:  # a new section: a blank line ends the table before it (never one inside a table)
-            lines += ([""] if lines[-1] else []) + [f"## {title}", "", "| Scorecard | Latest result | File | Earlier runs |",
-                                                    "|---|---|---|---|"]
+        if what is None:
+            out.append((title, []))
             continue
         names = files_for(stem)
         if not names:
@@ -403,11 +397,30 @@ def build() -> str:
             text = unattended(sorted(n for n in names if re.search(r"\d{8}", n))) if head == "unattended" else head(main)
         except (KeyError, IndexError, TypeError, ValueError):
             text = "see the file"
-        earlier = [n for n in names if n != main]
-        how = (f"a one-off run, {module}" if module.startswith("research") else f"`uv run python {module}`" if module.endswith(".py")
-               else f"`uv run python -m {module}`")
-        lines.append(f"| **{title}**<br><sub>{what} · {how}</sub> | {text} | [`{main}`]({main}) | "
-                     + (", ".join(f"[`{n.removesuffix('.json')}`]({n})" for n in earlier) or "") + " |")
+        how = (f"a one-off run, {module}" if module.startswith("research") else f"uv run python {module}"
+               if module.endswith(".py") else f"uv run python -m {module}")
+        out[-1][1].append({"title": title, "what": what, "how": how, "result": text, "file": main,
+                           "earlier": [n for n in names if n != main]})
+    return out
+
+
+def build() -> str:
+    lines = ["# The scorecards' results",
+             "",
+             "The submission's, the system card's and the README's headline figures are read from these files (or a section of",
+             "`docs/research.md`) by `scripts/claims.py`, and a test fails if a document and its file disagree. Failures are kept: an earlier run",
+             "stays beside the latest under its own name (`-before-fixes`, `-oct28`, a date), and `docs/research.md` says what",
+             "changed because of it. This page is made from the files (`scripts/results_index.py`); a test checks it's current.",
+             "Pictures and sounds are never kept: only words, numbers and timings.",
+             ""]
+    for section, rows in cards():
+        # a new section: a blank line ends the table before it (never one inside a table)
+        lines += ([""] if lines[-1] else []) + [f"## {section}", "", "| Scorecard | Latest result | File | Earlier runs |",
+                                                "|---|---|---|---|"]
+        for c in rows:
+            how = c["how"] if c["how"].startswith("a one-off") else f"`{c['how']}`"
+            lines.append(f"| **{c['title']}**<br><sub>{c['what']} · {how}</sub> | {c['result']} | [`{c['file']}`]({c['file']}) | "
+                         + (", ".join(f"[`{n.removesuffix('.json')}`]({n})" for n in c["earlier"]) or "") + " |")
     return "\n".join(lines).rstrip() + "\n"
 
 
