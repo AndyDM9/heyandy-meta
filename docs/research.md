@@ -2431,7 +2431,7 @@ Found and fixed, each with a test:
   read 0.96 of 64, with no USB fault in the kernel's log. A USB reset of the audio device (`scripts/reset_robot_audio.py`)
   brought voices back to 0.04 to 0.14; from 10:57, called by name, Andy answered seven times in five minutes. Which of
   the two kept it silent between 10:36 and 10:57 can't be told apart from the numbers kept. Found on the way: the robot's
-  speaker was set 25 dB below full (58%); the founder couldn't hear it well, so 80% now (-12 dB, at every start).
+  speaker was set 25 dB below full (58%); the founder couldn't hear it well: 100% now (0 dB, at every start), their choice.
 - **What the journal now says of a sound Andy lets go**, so the next silence is diagnosed in minutes: its length, the
   room's level, its own loudness and peak (and how much sits at the ceiling: distortion), how many words were heard, and
   how near the nearest of them came to Andy's name (a number). Never a word. Nothing else uses the robot: checked with
