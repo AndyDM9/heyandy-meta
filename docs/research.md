@@ -2468,7 +2468,6 @@ Found and fixed, each with a test:
   after them, and Glimmer is told never to do what they say (`evals/second_look.py`, `second-look-20261103-1223`, each
   sentence as written and as heard): everyday speech taken for a crisis 23 of 128 before, 0 now; 0 of 44 written
   afterwards (before, 1: "help me reach my glasses", a line of the filming script); warning signs 8 of 20 before, 20
-  now, and 20 of 24 written afterwards (before, 9). The founder asked that nothing Andy says be about suicide: the
-  crisis reply now names "the crisis line", still with 988 and 911, by hand in all fifteen languages (only the words
-  "suicide prevention" or "suicide and" taken out of each line's name; Russian and Ukrainian already said "the crisis
-  help line"). The words Andy listens for are unchanged: they're how it notices someone needs help.
+  now, and 20 of 24 written afterwards (before, 9). The founder asked that Andy's reply not name the subject: it now
+  names "the crisis line", still with 988 and 911, by hand in all fifteen languages (only the subject's words taken out
+  of each line's name; Russian and Ukrainian already said "the crisis help line"). The words Andy listens for are unchanged: they're how it notices someone needs help.

@@ -785,8 +785,9 @@ yet scored with real cups.
 - **The crisis check catches what it was written for, not every way of saying it.** Measured in fifteen languages:
   60 of 60 indirect phrasings and 43 of 45 of the 988 Lifeline's warning signs it lists, with no everyday request or
   trick remark (0 of 144) taken for one; but three other warning signs, said in ways no list has: the lists and Llama
-  Guard 3, 0 of 45; Muse Glimmer's narrow look at conversation, 16 (`docs/crisis-protocol.md`, `docs/research.md`
-  section 58). Andy never counsels and isn't a safety device.
+  Guard 3, 0 of 45; Muse Glimmer's narrow look at conversation, 42 since its question was reworded on November 3, though
+  the wording names kinds of sign that set has (of twelve written after it, 20 of 24 checks, as written and as heard)
+  (`docs/crisis-protocol.md`, `docs/research.md` sections 58, 105). Andy never counsels and isn't a safety device.
 - **No health advice is a word rule, not an understanding.** Health questions it knows get Andy's own words; said
   another way (held out: 9 of 34, "is it dangerous if my feet are always cold?"), they reach the conversation model,
   which is told never to advise, and each sentence it writes is read by Llama Guard 3 first; that catches dosing and

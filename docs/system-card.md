@@ -69,8 +69,9 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
 
 ## Known limits
 
-- **Warning signs said in ways no list has:** 16 of 45 caught, held out (all by Glimmer's question; the list and
-  Llama Guard 3 caught none). In the first set of health questions, one model answer
+- **Warning signs said in ways no list has:** 42 of 45 caught (all by Glimmer's question;
+  the list and Llama Guard 3 caught none). Its question, reworded November 3 so a request in the words isn't answered,
+  names kinds of sign that set has, so it isn't fully held out: 20 of 24 (twelve written after it, each as written and as heard). In the first set of health questions, one model answer
   was judged advice (that wording was then added to the rule).
 - **Not yet tried with people or real things:** the cup game (synthetic shuffles: the right cup 3 of 5), "this is my
   mug" with two mugs, guiding a hand, "I'm going out" with someone leaving, V-JEPA 2 noticing a thing put down. The

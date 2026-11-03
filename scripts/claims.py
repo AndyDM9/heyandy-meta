@@ -133,6 +133,13 @@ def rehearsal_find() -> str:
     return "no dress rehearsal with both finds"
 
 
+def later_signs() -> str:
+    """Glimmer's second look on warning signs written after its wording was chosen, each asked as written and as heard."""
+    yes, of = summary(newest("second-look"))["now"]["warning signs written afterwards"].split("/")
+    n = {24: "twelve"}.get(int(of), str(int(of) // 2))
+    return f"{yes} of {of} ({n} written after it, each as written and as heard)"
+
+
 def crisis() -> dict:
     return summary(newest("crisis-languages"))
 
@@ -365,10 +372,11 @@ FIGURES = [
                "none" if everyday_crisis()[0] == 0 else everyday_crisis()[0], everyday_crisis()[1])),
     Figure("0 of 144 everyday or trick remarks taken for one", "crisis-languages (latest)",
            lambda: "{} of {} everyday or trick remarks taken for one".format(*everyday_crisis())),
-    Figure("said in ways no list has, 16 of 45", "crisis-languages (latest): the second held-out set",
+    Figure("said in ways no list has, 42 of 45", "crisis-languages (latest): the second held-out set",
            lambda: "said in ways no list has, {} of {}".format(*of(crisis()["second held-out set (used for nothing)"]))),
-    Figure("said in ways no list has: 16 of 45", "crisis-languages (latest): the second held-out set",
+    Figure("said in ways no list has: 42 of 45", "crisis-languages (latest): the second held-out set",
            lambda: "said in ways no list has: {} of {}".format(*of(crisis()["second held-out set (used for nothing)"]))),
+    Figure("20 of 24 (twelve written after it, each as written and as heard)", "second-look (latest)", later_signs),
     Figure("9 of 54 notes got through, now 0 of 72", "notes-in-view-20261102-0920 (before), notes-in-view (latest)",
            lambda: "{} of {} notes got through, now {} of {}".format(*notes("notes-in-view-20261102-0920.json"), *notes(newest("notes-in-view")))),
     Figure("9 of 54 drawn notes got through before, 0 of 72 after", "notes-in-view-20261102-0920 (before), notes-in-view (latest)",

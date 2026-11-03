@@ -124,8 +124,9 @@ out: 25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 every
 reads each sentence a model writes before Andy says it. It says it's an AI at the start and every three hours. Crisis
 words in any of its fifteen languages get the 988 line from code, checked on this computer (a word list, Llama Guard 3,
 then one narrow question to Muse Glimmer): 60 of 60 indirect phrasings (the set it was tuned on), none of 144 everyday
-requests and trick remarks taken for one; the limit, published: held out, warning signs said in ways no list has, 16
-of 45 (all Glimmer's: the list and Llama Guard caught none). Ask **"Hey Andy, what won't you do?"** and it says so,
+requests and trick remarks taken for one; the limit, published: warning signs said in ways no list has: 42 of 45
+(all Glimmer's: the list and Llama Guard caught none; its question, reworded November 3, names kinds of sign that set
+has, so the fairer figure is 20 of 24 (twelve written after it, each as written and as heard)). Ask **"Hey Andy, what won't you do?"** and it says so,
 with today's receipts on the TV. Speech that isn't for Andy is dropped, never kept. On one page, with the limits:
 `docs/system-card.md`.
 

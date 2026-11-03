@@ -15,8 +15,8 @@ questions. It is not a health, medical or mental-health product, and it never co
   (`heyandy_meta/companion/safety_model.py`), still before any other model; and for conversation (never a request),
   a third look by Muse Glimmer on this computer, one narrow question; any of them gives the reply below.
 - Andy gives one fixed reply and does not try to counsel:
-  > "I'm a robot, so I can't help with this the way a person can. You can call or text 988, the Suicide and Crisis
-  > Lifeline, any time, day or night. If you're in danger right now, please call 911."
+  > "I'm a robot, so I can't help with this the way a person can. You can call or text 988, the crisis line, any time,
+  > day or night. If you're in danger right now, please call 911."
 - Nothing about it is stored or logged.
 - **Not yet built:** messaging a family member the person has chosen. When it exists, it will be opt-in, set by the
   person.
