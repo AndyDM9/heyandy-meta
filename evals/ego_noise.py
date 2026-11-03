@@ -23,7 +23,7 @@ from pathlib import Path
 from heyandy_meta.robot.motion import Motion
 
 ROOT = Path(__file__).resolve().parents[1]
-LINE = re.compile(r"^(\d+\.\d+) .*\(heard (\d+\.\d)s of speech, room level (\d+\.\d+); not for Andy\)")
+LINE = re.compile(r"^(\d+\.\d+) .*\(heard (\d+\.\d)s of speech, room level (\d+\.\d+)(?:, [^;]*)?; not for Andy\)")
 BINS = 12
 
 

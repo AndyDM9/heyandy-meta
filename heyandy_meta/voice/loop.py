@@ -10,6 +10,8 @@ import re
 import threading
 import time
 
+import numpy as np
+
 from ..companion.safety import crisis, emergency
 
 log = logging.getLogger(__name__)
@@ -183,11 +185,12 @@ class VoiceLoop:
                     self._pending = (text, yaw, utterance)
                     continue
                 stopped = self.stops(text)
+                # its length only, reported before the stop reaches the turn, so "Stopped." comes before its answer
+                self._report(None, "Stopped." if stopped else None, utterance, endpointer, words=len(text.split()))
                 if stopped:
                     self.andy.stop_following()  # no lock: the turn holds it, and this must reach it at once
                 else:
                     self.not_for_andy()  # said over Andy's answer: most likely the room's own conversation
-                self._report(None, "Stopped." if stopped else None, utterance, endpointer)  # its length only
                 continue
             self.busy = True
             self.marks = {"ended": self.utterance_end, "heard": heard_at, "again": self._again}
@@ -264,12 +267,28 @@ class VoiceLoop:
                     turns.put(pending)
                 else:
                     self.busy = False
-            self._report(text if reply is not None else None, reply, utterance, endpointer)
+            self._report(text if reply is not None else None, reply, utterance, endpointer, words=len(text.split()),
+                         name=_name_likeness(text))
 
-    def _report(self, text, reply, utterance, endpointer) -> None:
-        if self.on_heard:  # what wasn't for Andy is reported by its length only, never its words
-            self.on_heard(text if text is not None else
-                          f"{len(utterance) / endpointer.rate:.1f}s of speech, room level {endpointer.floor:.3f}", reply)
+    def _report(self, text, reply, utterance, endpointer, words: int | None = None, name: float | None = None) -> None:
+        if self.on_heard:  # what wasn't for Andy: its length, its loudness, how many words were heard; never the words
+            if text is None:
+                x = np.abs(np.asarray(utterance, dtype=np.float32))
+                level = float(np.sqrt(np.mean(np.square(x)))) if len(x) else 0.0
+                peak = float(x.max()) if len(x) else 0.0
+                clipped = float(np.mean(x >= 0.98 * peak)) if peak > 0.9 else 0.0  # at the ceiling: distorted
+                text = (f"{len(utterance) / endpointer.rate:.1f}s of speech, room level {endpointer.floor:.3f}, its own "
+                        f"{level:.3f}, peak {peak:.2f}" + (f", {clipped:.1%} at the ceiling" if clipped else "")
+                        + (f", {words} words heard" if words is not None else "")
+                        + (f", closest to its name {name:.2f}" if name is not None else ""))
+            self.on_heard(text, reply)
+
+
+def _name_likeness(text: str) -> float:
+    """How near the nearest word heard comes to Andy's name (1.0: "andy" itself): a number for the journal, never a word."""
+    from difflib import SequenceMatcher
+
+    return max((SequenceMatcher(None, w, "andy").ratio() for w in re.findall(r"\w+", text.lower())), default=0.0)
 
 
 def _looping(text: str) -> bool:

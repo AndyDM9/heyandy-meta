@@ -2422,3 +2422,17 @@ Found and fixed, each with a test:
   writing an unknown piece's own letters back, not its number.)
 - **The system card** now says the two settings that open a door on the home network, both off unless Andy is started
   with them: `--tv-host` (the TV page on a smart TV) and `--remote` (a phone, answered only once paired).
+- **Andy didn't answer, the morning of November 3** (10:04 to 10:57; numbers from the journal only, never a word). Andy
+  last answered at 18:36 on November 2; nobody tried again until 10:04. Then it let everything go, for two reasons.
+  First, my own instruction: I asked the founder to say "I fell and I can't get up" without "Hey Andy", and outside the
+  seconds after a reply Andy answers only when called (`_heard`; the filming script has the name). Second, about 10:36
+  the sound from the robot's microphone array fell about tenfold (the room's level 0.02 to 0.002; a voice 0.003 to
+  0.009), and Omnilingual ASR, given that faint sound, wrote nonsense (78 "words" in 8 s): the array's own automatic gain
+  read 0.96 of 64, with no USB fault in the kernel's log. A USB reset of the audio device (`scripts/reset_robot_audio.py`)
+  brought voices back to 0.04 to 0.14; from 10:57, called by name, Andy answered seven times in five minutes. Which of
+  the two kept it silent between 10:36 and 10:57 can't be told apart from the numbers kept. Found on the way: the robot's
+  speaker was set 25 dB below full (58%); the founder couldn't hear it well, so 80% now (-12 dB, at every start).
+- **What the journal now says of a sound Andy lets go**, so the next silence is diagnosed in minutes: its length, the
+  room's level, its own loudness and peak (and how much sits at the ceiling: distortion), how many words were heard, and
+  how near the nearest of them came to Andy's name (a number). Never a word. Nothing else uses the robot: checked with
+  root, only its daemon and Andy are connected to it, and nothing else starts at boot that can.
