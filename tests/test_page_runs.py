@@ -469,3 +469,43 @@ def test_the_front_door_speaks_the_visitors_language_and_lets_them_choose_anothe
     assert still_open == [True, True]
     assert french == ["Français", "Où sont mes lunettes ?", "fr", "in-fr"] and remembered == "Français"
     assert plain == ["English", "mandarin"]  # English: the story's chapter as it was, the bubble going round
+
+
+def test_the_story_is_told_in_andys_voice_and_a_press_turns_it_off(browser):
+    """The public demo's story, told chapter by chapter in Andy's own voice when the Space is built with it: on from the
+    press that started the story, each chapter as long as its words if they're longer, off with a press; and a browser
+    that won't play sound unasked (a link straight to ?story) offers it instead."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    base = f"http://127.0.0.1:{server.server_address[1]}/"
+    init = """window.HEYANDY_NARRATION = { "Meet Andy": { text: "Hi, I'm Andy.", file: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=", seconds: 9.5 },
+                                         "You ask": { text: "You ask.", file: "voice/none.mp3", seconds: 2 } };"""
+    try:
+        page = browser.new_page(viewport={"width": 1440, "height": 900})
+        page.add_init_script(init)
+        page.goto(base)
+        page.wait_for_selector("#welcome", timeout=10000)
+        page.click("text=Watch Andy's story")
+        page.wait_for_selector("#story .voice", timeout=5000)
+        first = page.evaluate("[chapterSeconds(0), STORY[0][1], chapterSeconds(1), document.querySelector('#story .voice').getAttribute('aria-pressed')]")
+        page.click("#story .voice")
+        off = page.evaluate("[narrate, chapterSeconds(0), document.querySelector('#story .voice').textContent]")
+        page.close()
+        direct = browser.new_page(viewport={"width": 1440, "height": 900})
+        direct.add_init_script(init)
+        direct.goto(base + "?story")
+        direct.wait_for_function("document.querySelector('#story .voice') && document.querySelector('#story .voice').getAttribute('aria-pressed') === 'false'", timeout=5000)
+        asked = direct.text_content("#story .voice")
+        direct.close()
+    finally:
+        server.shutdown()
+    assert first[0] == pytest.approx(10.4) and first[1] == 6 and first[2] == 6 and first[3] == "true"  # longer words, longer chapter
+    assert off == [False, 6, "Andy's voice: off"]
+    assert asked == "▶ Hear Andy tell it"

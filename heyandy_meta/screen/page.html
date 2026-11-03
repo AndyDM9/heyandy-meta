@@ -868,6 +868,21 @@
     STORY.unshift(["idle", window.HEYANDY_CLIP_SECONDS || 10, "Andy, on the table",  // a quiet TV under it: no Reveal over the robot
                    "The robot: it turns to your voice, looks around the room, and points. Then its TV, chapter by chapter.", true]);
   let story = null;  // {at, since, paused}
+  // Told by Andy in its own voice (SeamlessM4T v2, made on our computer: scripts/front_door_voice.py), chapter by
+  // chapter, when the Space is built with it; a chapter lasts as long as its words and a breath, if that's longer.
+  const NARRATION = window.HEYANDY_NARRATION || null;
+  let narrate = true, telling = null;
+  const told = (at) => NARRATION && NARRATION[STORY[at][2]];
+  const chapterSeconds = (at) => Math.max(STORY[at][1], narrate && told(at) ? told(at).seconds + 0.9 : 0);
+  function hush() { if (telling) { telling.pause(); telling = null; } }
+  function tell() {  // this chapter's words, in Andy's voice
+    hush();
+    const t = story && narrate && told(story.at), b = document.querySelector("#story .voice");
+    if (!t) return;
+    telling = new Audio(t.file);
+    telling.play().then(() => { if (b) b.textContent = "Andy's voice: on"; })
+      .catch(() => { telling = null; if (b) { b.textContent = "▶ Hear Andy tell it"; b.setAttribute("aria-pressed", "false"); } });
+  }
   function startStory() {
     $("demo").hidden = true; document.body.classList.remove("exploring");
     document.getElementById("end")?.remove(); document.body.classList.add("storying");
@@ -879,7 +894,17 @@
     const button = (label, act, name) => { const b = el("button", label); b.onclick = act; if (name) b.setAttribute("aria-label", name); nav.append(b); return b; };
     button("‹", () => go(story.at - 1), "Back"); const pause = button("Pause", () => {
       story.paused = !story.paused; pause.textContent = story.paused ? "Play" : "Pause";
-      if (story.paused) story.left = Date.now() - story.since; else story.since = Date.now() - story.left; });
+      if (story.paused) { story.left = Date.now() - story.since; telling?.pause(); }
+      else { story.since = Date.now() - story.left; telling?.play().catch(() => {}); } });
+    if (NARRATION) {  // Andy's voice, on from the press that started the story; a browser that won't play it yet asks
+      const voice = button("Andy's voice: on", () => {
+        const playing = voice.getAttribute("aria-pressed") === "true";
+        narrate = !playing; voice.setAttribute("aria-pressed", String(narrate));
+        voice.textContent = narrate ? "Andy's voice: on" : "Andy's voice: off";
+        if (narrate) tell(); else hush();
+      });
+      voice.classList.add("voice"); voice.setAttribute("aria-pressed", String(narrate));
+    }
     button("›", () => go(story.at + 1), "Next"); button("Explore every screen", exploreAll); nav.prepend(askForm(true));
     row.append(el("div", null, "ch"), text, nav); band.append(bars, row); document.body.prepend(band);  // first: on a phone it leads
     go(0); requestAnimationFrame(storyTick);
@@ -898,6 +923,7 @@
     if (i >= STORY.length) { clip(false); return endCard(); }
     story.at = Math.max(0, i); story.since = Date.now(); story.left = 0;
     document.getElementById("reveal")?.remove();  // each chapter starts clean
+    if (!story.paused) tell(); else hush();
     clip(!!STORY[story.at][4]);
     const [name, , title, line] = STORY[story.at], band = $("story");
     chosen = name; pictureKey = "";
@@ -909,19 +935,19 @@
   }
   function storyTick() {
     if (!story) return;
-    const band = $("story"), [, secs] = STORY[story.at];
+    const band = $("story"), secs = chapterSeconds(story.at);
     const done = story.paused ? story.left : Date.now() - story.since, f = Math.min(1, done / (secs * 1000));
     band.querySelectorAll(".bars b").forEach((b, i) => { b.style.width = (i < story.at ? 100 : i === story.at ? f * 100 : 0) + "%"; });
     if (f >= 1 && !story.paused) go(story.at + 1);
     if (story) requestAnimationFrame(storyTick);
   }
   function exploreAll() {
-    clip(false);
+    clip(false); hush();
     story = null; $("story")?.remove(); document.getElementById("end")?.remove(); document.body.classList.remove("storying");
     chosen = null; pictureKey = ""; demoBar();
   }
   function endCard() {
-    story = null; $("story")?.remove(); document.getElementById("reveal")?.remove(); document.body.classList.remove("storying");
+    hush(); story = null; $("story")?.remove(); document.getElementById("reveal")?.remove(); document.body.classList.remove("storying");
     const end = el("div"); end.id = "end"; end.setAttribute("role", "dialog"); end.setAttribute("aria-label", "Andy, in one minute");
     const inner = el("div", null, "in"), sig = document.querySelector("header .brand")?.cloneNode(true);
     if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }

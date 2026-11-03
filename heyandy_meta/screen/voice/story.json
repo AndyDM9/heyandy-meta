@@ -1,0 +1,82 @@
+{
+ "what": "The story, told by Andy in its own voice (SeamlessM4T v2)",
+ "chapters": {
+  "Andy, on the table": {
+   "text": "This is me, on the table. I turn to your voice, look around the room, and point.",
+   "seconds": 4.83,
+   "file": "voice/story-00.mp3",
+   "heard back": 1.0,
+   "sha256": "d8dc42e9bdceb1b1e4caf055800550d4dc22be2b08e30e3b1db46dee0332fa56"
+  },
+  "Meet Andy": {
+   "text": "Hi, I'm Andy. I find what you've lost, and point at it. This is the TV beside me.",
+   "seconds": 5.15,
+   "file": "voice/story-01.mp3",
+   "heard back": 0.98,
+   "sha256": "4ee6ae0ae2196765e596d8bd9a9bada59436a7ff25101e723f09ad1af12ac286"
+  },
+  "You ask": {
+   "text": "You ask: Hey Andy, where's my mug? I look around the room, and SAM 3.1 outlines everything that could be it.",
+   "seconds": 6.62,
+   "file": "voice/story-02.mp3",
+   "heard back": 0.94,
+   "sha256": "23abb25f94f918089125b0ac990c42785f7a1708745849f86f3156689ed7d973"
+  },
+  "It finds it": {
+   "text": "There it is. I point, check my aim with my own camera, and MapAnything tells me how far away it is.",
+   "seconds": 6.42,
+   "file": "voice/story-03.mp3",
+   "heard back": 0.97,
+   "sha256": "8e7bb7b5425deeefa9a0e48607fd0790b7ab32b5f46168f6e2d8e89b2472bf6c"
+  },
+  "It doesn't give up": {
+   "text": "Not found? I keep looking while you get on with your day, and tell you the moment it turns up.",
+   "seconds": 5.22,
+   "file": "voice/story-04.mp3",
+   "heard back": 1.0,
+   "sha256": "76178964b3ff90cef7a17a527a82e527d8bc28afe23b8b09540c7015df5e6fbf"
+  },
+  "It guides your hand": {
+   "text": "Can't see well? I watch your hand and talk it onto the thing, from your side: toward you, and right.",
+   "seconds": 5.35,
+   "file": "voice/story-05.mp3",
+   "heard back": 0.96,
+   "sha256": "999ed42bb499aaeb0c172abd66c4998eb119a7603077bf765c18291c13077ae4"
+  },
+  "It knows your room": {
+   "text": "Five looks, and I know your room in 3D, your things pinned. Its shape only, never a picture.",
+   "seconds": 5.31,
+   "file": "voice/story-06.mp3",
+   "heard back": 0.97,
+   "sha256": "92df736cba8c8c5d850f8d7fbeca037ed33868fa6b3aedd5735548ff4a0d9f90"
+  },
+  "Identical cups, told apart": {
+   "text": "Identical cups? SAM 3.1 Object Multiplex follows every one of them through the shuffle.",
+   "seconds": 6.02,
+   "file": "voice/story-07.mp3",
+   "heard back": 1.0,
+   "sha256": "e72926e0b2e11025caee672fbcc25eb4925b98d4627732b8c0324c3fa1432c42"
+  },
+  "Before you go": {
+   "text": "Going out? I point at what you'd leave behind, and Muse Spark checks whether you'll need an umbrella.",
+   "seconds": 5.57,
+   "file": "voice/story-08.mp3",
+   "heard back": 0.97,
+   "sha256": "16e14ba7e18e1ad647f84cc139c35b261e176b49b03b085fab82d4ae382838e5"
+  },
+  "Your language": {
+   "text": "I hear and speak fifteen languages. Muse Glimmer translates, on the computer beside me.",
+   "seconds": 5.44,
+   "file": "voice/story-09.mp3",
+   "heard back": 0.95,
+   "sha256": "374429d1b6b58e2655d7e06aefd2f33c10bdc2933c74ee9281d1b83e459b6f39"
+  },
+  "What it never does": {
+   "text": "And what I never do: your pictures and voice stay home, I give no health advice, and I say I'm an AI.",
+   "seconds": 6.06,
+   "file": "voice/story-10.mp3",
+   "heard back": 1.0,
+   "sha256": "9cc65ba0055f3d6498c707be1c87321a19da435eab9928c769f412d384b2ce00"
+  }
+ }
+}

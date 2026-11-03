@@ -104,6 +104,12 @@ def voices() -> dict:
     return {code: {"text": c["text"], "file": c["file"]} for code, c in clips.items()}
 
 
+def narration() -> dict:
+    """The story told by Andy in its own voice (scripts/front_door_voice.py): {chapter title: {text, file, seconds}}."""
+    told = json.loads(files("heyandy_meta.screen").joinpath("voice", "story.json").read_text())["chapters"]
+    return {title: {"text": c["text"], "file": c["file"], "seconds": c["seconds"]} for title, c in told.items()}
+
+
 def main() -> None:
     import argparse
 
@@ -120,6 +126,7 @@ def main() -> None:
     flags += f" window.HEYANDY_FIGURES = {json.dumps(front_door()[0], ensure_ascii=False)};"
     flags += f" window.HEYANDY_ASKS = {json.dumps(front_door()[1], ensure_ascii=False)};"
     flags += f" window.HEYANDY_VOICES = {json.dumps(voices(), ensure_ascii=False)};"
+    flags += f" window.HEYANDY_NARRATION = {json.dumps(narration(), ensure_ascii=False)};"
     if args.clip:  # the robot itself, filmed: kept small, for a page anyone opens
         size = args.clip.stat().st_size
         if size > 15_000_000:
@@ -161,6 +168,9 @@ def main() -> None:
     (OUT / "voice").mkdir()  # Andy's own voice, introducing itself in each language (the front door)
     for code in voices():
         (OUT / "voice" / f"{code}.mp3").write_bytes(files("heyandy_meta.screen").joinpath("voice", f"{code}.mp3").read_bytes())
+    for chapter in narration().values():  # and the story, told in it
+        name = chapter["file"].split("/", 1)[1]
+        (OUT / "voice" / name).write_bytes(files("heyandy_meta.screen").joinpath("voice", name).read_bytes())
     (OUT / "eyes").mkdir()
     (OUT / "vendor").mkdir()
     for name in VENDOR:  # the libraries' fallback copies, checked

@@ -76,3 +76,26 @@ def test_andys_voice_on_the_front_door_says_its_own_hand_written_words_in_each_l
         assert hashlib.sha256((screen / f"{code}.mp3").read_bytes()).hexdigest() == c["sha256"]
         assert c["heard back"] >= 0.6 and 1.0 <= c["seconds"] <= 6.0
     assert build_static_space.voices() == {code: {"text": c["text"], "file": c["file"]} for code, c in clips.items()}
+
+
+def test_the_story_told_in_andys_voice_says_no_more_than_its_chapters():
+    """scripts/front_door_voice.py STORY: each chapter told in the first person, a clip per chapter with its words, its
+    hash and how it was heard back; every chapter of the page's story has one, and the build ships them."""
+    import hashlib
+    import json
+    import re
+
+    import front_door_voice
+
+    screen = ROOT / "heyandy_meta" / "screen"
+    told = json.loads((screen / "voice" / "story.json").read_text())["chapters"]
+    page = (screen / "page.html").read_text()
+    titles = re.findall(r'\["[a-z-]+", \d+, "([^"]+)", "', re.search(r"const STORY = \[(.*?)\n  \];", page, re.S).group(1))
+    assert set(titles) <= set(told) and "Andy, on the table" in told  # the robot's own chapter, when built with it
+    for title, c in told.items():
+        assert c["text"] == front_door_voice.STORY[title]
+        assert hashlib.sha256((screen / c["file"]).read_bytes()).hexdigest() == c["sha256"]
+        assert c["heard back"] >= 0.9 and 3.0 <= c["seconds"] <= 8.0
+        assert not re.search(r"\d", c["text"].replace("3.1", "").replace("3D", "")), title  # no figure the page doesn't show
+    assert build_static_space.narration() == {t: {"text": c["text"], "file": c["file"], "seconds": c["seconds"]}
+                                              for t, c in told.items()}

@@ -2150,3 +2150,22 @@ Found and fixed, each with a test:
 - **Tried, and why not:** test turns played through the monitor's speakers, to time the "heard" note on the robot
   (section 90): heard as fragments of 1.2 to 1.9 s at the room's level that night (0.038), even louder, and let go; no
   turn. Left for the founder's own turns; nothing of the room is recorded to find out more.
+
+## 98. The story, told by Andy in its own voice (November 2, night)
+
+- **Why:** the public demo's 75-second story is the nearest thing to a film a visitor sees, and it was silent: ten
+  captioned chapters to read. Andy has a voice (Meta's SeamlessM4T v2) that a visitor otherwise hears only by pressing
+  its face (section 94).
+- **Now** (`scripts/front_door_voice.py` STORY, `page.html`): each chapter is told by Andy, in the first person, in its
+  own voice, made on our computer as the robot speaks ("Hi, I'm Andy. I find what you've lost, and point at it. This is
+  the TV beside me."): saying no more than the chapter's line and the proof under it (a chapter not yet tried on the
+  robot still says so on screen), and no figure. Eleven clips (the robot's own chapter too, for the Space built with
+  it), 4.8 to 6.6 s, each heard back by Omnilingual ASR at 0.94 to 1.00, kept with their words and SHA-256. On from the
+  press that starts the story ("Andy's voice: on", a press turns it off); a chapter lasts as long as its words and a
+  breath when they're longer; pause, back, next, exploring and the end all stop or follow it; a link straight to the
+  story, which a browser won't let speak unasked, offers "▶ Hear Andy tell it". English: the story's own language.
+- **Checked:** every chapter of the page's story has its clip, the clips' words are the script's and their hashes the
+  files' (`tests/test_social_card.py`); in a browser it's on from the press, a longer clip lengthens its chapter, a
+  press turns it off, and a direct link asks (`tests/test_page_runs.py`); on 390 and 360-pixel phones the story's
+  buttons don't overlap and none is under 44 pixels. The accessibility audit again (`accessibility-20261102-2135`): no
+  axe violation in 64 states, none of 1,442 texts below AA.
