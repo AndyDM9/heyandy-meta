@@ -189,3 +189,20 @@ def test_the_thing_asked_for_survives_the_translation(said, english, meant):
     from heyandy_meta.companion.language import kept_the_thing
 
     assert kept_the_thing(said, english, "es") == meant
+
+
+@pytest.mark.parametrize("text", ["change to english", "switch to english", "change it to english", "go back to english",
+                                  "back to english", "english please", "english", "use english", "english mode",
+                                  "change the language to english", "switch back to english please",
+                                  "hey andy change to english", "andy, english please"])
+def test_asking_for_english_in_everyday_words_is_heard(text):
+    """November 3: Andy was in Mandarin and the founder asked it to "change to English"; only "speak" or "talk" was
+    understood, so it stayed in Mandarin."""
+    assert asked_for(text) == "en"
+
+
+@pytest.mark.parametrize("text", ["i am switching to spanish class", "my son is learning english", "is english hard",
+                                  "change the channel to the english one", "english breakfast tea please",
+                                  "where are my english books", "the movie was in english", "go back to the kitchen"])
+def test_talk_about_a_language_still_isnt_asking_for_it(text):
+    assert asked_for(text) is None

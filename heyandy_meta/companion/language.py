@@ -241,7 +241,17 @@ LANGUAGE = re.compile(r"(?<!not )(?<!n't )(?<!never )(?<!to )(?<!can )(?<!cannot
                       r"(?<!no )\bh[aá]bla(?:me)?(?: en)? (?P<b>español|espanol|inglés|ingles)\b|"
                       r"^\W*(?:andy\W+)?in (?P<c>" + "|".join(NAMES) + r"),? please\W*$|"
                       # "Say English" (Chinese 说英语, word for word): only the whole request, never "I'd say French is..."
-                      r"^\W*(?:andy\W+)?say (?:it )?(?:in )?(?P<d>" + "|".join(NAMES) + r")\W*$", re.I)
+                      r"^\W*(?:andy\W+)?say (?:it )?(?:in )?(?P<d>" + "|".join(NAMES) + r")\W*$|"
+                      # "change to English", "switch back to English", "go back to English", "use English", "English,
+                      # please", "English": only as the whole request (November 3: the founder asked Andy, in Mandarin,
+                      # to "change to English", and only "speak" or "talk" was understood; "I'm switching to Spanish
+                      # class" is never one)
+                      r"^\W*(?:(?:hey |oye )?andy\W+)?(?:please\W+)?(?:(?:can|could|would|will) you\W+|let'?s\W+)?"
+                      r"(?:change|switch|go|get|come|turn|set|move|use)(?:\s+(?:it|this|that|the language|your language|"
+                      r"language|back|over|yourself))*(?:\s+(?:back\s+)?(?:to|into|in))?\s+(?P<e>" + "|".join(NAMES) +
+                      r")(?:\W+(?:please|now|again|mode|language))*\W*$|"
+                      r"^\W*(?:(?:hey |oye )?andy\W+)?(?:back\s+to\s+|in\s+)?(?P<f>" + "|".join(NAMES) +
+                      r")(?:\W+(?:please|now|again|mode|language))*\W*$", re.I)
 
 
 # Which of Andy's languages some words are in, from the words alone: its script, its letters, its everyday words. For
@@ -304,7 +314,7 @@ def asked_for(text: str) -> str | None:
     m = LANGUAGE.search(text)
     if not m:
         return None
-    word = (m.group("a") or m.group("b") or m.group("c") or m.group("d")).lower()
+    word = next(g for g in m.group("a", "b", "c", "d", "e", "f") if g).lower()
     return "es" if word.startswith("esp") else "en" if word.startswith("ingl") else NAMES[word]
 
 
