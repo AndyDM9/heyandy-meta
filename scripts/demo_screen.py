@@ -381,7 +381,7 @@ def show(state: ScreenState, scene: str) -> None:
         state.used("SAM 3.1", "device", 4)
         state.doing("Pointing", "At your keys' home")
     elif scene == "told":  # "where's my passport?": from what the person told Andy, at once, without moving
-        when = "on " + time.strftime("%A", time.localtime(time.time() - 3 * 86400)) + " at 3:12"
+        when = "on Friday at 3:12"  # written in (sample data): Andy's clip of it (front_door_voice.py) says the same, any day
         state.told("passport", "in the top drawer of the desk", when)
         state._told["until"] += 3600  # a still for the demo: it stays
         state.said(f"You told me {when}: your passport is in the top drawer of the desk. If it isn't there, ask me again "
