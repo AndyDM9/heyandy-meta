@@ -22,7 +22,7 @@ def test_a_figure_edited_by_hand_has_no_source():
 def test_the_best_run_quoted_for_one_that_varies_has_no_source():
     """The fall shot took 16.5 s once and 27.1 s once: one run's time alone isn't the robot's."""
     assert claims.unsourced("x", "points at the phone (16.5 s on the robot)")
-    assert min(claims.emergency_runs()) == 16.5 and max(claims.emergency_runs()) == 27.1 and len(claims.emergency_runs()) == 4
+    assert min(claims.emergency_runs()) == 16.5 and max(claims.emergency_runs()) == 27.1 and len(claims.emergency_runs()) == 5
 
 
 def test_a_new_run_that_changes_a_figure_is_caught(monkeypatch):

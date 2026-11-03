@@ -41,7 +41,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   its camera, and says where, from where you stand. *Moved round the desk and judged by a person, 13 of 15 right, and
   never a point at the wrong thing; alone, its own camera judging, 250 of 253 unattended searches ended in a point.*
 - **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
-  911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 to 27.1 s from the words, over four dress rehearsals.* Andy can't call
+  911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 to 27.1 s from the words, over five dress rehearsals.* Andy can't call
   anyone and doesn't watch for falls; it does what a robot that finds things can.
 - **It speaks your language.** Fifteen of them, and it notices which one it's called in: "安迪，我的眼镜在哪里？" gets
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
