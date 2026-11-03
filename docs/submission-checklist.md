@@ -7,8 +7,9 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 **Before, on November 3**
 - [ ] The founder's tests of what hasn't been tried on the robot yet (the founder's own test list: the cup game, my
       mug, going out, Spanish, "what's that?"), so the video and the text show only what works.
-- [ ] `uv run python scripts/preflight.py --cloud` says READY (and again on the morning of November 4).
-- [ ] The dress rehearsal says READY TO FILM, the room as it will be filmed (`docs/demo-script.md` step 2b).
+- [x] `uv run python scripts/preflight.py --cloud` says READY (November 3, 14:24; and again on the morning of November 4).
+- [x] The dress rehearsal says READY TO FILM, the room as it will be filmed (`docs/demo-script.md` step 2b): November 3,
+      every shot (`rehearsal-20261103-1155`, the keys `-only-1209`); again just before filming, in its light.
 - [ ] Film: the uncut find, follow the mug (or the cup game), several things at once, the network unplugged, a reminder
       (`docs/demo-script.md`). Recording the TV needs `uv run --with playwright playwright install ffmpeg` once.
 - [x] The physical scorecard (`evals/physical.py`), and its numbers in the README and the form text (November 1,
@@ -16,7 +17,8 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [ ] The 30-second clip on X as soon as a take is good (Most Viral counts engagement through November 8): the uncut
       find or the cup game, captions burned in. Keep its link for the form (step 6).
 - [x] Muse Spark live (since October 27, on our billing until the credits come; `docs/going-live.md`).
-- [ ] Any last questions in Discord #questions (November 3 is the last full day for them).
+- [x] Any last questions in Discord #questions (November 3 is the last full day for them): read November 3, the
+      organizers' answers on the video and the repository in `docs/rules.md`.
 
 **On November 4, in this order** (first and last: `uv run python scripts/release_check.py --space`; it lists what's
 left and must end READY TO SUBMIT before the form is sent in step 6, so the [brackets] are filled in step 2: the code pushed and its tests passed on GitHub, every figure, the
@@ -59,7 +61,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
        And the card a shared link shows: paste the Space's link into a new post on X, and don't send it: Andy's card
        (`docs/images/social-card.png`), not Hugging Face's plain one; the same with the GitHub link once its preview is set.
-6. [ ] Submit: the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
+6. [ ] Submit: the team's name (HeyAndy, Inc.), the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 1,700 words on what it is and what's new (`docs/submission.md`: fill its [brackets], the video's link;
        nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`).
 7. [ ] Publish Andy Finder (0.3.0: "Ring it" works with nothing set up; finds with the focus held, the true ray and its own aim check) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
