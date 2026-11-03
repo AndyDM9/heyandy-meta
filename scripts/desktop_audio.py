@@ -7,6 +7,8 @@ none it remembered was there, so the highest priority, the robot's speaker (1009
 --apply adds a silent output at priority 2000 to the running sound server, so the sound falls there instead: no
 restart of the desktop's sound or of Andy, and it's gone at the next login (deploy/audio/ has the lasting version).
 It checks that the sound in use now doesn't move, and that the next place is the silent one, or takes it away again.
+Made with PipeWire's own pw-cli (a node that stays after it exits): made through pactl's module-null-sink, as first
+written, its priority never reached PipeWire (it read 0, and the check took it away again: November 2, night).
 
     uv run python scripts/desktop_audio.py            # where it would go now (read-only)
     uv run python scripts/desktop_audio.py --apply    # the silent place, now; --undo takes it away
@@ -96,13 +98,17 @@ def now(run=subprocess.run) -> tuple[str, str | None, dict]:
     return current, if_gone(outputs, current, history), outputs
 
 
-def module_id(run=subprocess.run) -> str | None:
-    out = run(["pactl", "list", "short", "modules"], capture_output=True, text=True).stdout
-    for line in out.splitlines():
-        cols = line.split("\t")
-        if len(cols) > 2 and cols[1] == "module-null-sink" and f"sink_name={SILENT}" in cols[2]:
-            return cols[0]
+def node_id(run=subprocess.run) -> int | None:
+    """The silent output's node, if it's there."""
+    for o in dump(run):
+        if ((o.get("info") or {}).get("props") or {}).get("node.name") == SILENT:
+            return o.get("id")
     return None
+
+
+PROPS = (f'{{ factory.name=support.null-audio-sink node.name={SILENT} node.description="Desktop fallback (silent)" '
+         f"media.class=Audio/Sink audio.position=[ FL FR ] priority.session={PRIORITY} priority.driver={PRIORITY} "
+         "object.linger=true }")
 
 
 def apply(run=subprocess.run) -> int:
@@ -110,9 +116,7 @@ def apply(run=subprocess.run) -> int:
     if nxt == SILENT:
         print(f"already there: the sound is on {before}; if that goes, {describe(nxt)}")
         return 0
-    props = f'node.description="Desktop fallback (silent)" priority.session={PRIORITY} priority.driver={PRIORITY}'
-    out = run(["pactl", "load-module", "module-null-sink", f"sink_name={SILENT}", f"sink_properties={props}"],
-              capture_output=True, text=True)
+    out = run(["pw-cli", "create-node", "adapter", PROPS], capture_output=True, text=True)
     if out.returncode != 0:
         print(f"the sound system refused it: {out.stderr.strip()[:200]}")
         return 1
@@ -135,11 +139,11 @@ def apply(run=subprocess.run) -> int:
 
 
 def undo(run=subprocess.run) -> int:
-    mid = module_id(run)
-    if mid is None:
+    nid = node_id(run)
+    if nid is None:
         print("nothing to take away")
         return 0
-    run(["pactl", "unload-module", mid], capture_output=True, text=True)
+    run(["pw-cli", "destroy", str(nid)], capture_output=True, text=True)
     print("the silent output is gone")
     return 0
 

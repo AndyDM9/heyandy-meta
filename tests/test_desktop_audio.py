@@ -11,9 +11,9 @@ MONITOR = "alsa_output.pci-0000_01_00.1.hdmi-stereo-extra2"
 ROBOT = "alsa_output.usb-Pollen_Robotics_Reachy_Mini_Audio_1-00.analog-stereo"
 
 
-def sink(name, priority):
-    return {"type": "PipeWire:Interface:Node", "info": {"props": {"media.class": "Audio/Sink", "node.name": name,
-                                                                  "priority.session": priority}}}
+def sink(name, priority, nid=0):
+    return {"id": nid, "type": "PipeWire:Interface:Node",
+            "info": {"props": {"media.class": "Audio/Sink", "node.name": name, "priority.session": priority}}}
 
 
 def defaults(current, chosen=MONITOR):
@@ -43,7 +43,8 @@ def test_the_remembered_list_is_read_newest_first():
 
 
 class Sound:
-    """The sound system, faked: pw-dump's answer, and what pactl does to it."""
+    """The sound system, faked: pw-dump's answer, and what pw-cli does to it (the priority is read from the node's
+    own properties, as PipeWire does: the pactl way, first written, never set it)."""
 
     def __init__(self, misbehave=False):
         self.outputs, self.current, self.misbehave, self.calls = {MONITOR: 616, ROBOT: 1009}, MONITOR, misbehave, []
@@ -51,17 +52,19 @@ class Sound:
     def __call__(self, cmd, **kw):
         self.calls.append(cmd)
         if cmd[0] == "pw-dump":
-            d = [sink(n, p) for n, p in self.outputs.items()] + [defaults(self.current)]
+            d = [sink(n, p, 104 if n == da.SILENT else 50) for n, p in self.outputs.items()] + [defaults(self.current)]
             return NS(returncode=0, stdout=json.dumps(d), stderr="")
-        if cmd[:2] == ["pactl", "load-module"]:
-            self.outputs[da.SILENT] = da.PRIORITY
+        if cmd[:3] == ["pw-cli", "create-node", "adapter"]:
+            import re
+
+            props = cmd[3]
+            assert f"node.name={da.SILENT}" in props and "media.class=Audio/Sink" in props and "object.linger=true" in props
+            self.outputs[da.SILENT] = int(re.search(r"priority\.session=(\d+)", props).group(1))
             if self.misbehave:
                 self.current = da.SILENT  # the sound moved: must be undone at once
-            return NS(returncode=0, stdout="536870913\n", stderr="")
-        if cmd[:4] == ["pactl", "list", "short", "modules"]:
-            rows = f"536870913\tmodule-null-sink\tsink_name={da.SILENT} sink_properties=...\t\n" if da.SILENT in self.outputs else ""
-            return NS(returncode=0, stdout=rows, stderr="")
-        if cmd[:2] == ["pactl", "unload-module"]:
+            return NS(returncode=0, stdout="id: 104\n", stderr="")
+        if cmd[:2] == ["pw-cli", "destroy"]:
+            assert cmd[2] == "104"
             self.outputs.pop(da.SILENT, None)
             self.current = MONITOR
             return NS(returncode=0, stdout="", stderr="")

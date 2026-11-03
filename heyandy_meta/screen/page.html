@@ -936,7 +936,7 @@
     inner.append(el("h2", "Now ask Andy yourself"), askForm(true), tries(true));
     const go_ = el("div", null, "go"), link = (label, href, main) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; if (main) a.className = "main"; go_.append(a); };
     if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO, true);
-    link("Try Andy's eyes on your own things", "eyes.html", !window.HEYANDY_VIDEO);  // Meta's DINOv2, in the browser
+    link("Try Andy's eyes on your own things", "eyes.html?find", !window.HEYANDY_VIDEO);  // Meta's DINOv2, camera first
     link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", false);
     const again = el("button", "Replay the story"); again.onclick = startStory;
     const all = el("button", "Explore every screen"); all.onclick = exploreAll;

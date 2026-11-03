@@ -2128,3 +2128,25 @@ Found and fixed, each with a test:
 - **Checked** (`tests/test_tv_language.py`): a rebound name, another site's origin, no origin, a form, a guessed key, a
   language Andy hasn't, and a body too long are each refused, and nothing changes; the right request switches it; the
   public demo's page carries no key; in a browser, the settings list switches it, and the menu closes.
+
+## 97. A find, shared as a card; and the monitor's jam, really prevented (November 2, night)
+
+- **The card:** a post with a picture travels further than a link, and a find in Andy's eyes (section 92) shared only a
+  line and the address. Now *Share it* shares a card, 1200 by 675 (a post's size), drawn in the page from the find's
+  own numbers: "Andy found my mug.", how alike it was and its colour (86%, 98%), the seconds of the sweep, Meta's
+  DINOv2 in the browser, nothing left the phone, the address. Drawn, never taken from the camera: nothing of the room
+  goes with it. Through the phone's share sheet with the image where the browser can share files; else the link
+  copied and "Save the card". Checked (`tests/test_eyes_page.py`): the shared file is a 1200 by 675 PNG named for the
+  thing, with the line and the address; on a computer the link is copied and the card offered to save. The story's end
+  card now opens Andy's eyes in find mode too, as the front door does.
+- **The jam, really prevented:** with the founder away and the monitor set to sleep, the desktop's sound would fall on
+  the robot's speaker (section 77) and jam it, with nobody to unplug it. Section 84's `--apply` was run, and its own
+  check took it away again: the silent output's priority read 0. Made through pactl's module-null-sink, the priority
+  never reached PipeWire; the fake sound system it was tested against had set it anyway. Now `scripts/desktop_audio.py`
+  makes the node with PipeWire's own `pw-cli create-node` (staying after it exits), and the fake reads the priority
+  from the node's own properties, as PipeWire does. Applied at about 21:15 with no restart: the sound stayed on the monitor,
+  the silent output read priority 2000, and the monitor going would now send the sound there, not to the robot. Gone
+  at the next login; `--undo` takes it away.
+- **Tried, and why not:** test turns played through the monitor's speakers, to time the "heard" note on the robot
+  (section 90): heard as fragments of 1.2 to 1.9 s at the room's level that night (0.038), even louder, and let go; no
+  turn. Left for the founder's own turns; nothing of the room is recorded to find out more.

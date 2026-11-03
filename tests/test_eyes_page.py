@@ -223,3 +223,30 @@ def test_found_offers_the_link_to_share_never_the_photo(site, pw):
         assert not pg.evaluate("document.body.classList.contains('guided')") and pg.errors == []
     finally:
         browser.close()
+
+
+def test_a_find_shares_a_card_of_its_numbers_never_the_photo(site, pw):
+    """Posts with a picture travel further than a link: a find now shares a card (1200 by 675) drawn from its own
+    numbers (how alike, the colour, the seconds), with the link and a line. Never the photo: the card is drawn, not
+    taken from the camera. Where a browser can't share files (a computer), the link is copied and the card saved."""
+    browser, pg = guided_page(pw, site, camera=True)
+    try:
+        pg.wait_for_selector("#stage1 video", timeout=10000)
+        pg.evaluate("""() => { document.getElementById('thing').value = 'mug';
+          navigator.canShare = (d) => !!(d && d.files); navigator.share = async (d) => { window.shared = d; };
+          window.eyesGuide.found({ whole: 0.86, colour: 0.98, box: { x: 0, y: 0, w: 10, h: 10 } }); }""")
+        pg.click("#guideDone button:text('Share it')")
+        pg.wait_for_function("window.shared", timeout=5000)
+        got = pg.evaluate("""async () => { const f = window.shared.files[0], bmp = await createImageBitmap(f);
+          return [window.shared.files.length, f.type, f.name, bmp.width, bmp.height, window.shared.url, window.shared.text] }""")
+        pg.evaluate("""() => { navigator.canShare = undefined; navigator.share = undefined; window.shared = null;
+          navigator.clipboard.writeText = async (t) => { window.copied = t; }; window.eyesGuide.found({ whole: 0.86, colour: 0.98 }); }""")
+        pg.click("#guideDone button:text('Share it')")
+        pg.wait_for_selector("#guideDone a.save", timeout=5000)
+        saved = pg.evaluate("[document.querySelector('#guideDone a.save').download, !!window.copied]")
+        assert pg.errors == []
+    finally:
+        browser.close()
+    assert got[:5] == [1, "image/png", "andy-found-my-mug.png", 1200, 675]
+    assert got[5].endswith("/eyes.html?find") and "found my mug" in got[6]
+    assert saved == ["andy-found-my-mug.png", True]

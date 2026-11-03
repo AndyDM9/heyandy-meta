@@ -292,7 +292,7 @@
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   let T = null, eyes = null, loading = null, thing = null, name = "thing", pick = 1;
   const pics = { 1: null, 2: null };  // the photo in each step, as a canvas (at most 1600 pixels across)
-  let box = null, result = null, shown = 0, guided = false, camOff = null;
+  let box = null, result = null, shown = 0, guided = false, camOff = null, sweptFrom = 0;
 
   // ---- Meta, live: each look, with its seconds ----
   const calls = [];
@@ -560,6 +560,7 @@
     $("answer").hidden = $("tools").hidden = true; $("why").textContent = "";
     pics[2] = null;
     const run = { on: true, warmth: 0, rejected: 0, beat: 0, t0: performance.now(), saidAt: 0 };
+    sweptFrom = run.t0;  // for the card a find can share: how long the sweep took
     sweepLog.length = 0;
     sweeping = { stop: () => { run.on = false; clearTimeout(run.beat); stream.getTracks().forEach((t) => t.stop()); } };
     stop.onclick = () => { stopSweep(); if (guided) return guideStop(); empty(2); $("said").textContent = ""; };
@@ -691,6 +692,45 @@
     guideShow(2, `Now sweep the room for your ${name}`);
     sweep();
   }
+  // The card a find shares: drawn here from the find's own numbers (how alike, the colour, the seconds), never from the
+  // photo, so nothing of the room goes with it; 1200 by 675, the size a post shows whole.
+  async function findCard(numbers) {
+    await document.fonts?.ready;
+    const c = document.createElement("canvas"); c.width = 1200; c.height = 675;
+    const g = c.getContext("2d"), W = c.width, H = c.height;
+    const sky = g.createRadialGradient(W * 0.82, H * 0.3, 40, W * 0.6, H * 0.5, W * 0.85);
+    sky.addColorStop(0, "#1e5f4a"); sky.addColorStop(0.6, "#12241d"); sky.addColorStop(1, "#0b110f");
+    g.fillStyle = sky; g.fillRect(0, 0, W, H);
+    const round = (x, y, w, h, r) => { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); };
+    round(842, 150, 280, 155, 77.5); g.fillStyle = "#f5f3ef"; g.fill();  // Andy's face, as on its TV
+    g.fillStyle = "#0b110f";
+    for (const x of [918, 1046]) { g.beginPath(); g.ellipse(x, 230, 14, 28, 0, 0, Math.PI * 2); g.fill(); }
+    g.strokeStyle = "#ffcf5c"; g.lineWidth = 6; round(872, 352, 220, 150, 26); g.stroke();  // the spotlight's frame
+    g.fillStyle = "#ffcf5c"; g.font = '800 30px "Atkinson Next", sans-serif'; g.textAlign = "center";
+    g.fillText(`my ${numbers.name}`, 982, 438); g.textAlign = "left";
+    g.fillStyle = "#f5f3ef"; g.font = '800 74px "Atkinson Next", sans-serif'; g.fillText("Andy found", 72, 168);
+    g.fillStyle = "#ffcf5c";
+    let size = 74; const what = `my ${numbers.name}.`;
+    do { g.font = `800 ${size}px "Atkinson Next", sans-serif`; size -= 4; } while (g.measureText(what).width > 700 && size > 34);
+    g.fillText(what, 72, 252);
+    g.fillStyle = "rgba(245,243,239,0.84)"; g.font = '400 30px "Atkinson Next", sans-serif';
+    g.fillText("Meta's DINOv2, in my phone's browser.", 72, 322);
+    g.fillText("Nothing left my phone.", 72, 362);
+    const stats = [[`${numbers.alike}%`, "like the one I showed it"], [`${numbers.colour}%`, "the same colour"]];
+    if (numbers.seconds) stats.push([`${numbers.seconds} s`, "sweeping the room"]);
+    stats.forEach(([big, small], i) => {
+      const x = 72 + i * 245;
+      g.fillStyle = "#ffcf5c"; g.fillRect(x, 430, 200, 4);
+      g.fillStyle = "#f5f3ef"; g.font = '700 54px "Atkinson Mono", monospace'; g.fillText(big, x, 500);
+      g.fillStyle = "#cfe3d9"; g.font = '400 22px "Atkinson Next", sans-serif'; g.fillText(small, x, 534);
+    });
+    g.fillStyle = "#9fb8ad"; g.font = '700 24px "Atkinson Next", sans-serif';
+    g.fillText(location.host + location.pathname.replace(/eyes\.html$/, ""), 72, 620);
+    g.textAlign = "right"; g.font = '400 22px "Atkinson Next", sans-serif';
+    g.fillText("HeyAndy · built on Meta's open models", W - 72, 620);
+    return new Promise(r => c.toBlob(b => r(b), "image/png"));
+  }
+  window.eyesCard = findCard;  // for the tests
   function guideFound() {
     guideShow(2, `Found: your ${name}`); $("s2").classList.add("now"); document.body.classList.add("found");
     document.body.style.setProperty("--warmth", "0");
@@ -698,9 +738,21 @@
     share.className = "main"; story.href = "./?story";
     const url = location.origin + location.pathname + "?find";
     const text = `Andy just found my ${name} with my phone's camera: Meta's DINOv2, running in the browser. Nothing left my phone.`;
-    share.onclick = async () => {  // the link and a line, never the photo
-      try { if (navigator.share) { await navigator.share({ title: "Andy's eyes", text, url }); return; } } catch (e) { if (e.name === "AbortError") return; }
+    const cand = result?.candidates?.[shown];
+    const numbers = { name, alike: cand ? Math.round(100 * cand.whole) : null, colour: cand ? Math.round(100 * cand.colour) : null,
+                      seconds: sweptFrom ? Math.round((performance.now() - sweptFrom) / 1000) : null };
+    const card = numbers.alike != null ? findCard(numbers) : Promise.resolve(null);  // made while the find is admired
+    share.onclick = async () => {  // the card, the link and a line: never the photo
+      const blob = await card.catch(() => null), file = blob && new File([blob], `andy-found-my-${name}.png`, { type: "image/png" });
+      try {
+        if (file && navigator.canShare?.({ files: [file] })) { await navigator.share({ title: "Andy's eyes", text, url, files: [file] }); return; }
+        if (navigator.share) { await navigator.share({ title: "Andy's eyes", text, url }); return; }
+      } catch (e) { if (e.name === "AbortError") return; }
       try { await navigator.clipboard.writeText(`${text} ${url}`); share.textContent = "Link copied"; } catch (e) { share.textContent = url; }
+      if (file && !done.querySelector("a.save")) {  // no sharing here (a computer): the card, to save and post
+        const save = el("a", "Save the card", "save"); save.href = URL.createObjectURL(blob); save.download = file.name;
+        done.insertBefore(save, again);
+      }
     };
     again.onclick = () => guide();
     done.replaceChildren(share, again, story); done.hidden = false; share.focus({ preventScroll: true });
@@ -715,7 +767,8 @@
     if (ours) (async () => { await $("ours1").onclick(); if (thing) await $("ours2").onclick(); })();
     $("go").focus({ preventScroll: true });
   }
-  window.eyesGuide = { found: () => { name = named(); guideFound(); } };  // for the tests: the share sheet without a model
+  window.eyesGuide = { found: (cand) => {  // for the tests: the share sheet without a model (a find's numbers, if given)
+    name = named(); if (cand) { result = { candidates: [cand] }; shown = 0; } guideFound(); } };
   $("go").onclick = () => guide();
   $("guideClose").onclick = () => guideStop();
   $("guideCup").onclick = () => guideStop("", true);
