@@ -548,3 +548,49 @@ def test_a_scene_asked_for_or_picked_is_said_in_andys_voice_and_the_story_keeps_
     assert idle == 0
     assert asked == ["scene-memory.mp3", "scene-finding.mp3", "scene-found.mp3"]
     assert off == [3, "Andy's voice: off"]
+
+
+def test_the_story_ends_with_andy_saying_its_your_turn_and_three_ways_on(browser):
+    """November 2: the story's end card offered thirteen things at once, Andy gone and nothing to share, its figures
+    written into the page. Now "Your turn": Andy's face and its closing words (said in its voice when the story was told
+    in it), the figures read from the scorecards, three ways on (Andy's eyes first), and a link to share."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    init = """window.HEYANDY_FIGURES = [['250 of 253', 'searches on the robot ended in a point']];
+              window.HEYANDY_NARRATION = { "Your turn": { text: "That's me.", file: "voice/story-11.mp3", seconds: 3.3 } };
+              window.played = []; const A = window.Audio; window.Audio = function (src) { window.played.push(String(src).split('/').pop()); return new A(src); };"""
+    try:
+        seen = {}
+        for width, height in ((1440, 900), (1366, 680), (390, 844)):
+            page = browser.new_page(viewport={"width": width, "height": height})
+            page.add_init_script(init)
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/?story")
+            page.wait_for_selector("#story", timeout=10000)
+            page.evaluate("endCard()")
+            page.wait_for_selector("#end .way.main", timeout=3000)
+            seen[width] = page.evaluate("""() => { const e = document.getElementById('end'), main = e.querySelector('.way.main');
+              e.scrollTo(0, 0);
+              return { bubble: e.querySelector('.bubble').textContent, ways: [...e.querySelectorAll('.way b')].map(b => b.textContent),
+                       main: main.getAttribute('href'), figs: [...e.querySelectorAll('.figs b')].map(b => b.textContent),
+                       share: !![...e.querySelectorAll('.go button')].find(b => b.textContent === 'Share Andy'),
+                       top: e.querySelector('.sig').getBoundingClientRect().top, played: window.played.slice(-1),
+                       gear: getComputedStyle(document.getElementById('gear')).display, wide: document.documentElement.scrollWidth > innerWidth } }""")
+            page.hover("#end .way.main")
+            seen[width]["hover"] = page.evaluate("getComputedStyle(document.querySelector('#end .way.main')).backgroundColor")
+            page.close()
+    finally:
+        server.shutdown()
+    for width, s in seen.items():
+        assert s["bubble"] == "That's me. Now it's your turn: show me something of yours."
+        assert s["ways"][:2] == ["Find something of yours →", "Ask Andy"] and s["main"] == "eyes.html?find"
+        assert s["figs"] == ["250 of 253"] and s["share"] and s["gear"] == "none" and not s["wide"]
+        assert s["top"] >= 0, width  # its top on the screen, even when it's taller (it scrolls)
+        assert s["hover"] == "rgb(255, 220, 138)"  # the main way stays gold under a mouse
+        assert s["played"] == ["story-11.mp3"]  # Andy's closing words, in its voice

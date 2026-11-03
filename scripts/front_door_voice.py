@@ -48,6 +48,7 @@ STORY = {
     "Before you go": "Going out? I point at what you'd leave behind, and Muse Spark checks whether you'll need an umbrella.",
     "Your language": "I hear and speak fifteen languages. Muse Glimmer translates, on the computer beside me.",
     "What it never does": "And what I never do: your pictures and voice stay home, I give no health advice, and I say I'm an AI.",
+    "Your turn": "That's me. Now it's your turn: show me something of yours.",  # the end card, after the last chapter
 }
 
 

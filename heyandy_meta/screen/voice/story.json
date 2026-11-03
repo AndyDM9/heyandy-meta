@@ -77,6 +77,13 @@
    "file": "voice/story-10.mp3",
    "heard back": 1.0,
    "sha256": "9cc65ba0055f3d6498c707be1c87321a19da435eab9928c769f412d384b2ce00"
+  },
+  "Your turn": {
+   "text": "That's me. Now it's your turn: show me something of yours.",
+   "seconds": 3.26,
+   "file": "voice/story-11.mp3",
+   "heard back": 1.0,
+   "sha256": "7f0802f282d60ecd0a9e62b00bda195391cbe7d89c204f61ab32f2ffb781f713"
   }
  }
 }

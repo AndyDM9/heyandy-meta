@@ -51,4 +51,4 @@ def test_the_space_builds_it_and_the_front_door_and_end_card_link_to_it():
     assert "proof.html" in build_static_space.SHARED
     page = (ROOT / "heyandy_meta" / "screen" / "page.html").read_text()
     assert 'el("a", "Every number, measured"); m.href = "proof.html"' in page
-    assert 'link("See every measurement", "proof.html", false)' in page
+    assert "Every number, measured →" in page and "proof.html" in page

@@ -314,8 +314,7 @@
   .tries button { font: inherit; font-size: 1.1rem; padding: 0.25rem 0.8rem; border-radius: 99rem; cursor: pointer;
                   background: none; color: var(--ink); border: 0.12rem dashed var(--muted); }
   .tries.dark button { color: #F5F3EF; border-color: rgba(245, 243, 239, 0.4); font-size: 1.35rem; padding: 0.5rem 1.1rem; }
-  #end h2 { margin: 0 0 1rem; font-size: 2.2rem; } #end form.ask { font-size: 1.6rem; margin-bottom: 1rem; max-width: 60rem; }
-  #end form.ask input { font-size: 1.6rem; padding: 0.8rem 1.3rem; } #end .tries { margin-bottom: 2.4rem; }
+  #end form.ask input { font-size: 1.4rem; padding: 0.7rem 1.1rem; }
   #demo b { color: rgba(245, 243, 239, 0.7); font-weight: 600; margin: 0 0.4rem; white-space: nowrap; }
   #demo button { font: inherit; white-space: nowrap; color: #F5F3EF; background: none; border: 0.12rem solid rgba(245, 243, 239, 0.35);
                  border-radius: 99rem; padding: 0.2rem 0.8rem; cursor: pointer; }
@@ -430,15 +429,37 @@
            background: rgba(245, 243, 239, 0.1); border: 0.12rem solid rgba(245, 243, 239, 0.35); border-radius: 99rem;
            padding: 0.75rem 1.4rem; text-decoration: none; }
   #story button:hover, #end a:hover, #end button:hover { background: rgba(245, 243, 239, 0.2); }
-  #end { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 8; display: grid; place-items: center;
+  #end { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 8; display: flex; overflow-y: auto; padding: 2.4rem 0;
          background: radial-gradient(ellipse at 70% 30%, #1d2a24, #070a09 70%); color: #F5F3EF; animation: rv-in 0.6s ease-out; }
-  #end .in { width: min(110rem, 88vw); }
+  #end .in { width: min(110rem, 88vw); margin: auto; }  /* centred when it fits, from its top when it's taller */
   #end .sig { height: 3rem; width: auto; color: #F5F3EF; opacity: 0.9; }
-  #end h1 { margin: 2.2rem 0 1rem; font-size: 7.4rem; font-weight: 800; line-height: 0.98; letter-spacing: -0.03em; }
+  #end h1 { margin: 0; font-size: clamp(4.2rem, 4.6vw, 6.4rem); font-weight: 800; line-height: 0.98; letter-spacing: -0.03em; }
   #end h1 em { font-style: normal; color: var(--outline); }
-  #end .proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin: 2.8rem 0 3.4rem; }
-  #end .proof div { border-top: 0.2rem solid var(--outline); padding-top: 1.1rem; font-size: 1.6rem; color: rgba(245, 243, 239, 0.8); }
-  #end .proof b { display: block; font-size: 2.3rem; color: #F5F3EF; margin-bottom: 0.4rem; }
+  #end .head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4rem; align-items: center; margin: 2.4rem 0 2.6rem; }
+  #end .andy { display: grid; justify-items: center; gap: 1.6rem; width: 24rem; }
+  #end .andy .face { width: 20rem; height: auto; color: #F5F3EF; overflow: visible; animation: breathe 6s ease-in-out infinite; }
+  #end .andy .eye { fill: #0f1814; }
+  #end .bubble { position: relative; margin: 0; padding: 1.1rem 1.5rem; border-radius: 1.5rem; background: var(--outline);
+                 color: #0f1814; font-size: 1.6rem; font-weight: 750; line-height: 1.3; text-align: center; }
+  #end .bubble::before { content: ""; position: absolute; top: -0.8rem; left: calc(50% - 0.8rem); width: 1.6rem; height: 1.6rem;
+                         background: var(--outline); transform: rotate(45deg); border-radius: 0.2rem; }
+  #end .figs { list-style: none; padding: 0; margin: 2.2rem 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.4rem; }
+  #end .figs li { border-top: 0.2rem solid var(--outline); padding-top: 0.9rem; font-size: 1.45rem; color: rgba(245, 243, 239, 0.8); }
+  #end .figs b { display: block; font: 700 2.8rem/1 "Atkinson Mono", monospace; color: #F5F3EF; margin-bottom: 0.4rem; }
+  #end .ways { display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 1.6rem; margin-bottom: 2.2rem; }
+  #end .way { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.8rem 2rem; border-radius: 1.8rem; text-decoration: none;
+              background: rgba(245, 243, 239, 0.07); border: 0.12rem solid rgba(245, 243, 239, 0.22); color: #F5F3EF; }
+  #end a.way:hover { background: rgba(245, 243, 239, 0.14); }
+  #end a.way.main:hover { background: #ffdc8a; }  /* the main way stays gold under a mouse: its dark words on it */
+  #end a.way:focus-visible { outline: 0.3rem solid #F5F3EF; outline-offset: 0.3rem; }
+  #end .way b { font-size: 2.3rem; line-height: 1.1; } #end .way span { font-size: 1.35rem; line-height: 1.4; color: rgba(245, 243, 239, 0.78); }
+  #end:focus { outline: none; }
+  #end .way.main { background: var(--outline); border-color: var(--outline); color: #070a09; justify-content: center; }
+  #end .way.main b { font-size: 2.8rem; } #end .way.main span { color: #23302a; }
+  #end .way.ask form.ask { font-size: 1.35rem; margin: 0.6rem 0 0.2rem; } #end .way.ask .tries { margin: 0; }
+  #end .way.ask .tries button { font-size: 1.15rem; }
+  #end .go .share { background: rgba(245, 243, 239, 0.16); font-weight: 800; }
+  body.ended #gear, body.ended #menu { display: none; }
   #end .go { display: flex; flex-wrap: wrap; gap: 1rem; }
   #end .go .main { background: var(--outline); color: #070a09; border-color: var(--outline); font-weight: 800; }
   #end small { display: block; margin-top: 2.4rem; font-size: 1.3rem; color: rgba(245, 243, 239, 0.55); }
@@ -457,10 +478,14 @@
     body.storying .stage { transform: none; }
     body.exploring { height: auto; min-height: 100vh; overflow-y: auto; } body.exploring .stage { transform: none; }
     body.exploring #demo { position: relative; padding: 3vw 4vw; }
-    #end { overflow-y: auto; place-items: start center; padding: 10vw 0; }
+    #end { padding: 8vw 0; }
     #end .in { width: 88vw; } #end .sig { height: 6vw; } #end h1 { font-size: 10vw; margin-top: 5vw; }
-    #end .proof { grid-template-columns: 1fr; gap: 4vw; margin: 6vw 0; }
-    #end .proof div { font-size: 3.8vw; } #end .proof b { font-size: 5vw; }
+    #end .head { grid-template-columns: 1fr; gap: 5vw; margin: 4vw 0 6vw; } #end .andy { width: auto; }
+    #end .andy .face { width: 34vw; } #end .bubble { font-size: 4vw; }
+    #end .figs { grid-template-columns: 1fr; gap: 3vw; } #end .figs li { font-size: 3.6vw; display: grid; grid-template-columns: max-content 1fr; gap: 3vw; align-items: baseline; }
+    #end .figs b { font-size: 5.4vw; margin: 0; white-space: nowrap; }
+    #end .ways { grid-template-columns: 1fr; gap: 3vw; } #end .way { padding: 5vw; } #end .way b { font-size: 5.4vw; }
+    #end .way.main b { font-size: 6.2vw; } #end .way span { font-size: 3.6vw; }
     #end .go { gap: 2.5vw; } #end small { font-size: 3vw; margin-top: 5vw; }
     html #reveal .words { left: 6vw; right: 6vw; bottom: 9vw; } html #reveal .kick { font-size: 3vw; }
     html #reveal h1, html #reveal h1.long { font-size: 13vw; max-width: none; } html #reveal .nums { gap: 6vw; }
@@ -894,6 +919,7 @@
       .catch(() => { telling = null; if (b) { b.textContent = "▶ Hear Andy tell it"; b.setAttribute("aria-pressed", "false"); } });
   }
   function startStory() {
+    document.body.classList.remove("ended");
     $("demo").hidden = true; document.body.classList.remove("exploring");
     document.getElementById("end")?.remove(); document.body.classList.add("storying");
     story = { at: 0, since: Date.now(), paused: false, left: 0 };
@@ -952,34 +978,64 @@
     if (story) requestAnimationFrame(storyTick);
   }
   function exploreAll() {
+    document.body.classList.remove("ended");
     clip(false); hush();
     story = null; $("story")?.remove(); document.getElementById("end")?.remove(); document.body.classList.remove("storying");
     chosen = null; pictureKey = ""; demoBar();
   }
   function endCard() {
+    // Your turn: the story's end, where a visitor is most likely to try Andy, ask it something or pass it on. Andy says
+    // so itself (its own voice, when the story was told in it), then three ways on, the first its eyes on your own
+    // things; a link to share; its figures read from the scorecards when the Space was built (window.HEYANDY_FIGURES).
     hush(); story = null; $("story")?.remove(); document.getElementById("reveal")?.remove(); document.body.classList.remove("storying");
-    const end = el("div"); end.id = "end"; end.setAttribute("role", "dialog"); end.setAttribute("aria-label", "Andy, in one minute");
+    document.body.classList.add("ended");
+    const end = el("div"); end.id = "end"; end.setAttribute("role", "dialog"); end.setAttribute("aria-labelledby", "end-title");
     const inner = el("div", null, "in"), sig = document.querySelector("header .brand")?.cloneNode(true);
     if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }
-    const h1 = el("h1"); h1.append("Andy finds what you've lost. ", el("em", "Every model it runs is Meta's.")); inner.append(h1);
-    const proof = el("div", null, "proof");
-    for (const [b, d] of [["On the robot", "Unattended searches ended in a point 250 times in 253, the latest within 2 degrees; its own camera checks every point."],
-                          ["Private by design", "The camera and microphone reach only Meta's open models on the computer beside it."],
-                          ["Eleven Meta models", "SAM 3.1, Muse Glimmer, MapAnything, V‑JEPA 2, DINOv2, Omnilingual ASR, SeamlessM4T v2, Llama Guard 3, Prompt Guard 2, Muse Spark, Muse Image."]]) {
-      const x = el("div", d); x.prepend(el("b", b)); proof.append(x);
+    const head = el("div", null, "head"), andy = el("div", null, "andy"), face = document.querySelector("#ambient .face").cloneNode(true);
+    face.setAttribute("aria-hidden", "true");
+    const bubble = el("p", "That's me. Now it's your turn: show me something of yours.", "bubble");
+    andy.append(face, bubble);
+    const words = el("div"), h1 = el("h1"); h1.id = "end-title";
+    h1.append("Andy finds what you've lost. ", el("em", "Every model it runs is Meta's."));
+    words.append(h1);
+    if (window.HEYANDY_FIGURES) {
+      const figs = el("ul", null, "figs"); figs.setAttribute("aria-label", "Measured");
+      for (const [big, small] of window.HEYANDY_FIGURES) { const li = el("li", " " + small); li.prepend(el("b", big)); figs.append(li); }
+      words.append(figs);
     }
-    inner.append(proof);
-    inner.append(el("h2", "Now ask Andy yourself"), askForm(true), tries(true));
-    const go_ = el("div", null, "go"), link = (label, href, main) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; if (main) a.className = "main"; go_.append(a); };
-    if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO, true);
-    link("Try Andy's eyes on your own things", "eyes.html?find", !window.HEYANDY_VIDEO);  // Meta's DINOv2, camera first
-    if (window.HEYANDY_STATIC) link("See every measurement", "proof.html", false);
-    link("See how it's built", "https://github.com/AndyDM9/heyandy-meta", false);
+    head.append(andy, words); inner.append(head);
+    const ways = el("div", null, "ways");
+    const tile = (cls, title, line, href) => {
+      const t = el(href ? "a" : "div", null, "way " + cls);
+      if (href) { t.href = href; }
+      t.append(el("b", title), el("span", line)); ways.append(t); return t;
+    };
+    tile("main", "Find something of yours →", "Your phone's camera and Meta's DINOv2, in your browser: nothing leaves it.", "eyes.html?find");
+    const ask = tile("ask", "Ask Andy", "Type or say it, in any of its fifteen languages.");
+    ask.append(askForm(true), tries(true));
+    if (window.HEYANDY_VIDEO) tile("", "Watch the 3-minute video →", "Andy on the table, finding things, uncut.", window.HEYANDY_VIDEO);
+    else if (window.HEYANDY_STATIC) tile("", "Every number, measured →", "Every scorecard: its result, how to run it again, its file.", "proof.html");
+    inner.append(ways);
+    const more = el("div", null, "go"), url = location.origin + location.pathname.replace(/index\.html$/, "");
+    const share = el("button", "Share Andy"); share.className = "share";
+    share.onclick = async () => {  // the demo's address and a line; nothing else
+      const text = "Andy: a tabletop robot that finds what you've lost and points at it, built on Meta's open models. Try its eyes on your own things:";
+      try { if (navigator.share) { await navigator.share({ title: "Andy", text, url }); return; } } catch (e) { if (e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(`${text} ${url}`); share.textContent = "Link copied"; } catch (e) { share.textContent = url; }
+    };
+    more.append(share);
     const again = el("button", "Replay the story"); again.onclick = startStory;
     const all = el("button", "Explore every screen"); all.onclick = exploreAll;
-    go_.append(again, all); inner.append(go_);
+    more.append(again, all);
+    if (window.HEYANDY_STATIC && window.HEYANDY_VIDEO) { const m = el("a", "See every measurement"); m.href = "proof.html"; more.append(m); }
+    const gh = el("a", "See how it's built"); gh.href = "https://github.com/AndyDM9/heyandy-meta"; gh.target = "_blank"; gh.rel = "noopener";
+    more.append(gh); inner.append(more);
     inner.append(el("small", "Sample data: no robot, camera or home here; the pictures are drawn. Built by HeyAndy, Inc. during Meta's hackathon (October 26 to November 4, 2026); our own earlier object-finding prototype is kept outside this code. Andy gives no health advice."));
     end.append(inner); document.body.append(end);
+    const closing = narrate && NARRATION && NARRATION["Your turn"];  // Andy's own voice, when the story was told in it
+    if (closing) { telling = new Audio(closing.file); telling.play().catch(() => { telling = null; }); }
+    end.tabIndex = -1; end.focus({ preventScroll: true });  // focus in the ending (Tab: its first way), no ring for a mouse
   }
   // The front door: the public demo's first screen, before the story (a link that names a scene, asks Andy, explores
   // or asks for the story itself, ?story, goes straight there). One thing to try first, Andy's eyes on your own things,

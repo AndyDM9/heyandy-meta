@@ -2230,3 +2230,26 @@ Found and fixed, each with a test:
   round, a pick and a find are said in order, and nothing once the voice is off (`tests/test_page_runs.py`); on 390 and
   360-pixel phones the bar's new button is 44 pixels tall with nothing wider than the screen. The accessibility audit
   again (`accessibility-20261102-2231`): no axe violation in 66 states, none of 1,537 texts below AA.
+
+## 102. The story's end: "your turn" (November 2, night)
+
+- **Why:** a visitor who watched the whole story is the likeliest to try Andy, ask it something or pass it on, and
+  its end card offered thirteen things at once (an ask box, a microphone, six suggestions, five buttons) with nothing
+  first; Andy itself was gone from the end of a story it had just told; there was nothing to share; and its figures
+  were written into the page ("250 times in 253, the latest within 2 degrees"), where `scripts/claims.py` never looks.
+- **Now** (`page.html` endCard): Andy's face and its closing words, "That's me. Now it's your turn: show me something
+  of yours.", said in its own voice when the story was told in it (a twelfth clip, heard back at 1.00); the headline;
+  the figures read from the scorecards when the Space is built (the front door's); three ways on, as tiles: *Find
+  something of yours* first (Andy's eyes in find mode), *Ask Andy* (the ask box and its suggestions inside it), and
+  *Every number, measured* (or the 3-minute video, once the Space is built with it); then a quiet row: *Share Andy*
+  (the system's share sheet, or the link copied: the address and a line), replay the story, explore every screen,
+  how it's built. Taller than the window, it scrolls from its top (it was centred and cut at both ends); the settings
+  gear no longer shows over it.
+- **Found while checking:** under a mouse, the gold main way turned dark with dark words on it (a general hover rule
+  outranked it): it stays gold now. And focus starts in the ending, so its first Tab is the main way, with no ring
+  drawn for a mouse.
+- **Checked** (`tests/test_page_runs.py`): at 1440 by 900, 1366 by 680 and on a 390-pixel phone, the closing words,
+  the ways in order with Andy's eyes first, the figures read, *Share Andy*, its top on the screen, the main way gold
+  under a mouse, Andy's closing words played, no settings gear, nothing wider than the screen; the accessibility audit's
+  end card: no violation at either width; the whole demo again (`accessibility-20261102-2306`): no axe violation in 66
+  states, none of 1,543 texts below AA.
