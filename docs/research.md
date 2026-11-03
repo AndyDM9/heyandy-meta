@@ -2505,3 +2505,12 @@ Found and fixed, each with a test:
   a test draws four names, three crowded, and checks no two boxes meet). The last caption that stays on screen was by
   design: the TV turns to Andy's face after a quiet minute, and in filming mode stays on what Andy last did. The
   accessibility audit again (`accessibility-20261103-1543`): no axe violation, none of 1,577 texts below AA.
+  The help ("What can I ask Andy?") was taller than a TV and centred, so cut at both ends, and in the public demo its
+  title was under the band of buttons: it now starts below the band and scrolls (a browser test, TV and phone size).
+- **One failed read is not a stopped microphone** (November 3, 16:45). The evening's watch saw Andy's log say its
+  microphones and speaker had stopped: one read of a voice's direction (of about 200 in the 20 s look) had failed with
+  an I/O error, the next answered, no USB error in the kernel's log, and Andy went on hearing; 20 s later it said
+  they answered again. But for those 20 s its TV showed the trouble line with the fix, which a take would have
+  filmed. November 2's real fault failed every read. Trouble now is five or more failed reads in one look, or
+  failures look after look (a dead control while Andy talks through most of a look); one alone is only logged
+  (`robot/audio_watch.py`, a test replays both).

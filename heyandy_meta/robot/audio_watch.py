@@ -63,6 +63,9 @@ def faults(kernel_log: str, where: str) -> int:
     return sum(1 for line in kernel_log.splitlines() if f"usb {where}:" in line and any(f in line for f in FAULTS))
 
 
+DOA_FAILED = 5  # failed direction reads in one look (of about 200) that are trouble at once
+
+
 class AudioWatch:
     def __init__(self, body, on_change=None, run=subprocess.run, clock=time.time, every_s: float = 20.0,
                  silent_s: float = 10.0, grace_s: float = 30.0, where: str | None = None):
@@ -73,6 +76,7 @@ class AudioWatch:
         self.grace_until = self.started + grace_s  # the microphones' first sound comes a few seconds after a start
         self._since = self.started
         self._doa = getattr(body, "doa_failures", 0)
+        self._doa_before = 0  # direction reads that failed in the look before this one
         self.trouble: str | None = None  # what's wrong, in words, while it is
         self.unread = 0  # looks at the kernel's log that couldn't be read
 
@@ -105,8 +109,16 @@ class AudioWatch:
             problems.append(f"no sound from the microphones for {int(now - (last or self.started))} s")
         failed = getattr(self.body, "doa_failures", 0) - self._doa
         self._doa += failed
-        if failed:
+        # The direction is read about every 100 ms while Andy isn't speaking: on November 2, with the array's USB
+        # control dead, every read failed. On November 3 at 16:45 one read of about 200 failed and the next answered,
+        # but the TV said the microphones had stopped, with the fix, for 20 s. Trouble now is several in one look, or
+        # failures look after look (a dead control while Andy talks for most of a look); one alone is only logged.
+        if failed >= DOA_FAILED or (failed and self._doa_before):
             problems.append(f"{failed} reads of a voice's direction failed")
+        elif failed:
+            print(f"{failed} read{'s' if failed > 1 else ''} of a voice's direction failed, the rest answered: not taken "
+                  "for trouble unless it goes on", flush=True)
+        self._doa_before = failed
         text = (f"My microphones and speaker stopped answering ({'; '.join(problems)}). Fix: {FIX}"
                 if problems else None)
         if text != self.trouble:

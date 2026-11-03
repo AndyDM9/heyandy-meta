@@ -98,3 +98,31 @@ def test_a_kernel_log_that_cant_be_read_is_said_once_and_never_taken_for_no_erro
         clock.t += 5
         watch._kernel(clock.t)
     assert watch.unread == 3 and capsys.readouterr().out.count("can't read the kernel's log") == 1
+
+
+def test_one_failed_direction_read_is_logged_but_not_put_on_the_tv_unless_it_goes_on(capsys):
+    """November 3, 16:45: one read of a voice's direction failed (EIO) and the next answered; the TV said the
+    microphones had stopped, with the fix, for 20 s, and Andy went on hearing. A take would have shown it."""
+    clock, (run, _) = Clock(), kernel()
+    body, shown = ears(), []
+    watch = AudioWatch(body, shown.append, run=run, clock=clock, where="1-5.2.1")
+    clock.t += 40
+    body._raw.append((clock.t, 0, None))
+    body.doa_failures = 1
+    assert watch.check() is None and shown == []  # one alone: only logged
+    assert "1 read of a voice's direction failed, the rest answered" in capsys.readouterr().out
+    clock.t += 20
+    body._raw.append((clock.t, 0, None))
+    assert watch.check() is None  # the next look all answered
+    clock.t += 20
+    body._raw.append((clock.t, 0, None))
+    body.doa_failures = 2
+    assert watch.check() is None  # one again, a look apart: still a blip
+    clock.t += 20
+    body._raw.append((clock.t, 0, None))
+    body.doa_failures = 3
+    assert "1 reads of a voice's direction failed" in watch.check()  # failing look after look: trouble
+    clock.t += 20
+    body._raw.append((clock.t, 0, None))
+    body.doa_failures = 3 + 5
+    assert "5 reads of a voice's direction failed" in watch.check()  # several in one look: trouble at once
