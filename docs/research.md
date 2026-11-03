@@ -2023,3 +2023,24 @@ Found and fixed, each with a test:
   starts the story (`tests/test_page_runs.py`). The accessibility audit (`evals/accessibility.py`) has the door as a
   state of its own: no axe violation and no text below WCAG AA contrast, measured from the pixels, at both widths; the
   whole demo again with it (`accessibility-20261102-1908`): no axe violation in 58 states, none of 1,220 texts below AA.
+
+## 92. Find mode: Andy's eyes, the whole screen, camera first (November 2, evening)
+
+- **Why:** the front door (section 91) sends every visitor to Andy's eyes, and on a phone that page was a long document:
+  two stacked panels, six buttons, and the live sweep, the part that feels like magic, below the fold; the shutter was
+  a small "Take it" under a preview the size of a card; and nothing came after a find but the page.
+- **Now** (`heyandy_meta/screen/eyes.html`, `?find`, or "Find something now, full screen"): the same two steps and the
+  same code (look, find, the sweep and its closer look, measured in sections 53 and 56), shown one at a time, each the
+  whole screen. 1: the camera opens at once, a gold frame to fill and a round shutter at the bottom, under a thumb;
+  chips say what it is (mug, keys, glasses...), so no keyboard comes up; what's in the frame is the box DINOv2 learns
+  (the frame mapped through the camera's crop to its own pixels); Andy's face waits while DINOv2 loads, prefetched
+  while you frame it. 2: the sweep fills the screen, and the screen's edge glows gold, brighter as Andy gets warmer
+  (the same warmth as the tone and the meter); its words large over the camera. Found: the spotlight and the robot's
+  "found" sound, then *Share it* (the system's share sheet, or the link copied: a line and the address, never the
+  photo), *Find something else*, *See the robot*. No camera, no model: back to the page, which says what to do.
+- **Checked:** with the real model and a fake camera showing our museum cup (`evals/eyes_live.py`'s camera, at a phone's
+  width): viewfinder, shutter, learned, the sweep, "There's your cup.", the share sheet, with no script error; without
+  a network (`tests/test_eyes_page.py`): the shutter is 64 px or more, near the bottom and focused, the viewfinder fills
+  the screen with no sideways scroll, and a model that can't load says so on the page; without a camera, the page says
+  what to do; the share copies a line and the address, nothing else. The accessibility audit again
+  (`accessibility-20261102-1956`): no axe violation in 58 states, none of 1,222 texts below AA.

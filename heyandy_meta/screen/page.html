@@ -893,7 +893,7 @@
     if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }
     const pitch = el("div", null, "pitch"), h1 = el("h1");
     h1.id = "w-title"; h1.append("Lost something? ", el("em", "Andy points at it."));
-    const cta = el("a", "Find something of yours ", "cta"); cta.href = "eyes.html";
+    const cta = el("a", "Find something of yours ", "cta"); cta.href = "eyes.html?find";  // straight to the camera
     const arrow = el("span", "→"); arrow.setAttribute("aria-hidden", "true"); cta.append(arrow);
     pitch.append(h1, el("p", "A tabletop robot that finds your things and points at them, built on Meta's open models. " +
                               "The pictures of your home and your voice never leave it.", "lede"),

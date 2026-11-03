@@ -1,0 +1,486 @@
+{
+ "when": "2026-11-02 19:56",
+ "axe": "axe-core@4.10.2",
+ "tags": [
+  "wcag2a",
+  "wcag2aa",
+  "wcag21a",
+  "wcag21aa",
+  "wcag22aa",
+  "best-practice"
+ ],
+ "summary": {
+  "pages and states": 58,
+  "with an axe violation": 0,
+  "rules violated": [],
+  "texts measured from pixels": 1222,
+  "texts below WCAG AA contrast": 0,
+  "below, distinct": []
+ },
+ "states": [
+  {
+   "state": "welcome",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 34,
+   "contrast measured": 13,
+   "contrast too low": []
+  },
+  {
+   "state": "welcome",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 34,
+   "contrast measured": 13,
+   "contrast too low": []
+  },
+  {
+   "state": "story",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 37,
+   "contrast measured": 15,
+   "contrast too low": []
+  },
+  {
+   "state": "story",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 37,
+   "contrast measured": 11,
+   "contrast too low": []
+  },
+  {
+   "state": "end card",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 40,
+   "contrast measured": 21,
+   "contrast too low": []
+  },
+  {
+   "state": "end card",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 21,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: start",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 4,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: start",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 29,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: idle",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 7,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: idle",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 28,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: finding",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 5,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: finding",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 26,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: found",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 10,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: found",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 35,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: guide",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 16,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: guide",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 29,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: turned",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 9,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: turned",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 28,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: sound",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 7,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: sound",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 29,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: home",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 9,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: home",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 29,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: told",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 5,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: told",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 27,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: checked",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 16,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: checked",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 37,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: mine",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 9,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: mine",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 32,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: cups",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 6,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: cups",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 26,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: out",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 12,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: out",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 30,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: spanish",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 9,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: spanish",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 30,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: mandarin",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 8,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: mandarin",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 28,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: web",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 39,
+   "contrast measured": 4,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: web",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 39,
+   "contrast measured": 26,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: answer",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 7,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: answer",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 28,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: drawing",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 43,
+   "contrast measured": 5,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: drawing",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 43,
+   "contrast measured": 28,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: memory",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 16,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: memory",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 35,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: room",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 42,
+   "contrast measured": 5,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: room",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 42,
+   "contrast measured": 27,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: story",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 18,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: story",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 35,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: privacy",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 9,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: privacy",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 32,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: promises",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 13,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: promises",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 41,
+   "contrast measured": 33,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: help",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 43,
+   "contrast measured": 16,
+   "contrast too low": []
+  },
+  {
+   "state": "scene: help",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 43,
+   "contrast measured": 22,
+   "contrast too low": []
+  },
+  {
+   "state": "Andy's eyes",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 34,
+   "contrast measured": 17,
+   "contrast too low": []
+  },
+  {
+   "state": "Andy's eyes",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 34,
+   "contrast measured": 17,
+   "contrast too low": []
+  },
+  {
+   "state": "under the hood",
+   "width": "desktop",
+   "violations": {},
+   "passed rules": 27,
+   "contrast measured": 80,
+   "contrast too low": []
+  },
+  {
+   "state": "under the hood",
+   "width": "phone",
+   "violations": {},
+   "passed rules": 27,
+   "contrast measured": 80,
+   "contrast too low": []
+  }
+ ]
+}

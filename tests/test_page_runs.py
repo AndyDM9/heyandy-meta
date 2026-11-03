@@ -359,7 +359,7 @@ def test_the_public_demo_opens_on_a_front_door_with_one_thing_to_try_first(brows
         server.shutdown()
     for width in (1440, 390, 360):
         s = seen[width]
-        assert s["errors"] == [] and s["title"] == "Lost something? Andy points at it." and s["cta"] == "eyes.html"
+        assert s["errors"] == [] and s["title"] == "Lost something? Andy points at it." and s["cta"] == "eyes.html?find"
         assert s["ctaAbove"] and s["tall"] >= 44 and not s["wide"] and s["figures"] == 1  # the action on the first screen
         assert s["behind"] and not s["storying"] and s["focused"] and s["tab"] == "cta"
         assert s["after escape"] == [False, True, False]  # Escape: into the story, nothing left inert

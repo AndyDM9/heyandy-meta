@@ -24,20 +24,25 @@ def site():
 
 
 @pytest.fixture(scope="module")
-def page(site):
-    with playwright.sync_playwright() as p:
-        try:
-            browser = p.chromium.launch()
-        except Exception as e:  # noqa: BLE001 - no browser here: skip
-            pytest.skip(f"no Chromium for Playwright: {e}")
-        pg = browser.new_page(viewport={"width": 1280, "height": 900})
-        pg.route("**/*", lambda r: r.abort() if not r.request.url.startswith(site) else r.continue_())  # no network
-        pg.errors = []
-        pg.on("pageerror", lambda e: pg.errors.append(str(e)))
-        pg.goto(f"{site}/eyes.html")
-        pg.wait_for_function("window.EYES_READY === true", timeout=10000)
-        yield pg
-        browser.close()
+def pw():
+    with playwright.sync_playwright() as p:  # one Playwright per module
+        yield p
+
+
+@pytest.fixture(scope="module")
+def page(site, pw):
+    try:
+        browser = pw.chromium.launch()
+    except Exception as e:  # noqa: BLE001 - no browser here: skip
+        pytest.skip(f"no Chromium for Playwright: {e}")
+    pg = browser.new_page(viewport={"width": 1280, "height": 900})
+    pg.route("**/*", lambda r: r.abort() if not r.request.url.startswith(site) else r.continue_())  # no network
+    pg.errors = []
+    pg.on("pageerror", lambda e: pg.errors.append(str(e)))
+    pg.goto(f"{site}/eyes.html")
+    pg.wait_for_function("window.EYES_READY === true", timeout=10000)
+    yield pg
+    browser.close()
 
 
 def test_the_page_runs_and_waits_for_your_thing_before_looking(page):
@@ -141,3 +146,80 @@ def test_the_models_are_pinned_to_a_commit_not_main():
     page = files("heyandy_meta.screen").joinpath("page.html").read_text()
     assert 'REVISION = "ec7abea1a8757ec4f9f7b26399d31234ffaa6e6a"' in core and core.count("revision: REVISION") == 3
     assert 'revision: "a19f851b3d42865797e410752b4c570c871e4825"' in page
+
+
+def guided_page(pw, site, camera: bool):
+    """The page opened at ?find (the front door's "Find something of yours"), on a phone, with no network (so no model);
+    with Chromium's fake camera when asked."""
+    args = ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] if camera else []
+    try:
+        browser = pw.chromium.launch(args=args)
+    except Exception as e:  # noqa: BLE001 - no browser here: skip
+        pytest.skip(f"no Chromium for Playwright: {e}")
+    ctx = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True,
+                              permissions=["camera"] if camera else [])
+    pg = ctx.new_page()
+    pg.route("**/*", lambda r: r.abort() if not r.request.url.startswith(site) else r.continue_())
+    pg.errors = []
+    pg.on("pageerror", lambda e: pg.errors.append(str(e)))
+    pg.goto(f"{site}/eyes.html?find")
+    pg.wait_for_function("window.EYES_READY === true", timeout=10000)
+    return browser, pg
+
+
+def test_find_mode_opens_the_camera_full_screen_with_the_shutter_under_a_thumb(site, pw):
+    """November 2: the front door's one action leads here, and on a phone the page was a long document of panels and
+    six buttons, the live sweep below the fold. ?find is the same two steps, each the whole screen: a viewfinder with a
+    frame to fill and a shutter at the bottom, then the sweep; the page's own steps underneath, unchanged."""
+    browser, pg = guided_page(pw, site, camera=True)
+    try:
+        pg.wait_for_selector("#stage1 video", timeout=10000)
+        pg.wait_for_selector("#stage1 .frame:not([hidden])", timeout=5000)
+        shot = pg.evaluate("""() => { const b = document.querySelector('#stage1 .cam button.main').getBoundingClientRect();
+          const v = document.querySelector('#stage1 video').getBoundingClientRect();
+          return { guided: document.body.classList.contains('guided'), title: document.getElementById('guideTitle').textContent,
+                   shutter: [b.width, b.height, b.bottom], fills: v.width >= innerWidth - 1 && v.height >= innerHeight - 1,
+                   label: document.querySelector('#stage1 .cam button.main').getAttribute('aria-label'),
+                   focused: document.activeElement === document.querySelector('#stage1 .cam button.main'),
+                   chips: [...document.querySelectorAll('#guideChips button')].map(b => b.textContent),
+                   wide: document.documentElement.scrollWidth > innerWidth } }""")
+        assert shot["guided"] and shot["title"] == "Show me your thing" and shot["fills"] and not shot["wide"]
+        assert shot["shutter"][0] >= 64 and shot["shutter"][2] >= 844 - 140  # big, and near the bottom: under a thumb
+        assert shot["label"] == "Take the picture" and shot["focused"] and "keys" in shot["chips"]
+        pg.click("#guideChips button:text('keys')")
+        pg.click("#stage1 .cam button.main")  # no network, so no model: it says so, plainly, back on the page
+        pg.wait_for_function("!document.body.classList.contains('guided')", timeout=15000)
+        assert "couldn't start" in pg.text_content("#hint1") and pg.get_attribute("#s2", "aria-disabled") == "true"
+        assert pg.evaluate("document.getElementById('thing').value") == "keys"
+        assert pg.errors == []
+    finally:
+        browser.close()
+
+
+def test_find_mode_without_a_camera_goes_back_to_the_page_and_says_what_to_do(site, pw):
+    browser, pg = guided_page(pw, site, camera=False)
+    try:
+        pg.wait_for_function("!document.body.classList.contains('guided')", timeout=10000)
+        assert "No camera here" in pg.text_content("#hint1") and pg.errors == []
+    finally:
+        browser.close()
+
+
+def test_found_offers_the_link_to_share_never_the_photo(site, pw):
+    browser, pg = guided_page(pw, site, camera=True)
+    try:
+        pg.wait_for_selector("#stage1 video", timeout=10000)
+        pg.evaluate("document.getElementById('thing').value = 'mug'; navigator.share = undefined;"
+                    "navigator.clipboard.writeText = async (t) => { window.copied = t; }; window.eyesGuide.found()")
+        assert pg.text_content("#guideTitle") == "Found: your mug"
+        buttons = pg.eval_on_selector_all("#guideDone > *", "els => els.map(e => e.textContent)")
+        assert buttons == ["Share it", "Find something else", "See the robot"]
+        pg.click("#guideDone button:text('Share it')")
+        pg.wait_for_function("window.copied", timeout=3000)
+        copied = pg.evaluate("window.copied")
+        assert "found my mug" in copied and copied.endswith("/eyes.html?find") and "data:" not in copied
+        assert pg.text_content("#guideDone button.main") == "Link copied"
+        pg.keyboard.press("Escape")
+        assert not pg.evaluate("document.body.classList.contains('guided')") and pg.errors == []
+    finally:
+        browser.close()

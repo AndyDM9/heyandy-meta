@@ -121,6 +121,88 @@
   .live .meter { flex: 1 1 12rem; height: 6px; background: var(--rule); border-radius: 99em; overflow: hidden; max-width: 20rem; }
   .live .meter i { display: block; height: 100%; background: var(--gold); width: 0; transition: width 0.2s; }
 
+  /* Find mode (?find, or "Find something now"): the same two steps, each the whole screen, the camera first and every
+     control under a thumb. 1, a viewfinder: fill the frame with your thing and press the shutter; 2, the sweep, the
+     screen's edge glowing warmer as Andy gets close; then the spotlight, and a link to share (never the photo). */
+  .start { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8em 1.2em; margin: 2.4vh 0 0; }
+  .start button { font-size: 1.1em; padding: 0.9em 1.5em; }
+  .start span { color: var(--soft); }
+  #guide { display: none; }
+  body.guided { overflow: hidden; padding: 0; background: #000; }
+  body.guided > header, body.guided > footer, body.guided .live, body.guided .step { display: none; }
+  body.guided main { display: block; margin: 0; }
+  body.guided .step.now { display: block; position: fixed; inset: 0; z-index: 1; margin: 0; padding: 0; border: 0;
+                          border-radius: 0; background: #000; opacity: 1; }
+  body.guided .step.now > h2, body.guided .step.now .picks, body.guided .hint, body.guided form.name,
+  body.guided .known, body.guided .tools, body.guided .phone { display: none !important; }
+  body.guided .stage { position: absolute; inset: 0; z-index: auto; border-radius: 0; min-height: 0; border: 0; background: #000; padding: 0; }
+  body.guided .stage.empty { color: var(--soft); font-size: 1.1em; padding: 18vh 8vw; align-content: start; }
+  body.guided #stage1 > video { width: 100vw; height: 100vh; max-width: none; max-height: none; object-fit: cover; }
+  body.guided .stage .photo video, body.guided .stage canvas.pic { max-width: 100vw; max-height: 100vh; }
+  body.guided .stage .pill { top: auto; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  body.guided .stage .warm { display: none; }
+  body.guided .cam { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; padding: 2vh 5vw calc(3vh + env(safe-area-inset-bottom));
+                     align-items: center; gap: 1.2em; }
+  body.guided #stage1 .cam { justify-content: center; z-index: 3; }
+  body.guided #stage1 .cam button.main { width: 84px; height: 84px; padding: 0; border-radius: 50%; font-size: 0; color: transparent;
+                     background: #f5f3ef; border: 6px solid rgba(245, 243, 239, 0.45); background-clip: padding-box;
+                     box-shadow: 0 0 0 3px #f5f3ef; order: 2; }
+  body.guided #stage1 .cam button.main:active { transform: scale(0.94); }
+  body.guided #stage1 .cam button:not(.main) { order: 1; position: absolute; left: 5vw; }
+  body.guided #stage2 .cam { justify-content: space-between; }
+  /* step 2's words, stacked at the bottom over the camera, above its buttons (or, once found, the share sheet) */
+  body.guided #s2.now { display: flex; flex-direction: column; justify-content: flex-end; gap: 1vh;
+                        padding: 0 7vw calc(96px + 3vh + env(safe-area-inset-bottom)); }
+  body.guided.found #s2.now { padding-bottom: calc(150px + 3vh + env(safe-area-inset-bottom)); }
+  body.guided #s2.now::before { content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: 52vh; z-index: 1;
+                                background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 55%); pointer-events: none; }
+  body.guided .said, body.guided .why { position: relative; z-index: 2; text-align: center; margin: 0;
+                                        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9); }
+  body.guided .said { font-size: clamp(24px, 6.4vw, 44px); line-height: 1.15; }
+  body.guided .why { font-size: clamp(13px, 3.4vw, 17px); color: rgba(245, 243, 239, 0.86); }
+  body.guided .answer { position: relative; z-index: 3; justify-content: center; margin: 1vh 0 0; }
+  body.guided .answer button { font-size: 1.15em; padding: 0.95em 1.6em; }
+  body.guided #guide { display: block; }
+  #guide .top { position: fixed; left: 0; right: 0; top: 0; z-index: 4; display: flex; align-items: center; gap: 0.8em;
+                padding: calc(1.6vh + env(safe-area-inset-top)) 4vw 3vh; background: linear-gradient(rgba(0, 0, 0, 0.72), transparent); }
+  #guide .face { width: 54px; height: auto; flex: none; color: #f5f3ef; }
+  #guide .face .eye { fill: #0b110f; transform-box: fill-box; transform-origin: center;
+                      transform: scaleY(calc(1 + 0.35 * var(--warmth, 0))); transition: transform 0.3s; }
+  #guide .step-n { font: 700 0.85em/1 "Atkinson Mono", monospace; color: var(--gold); letter-spacing: 0.06em; }
+  #guide h2 { margin: 0.25em 0 0; font-size: clamp(20px, 5vw, 30px); display: block; }
+  #guide .close { margin-left: auto; width: 48px; height: 48px; padding: 0; border-radius: 50%; font-size: 1.3em;
+                  background: rgba(245, 243, 239, 0.14); border-color: rgba(245, 243, 239, 0.3); }
+  body.guided .frame { position: fixed; z-index: 1; left: 50%; top: 46%; width: min(70vw, 52vh); aspect-ratio: 1; translate: -50% -50%;
+                  border-radius: 28px; box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.42); pointer-events: none; }
+  body.guided .frame::before { content: ""; position: absolute; inset: 0; border-radius: inherit; border: 3px solid var(--gold);
+                          -webkit-mask: linear-gradient(#000 0 0) top/100% 22% no-repeat, linear-gradient(#000 0 0) bottom/100% 22% no-repeat;
+                                  mask: linear-gradient(#000 0 0) top/100% 22% no-repeat, linear-gradient(#000 0 0) bottom/100% 22% no-repeat; }
+  body.guided .frame span { position: absolute; left: 0; right: 0; top: calc(100% + 1.4vh); text-align: center; font-weight: 700;
+                       text-shadow: 0 2px 10px #000; }
+  #guide .chips { position: fixed; left: 0; right: 0; bottom: calc(5vh + 92px + env(safe-area-inset-bottom)); z-index: 3;
+                  display: flex; gap: 0.5em; overflow-x: auto; padding: 0 5vw; scrollbar-width: none; justify-content: safe center; }
+  #guide .chips button { flex: none; min-height: 44px; background: rgba(11, 17, 15, 0.7); border-color: rgba(245, 243, 239, 0.35); }
+  #guide .chips button[aria-pressed="true"] { background: var(--gold); color: #12241d; border-color: var(--gold); }
+  #guide .other { position: fixed; right: 4vw; top: calc(1.6vh + 64px + env(safe-area-inset-top)); z-index: 4; min-height: 44px;
+                  font-size: 0.85em; background: rgba(11, 17, 15, 0.7); border-color: rgba(245, 243, 239, 0.3); }
+  #guide .busy { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; align-content: center; gap: 2vh;
+                 background: rgba(5, 8, 7, 0.82); text-align: center; padding: 8vw; font-size: clamp(20px, 5vw, 30px); font-weight: 700; }
+  #guide .busy svg { width: min(40vw, 180px); color: #f5f3ef; animation: think 1.4s ease-in-out infinite; }
+  #guide .busy small { display: block; font-size: 0.6em; font-weight: 400; color: var(--soft); max-width: 30ch; margin: 0 auto; }
+  @keyframes think { 50% { transform: translateY(-6px) rotate(-3deg); } }
+  body.guided::after { content: ""; position: fixed; inset: 0; z-index: 2; pointer-events: none; border-radius: 0;
+                       box-shadow: inset 0 0 calc(4vmin + 18vmin * var(--warmth, 0)) calc(1vmin * var(--warmth, 0))
+                                   rgba(255, 207, 92, calc(0.9 * var(--warmth, 0))); transition: box-shadow 0.3s; }
+  #guide .done { position: fixed; left: 0; right: 0; bottom: 0; z-index: 4; display: flex; flex-wrap: wrap; justify-content: center;
+                 gap: 0.7em; padding: 2vh 5vw calc(3vh + env(safe-area-inset-bottom)); }
+  #guide .done button, #guide .done a { min-height: 48px; font-size: 1.05em; display: inline-flex; align-items: center; }
+  #guide .done a { color: var(--ink); background: var(--panel2); border: 1px solid var(--rule); border-radius: 99em;
+                   padding: 0.75em 1.15em; text-decoration: none; font-weight: 650; }
+  body.guided .spot { animation: found 1.2s ease-out 0.9s 2; }
+  @keyframes found { 50% { box-shadow: 0 0 0 200vmax rgba(3, 5, 4, 0.78), 0 0 0 14px rgba(255, 207, 92, 0.55); } }
+  @media (prefers-reduced-motion: reduce) {
+    #guide .busy svg, body.guided .spot { animation: none; } body.guided::after, #guide .face .eye { transition: none; }
+  }
   footer { margin-top: 3vh; color: var(--soft); font-size: 0.9em; max-width: 78rem; display: grid; gap: 0.8em; }
   footer p { margin: 0; }
   footer b { color: var(--ink); }
@@ -134,6 +216,8 @@
   <p class="lede">Show Andy something of yours, once. Then <b>sweep your camera around the room</b> (it sounds warmer as
     you get close), or show it a photo, and Andy finds it: <b>yours, not just one like it.</b> Meta's DINOv2 does the
     looking, <b>here in your browser</b>: your camera and photos never leave this device.</p>
+  <p class="start"><button type="button" class="main" id="go">Find something now, full screen</button>
+    <span>Your camera first: show Andy your thing, then sweep the room.</span></p>
   <div class="phone" id="phone" hidden><img id="qr" alt="A code to open this page on your phone">
       <p><b>Best on your phone.</b> Scan this, show Andy your thing there, then sweep the room with its camera: it
         sounds warmer as you get close.</p></div>
@@ -188,6 +272,19 @@
   <p>Our cups: The Metropolitan Museum of Art, Open Access (CC0), objects 2109, 191578, 207670, 385 and 240140. Built by
     HeyAndy, Inc. for Meta's Global AI Developer Hackathon. <a href="https://github.com/AndyDM9/heyandy-meta">How it's built</a>.</p>
 </footer>
+<div id="guide" role="group" aria-labelledby="guideTitle">
+  <div class="top">
+    <svg class="face" viewBox="0 0 380 210" aria-hidden="true"><rect x="4" y="3" width="372" height="203" rx="101.5" fill="currentColor"/>
+      <ellipse class="eye" cx="102.3" cy="108.5" rx="18.9" ry="37.3"/><ellipse class="eye" cx="279" cy="108.5" rx="18.9" ry="37.3"/></svg>
+    <div><div class="step-n" id="guideStep">1 OF 2</div><h2 id="guideTitle">Show me your thing</h2></div>
+    <button type="button" class="close" id="guideClose" aria-label="Close: back to the page">✕</button>
+  </div>
+  <div class="frame" id="guideFrame" hidden><span>Fill the frame with it</span></div>
+  <div class="chips" id="guideChips" role="group" aria-label="What is it?" hidden></div>
+  <button type="button" class="other" id="guideCup" hidden>No camera? Our cup</button>
+  <div class="busy" id="guideBusy" hidden aria-live="polite"></div>
+  <div class="done" id="guideDone" hidden></div>
+</div>
 <input type="file" id="file" accept="image/*" hidden>
 <script type="module">
   import * as E from "./eyes-core.js";
@@ -195,7 +292,7 @@
   const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
   let T = null, eyes = null, loading = null, thing = null, name = "thing", pick = 1;
   const pics = { 1: null, 2: null };  // the photo in each step, as a canvas (at most 1600 pixels across)
-  let box = null, result = null, shown = 0;
+  let box = null, result = null, shown = 0, guided = false, camOff = null;
 
   // ---- Meta, live: each look, with its seconds ----
   const calls = [];
@@ -257,7 +354,10 @@
       const stop = () => stream.getTracks().forEach((t) => t.stop());
       take.onclick = async () => { const c = await toCanvas(video, video.videoWidth, video.videoHeight); stop(); use(step, c); };
       cancel.onclick = () => { stop(); empty(step); };
-    }).catch(() => { $("said").textContent = ""; stage.className = "stage empty"; stage.textContent = "The camera isn't available here: take or choose a photo instead."; });
+    }).catch(() => {
+      $("said").textContent = ""; stage.className = "stage empty"; stage.textContent = "The camera isn't available here: take or choose a photo instead.";
+      if (guided) { guideStop(); $("hint1").hidden = false; $("hint1").textContent = "No camera here: take or choose a photo of your thing, or try our cup."; }
+    });
   }
   function empty(step) {
     const stage = $("stage" + step); stage.className = "stage empty";
@@ -297,7 +397,7 @@
       box = { x: canvas.width * 0.15, y: canvas.height * 0.15, w: canvas.width * 0.7, h: canvas.height * 0.7 };
       drawBox(); dragBox(photo, canvas);
       $("hint1").hidden = $("name1").hidden = false; $("known").hidden = true;
-      $("thing").focus({ preventScroll: true });
+      if (!guided) $("thing").focus({ preventScroll: true });  // find mode names it with a chip, no keyboard
     } else search();
   }
 
@@ -343,6 +443,7 @@
     } catch (err) {
       btn.disabled = false; btn.textContent = "Remember it";
       $("hint1").hidden = false; $("hint1").textContent = "Andy's eyes couldn't start in this browser (" + (err.message || err) + "). A recent Chrome, Edge, Safari or Firefox will do.";
+      if (guided) guideStop($("hint1").textContent);
       return;
     }
     btn.disabled = false; btn.textContent = "Remember it";
@@ -355,7 +456,7 @@
     stopSweep();  // a new thing: a sweep starts again from the button
     if (!pics[2]) { const st = $("stage2"); st.className = "stage empty"; st.textContent = `Now a photo of where your ${name} might be: the table, a shelf, the room.`; }
     else search();
-    $("s2").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (guided) guideSweep(); else $("s2").scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   // ---- step 2: the search, and the Reveal ----
@@ -408,6 +509,7 @@
       $("said").textContent = `There's your ${name}.`;
       if (!shown) { chime(); navigator.vibrate?.([60, 40, 120]); }
       $("why").textContent = `${pct}% like the one you showed me, ${col}% in colour (${rule}).`;
+      if (guided) guideFound();
     } else {
       const otherColour = cand.whole >= E.SURE;  // alike in every way but its colour: a twin, perhaps someone else's
       $("said").textContent = shown ? "How about this one?" : otherColour
@@ -445,6 +547,7 @@
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 } }, audio: false });
     } catch (e) {
       stage.className = "stage empty"; stage.textContent = "The camera isn't available here: take or choose a photo instead.";
+      if (guided) guideStop("The camera isn't available here, so here's Andy's eyes with our cups instead.", true);
       return;
     }
     const video = el("video"), view = el("div", null, "photo"), sight = el("canvas", null, "heat live on"), hunt = el("div", null, "hunt");
@@ -459,7 +562,7 @@
     const run = { on: true, warmth: 0, rejected: 0, beat: 0, t0: performance.now(), saidAt: 0 };
     sweepLog.length = 0;
     sweeping = { stop: () => { run.on = false; clearTimeout(run.beat); stream.getTracks().forEach((t) => t.stop()); } };
-    stop.onclick = () => { stopSweep(); empty(2); $("said").textContent = ""; };
+    stop.onclick = () => { stopSweep(); if (guided) return guideStop(); empty(2); $("said").textContent = ""; };
     hush.onclick = () => { sound = !sound; hush.textContent = sound ? "Sound: on" : "Sound: off"; };
     await video.play().catch(() => {});
     say(`Sweep slowly around the room. I'm looking for your ${name}.`);
@@ -486,6 +589,7 @@
       run.warmth = 0.5 * run.warmth + 0.5 * Math.max(0, Math.min(1, (whole - 0.55) / (E.SURE - 0.55)));
       run.rejected = Math.max(0, run.rejected - 0.01);
       fill.style.width = `${Math.round(100 * run.warmth)}%`;
+      document.body.style.setProperty("--warmth", run.warmth.toFixed(2));  // find mode: the screen's edge, warmer
       paint(sight, r);
       hunt.hidden = !(best && whole >= E.MAYBE);
       if (!hunt.hidden) { place(hunt, best.box, frame); hunt.classList.toggle("sure", r.verdict === "found"); }
@@ -515,7 +619,7 @@
     result = found; heat(photo, canvas); shown = 0; reveal();
   }
   $("sweep").onclick = () => { if (thing) sweep(); else { $("s1").scrollIntoView({ behavior: "smooth" }); } };
-  $("yes").onclick = () => { $("answer").hidden = true; $("said").textContent = `Good: your ${name}.`; $("stage2").querySelector(".spot")?.classList.remove("maybe"); };
+  $("yes").onclick = () => { $("answer").hidden = true; $("said").textContent = `Good: your ${name}.`; $("stage2").querySelector(".spot")?.classList.remove("maybe"); if (guided) guideFound(); };
   $("no").onclick = () => { shown += 1; reveal(); };
 
   // On a computer, a code to carry the page to a phone, where the sweep belongs: this very address, so it's right
@@ -530,6 +634,93 @@
     };
     document.head.append(s);
   }
+
+  // ---- find mode: the two steps, each the whole screen, camera first (?find; the front door's "Find something of
+  // yours" comes here). The steps are the ones above, unchanged: only how they're shown, and what follows each.
+  const CHIPS = ["mug", "keys", "glasses", "phone", "wallet", "remote", "cup", "bottle"];
+  const frameEl = $("guideFrame");  // laid over the viewfinder itself, under its shutter
+  function guideShow(step, title) {
+    $("guideStep").textContent = `${step} OF 2`; $("guideTitle").textContent = title;
+    $("s1").classList.toggle("now", step === 1); $("s2").classList.toggle("now", step === 2);
+    frameEl.hidden = $("guideChips").hidden = $("guideCup").hidden = step !== 1;
+    $("guideDone").hidden = true; $("guideBusy").hidden = true;
+  }
+  function guide() {
+    guided = true; document.body.classList.add("guided"); document.body.classList.remove("found");
+    document.body.style.setProperty("--warmth", "0");
+    stopSweep(); $("said").textContent = $("why").textContent = ""; $("answer").hidden = true;
+    pics[2] = null; result = null; empty(2);  // a new find: nothing of the last one's photo is looked at again
+    guideShow(1, "Show me your thing");
+    const chips = $("guideChips"); chips.replaceChildren();
+    for (const c of CHIPS) {
+      const b = el("button", c); b.type = "button"; b.setAttribute("aria-pressed", String($("thing").value === c));
+      b.onclick = () => { $("thing").value = c; chips.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); };
+      chips.append(b);
+    }
+    ready().catch(() => {});  // DINOv2 on its way while you frame your thing
+    camera(1);
+    const take = () => $("stage1").querySelector(".cam button.main");
+    const wait = setInterval(() => {  // the camera's own buttons: its shutter, named for a screen reader, and Cancel closes
+      const t = take(); if (!guided || !t) { if (!guided) clearInterval(wait); return; }
+      clearInterval(wait);
+      t.setAttribute("aria-label", "Take the picture"); t.focus({ preventScroll: true });
+      $("stage1").append(frameEl); frameEl.hidden = false;
+      const video = $("stage1").querySelector("video"), shoot = t.onclick;
+      t.onclick = async () => {
+        try { audio ??= new AudioContext(); audio.resume(); } catch (e) { audio = null; }  // this tap lets the sweep sound
+        const frame = frameEl.getBoundingClientRect(), v = video.getBoundingClientRect();
+        const k = Math.max(v.width / video.videoWidth, v.height / video.videoHeight);  // the video covers the screen
+        const ox = (v.width - video.videoWidth * k) / 2 + v.left, oy = (v.height - video.videoHeight * k) / 2 + v.top;
+        const want = { x: (frame.left - ox) / k, y: (frame.top - oy) / k, w: frame.width / k, h: frame.height / k };
+        camOff = null;  // the shutter turns the camera off itself
+        await shoot();
+        const c = pics[1];
+        box = { x: Math.max(0, want.x), y: Math.max(0, want.y), w: Math.min(want.w, c.width - Math.max(0, want.x)), h: Math.min(want.h, c.height - Math.max(0, want.y)) };
+        drawBox(); guideBusy(`Looking at your ${named()}…`, "Learning it by sight, in this browser: the first time, DINOv2 downloads once (24 MB).");
+        remember();
+      };
+      const cancel = $("stage1").querySelector(".cam button:not(.main)");
+      if (cancel) { camOff = cancel.onclick; cancel.onclick = () => guideStop(); }
+    }, 100);
+  }
+  function guideBusy(text, small) {
+    const b = $("guideBusy"), face = document.querySelector("#guide .face").cloneNode(true);
+    b.replaceChildren(face, el("div", text)); if (small) b.lastChild.append(el("small", small)); b.hidden = false;
+  }
+  function guideSweep() {
+    guideShow(2, `Now sweep the room for your ${name}`);
+    sweep();
+  }
+  function guideFound() {
+    guideShow(2, `Found: your ${name}`); $("s2").classList.add("now"); document.body.classList.add("found");
+    document.body.style.setProperty("--warmth", "0");
+    const done = $("guideDone"), share = el("button", "Share it"), again = el("button", "Find something else"), story = el("a", "See the robot");
+    share.className = "main"; story.href = "./?story";
+    const url = location.origin + location.pathname + "?find";
+    const text = `Andy just found my ${name} with my phone's camera: Meta's DINOv2, running in the browser. Nothing left my phone.`;
+    share.onclick = async () => {  // the link and a line, never the photo
+      try { if (navigator.share) { await navigator.share({ title: "Andy's eyes", text, url }); return; } } catch (e) { if (e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(`${text} ${url}`); share.textContent = "Link copied"; } catch (e) { share.textContent = url; }
+    };
+    again.onclick = () => guide();
+    done.replaceChildren(share, again, story); done.hidden = false; share.focus({ preventScroll: true });
+  }
+  function guideStop(why, ours) {
+    guided = false; stopSweep();
+    if (camOff) { const off = camOff; camOff = null; off(); }  // the viewfinder's camera off, if it was on
+    document.body.classList.remove("guided", "found"); document.body.style.removeProperty("--warmth");
+    $("s1").classList.remove("now"); $("s2").classList.remove("now"); $("guideBusy").hidden = true;
+    if (!pics[2]) empty(2);  // a sweep stopped part way: no frozen camera left on the page (a find stays to see)
+    if (why) { $("said").textContent = why; }
+    if (ours) (async () => { await $("ours1").onclick(); if (thing) await $("ours2").onclick(); })();
+    $("go").focus({ preventScroll: true });
+  }
+  window.eyesGuide = { found: () => { name = named(); guideFound(); } };  // for the tests: the share sheet without a model
+  $("go").onclick = () => guide();
+  $("guideClose").onclick = () => guideStop();
+  $("guideCup").onclick = () => guideStop("", true);
+  addEventListener("keydown", (e) => { if (guided && e.key === "Escape") guideStop(); });
+  if (new URLSearchParams(location.search).has("find")) guide();
 
   // ?try: the whole example at once (our cup, then our four cups), for a link that shows it working
   if (new URLSearchParams(location.search).has("try")) {
