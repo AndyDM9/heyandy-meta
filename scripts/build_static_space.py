@@ -98,6 +98,12 @@ def front_door() -> tuple[list, list]:
     return [list(f) for f in social_card.figures()], [[code, asked[0]] for code, asked in REQUESTS.items()]
 
 
+def voices() -> dict:
+    """Andy introducing itself in each language, in its own voice (scripts/front_door_voice.py): {code: {text, file}}."""
+    clips = json.loads(files("heyandy_meta.screen").joinpath("voice", "voice.json").read_text())["clips"]
+    return {code: {"text": c["text"], "file": c["file"]} for code, c in clips.items()}
+
+
 def main() -> None:
     import argparse
 
@@ -113,6 +119,7 @@ def main() -> None:
     flags = "window.HEYANDY_STATIC = true;" + (f" window.HEYANDY_VIDEO = {json.dumps(video)};" if video else "")
     flags += f" window.HEYANDY_FIGURES = {json.dumps(front_door()[0], ensure_ascii=False)};"
     flags += f" window.HEYANDY_ASKS = {json.dumps(front_door()[1], ensure_ascii=False)};"
+    flags += f" window.HEYANDY_VOICES = {json.dumps(voices(), ensure_ascii=False)};"
     if args.clip:  # the robot itself, filmed: kept small, for a page anyone opens
         size = args.clip.stat().st_size
         if size > 15_000_000:
@@ -151,6 +158,9 @@ def main() -> None:
     (OUT / "eyes.html").write_text(shared(files("heyandy_meta.screen").joinpath("eyes.html").read_text(), "eyes.html"))
     shutil.copy(ROOT / "docs" / "images" / "social-card.png", OUT / "card.png")  # what a shared link shows
     (OUT / "eyes-core.js").write_text(files("heyandy_meta.screen").joinpath("eyes-core.js").read_text())
+    (OUT / "voice").mkdir()  # Andy's own voice, introducing itself in each language (the front door)
+    for code in voices():
+        (OUT / "voice" / f"{code}.mp3").write_bytes(files("heyandy_meta.screen").joinpath("voice", f"{code}.mp3").read_bytes())
     (OUT / "eyes").mkdir()
     (OUT / "vendor").mkdir()
     for name in VENDOR:  # the libraries' fallback copies, checked

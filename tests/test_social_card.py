@@ -56,3 +56,23 @@ def test_the_front_door_shows_the_cards_figures_and_the_language_scorecards_own_
     figures, asks = build_static_space.front_door()
     assert figures == [list(f) for f in social_card.figures()]
     assert asks == [[code, asked[0]] for code, asked in REQUESTS.items()] and len(asks) == 13
+
+
+def test_andys_voice_on_the_front_door_says_its_own_hand_written_words_in_each_language():
+    """scripts/front_door_voice.py: Andy introducing itself in its fifteen languages, its own voice (SeamlessM4T v2),
+    the words its hand-written ones (companion/language.py, DISCLOSURE): each clip's words and hash kept, and each
+    heard back by Omnilingual ASR close to its words; the Space's build ships every one."""
+    import hashlib
+    import json
+
+    import front_door_voice
+
+    screen = ROOT / "heyandy_meta" / "screen" / "voice"
+    clips = json.loads((screen / "voice.json").read_text())["clips"]
+    lines = front_door_voice.lines()
+    assert set(clips) == set(lines) and len(clips) == 15
+    for code, c in clips.items():
+        assert c["text"] == lines[code][0] and c["voice"] == lines[code][1]  # what the page shows is what it says
+        assert hashlib.sha256((screen / f"{code}.mp3").read_bytes()).hexdigest() == c["sha256"]
+        assert c["heard back"] >= 0.6 and 1.0 <= c["seconds"] <= 6.0
+    assert build_static_space.voices() == {code: {"text": c["text"], "file": c["file"]} for code, c in clips.items()}

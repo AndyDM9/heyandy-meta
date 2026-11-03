@@ -1,0 +1,126 @@
+{
+ "what": "Andy's own voice for the public demo's front door: the line it says before its first answer on the robot (\"I'm",
+ "model": "SeamlessM4T v2",
+ "clips": {
+  "en": {
+   "text": "I'm Andy, an AI robot.",
+   "voice": "eng",
+   "seconds": 1.92,
+   "file": "voice/en.mp3",
+   "heard back": 0.97,
+   "sha256": "7a898ee55a70c4964a0480ea9ad6fb4280c2b6589abaddc9f5cc9a27ab7c7455"
+  },
+  "es": {
+   "text": "Soy Andy, un robot con inteligencia artificial.",
+   "voice": "spa",
+   "seconds": 3.5,
+   "file": "voice/es.mp3",
+   "heard back": 1.0,
+   "sha256": "9fac0956efe14ea99c44e76814f7385292aedc9a9430a83d37beafef7ce86596"
+  },
+  "zh": {
+   "text": "我是 Andy，一个人工智能机器人。",
+   "voice": "cmn",
+   "seconds": 3.33,
+   "file": "voice/zh.mp3",
+   "heard back": 0.69,
+   "sha256": "5a1c17d2dd233774246c3387f683229ce991a7d410317a073a0e816599290963"
+  },
+  "tl": {
+   "text": "Ako si Andy, isang AI na robot.",
+   "voice": "tgl",
+   "seconds": 3.42,
+   "file": "voice/tl.mp3",
+   "heard back": 0.85,
+   "sha256": "69b13e8f54c88706112e0e69de69ce8c5aaa3342bd982c4601724accf791856c"
+  },
+  "vi": {
+   "text": "Tôi là Andy, một robot trí tuệ nhân tạo.",
+   "voice": "vie",
+   "seconds": 2.54,
+   "file": "voice/vi.mp3",
+   "heard back": 0.9,
+   "sha256": "828b93c7bae92b0436618b2737c864f81ad90a56681f57f72bcc01cc92831a27"
+  },
+  "ko": {
+   "text": "저는 앤디, 인공지능 로봇이에요.",
+   "voice": "kor",
+   "seconds": 3.5,
+   "file": "voice/ko.mp3",
+   "heard back": 0.77,
+   "sha256": "7d3f6397627a15e48a908586ab87319fff385bc1a51b117bf732c2b08252b4eb"
+  },
+  "ru": {
+   "text": "Я Энди, робот с искусственным интеллектом.",
+   "voice": "rus",
+   "seconds": 3.01,
+   "file": "voice/ru.mp3",
+   "heard back": 0.97,
+   "sha256": "bb644b329b8391f5438c2ab2a49d7d8f551aa2aa1213bd53861525963f756266"
+  },
+  "ar": {
+   "text": "أنا آندي، روبوت يعمل بالذكاء الاصطناعي.",
+   "voice": "arb",
+   "seconds": 3.37,
+   "file": "voice/ar.mp3",
+   "heard back": 0.94,
+   "sha256": "1445340d379b6cecf0f78a88f21c04f397547ae7c3ab788f170ffc13cce27960"
+  },
+  "hi": {
+   "text": "मैं एंडी हूँ, एक एआई रोबोट।",
+   "voice": "hin",
+   "seconds": 2.53,
+   "file": "voice/hi.mp3",
+   "heard back": 0.78,
+   "sha256": "beb19d9596333fb95c870330d7511c3ec79a1d30359534ed1123634fda846f2d"
+  },
+  "pt": {
+   "text": "Eu sou o Andy, um robô com inteligência artificial.",
+   "voice": "por",
+   "seconds": 3.5,
+   "file": "voice/pt.mp3",
+   "heard back": 0.94,
+   "sha256": "ec573bdc3b927777c594a62184bffc0a04c354fe83b086e16e2b7d6b38b4266c"
+  },
+  "fr": {
+   "text": "Je suis Andy, un robot doté d'intelligence artificielle.",
+   "voice": "fra",
+   "seconds": 3.92,
+   "file": "voice/fr.mp3",
+   "heard back": 0.95,
+   "sha256": "02e509ba7d22bfcf9ac6918c222f71b71c3169d75c274e568696078a00fd1d93"
+  },
+  "it": {
+   "text": "Sono Andy, un robot con intelligenza artificiale.",
+   "voice": "ita",
+   "seconds": 3.44,
+   "file": "voice/it.mp3",
+   "heard back": 1.0,
+   "sha256": "6afc5fe01f434ca97574712d066b0280d20c0ce4339f35f09a523d8cac8b3dd5"
+  },
+  "pl": {
+   "text": "Jestem Andy, robot ze sztuczną inteligencją.",
+   "voice": "pol",
+   "seconds": 3.5,
+   "file": "voice/pl.mp3",
+   "heard back": 0.99,
+   "sha256": "b1c89e1a7ba6b241e583e56487c8350d891873a0adca6d87e877a8d3816e5d38"
+  },
+  "de": {
+   "text": "Ich bin Andy, ein Roboter mit künstlicher Intelligenz.",
+   "voice": "deu",
+   "seconds": 3.78,
+   "file": "voice/de.mp3",
+   "heard back": 1.0,
+   "sha256": "8629ab7beeafad6937373d82487421f7c3dc70262fe46bb49c5a2077bfed2194"
+  },
+  "uk": {
+   "text": "Я Енді, робот зі штучним інтелектом.",
+   "voice": "ukr",
+   "seconds": 3.26,
+   "file": "voice/uk.mp3",
+   "heard back": 1.0,
+   "sha256": "bc7c855ce01244496f7f95c20c37cf8ff760dd82e54fec0823edf61dac142367"
+  }
+ }
+}

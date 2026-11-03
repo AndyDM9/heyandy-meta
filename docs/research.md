@@ -2065,3 +2065,24 @@ Found and fixed, each with a test:
   with nothing left lit, doesn't redraw the chart between polls, doesn't play with reduced motion, and fits a phone;
   the accessibility audit has it playing back as a state of its own: the whole demo again
   (`accessibility-20261102-2015`), no axe violation in 60 states, none of 1,384 texts below AA.
+
+## 94. Andy's own voice on the front door (November 2, evening)
+
+- **Why:** Andy speaks fifteen languages in its own voice (Meta's SeamlessM4T v2, section 54), and on the public demo
+  nobody could hear it: the front door (section 91) showed its face and a bubble cycling "where are my glasses?"
+  through the languages, silent. A voice is most of a robot's personality, and the one model a visitor can't see.
+- **Now** (`heyandy_meta/screen/page.html` welcome, `scripts/front_door_voice.py`): Andy's face is a button, and the
+  bubble has "Hear Andy": pressed, Andy introduces itself in the bubble's language, the line it says before its first
+  answer on the robot ("I'm Andy, an AI robot."; "Soy Andy, un robot con inteligencia artificial."; "我是 Andy，一个人工
+  智能机器人。"), its words in the bubble while it speaks, its face moving with how loud they are as the robot's head
+  does when it speaks (Web Audio; still with reduced motion). The words are Andy's hand-written ones (nothing
+  translated for the page); the clips were made by its voice service on our computer, as the robot says them, and
+  kept as fifteen small MP3s (9 to 19 KB each) with a manifest of each one's words, voice, length and SHA-256. Each was
+  heard back by Omnilingual ASR, told its language, from 0.69 (Mandarin: Andy heard as 安迪, as it's written, and
+  机器人 as 机器原子) and 0.77 (Korean) to 1.00 (Spanish, Italian, German, Ukrainian).
+- **Checked:** the manifest's words are the hand-written ones and its hashes the files' (`tests/test_social_card.py`);
+  pressing the face speaks the bubble's language and shows its words, then the bubble goes on
+  (`tests/test_page_runs.py`); on a 360-pixel phone the main action stays on the first screen. The accessibility
+  audit has Andy speaking as a state of its own; it found the speaking bubble sharing a class name with the face's
+  column (its padding gone, its words over the edge on a phone), fixed before this shipped. The whole demo again
+  (`accessibility-20261102-2034`): no axe violation in 62 states, none of 1,411 texts below AA.

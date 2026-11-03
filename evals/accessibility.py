@@ -171,7 +171,9 @@ def states() -> list[tuple[str, str, str | None]]:
     sys.path.insert(0, str(ROOT / "scripts"))
     from demo_screen import SCENES
 
-    return ([("welcome", "index.html", None), ("story", "index.html?story", None),
+    return ([("welcome", "index.html", None),
+             ("welcome, Andy speaking", "index.html", "document.querySelector('#welcome .bubble').classList.add('own')"),
+             ("story", "index.html?story", None),
              ("end card", "index.html?story", "endCard()")]
             + [(f"scene: {s}", f"index.html?scene={s}", None) for s in SCENES]
             + [("Andy's eyes", "eyes.html", None), ("under the hood", "hood.html", None),

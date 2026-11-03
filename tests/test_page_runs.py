@@ -367,6 +367,41 @@ def test_the_public_demo_opens_on_a_front_door_with_one_thing_to_try_first(brows
     assert seen["clip"] == [True, False]
 
 
+def test_andy_introduces_itself_in_its_own_voice_in_the_bubbles_language(browser):
+    """The front door's face is a button, and so is "Hear Andy": Andy's own voice (SeamlessM4T v2) saying its hand-written
+    introduction in the bubble's language; the bubble shows those words while it speaks, then goes on."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    try:
+        page = browser.new_page(viewport={"width": 1440, "height": 900})
+        page.add_init_script("""window.HEYANDY_ASKS = [['es', '¿Dónde están mis gafas?']];
+          window.HEYANDY_VOICES = { en: { text: "I'm Andy, an AI robot.", file: 'voice/en.mp3' },
+                                    es: { text: 'Soy Andy, un robot con inteligencia artificial.', file: 'voice/es.mp3' } };""")
+        page.goto(f"http://127.0.0.1:{server.server_address[1]}/")
+        page.wait_for_selector("#welcome .hear", timeout=10000)
+        page.wait_for_function("document.querySelector('#welcome .bubble small').textContent === 'Español'", timeout=8000)
+        label = page.get_attribute("#welcome .hear", "aria-label")
+        face = page.get_attribute("#welcome button.talk", "aria-label")
+        page.click("#welcome button.talk")
+        speaking = page.evaluate("""() => [document.querySelector('#welcome .bubble q').textContent,
+                                          document.querySelector('#welcome .bubble small').textContent,
+                                          document.querySelector('#welcome .bubble').classList.contains('own')]""")
+        page.wait_for_function("!document.querySelector('#welcome .bubble').classList.contains('own')", timeout=8000)
+        page.keyboard.press("Escape")
+        page.close()
+    finally:
+        server.shutdown()
+    assert label == face == "Hear Andy introduce itself, in Español"
+    assert speaking == ["Soy Andy, un robot con inteligencia artificial.", "Español · Andy's own voice", True]
+
+
 def test_andys_own_tv_never_shows_the_front_door(browser):
     server = serve(ScreenState(), port=0)  # the robot's TV: no demo scenes
     try:

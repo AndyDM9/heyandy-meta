@@ -568,6 +568,20 @@
   #welcome .bubble small { display: block; position: relative; margin-top: 0.35rem; font: 700 1.05rem/1.2 "Atkinson Mono", monospace;
                            letter-spacing: 0.04em; color: #3d4c45; }
   #welcome .bubble.swap q, #welcome .bubble.swap small { animation: w-swap 0.45s ease both; }
+  /* Andy's own voice: the face is a button; pressed (or "Hear Andy"), Andy introduces itself in the bubble's language,
+     its face moving with its words as the robot's head does when it speaks */
+  #welcome .talk { display: block; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; border-radius: 50%;
+                   transform: translateY(calc(var(--talk, 0) * -1.1rem)) rotate(calc(var(--talk, 0) * -4deg));
+                   transition: transform 0.06s linear; }
+  #welcome .talk:focus-visible { outline: 0.25rem solid var(--outline); outline-offset: 0.6rem; }
+  #welcome .bubble.own { background: var(--outline); }
+  #welcome .bubble.own::before { background: var(--outline); }
+  #welcome .hear { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-top: 0.7rem; padding: 0.5rem 1.1rem;
+                   border-radius: 99rem; border: 0.12rem solid #0f1814; background: transparent; color: #0f1814; cursor: pointer;
+                   font: 800 1.25rem/1 "Atkinson Next", sans-serif; position: relative; }
+  #welcome .hear svg { width: 1.3rem; height: 1.3rem; }
+  #welcome .hear:focus-visible { outline: 0.2rem solid #0f1814; outline-offset: 0.2rem; }
+  #welcome .tip { margin: -1rem 0 0; font-size: 1.2rem; color: rgba(245, 243, 239, 0.7); text-align: center; }
   #welcome .proof { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.6rem; margin: 0; padding: 0; }
   #welcome .proof li { list-style: none; border-top: 0.2rem solid var(--outline); padding-top: 1rem; font-size: 1.4rem;
                        line-height: 1.35; color: rgba(245, 243, 239, 0.78); }
@@ -586,7 +600,10 @@
     #welcome .sig { height: 2rem; }
     #welcome .andy { order: -1; grid-row: 2; padding: 1.6rem 0 0; gap: 1.6rem; }
     #welcome .face { width: min(15rem, 42vw); }
-    #welcome .bubble { width: 100%; min-height: 5.6rem; }
+    #welcome .bubble { width: 100%; min-height: 5.6rem; display: flex; align-items: center; gap: 0.9rem; text-align: left; }
+    #welcome .bubble > div { flex: 1; min-width: 0; }
+    #welcome .hear { margin: 0; flex: none; }
+    #welcome .tip { display: none; }
     #welcome .pitch { grid-row: 3; padding: 2rem 0 2.4rem; }
     #welcome h1 { font-size: clamp(3.2rem, 11vw, 5.2rem); }
     #welcome .lede { font-size: 1.55rem; margin: 1.4rem 0 2rem; }
@@ -601,6 +618,7 @@
   @media (prefers-reduced-motion: reduce) {
     #welcome .in, #welcome .face, #welcome .bubble.swap q, #welcome .bubble.swap small { animation: none; }
     #welcome .eyes, #welcome .eye, #welcome .cta, #welcome .cta span { transition: none; }
+    #welcome .talk { transform: none; transition: none; }
   }
   @keyframes rv-in { to { opacity: 1; } }
   @keyframes rv-out { to { opacity: 0; } }
@@ -907,15 +925,22 @@
     pitch.append(more);
     const andy = el("div", null, "andy"), face = document.querySelector("#ambient .face").cloneNode(true);
     face.setAttribute("aria-hidden", "true");
-    const bubble = el("div", null, "bubble"), said = el("q"), lang = el("small");
-    bubble.setAttribute("aria-hidden", "true"); bubble.append(said, lang);
+    const bubble = el("div", null, "bubble"), said = el("q"), lang = el("small"), voices = window.HEYANDY_VOICES || null;
+    const words = el("div"); words.setAttribute("aria-hidden", "true"); words.append(said, lang); bubble.append(words);
+    const hear = el("button", null, "hear"), talk = el("button", null, "talk");
+    hear.type = talk.type = "button";
+    hear.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
+    hear.append("Hear Andy");
+    if (voices) bubble.append(hear);
     if (window.HEYANDY_CLIP) {  // built with the robot, filmed (--clip): the robot itself is the first thing seen
       const box = el("div", null, "robot"), v = el("video");
       v.src = window.HEYANDY_CLIP; v.muted = v.autoplay = v.playsInline = v.loop = true;
       v.setAttribute("aria-label", "Andy on the table, filmed");
       box.append(v, el("div", window.HEYANDY_CLIP_CAPTION || "Filmed on the robot · uncut · 1× speed", "badge"));
       andy.append(box, bubble); v.play().catch(() => {});
-    } else andy.append(face, bubble);
+    } else if (voices) { talk.append(face); andy.append(talk, bubble); }
+    else andy.append(face, bubble);
+    if (voices) andy.append(el("p", "Tap Andy to hear its own voice, in the bubble's language", "tip"));
     inner.append(pitch, andy);
     if (window.HEYANDY_FIGURES) {
       const proof = el("ul", null, "proof"); proof.setAttribute("aria-label", "Measured");
@@ -928,13 +953,46 @@
     document.body.append(w); document.body.classList.add("welcoming");
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches, eyes = face.querySelector(".eyes"), timers = [];
     w.tabIndex = -1;  // focus starts in the front door (Tab reaches its first button), with no ring on a mouse's first look
-    let i = 0;
+    let i = 0, current = "en", cycle = 0, playing = null;
+    const swap = () => { if (!still) { bubble.classList.remove("swap"); void bubble.offsetWidth; bubble.classList.add("swap"); } };
+    const name = (code) => (voices && voices[code] ? code : "en");
+    const label = () => { const n = ASK_LANGS[name(current)] || "English";
+      hear.setAttribute("aria-label", `Hear Andy introduce itself, in ${n}`); talk.setAttribute("aria-label", `Hear Andy introduce itself, in ${n}`); };
     const say = () => {
       const [code, text] = ASKS[i++ % ASKS.length];
-      said.textContent = text; said.dir = "auto"; lang.textContent = ASK_LANGS[code] || code;
-      if (!still) { bubble.classList.remove("swap"); void bubble.offsetWidth; bubble.classList.add("swap"); }
+      current = code; said.textContent = text; said.dir = "auto"; lang.textContent = ASK_LANGS[code] || code;
+      bubble.classList.remove("own"); label(); swap();
     };
-    say(); if (!still) timers.push(setInterval(say, 2600));
+    const go = () => { clearInterval(cycle); if (!still) cycle = setInterval(say, 2600); };
+    say(); go();
+    let ctx = null;
+    const speak = () => {  // Andy's own voice (SeamlessM4T v2, made on our computer), in the bubble's language
+      if (!voices) return;
+      playing?.stop();
+      clearInterval(cycle);
+      const code = name(current), v = voices[code], audio = new Audio(v.file);
+      said.textContent = v.text; said.dir = "auto"; lang.textContent = `${ASK_LANGS[code] || code} · Andy's own voice`;
+      bubble.classList.add("own"); swap();
+      let raf = 0, done = false;
+      const end = () => {
+        if (done) return; done = true; cancelAnimationFrame(raf); w.style.setProperty("--talk", "0"); playing = null;
+        timers.push(setTimeout(() => { if (welcomed) { say(); go(); } }, 1400));
+      };
+      playing = { stop: () => { audio.pause(); end(); } };
+      try {  // its face moves with how loud its words are, as the robot's head does when it speaks
+        if (!still) {
+          ctx ??= new (window.AudioContext || window.webkitAudioContext)(); ctx.resume();
+          const an = ctx.createAnalyser(), buf = new Uint8Array(256); an.fftSize = 512;
+          ctx.createMediaElementSource(audio).connect(an); an.connect(ctx.destination);
+          const move = () => { an.getByteTimeDomainData(buf); let e = 0; for (const x of buf) e += (x - 128) ** 2;
+            w.style.setProperty("--talk", Math.min(1, Math.sqrt(e / buf.length) / 28).toFixed(2)); raf = requestAnimationFrame(move); };
+          raf = requestAnimationFrame(move);
+        }
+      } catch (e) { /* no Web Audio: Andy speaks, its face still */ }
+      audio.onended = end; audio.onerror = end;
+      audio.play().catch(end);
+    };
+    hear.onclick = talk.onclick = speak;
     const blink = () => { w.classList.add("blink"); setTimeout(() => w.classList.remove("blink"), 140); };
     if (!still) timers.push(setInterval(() => { if (Math.random() < 0.6) blink(); }, 2400));
     const look = (target) => {  // Andy looks at what you're about to press
@@ -943,16 +1001,16 @@
       const dx = t.left + t.width / 2 - (f.left + f.width / 2), dy = t.top + t.height / 2 - (f.top + f.height / 2), d = Math.hypot(dx, dy) || 1;
       eyes.style.transform = `translate(${(dx / d * 26).toFixed(1)}px, ${(dy / d * 16).toFixed(1)}px)`;
     };
-    for (const target of [cta, ...more.children]) {
+    for (const target of [cta, ...more.children, ...(voices ? [hear] : [])]) {
       target.addEventListener("pointerenter", () => look(target)); target.addEventListener("focus", () => look(target));
       target.addEventListener("pointerleave", () => look(null)); target.addEventListener("blur", () => look(null));
     }
-    welcomed = { timers, behind };
+    welcomed = { timers, behind, stop: () => { clearInterval(cycle); playing?.stop(); } };
     w.focus({ preventScroll: true });
   }
   function leaveWelcome(toStory) {
     if (!welcomed) return;
-    welcomed.timers.forEach(clearInterval); welcomed.behind.forEach(e => { e.inert = false; });
+    welcomed.stop(); welcomed.timers.forEach(clearInterval); welcomed.behind.forEach(e => { e.inert = false; });
     welcomed = null; document.getElementById("welcome")?.remove(); document.body.classList.remove("welcoming");
     if (toStory) startStory();
   }
