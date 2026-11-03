@@ -50,3 +50,13 @@ def test_the_piece_command_keeps_the_take_sound_and_quotes_awkward_paths(tmp_pat
     tv = cmd.index("film/tv.webm")
     assert cmd[tv - 3: tv - 1] == ["-ss", "12.8"]  # the TV starts where the take's piece does
     assert cmd[cmd.index("[v]") + 1: cmd.index("[v]") + 3] == ["-map", "0:a?"]  # the take's own sound
+
+
+def test_the_captions_leave_out_andys_clap():
+    """November 3, a dry run with Andy's own clap and voice: the clap's two notes came out as a caption ("The world war
+    I was problem"), and the piece, starting just after the clap, would have flashed it."""
+    assert film.without_clap([(1.98, 2.25), (5.1, 6.81)], 2.0) == [(5.1, 6.81)]
+    assert film.without_clap([(1.98, 3.4)], 2.0) == [(2.45, 3.4)]  # speech straight after the clap keeps its part
+    assert film.without_clap([(1.0, 2.1)], 2.0) == [(1.0, 1.95)]
+    assert film.without_clap([(5.1, 6.8)], None) == [(5.1, 6.8)]
+

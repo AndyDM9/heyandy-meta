@@ -2476,3 +2476,11 @@ Found and fixed, each with a test:
   now, and 20 of 24 written afterwards (before, 9). The founder asked that Andy's reply not name the subject: it now
   names "the crisis line", still with 988 and 911, by hand in all fifteen languages (only the subject's words taken out
   of each line's name; Russian and Ukrainian already said "the crisis help line"). The words Andy listens for are unchanged: they're how it notices someone needs help.
+- **Tonight's tools, run end to end on a made-up take** (November 3, afternoon: Andy's own clap and voice in a quiet
+  room's noise, coloured frames for the camera and the TV, no camera or room recorded): `make_film.py sync` found the
+  clap at 2.00 s of the take and lined the TV up 1.5 s off, as made, and its check saw the TV's own flash 0.10 s after
+  the clap (a dark full-screen flash, as the TV's is; a white one on a cream page isn't seen, and needn't be);
+  `captions` heard "Hey Andy where are my glasses", but also wrote "The world war I was problem" for the clap's two
+  notes, and the piece, starting just after the clap, would have shown it for half a second: the clap (matched at
+  0.98, anything else about 0.3) is now left out of the captions. Then `burn` (the badge, the TV beside the robot, the
+  caption on time) and `cut` with the cards: 37.2 s, 1080p, -16 LUFS.

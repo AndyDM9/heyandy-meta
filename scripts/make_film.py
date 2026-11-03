@@ -112,6 +112,24 @@ def sync(take_sound: np.ndarray, clap_wall: float, tv_started: float, tv_flashes
     return out
 
 
+def without_clap(spans: list[tuple], clap_at: float | None, clap_s: float = 0.45) -> list[tuple]:
+    """The speech spans with Andy's clap cut out (November 3, a dry run: Omnilingual ASR wrote "The world war I was
+    problem" for its two notes, and the piece, starting just after the clap, would have shown it for half a second);
+    speech that runs on past the clap keeps its part, if 0.3 s or more."""
+    if clap_at is None:
+        return list(spans)
+    out, a0, b0 = [], clap_at - 0.05, clap_at + clap_s
+    for a, b in spans:
+        if b <= a0 or a >= b0:
+            out.append((a, b))
+            continue
+        if a0 - a >= 0.3:
+            out.append((a, a0))
+        if b - b0 >= 0.3:
+            out.append((b0, b))
+    return out
+
+
 def transcribe(samples: np.ndarray, url: str, language: str) -> str:
     req = urllib.request.Request(url.rstrip("/") + "/transcribe", data=samples.astype("<f4").tobytes(), method="POST",
                                  headers={"X-Sample-Rate": str(RATE), "X-Language": language})
@@ -329,7 +347,8 @@ def main() -> None:
     if args.do == "captions":
         sound = audio(args.take)
         lines = []
-        for a, b_ in speech_spans(sound):
+        claps = [at for at, match in find_clap(sound) if match >= 0.6]  # the take's own clap: 0.98, anything else ~0.3
+        for a, b_ in without_clap(speech_spans(sound), claps[0] if claps else None):
             text = tidy(transcribe(sound[int(a * RATE): int(b_ * RATE)], args.voice_url, args.language))
             if text:
                 lines.append((a, b_, text))
