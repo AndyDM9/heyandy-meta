@@ -2499,3 +2499,9 @@ Found and fixed, each with a test:
   calls: none taken; 11 of 11 emergencies and crisis phrases taken. The TV ad's "I've fallen and I can't get up" is
   taken, and gets the 911 line. Found on the way: "I can't get up this early anymore" was an emergency even with the
   name; now not.
+- **Andy's TV, audited as it'll be filmed** (November 3, afternoon). The live screen, pictured when no camera picture
+  was on it: "Keeping an eye on" printed "keys" through "glasses", three things seen close together. Each name is now
+  measured as drawn and moved a line down or up when it would overlap one already placed (`untangle`, page.html;
+  a test draws four names, three crowded, and checks no two boxes meet). The last caption that stays on screen was by
+  design: the TV turns to Andy's face after a quiet minute, and in filming mode stays on what Andy last did. The
+  accessibility audit again (`accessibility-20261103-1543`): no axe violation, none of 1,577 texts below AA.

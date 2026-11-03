@@ -1619,7 +1619,23 @@
       t.setAttribute("x", x + (x < -40 ? -9 : 9)); t.setAttribute("y", y + 4); t.setAttribute("class", "name");
       t.setAttribute("text-anchor", x < -40 ? "end" : "start"); t.textContent = p.label; g.append(t);
     }
+    requestAnimationFrame(() => untangle(svg));  // once it's on the screen and its names have a size
     return svg;
+  }
+  // Each name clear of those already placed: two things seen close together printed one over the other ("keys" through
+  // "glasses", November 3, on the robot's TV). Measured as drawn, a name that would overlap moves a line down or up.
+  function untangle(svg) {
+    if (!svg.isConnected) return;
+    const placed = [], box = t => { const b = t.getBBox(); return [b.x, b.y, b.x + b.width, b.y + b.height]; };
+    const clear = b => !placed.some(q => b[0] < q[2] && q[0] < b[2] && b[1] < q[3] && q[1] < b[3]);
+    for (const t of svg.querySelectorAll("text.name")) {
+      const y0 = +t.getAttribute("y"), h = t.getBBox().height;
+      for (const d of [0, h, -h, 2 * h, -2 * h]) {
+        t.setAttribute("y", y0 + d);
+        if (clear(box(t))) break;
+      }
+      placed.push(box(t));
+    }
   }
   function zoom(p) {  // about four times the thing's size, at least a third of the frame, in the frame's shape
     const [l, t, r, b] = p.box, aspect = p.width / p.height;

@@ -692,3 +692,29 @@ def test_the_front_door_says_which_language_the_story_is_told_in(browser):
     finally:
         long.close()
         server.shutdown()
+
+
+def test_the_map_of_watched_things_never_prints_one_name_over_another(browser):
+    """November 3, on the robot's TV: the cup, the keys and the glasses seen close together, and "keys" printed through
+    "glasses". Each name now keeps clear of those already placed."""
+    server = serve(ScreenState(), port=0)
+    try:
+        page = browser.new_page(viewport={"width": 1920, "height": 1080})
+        page.goto(f"http://127.0.0.1:{server.server_address[1]}/")
+        page.wait_for_timeout(800)
+        boxes = page.evaluate("""() => {
+          const places = [{label: "cup", yaw: -8, pitch: -20, metres: 1.2, ago_s: 5},
+                          {label: "keys", yaw: -12, pitch: -22, metres: 1.15, ago_s: 600},
+                          {label: "glasses", yaw: -10, pitch: -21, metres: 1.18, ago_s: 5},
+                          {label: "remote", yaw: 60, pitch: -10, metres: 2.0, ago_s: 50}];
+          const svg = dial(places, false); document.body.append(svg); untangle(svg);
+          return [...svg.querySelectorAll("text.name")].map(t => { const b = t.getBBox(); return [t.textContent, b.x, b.y, b.x + b.width, b.y + b.height]; });
+        }""")
+        page.close()
+    finally:
+        server.shutdown()
+    assert [b[0] for b in boxes] == ["cup", "keys", "glasses", "remote"]
+    for i, a in enumerate(boxes):
+        for b in boxes[i + 1:]:
+            overlap = a[1] < b[3] and b[1] < a[3] and a[2] < b[4] and b[2] < a[4]
+            assert not overlap, (a, b)
