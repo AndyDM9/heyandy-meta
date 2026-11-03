@@ -4,6 +4,12 @@ Judged on impact (30%), use of Meta's models (25%), technical depth (20%) and th
 the demo; the numbers carry the depth. Filmed on the Reachy Mini Lite in a staged room (no other people, nothing
 personal in view). The TV page is screen-recorded at the same time.
 
+**Again on November 3** (`docs/rules.md`, "Organizer answers"): judges stop watching at 3:00; most of the video real
+footage of the product running with live Meta model calls visible; "show the product, not slides"; a video made
+entirely by AI doesn't count. So the robot's takes carry it, the TV's live strip in shot, and the numbers as the short
+card (`film/card-short.mp4`, 10.3 s) or captions. `film/andy-story.mp4` (the public demo's story) is only the fallback:
+it's the demo running, but its scenes are recorded, not live.
+
 **What the organizers asked of the video (Discord #questions, Oct 31, the Cerebral Valley app):** judged on Impact
 (30%), Use of Meta AI tooling (25%), Technical depth and execution (20%) and Demo (25%: "a working, impressive demo
 that holds up live and is genuinely cool to watch"); open with the one line on what existed before and what was built
