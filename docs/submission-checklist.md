@@ -40,8 +40,9 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        dates show the work was done during the event.
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics) and
        check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload
-       `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. First check
-       GitHub Support has purged the old commits (the founder's ticket of November 1; the private status notes have the check).
+       `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. GitHub Support
+       has purged the old commits (the founder's ticket of November 1): checked November 3, none of the 182 replaced
+       commits is served by its hash any more, nor their objects (the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
        (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the front door and the story open on
        about 10 s of the robot itself, `docs/demo-script.md`; then
