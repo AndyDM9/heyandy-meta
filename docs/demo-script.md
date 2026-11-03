@@ -28,7 +28,7 @@ hood for the where and how.
 
 **A tighter cut, if the plan above runs long** (a judge's read of everything, November 2, research.md 85: about fifteen
 features in three minutes is a lot, and the strongest moments get less time): keep the required first line; the
-problem with the health caption; **the uncut find** (the TV decoy skipped, then 3 s of "how did you do that?", said straight after its answer: no name needed); one of
+problem with the health caption; **the uncut find** (the TV decoy skipped, then 3 s of "Hey Andy, how did you do that?": the name too, in case anyone in the room spoke); one of
 **Mandarin** or **the network unplugged** (its receipt: "Nothing left this house"); **several things at once** (the
 agent); **the sticky note**, if it works on real paper; **"Hey Andy, what won't you do?"**, then **"Hey Andy, what did you hear today?"**.
 Drop from the quick cuts: the room in 3D, the lighthouse, the weather radar, "what am I holding?" (the note does it
@@ -151,9 +151,10 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
 6. **Takes,** in the storyboard's order. Cameras rolling, then say **"take one"** ("take two", "next take"): Andy says
    nothing, plays two quick high notes (the clap), and the TV flashes "TAKE 1" for under a second. That's the mark
    step 8 lines everything up on; Andy times the clap by its own microphones and writes it to `film/takes.json`. Then
-   the take: speak at a normal distance, **start every request with "Hey Andy"**, and wait for Andy to finish. Only a
-   reply's own follow-up ("how did you do that?", "speak English") may come without the name, straight after Andy has
-   spoken; anything else said on its own is taken for the room's talk and let go, emergencies included. **"Cut"** and
+   the take: speak at a normal distance, **start every request with "Hey Andy"**, and wait for Andy to finish. A reply's
+   own follow-up ("how did you do that?") may come without the name straight after Andy has spoken, but not once
+   anyone else in the room has talked, so say the name every time; anything else said on its own is taken for the
+   room's talk and let go, emergencies included. **"Cut"** and
    Andy says how long the take ran. In filming mode the cues ("take two", "next take", "cut", "that's a wrap") are heard
    without the name, and only they are.
    Something goes wrong: "Hey Andy, stop", then the next take; if Andy stops answering, restart it (step 1's command, 20 s)
