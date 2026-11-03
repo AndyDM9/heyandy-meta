@@ -2210,3 +2210,23 @@ Found and fixed, each with a test:
   front door hears Korean, keys get "There they are!", and nothing is said once the sound is off
   (`tests/test_eyes_page.py`); the clips' words are the hand-written ones and their hashes the files'
   (`tests/test_social_card.py`).
+
+## 101. Every scene of the demo, said in Andy's own voice (November 2, night)
+
+- **Why:** the public demo answers what a visitor types or says (*Ask Andy*) with the scene recorded from the TV for it,
+  and lets them pick any scene; each scene is Andy speaking ("There it is! I see your blue mug..."; "파란 컵이 보입니다,"
+  in Korean), and every one was silent: a caption to read.
+- **Now** (`scripts/front_door_voice.py` scene_lines, `page.html` sayScene): each scene's line, the caption the TV
+  shows Andy saying, in Andy's own voice (Meta's SeamlessM4T v2, made on our computer) and the scene's language, said
+  when the visitor asks or picks it: a find says "Let me look." and then the find, as on the robot; asked in Korean,
+  Andy answers in Korean. Never while the scenes go round by themselves; the story keeps its own telling; "Andy's
+  voice" in the bar turns it off, the same choice as the story's. Made sentence by sentence, as the robot's speaker
+  makes them (the keys' story made whole and heard back whole scored 0.56; heard back a sentence at a time, its
+  sentences scored 0.74 to 1.00, and a paragraph made whole comes out worse anyway). Thirty-five scenes, 209 s, 1.1 MB;
+  heard back sentence by sentence by Omnilingual ASR at 0.88 to 1.00. The lost-and-found scene's time of day is now
+  written in ("since 9:40"): it was the clock's, and a clip can't say the time a page shows later.
+- **Checked:** the clips' words are the scenes' own captions now, in their languages (a scene whose words change
+  without its clip made again fails `tests/test_social_card.py`); in a browser, nothing is said while the scenes go
+  round, a pick and a find are said in order, and nothing once the voice is off (`tests/test_page_runs.py`); on 390 and
+  360-pixel phones the bar's new button is 44 pixels tall with nothing wider than the screen. The accessibility audit
+  again (`accessibility-20261102-2231`): no axe violation in 66 states, none of 1,537 texts below AA.

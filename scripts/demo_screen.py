@@ -357,8 +357,8 @@ def show(state: ScreenState, scene: str) -> None:
         state._timer = (time.monotonic() - 6.1, time.monotonic())
         jpeg, mask = sample_frame()
         found = Found("mug", -6.0, 14.0, 0.91, Frame(jpeg, 1920, 1080, -6.0, 14.0), mask, looks=2, aim_deg=2.0, metres=1.2)
-        since = time.strftime("%-I:%M", time.localtime(time.time() - 25 * 60))
-        words = f"Good news: your mug turned up! It's a little to my right, about 4 feet away. I'd been looking out for it since {since}."
+        # a time of day written in (sample data): the clip of Andy saying it (scripts/front_door_voice.py) says the same
+        words = "Good news: your mug turned up! It's a little to my right, about 4 feet away. I'd been looking out for it since 9:40."
         state.found(found, words)
         state.turned_up(words)
         state._picture.until += 3600  # a still for the demo: it stays

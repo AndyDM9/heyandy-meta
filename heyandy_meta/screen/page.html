@@ -875,6 +875,16 @@
   const told = (at) => NARRATION && NARRATION[STORY[at][2]];
   const chapterSeconds = (at) => Math.max(STORY[at][1], narrate && told(at) ? told(at).seconds + 0.9 : 0);
   function hush() { if (telling) { telling.pause(); telling = null; } }
+  // The demo's scenes, each said in Andy's own voice when the visitor asks or picks one (never while they go round by
+  // themselves, and the story has its own telling): what the robot says, as the TV shows it, in the scene's language.
+  const SCENE_VOICE = window.HEYANDY_SCENE_VOICE || null;
+  function sayScene(name) {
+    hush();
+    const v = SCENE_VOICE && narrate && SCENE_VOICE[name];
+    if (!v) return;
+    telling = new Audio(v.file);
+    telling.play().catch(() => { telling = null; });
+  }
   function tell() {  // this chapter's words, in Andy's voice
     hush();
     const t = story && narrate && told(story.at), b = document.querySelector("#story .voice");
@@ -1164,7 +1174,7 @@
     document.body.classList.add("exploring");
     if (document.body.firstElementChild !== nav) document.body.prepend(nav);  // first: on a phone it leads
     const top = el("div", null, "row top"), eyes = el("a", "Try it on your own things →");
-    eyes.href = "eyes.html"; eyes.className = "eyes"; eyes.title = "Andy's eyes: Meta's DINOv2 finds your thing in your photo, in this browser";
+    eyes.href = "eyes.html?find"; eyes.className = "eyes"; eyes.title = "Andy's eyes: Meta's DINOv2 finds your thing in your photo, in this browser";
     top.append(el("b", "Ask Andy"), askForm(true), eyes); nav.append(top);
     if (asked) {  // what was asked, what it matched, and what a recorded scene can't show
       const a = el("div", null, "asked"); a.append(el("span", `You asked “${asked.text}”`), el("em", "→ " + (NAMES[asked.scene] || asked.scene)));
@@ -1175,10 +1185,18 @@
       nav.append(a);
     } else nav.append(tries(true));
     const row = el("div", null, "row scenes"); row.append(el("b", "Sample data · scenes:"));
+    if (SCENE_VOICE) {  // Andy's own voice for the scenes, the same choice as the story's
+      const v = el("button", narrate ? "Andy's voice: on" : "Andy's voice: off");
+      v.className = "voice"; v.setAttribute("aria-pressed", String(narrate));
+      v.onclick = () => { narrate = !narrate; v.textContent = narrate ? "Andy's voice: on" : "Andy's voice: off";
+                          v.setAttribute("aria-pressed", String(narrate)); if (narrate && chosen) sayScene(chosen); else hush(); };
+      row.append(v);
+    }
     for (const name of [...scenes, "auto"]) {
       const b = el("button", NAMES[name] || "In turn");
       b.setAttribute("aria-pressed", String(name === (chosen || "auto")));
-      b.onclick = () => { chosen = name === "auto" ? null : name; asked = null; asking++; pictureKey = ""; demoBar(); };
+      b.onclick = () => { chosen = name === "auto" ? null : name; asked = null; asking++; pictureKey = ""; demoBar();
+                          if (chosen) sayScene(chosen); else hush(); };
       row.append(b);
     }
     nav.append(row);
@@ -1282,8 +1300,8 @@
                   : EMERGENCY_TYPED.test(text) ? `On the robot, Andy says first: "${EMERGENCY_SAID}" Then it finds your phone and points at it (16.5 to 27.1 s on the robot). This scene was recorded finding a mug.`
                   : scene === "help" && HEALTH_TYPED.test(text) ? `On the robot, Andy says: "${HEALTH_SAID}" Its own words, written in code in each of its fifteen languages: no model answers a health question.`
                   : scene === "help" ? "Nothing matched that, so here's what Andy can do. On the robot, Andy also just talks." : "" };
-    chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar();
-    if (scene === "find") setTimeout(() => { if (run === asking) { chosen = "found"; pictureKey = ""; demoBar(); } }, 2600);
+    chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar(); sayScene(chosen);
+    if (scene === "find") setTimeout(() => { if (run === asking) { chosen = "found"; pictureKey = ""; demoBar(); sayScene("found"); } }, 2600);
   }
   // ---- Say it: the demo heard, not typed. Meta's wav2vec 2.0 (facebook/wav2vec2-base-960h, Apache-2.0; 8-bit, 95 MB,
   // fetched once, on the first tap) runs in this browser: nothing said leaves it. English. It writes what it hears letter

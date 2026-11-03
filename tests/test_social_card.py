@@ -119,3 +119,24 @@ def test_find_modes_words_are_andys_own_by_hand_in_each_language():
             assert hashlib.sha256((screen / c["file"]).read_bytes()).hexdigest() == c["sha256"]
             assert c["heard back"] >= 0.6 or c["seconds"] < 1.7, (code, moment)
     assert build_static_space.find_voice()["en"]["it"] == {"text": "There it is!", "file": "voice/find-en-it.mp3"}
+
+
+def test_each_demo_scene_is_said_in_andys_voice_and_its_words_are_the_scenes_own():
+    """scripts/front_door_voice.py scene_lines: each scene's caption (what the TV shows Andy saying), in the scene's
+    language, in Andy's own voice, sentence by sentence as the robot's speaker makes it. A scene whose words change
+    without its clip made again fails here."""
+    import hashlib
+    import json
+
+    import front_door_voice
+
+    screen = ROOT / "heyandy_meta" / "screen"
+    said = json.loads((screen / "voice" / "scenes.json").read_text())["scenes"]
+    now = front_door_voice.scene_lines()
+    assert said.keys() == now.keys() and len(said) >= 30
+    for name, c in said.items():
+        assert (c["text"], c["lang"]) == now[name], name
+        assert hashlib.sha256((screen / c["file"]).read_bytes()).hexdigest() == c["sha256"]
+        assert c["heard back"] >= 0.85, name
+    assert {c["lang"] for c in said.values()} >= {"en", "es", "zh", "ko", "ar", "hi", "uk"}
+    assert build_static_space.scene_voice()["in-ko"]["file"] == "voice/scene-in-ko.mp3"

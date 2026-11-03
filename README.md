@@ -47,11 +47,12 @@ Built on Meta's models for people who live at home, starting with older adults, 
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
   the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
-- **Try it now, no robot needed:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) opens on Andy's
-  face and one thing to try first, Andy's eyes on your own things; its 75-second story, told by Andy in its own voice,
-  is Andy's own TV, its scenes recorded and replayed in your browser; *Ask Andy* plays the scene that matches what you type, in any of
-  its fifteen languages, or **say** in English (tap 🎙: Meta's wav2vec 2.0 hears you, in your browser). **Andy's eyes,
-  live** is the real thing: show it your mug, sweep your phone round the room, and Meta's DINOv2 finds yours.
+- **Try it now, no robot needed:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) opens on Andy's face
+  and one thing to try first, Andy's eyes on your own things; its 75-second story, told by Andy in its own voice, is
+  Andy's own TV, its scenes recorded and replayed in your browser; *Ask Andy* plays the scene that matches what you
+  type, Andy saying it in its own voice, in any of its fifteen languages, or **say** in English (tap 🎙: Meta's wav2vec
+  2.0 hears you, in your browser). **Andy's eyes, live** is the real thing: show it your mug, sweep your phone round the
+  room, and Meta's DINOv2 finds yours.
 - **Run it yourself:** two commands on a laptop, no GPU and no robot ([Run it](#run-it)); the whole Andy, from this
   repository, on a computer with two 24 GB GPUs.
 

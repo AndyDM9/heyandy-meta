@@ -509,3 +509,42 @@ def test_the_story_is_told_in_andys_voice_and_a_press_turns_it_off(browser):
     assert first[0] == pytest.approx(10.4) and first[1] == 6 and first[2] == 6 and first[3] == "true"  # longer words, longer chapter
     assert off == [False, 6, "Andy's voice: off"]
     assert asked == "▶ Hear Andy tell it"
+
+
+def test_a_scene_asked_for_or_picked_is_said_in_andys_voice_and_the_story_keeps_its_own(browser):
+    """The public demo's scenes, each said in Andy's own voice when the visitor asks or picks one: a find says "Let me
+    look." and then the find; never while the scenes go round by themselves; off with "Andy's voice"; the story keeps
+    its own telling."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    base = f"http://127.0.0.1:{server.server_address[1]}/"
+    init = """window.HEYANDY_SCENE_VOICE = Object.fromEntries(["found", "finding", "memory", "help", "room"].map(n => [n, { text: n, file: `voice/scene-${n}.mp3` }]));
+              window.played = []; const A = window.Audio; window.Audio = function (src) { window.played.push(String(src).split('/').pop()); return new A(src); };"""
+    try:
+        page = browser.new_page(viewport={"width": 1440, "height": 900})
+        page.add_init_script(init)
+        page.goto(base + "?explore")
+        page.wait_for_selector("#demo .voice", timeout=10000)
+        page.wait_for_timeout(1500)
+        idle = page.evaluate("window.played.length")  # going round by themselves: nothing said
+        page.click("#demo button:text('Memory')")
+        page.fill("#demo form.ask input", "where are my keys?")
+        page.press("#demo form.ask input", "Enter")
+        page.wait_for_function("window.played.includes('scene-found.mp3')", timeout=6000)
+        asked = page.evaluate("window.played")
+        page.click("#demo .voice")
+        page.click("#demo button:text('Memory')")
+        off = page.evaluate("[window.played.length, document.querySelector('#demo .voice').textContent]")
+        page.close()
+    finally:
+        server.shutdown()
+    assert idle == 0
+    assert asked == ["scene-memory.mp3", "scene-finding.mp3", "scene-found.mp3"]
+    assert off == [3, "Andy's voice: off"]

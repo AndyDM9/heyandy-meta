@@ -9,7 +9,8 @@ build copies them.
 
     uv run python scripts/front_door_voice.py        # -> heyandy_meta/screen/voice/: <language>.mp3, voice.json,
                                                      #    the story's chapters, story-NN.mp3 and story.json,
-                                                     #    and find mode's words, find-<language>-<moment>.mp3
+                                                     #    find mode's words, find-<language>-<moment>.mp3,
+                                                     #    and each demo scene's line, scene-<name>.mp3
 """
 import hashlib
 import json
@@ -64,6 +65,25 @@ def find_lines() -> dict[str, dict[str, str]]:
         words = {k: (v if code == "en" else PHRASES.get(code, {}).get(v)) for k, v in FIND.items()}
         if all(words.values()):
             out[code] = words
+    return out
+
+
+def scene_lines() -> dict[str, tuple[str, str]]:
+    """{scene: (what Andy says in it, its language)}: the public demo's scenes as the Space's build makes them
+    (scripts/demo_screen.py), each one's caption, the words the TV shows Andy saying."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from demo_screen import IN_LANGUAGE, SCENES, show
+
+    from heyandy_meta.screen.state import ScreenState
+
+    out = {}
+    for name in (*SCENES, *IN_LANGUAGE):
+        state = ScreenState()
+        show(state, name)
+        snap = state.snapshot()
+        text = (snap.get("caption") or "").strip()
+        if text:
+            out[name] = (text, snap.get("lang") or "en")
     return out
 
 
@@ -132,6 +152,30 @@ def main() -> None:
         print(f"find {code}: " + ", ".join(f"{m} {c['heard back']:.2f}" for m, c in found[code].items()))
     (OUT / "find.json").write_text(json.dumps({"what": "Andy's eyes, find mode, in Andy's own voice (SeamlessM4T v2)",
                                                "languages": found}, ensure_ascii=False, indent=1))
+    import numpy as np
+
+    from heyandy_meta.voice.speaker import SENTENCE
+
+    spoken = {}
+    for name, (text, lang) in scene_lines().items():
+        speaker = LocalVoice("http://127.0.0.1:8092", voice=LANGUAGES[lang].voice)
+        # sentence by sentence, as the robot's speaker makes them (voice/speaker.py): a long paragraph in one go comes out
+        # worse (the keys' story, 17.8 s at once, was heard back at 0.56)
+        sentences = [x for x in SENTENCE.split(text.strip()) if x.strip()]
+        parts = [speaker.speak(x, rate=RATE) for x in sentences]
+        gap = np.zeros(int(0.12 * RATE), np.float32)
+        samples = np.concatenate([y for part in parts for y in (part, gap)][:-1])
+        path = OUT / f"scene-{name}.mp3"
+        seconds = mp3(samples, path)
+        # heard back sentence by sentence (Omnilingual ASR hears an utterance of a few seconds, as Andy's ears cut them:
+        # the keys' story heard whole, 18.8 s, scored 0.56, each of its sentences 0.74 to 1.00), weighted by length
+        scores = [heard_back(x, speaker.transcribe(a, RATE, language=LANGUAGES[lang].asr)) for x, a in zip(sentences, parts)]
+        heard = round(sum(sc * len(a) for sc, a in zip(scores, parts)) / sum(len(a) for a in parts), 2)
+        spoken[name] = {"text": text, "lang": lang, "seconds": seconds, "file": f"voice/scene-{name}.mp3",
+                        "heard back": heard, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        print(f"scene {name}: {lang} {seconds:.1f} s, heard back {heard:.2f}")
+    (OUT / "scenes.json").write_text(json.dumps({"what": "The public demo's scenes, each said in Andy's own voice (SeamlessM4T v2)",
+                                                 "scenes": spoken}, ensure_ascii=False, indent=1))
 
 
 if __name__ == "__main__":

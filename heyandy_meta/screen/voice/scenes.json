@@ -1,0 +1,285 @@
+{
+ "what": "The public demo's scenes, each said in Andy's own voice (SeamlessM4T v2)",
+ "scenes": {
+  "start": {
+   "text": "Here's your room, measured in 3D. Now, what do you lose most often? Your keys, your glasses, your phone, the remote?",
+   "lang": "en",
+   "seconds": 6.9,
+   "file": "voice/scene-start.mp3",
+   "heard back": 0.98,
+   "sha256": "4792edc8627de8f6c7789051e57ae287989f6e436e492c6b859b88b11834ac62"
+  },
+  "finding": {
+   "text": "Let me look.",
+   "lang": "en",
+   "seconds": 1.09,
+   "file": "voice/scene-finding.mp3",
+   "heard back": 1.0,
+   "sha256": "4c0c063f6ce37fa3dbbbfabc561ece1477f1e4414a98d2560685761e2826b92b"
+  },
+  "found": {
+   "text": "There it is! I see your blue mug: ahead of you, on your left, about 2 steps from you, at your 11 o'clock.",
+   "lang": "en",
+   "seconds": 6.82,
+   "file": "voice/scene-found.mp3",
+   "heard back": 0.98,
+   "sha256": "005a982fff192353b97d7aaa892ff1df2ae31a45d648f6877ba1d5ec4e8a2454"
+  },
+  "guide": {
+   "text": "Toward you, and right.",
+   "lang": "en",
+   "seconds": 1.46,
+   "file": "voice/scene-guide.mp3",
+   "heard back": 0.88,
+   "sha256": "9e5caee781872c910bd6b3b805dcb18f12952c093541336623fdcd5985a4d2f8"
+  },
+  "turned": {
+   "text": "Good news: your mug turned up! It's a little to my right, about 4 feet away. I'd been looking out for it since 9:40.",
+   "lang": "en",
+   "seconds": 7.2,
+   "file": "voice/scene-turned.mp3",
+   "heard back": 0.96,
+   "sha256": "3a7d60d3b9e126cb159eb466d2cf7c8491aaa14b4515bfa09692faff1f06ad7a"
+  },
+  "sound": {
+   "text": "I can hear it, but I can't see it. It's ringing a little to my left, where I'm pointing: it may be under something.",
+   "lang": "en",
+   "seconds": 6.05,
+   "file": "voice/scene-sound.mp3",
+   "heard back": 1.0,
+   "sha256": "4c8758af06e434c85b46942513677af01a08081aca73944c372caeeed25c5ce4"
+  },
+  "home": {
+   "text": "They live there, in the bowl by the door.",
+   "lang": "en",
+   "seconds": 2.33,
+   "file": "voice/scene-home.mp3",
+   "heard back": 1.0,
+   "sha256": "30783cfb8359372d39d1dd7442352dc996594523681f391a697ee4d1ab98991b"
+  },
+  "told": {
+   "text": "You told me on Friday at 3:12: your passport is in the top drawer of the desk. If it isn't there, ask me again and I'll look around the room.",
+   "lang": "en",
+   "seconds": 8.37,
+   "file": "voice/scene-told.mp3",
+   "heard back": 1.0,
+   "sha256": "c54c81488612cd87945c7666fa13e5ed738d2e407d5782d3089d422acf50c2eb"
+  },
+  "checked": {
+   "text": "Mostly fine, but 1 thing isn't working. Telling how far (MapAnything): I can still find things and point, but not say how far.",
+   "lang": "en",
+   "seconds": 7.41,
+   "file": "voice/scene-checked.mp3",
+   "heard back": 0.97,
+   "sha256": "fb54f6f81ffb7eceb0a91f941c3561b70ddc145571651fe3221b471deebb4f9b"
+  },
+  "mine": {
+   "text": "Found it! I see your mug, the one you showed me, a little to my right. The other mug isn't yours.",
+   "lang": "en",
+   "seconds": 6.49,
+   "file": "voice/scene-mine.mp3",
+   "heard back": 0.93,
+   "sha256": "a3db3d5a0b9ab164d752e7ecd1b116e7e319af4c4a9df2c39278c29b17cdc1ba"
+  },
+  "cups": {
+   "text": "Yes! I kept my eye on it. That's 2 to 1 to me. Again?",
+   "lang": "en",
+   "seconds": 5.44,
+   "file": "voice/scene-cups.mp3",
+   "heard back": 0.94,
+   "sha256": "a4d43dcc431b1799352471c61805360cb4ef5aee0df1a70b4c0112a25386361f"
+  },
+  "out": {
+   "text": "Don't forget your keys. I didn't see your glasses and your remote where I last saw them, so I hope they're with you. Remember: at 9:39, call Sam. Take an umbrella. Have a lovely time!",
+   "lang": "en",
+   "seconds": 12.89,
+   "file": "voice/scene-out.mp3",
+   "heard back": 0.92,
+   "sha256": "ee0d76258005b99cfd8fe38f0b433dc8845fc3e3501d161ff379300d74685d47"
+  },
+  "spanish": {
+   "text": "Veo su taza azul, un poco a mi derecha.",
+   "lang": "es",
+   "seconds": 2.63,
+   "file": "voice/scene-spanish.mp3",
+   "heard back": 0.97,
+   "sha256": "f2c5f4feae1b9e056cb7a16ff2ad9a00f9fbe2d44efc3605f19d3c1ff336e570"
+  },
+  "mandarin": {
+   "text": "我看到您的蓝色杯子，在我右边一点。",
+   "lang": "zh",
+   "seconds": 4.26,
+   "file": "voice/scene-mandarin.mp3",
+   "heard back": 0.97,
+   "sha256": "280c8aaaeed96429d71bc28b62cd7dedb73aefbdd5385646d39e6ca395449a07"
+  },
+  "web": {
+   "text": "The TV is showing Wikipedia's page on banana bread: a sweet quick bread made from mashed bananas.",
+   "lang": "en",
+   "seconds": 6.33,
+   "file": "voice/scene-web.mp3",
+   "heard back": 1.0,
+   "sha256": "0d8f56baa9f3596188a40541d669bbb16f734bc72be927fe6dd79da23c7adddc"
+  },
+  "answer": {
+   "text": "Sunny tomorrow, with a high of 61 and a light breeze in the afternoon. That's according to weather.gov.",
+   "lang": "en",
+   "seconds": 6.74,
+   "file": "voice/scene-answer.mp3",
+   "heard back": 0.95,
+   "sha256": "7b2b3fe190d3881950d5c65083108fc54e53850d20519923847ba527b360350c"
+  },
+  "drawing": {
+   "text": "Here's your picture, on the screen. I've saved it in your Pictures folder.",
+   "lang": "en",
+   "seconds": 3.88,
+   "file": "voice/scene-drawing.mp3",
+   "heard back": 1.0,
+   "sha256": "1014c2534d694cad0178b1045a536b3ac3b0802302898ab01ab7fb3449491b0d"
+  },
+  "memory": {
+   "text": "I'm keeping an eye on your keys and your glasses. It's on the screen.",
+   "lang": "en",
+   "seconds": 3.97,
+   "file": "voice/scene-memory.mp3",
+   "heard back": 1.0,
+   "sha256": "b2e84171032010a3214517008469685714563e32a8f70efd85775de3e273e723"
+  },
+  "room": {
+   "text": "Here's the room as I measured it, on the screen: your keys a little to my right, about 2 feet away; your glasses a little to my left, about 3 feet away; your cup a little to my right, about 3 feet away. Its shape only, never a picture.",
+   "lang": "en",
+   "seconds": 13.6,
+   "file": "voice/scene-room.mp3",
+   "heard back": 0.94,
+   "sha256": "ebcfb16d88bb5cbbb2680a05553017dde2cc5288c47fcdd42bb9a1622f69f790"
+  },
+  "story": {
+   "text": "Here's the story of your keys. At 8:12, I found them on the desk, behind the keyboard. At 10:42, you put them down on the shelf by the door. At 11:12, you picked them up. At 12:05, I saw them on the desk again. They usually end up on the desk, behind the keyboard. It's on the screen.",
+   "lang": "en",
+   "seconds": 18.78,
+   "file": "voice/scene-story.mp3",
+   "heard back": 0.91,
+   "sha256": "57a2970aa46af27d48b8b81542a9eedef9b8407df0c2e0a20595cc0c925b0fe0"
+  },
+  "privacy": {
+   "text": "Today, 21 of your 24 requests stayed in this house. For the other 3, I sent 68 words to Muse Spark, and 2 screenshots of web pages you asked to see. No camera pictures and no sound left the house. It's on the screen.",
+   "lang": "en",
+   "seconds": 15.21,
+   "file": "voice/scene-privacy.mp3",
+   "heard back": 0.96,
+   "sha256": "65374e0e1f29b1bf70742cc6ae5d3621a0c684333783900b9f039100a388e679"
+  },
+  "promises": {
+   "text": "I never send a camera picture of your home to the cloud, I never give health advice, and I always say I'm an AI. And no camera picture has left this house today. It's on the screen, with the receipts.",
+   "lang": "en",
+   "seconds": 11.57,
+   "file": "voice/scene-promises.mp3",
+   "heard back": 0.99,
+   "sha256": "f88d3bd5f35fea54634c9c4c5671aae433bcc9a4379e9f95de097a04f808fa2b"
+  },
+  "help": {
+   "text": "I can find things and point at them, keep an eye on things, remind you, and look things up.",
+   "lang": "en",
+   "seconds": 5.02,
+   "file": "voice/scene-help.mp3",
+   "heard back": 1.0,
+   "sha256": "d0498c92e5e5ef9d81543881ce7c096c904052aaf0f56c984ba9a054f6cb7446"
+  },
+  "in-tl": {
+   "text": "Nakikita ko ang iyong asul na tasa, kaunti sa aking kanan.",
+   "lang": "tl",
+   "seconds": 5.06,
+   "file": "voice/scene-in-tl.mp3",
+   "heard back": 1.0,
+   "sha256": "6e7a24d552d5b6759c4e5aaa9873d0c85003fc752764b5e0999f73678a439ed6"
+  },
+  "in-vi": {
+   "text": "Tôi thấy chiếc cốc xanh của bạn, hơi lệch sang phải một chút so với tôi.",
+   "lang": "vi",
+   "seconds": 3.96,
+   "file": "voice/scene-in-vi.mp3",
+   "heard back": 1.0,
+   "sha256": "5234f7a004192ae74eefe54ecec7bbed151117d09db2890b7d0f08e3b23b3ea8"
+  },
+  "in-ko": {
+   "text": "파란 컵이 보입니다. 제 오른쪽에 조금 있습니다.",
+   "lang": "ko",
+   "seconds": 4.98,
+   "file": "voice/scene-in-ko.mp3",
+   "heard back": 0.91,
+   "sha256": "ff0565970a452e653741b07640aa8b7caf04f4e5982b49dc64f867a1311d4b85"
+  },
+  "in-ru": {
+   "text": "Я вижу вашу синюю чашку, чуть правее меня.",
+   "lang": "ru",
+   "seconds": 3.28,
+   "file": "voice/scene-in-ru.mp3",
+   "heard back": 0.92,
+   "sha256": "d4fd9f9af3da064f4bc7d20d31bd2245573ccd05693077a045735d6cdf2754bc"
+  },
+  "in-ar": {
+   "text": "أرى كوبك الأزرق، قليلًا إلى يميني.",
+   "lang": "ar",
+   "seconds": 2.94,
+   "file": "voice/scene-in-ar.mp3",
+   "heard back": 0.94,
+   "sha256": "22f7be837e289dc8e1ac3b13d80c92f7136f3b87269431fac36d2d125e657cbe"
+  },
+  "in-hi": {
+   "text": "मैं आपका नीला कप देख रहा हूँ, वह मेरे दाएँ थोड़ा है।",
+   "lang": "hi",
+   "seconds": 4.11,
+   "file": "voice/scene-in-hi.mp3",
+   "heard back": 0.93,
+   "sha256": "667f5b4744e9d97977e7bd05751f70027959a78f8c8c78c9752819c946a013f1"
+  },
+  "in-pt": {
+   "text": "Eu vejo sua xícara azul, um pouco à minha direita.",
+   "lang": "pt",
+   "seconds": 3.28,
+   "file": "voice/scene-in-pt.mp3",
+   "heard back": 1.0,
+   "sha256": "f5c157275615ac7230a1b57929cb11fb7d32b41b09ff759a4e3e2bfbe9953aa3"
+  },
+  "in-fr": {
+   "text": "Je vois votre tasse bleue, un peu à ma droite.",
+   "lang": "fr",
+   "seconds": 2.78,
+   "file": "voice/scene-in-fr.mp3",
+   "heard back": 1.0,
+   "sha256": "1a1e0d426d3a9b360a24a356cdb5ba820b26999433f6728443f57412fdb65b61"
+  },
+  "in-it": {
+   "text": "Vedo la tua tazza blu, un po' alla mia destra.",
+   "lang": "it",
+   "seconds": 2.94,
+   "file": "voice/scene-in-it.mp3",
+   "heard back": 1.0,
+   "sha256": "2c8500721222bbf1f23e80d6af90426f0689011707a8608cbd36ff665575670a"
+  },
+  "in-pl": {
+   "text": "Widzę twój niebieski kubek, trochę po mojej prawej stronie.",
+   "lang": "pl",
+   "seconds": 4.06,
+   "file": "voice/scene-in-pl.mp3",
+   "heard back": 0.98,
+   "sha256": "39e354b10dac15be89c59422a24502510938f6e0b45e39d09760a003e2e57bbe"
+  },
+  "in-de": {
+   "text": "Ich sehe Ihren blauen Becher, ein wenig zu meiner Rechten.",
+   "lang": "de",
+   "seconds": 3.39,
+   "file": "voice/scene-in-de.mp3",
+   "heard back": 0.98,
+   "sha256": "6f02af913313d3a4d61c7933334ec729cc6b28d0acced8da6f86d092b0a780a1"
+  },
+  "in-uk": {
+   "text": "Я бачу вашу синю чашку, трохи праворуч від мене.",
+   "lang": "uk",
+   "seconds": 4.05,
+   "file": "voice/scene-in-uk.mp3",
+   "heard back": 1.0,
+   "sha256": "b887c706312cbcdf432cf554c0e67bdb8697af379bcd5f70a4bfc7ee7f37f173"
+  }
+ }
+}
