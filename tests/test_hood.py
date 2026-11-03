@@ -197,13 +197,13 @@ def test_the_turn_plays_back_at_its_own_speed_with_each_model_lit_as_it_works(tm
             page.on("pageerror", lambda e: errors.append(str(e)))
             page.goto(url)
             page.wait_for_selector(".playhead", timeout=5000)  # it plays as the page opens
-            page.evaluate("window.hoodReplay(40)")  # again, forty times as fast
-            seen = set()
-            for _ in range(60):
-                seen.add(page.text_content("#doing"))
-                if "Done" in page.text_content("#status"):
-                    break
-                page.wait_for_timeout(25)
+            # every model named as it works, recorded in the page as the words change (sampling from here, a slow
+            # machine missed the short ones), with the turn played again forty times as fast
+            page.evaluate("""() => { window.named = []; const d = document.getElementById('doing');
+              new MutationObserver(() => window.named.push(d.textContent)).observe(d, { childList: true, subtree: true, characterData: true });
+              window.hoodReplay(40); }""")
+            page.wait_for_function("document.getElementById('status').textContent.startsWith('Done')", timeout=10000)
+            seen = set(page.evaluate("window.named"))
             status = page.text_content("#status")
             first = page.query_selector(".seg")
             page.wait_for_timeout(2300)  # two polls of hood.json
