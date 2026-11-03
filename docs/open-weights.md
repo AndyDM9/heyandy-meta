@@ -50,6 +50,14 @@ MATCH  Omnilingual ASR       2 of 2   dl.fbaipublicfiles.com/mms/ (omniASR-LLM-1
 54 of 54 files
 ```
 
+SeamlessM4T v2's tokenizer is read from a copy (`~/models/seamless-m4t-v2-processor`, made from Meta's files with
+transformers' `save_pretrained` by `scripts/setup-local-models.sh`): the transformers version Andy's voice runs reads
+Meta's files themselves as "unknown" for every word. The copy's three files are the library's, not Meta's bytes, so the
+check above can't cover them; `evals/voice_tokenizer.py` checks what they do instead: on every line Andy says through
+SeamlessM4T v2 (538 in fifteen languages), the copy gives exactly the numbers Meta's own SentencePiece model
+(`tokenizer.model`, above) gives. Meta's vocabulary has no piece for a few characters Andy's lines use (Mandarin's 。,
+the curly apostrophe, eleven Korean syllables), so the model reads "unknown" there, the copy and Meta's model alike.
+
 ## Verify it
 
 ```bash

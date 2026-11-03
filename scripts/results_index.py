@@ -207,6 +207,15 @@ def open_weights_all(f: str) -> str:
             f"published, at the revision Andy loads (" + ", ".join(r["model"] for r in d["models"]) + ")")
 
 
+def voice_tokenizer(f: str) -> str:
+    s = load(f)["summary"]
+    unknown = "lines with a character Meta's vocabulary hasn't"
+    odd = ", ".join(f"{v}: {' '.join(b['characters'])}" for v, b in s["by voice"].items() if b["characters"])
+    return (f"**{s['same tokens']} of {s['lines']}** lines Andy says, in {s['languages']} languages, made into exactly the "
+            f"numbers Meta's own SentencePiece model gives ({s['tokens']:,} tokens)"
+            + (f"; Meta's vocabulary has no piece for a character in {s[unknown]} of them ({odd})" if odd else ""))
+
+
 def gpu_budget(f: str) -> str:
     s = load(f)["summary"]
     return (f"**{s['total GB']} GB** at rest on the two GPUs: the language model {s['language model GB']} GB, everything "
@@ -315,6 +324,9 @@ CARDS = [
     ("Open weights, every file", "each of the nine open-weight models' files on this computer against Meta's published "
      "hashes: Hugging Face's SHA-256 and git hashes at the pinned revision, Omnilingual ASR's against Meta's download server",
      "scripts/verify_all_weights.py", "open-weights-all", open_weights_all),
+    ("The voice's tokenizer", "the copy of SeamlessM4T v2's tokenizer Andy's voice loads (re-saved here from Meta's files) "
+     "against Meta's own SentencePiece model, on every line Andy says", "evals.voice_tokenizer", "voice-tokenizer",
+     voice_tokenizer),
     ("Open weights, verified", "the Muse Glimmer file served on our own hardware, checked against Meta's published SHA-256",
      "scripts/verify_open_weights.py", "open-weights", open_weights),
     ("Notes in view", "a note left in view can't instruct Andy: drawn notes through its own picture checks, Muse Glimmer "

@@ -1,0 +1,154 @@
+{
+  "when": "2026-11-03 09:26",
+  "what": "Andy's voice's tokenizer (the copy it loads) against Meta's own files, token for token, on every line Andy says through SeamlessM4T v2: evals/voice_tokenizer.py",
+  "copy": {
+    "dir": "~/models/seamless-m4t-v2-processor",
+    "made by": "scripts/setup-local-models.sh (save_pretrained)",
+    "files": {
+      "processor_config.json": "c0e06625125fd5ca0af26bf47defe28a1e7c7b74743b2fd941a13e75638405a6",
+      "tokenizer.json": "1637354a5657c5de999d56a14791be92cfd20e33bb74f34f21fdbb8bb558dc82",
+      "tokenizer_config.json": "ded689abf50c9dd8500480f4d07107927e06ac4529d40c7ded81937e3288a69f"
+    }
+  },
+  "meta": {
+    "repo": "facebook/seamless-m4t-v2-large",
+    "revision": "5f8cc790b19fc3f67a61c105133b20b34e3dcb76",
+    "tokenizer.model": "026a76827537db9f1348e4d5aaa127bb10a2f2ff633243f3a52d16be82d73f9d"
+  },
+  "transformers": "5.21.0",
+  "sentencepiece": "0.2.2",
+  "summary": {
+    "lines": 538,
+    "languages": 15,
+    "same tokens": 538,
+    "tokens": 11953,
+    "every line the same": true,
+    "lines with a character Meta's vocabulary hasn't": 41,
+    "by voice": {
+      "arb": {
+        "lines": 28,
+        "same tokens": 28,
+        "tokens": 645,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "cmn": {
+        "lines": 28,
+        "same tokens": 28,
+        "tokens": 591,
+        "lines with a character Meta's vocabulary hasn't": 24,
+        "characters": [
+          "。"
+        ]
+      },
+      "deu": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 693,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "eng": {
+        "lines": 93,
+        "same tokens": 93,
+        "tokens": 1841,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "fra": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 725,
+        "lines with a character Meta's vocabulary hasn't": 3,
+        "characters": [
+          "’"
+        ]
+      },
+      "hin": {
+        "lines": 31,
+        "same tokens": 31,
+        "tokens": 775,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "ita": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 650,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "kor": {
+        "lines": 28,
+        "same tokens": 28,
+        "tokens": 741,
+        "lines with a character Meta's vocabulary hasn't": 12,
+        "characters": [
+          "곽",
+          "깁",
+          "녕",
+          "맵",
+          "봇",
+          "샘",
+          "섞",
+          "씽",
+          "옆",
+          "췄",
+          "킵"
+        ]
+      },
+      "pol": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 710,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "por": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 668,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "rus": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 739,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "spa": {
+        "lines": 62,
+        "same tokens": 62,
+        "tokens": 1010,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "tgl": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 726,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      },
+      "ukr": {
+        "lines": 30,
+        "same tokens": 30,
+        "tokens": 749,
+        "lines with a character Meta's vocabulary hasn't": 2,
+        "characters": [
+          "’"
+        ]
+      },
+      "vie": {
+        "lines": 28,
+        "same tokens": 28,
+        "tokens": 690,
+        "lines with a character Meta's vocabulary hasn't": 0,
+        "characters": []
+      }
+    }
+  },
+  "differ": []
+}

@@ -1,3 +1,5 @@
+import pytest
+
 from heyandy_meta.voice.spoken import number, phrases, words
 
 
@@ -25,3 +27,21 @@ def test_phrases_carry_the_pauses_the_punctuation_made():
                                    "Want me to keep an eye"]
     assert [pause for _, pause in out] == [0.15, 0.32, 0.15, 0.32, 0.0]
     assert phrases("...!") == []
+
+
+@pytest.mark.parametrize("lang, text, said", [
+    ("en", "If you need help, please call 911 right away.", "If you need help, please call nine one one right away."),
+    ("en", "You can call or text 988, the Suicide and Crisis Lifeline.", "You can call or text nine eight eight, the Suicide and Crisis Lifeline."),
+    ("es", "Si necesita ayuda, llame al 911 ahora mismo.", "Si necesita ayuda, llame al nueve uno uno ahora mismo."),
+    ("es", "Llame o envíe un mensaje al 988.", "Llame o envíe un mensaje al nueve ocho ocho."),
+])
+def test_the_numbers_andy_gives_to_call_are_said_digit_by_digit(lang, text, said):
+    """November 3: Andy's voice said "please call nine hundred eleven" and "novecientos once"; emergency and crisis
+    numbers are said as they're dialled."""
+    assert words(text, lang) == said
+
+
+def test_other_numbers_with_those_digits_are_still_numbers():
+    assert words("about 9.11 metres", "en") == "about nine point one one metres"
+    assert words("9110 steps", "en") == "nine thousand one hundred ten steps"
+

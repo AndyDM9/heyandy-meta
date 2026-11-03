@@ -59,8 +59,14 @@ def _time(h: int, m: int, lang: str) -> str:
     return number(h, lang) + (" o'clock" if not m else " oh " + number(m, lang) if m < 10 else " " + number(m, lang))
 
 
+# The numbers Andy gives to call, said digit by digit as they're said and dialled: "nine one one", never "nine hundred
+# eleven" (as Andy's voice said them in English and Spanish until November 3: research.md section 105)
+DIALLED = re.compile(r"(?<![\d.,:])\b(911|988)\b(?![.,:]?\d)")
+
+
 def words(text: str, lang: str = "en") -> str:
     """Numbers, times and units in words; abbreviations as they're said."""
+    text = DIALLED.sub(lambda m: " ".join(number(int(d), lang) for d in m[1]), text)
     text = re.sub(r"\b(\d{1,2}):(\d{2})\b", lambda m: _time(int(m[1]), int(m[2]), lang), text)
     text = re.sub(r"(\d+)\.(\d+)", lambda m: number(int(m[1]), lang) + (" point " if lang == "en" else " coma ")
                   + " ".join(number(int(d), lang) for d in m[2]), text)

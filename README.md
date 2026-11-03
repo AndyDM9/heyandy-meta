@@ -88,7 +88,9 @@ Andy's eyes).
 If SeamlessM4T v2 can't load, Meta's MMS-TTS speaks instead (`local/voice_server.py`; not needed since October 26).
 Nine of Andy's eleven are open weights on our own two GPUs ([each one's source and licence](docs/open-weights.md)),
 and every one of their files is verified: 54 of 54 files byte for byte what Meta published, at the revision Andy loads
-(`scripts/verify_all_weights.py`). The camera and microphone reach only those.
+(`scripts/verify_all_weights.py`). Andy's voice reads its words with a copy of Meta's tokenizer re-saved here, which
+gives exactly what Meta's own SentencePiece model gives on 538 of 538 lines Andy says, in fifteen languages
+(`evals/voice_tokenizer.py`). The camera and microphone reach only those.
 
 ![What runs in the house and what goes to the cloud: the robot and the TV in the room; on the computer beside the
 robot, safety in code around every model (crisis words to 988, a fall to 911 and the phone found, health questions to

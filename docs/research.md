@@ -2403,3 +2403,22 @@ Found and fixed, each with a test:
 - **Not changed, and why:** hearing less while resting (§89: the sounds are as long as a request, and a quiet "help"
   must still be heard). Andy Finder's page stays on the home network (a Reachy Mini app is opened from a phone) and it
   uses the owner's own key, said on its page.
+- **Andy's voice said "nine hundred eleven"** (found writing the tokenizer check, below). The voice server writes
+  numbers as words for English and Spanish before SeamlessM4T v2 says them (`words`), and it wrote 911 as "nine hundred
+  eleven" and 988 as "nine hundred eighty-eight" ("novecientos once" in Spanish): the crisis reply, the fall's "please
+  call 911 right away" and the health line, as Andy said them aloud. No recorded clip has them (the demo's are made from
+  other lines); live, they were said so since the voice was made. Now the numbers Andy gives to call are said as they're
+  dialled, "nine one one", "nueve uno uno" (`DIALLED`, tests in English and Spanish; 9.11 and 9110 still numbers). The
+  voice service restarted at 09:26 in a quiet hour; preflight READY; heard back, the English lines as written.
+- **The voice's tokenizer, checked** (`evals/voice_tokenizer.py`, `voice-tokenizer-20261103-0926`): the copy the voice
+  loads, re-saved from Meta's files because this transformers reads Meta's own as "unknown" for every word (October 30),
+  gives exactly the numbers Meta's own SentencePiece model (`tokenizer.model`, verified byte for byte) gives, on 538 of
+  538 lines Andy says in fifteen languages (11,953 tokens). Meta's vocabulary has no piece for a few characters in 41 of
+  them: Mandarin's 。 (24 of 28 lines), the curly apostrophe (5 in French and Ukrainian), and eleven Korean syllables
+  (12 of 28 lines; 봇 in 로봇, robot, and 샘, the sound Andy's Korean story gives SAM): the model reads "unknown" there,
+  the copy and Meta's alike. Plainer punctuation was tried, said by the live voice and heard back by Omnilingual ASR:
+  Mandarin's median rose (0.877 to 0.908) but its mean fell (0.866 to 0.856), and one line heard perfectly as written
+  wasn't heard at all, so nothing was changed. (A first reading said the copy lost those pieces; it was SentencePiece
+  writing an unknown piece's own letters back, not its number.)
+- **The system card** now says the two settings that open a door on the home network, both off unless Andy is started
+  with them: `--tv-host` (the TV page on a smart TV) and `--remote` (a phone, answered only once paired).

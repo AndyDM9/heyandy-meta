@@ -479,6 +479,11 @@ FIGURES = [
     Figure("54 of 54 files", "open-weights-all (latest)",
            lambda: "{matched} of {files} files".format(**summary(newest("open-weights-all")))
            if summary(newest("open-weights-all"))["every file matches"] else "not every file matches"),
+    Figure("538 of 538 lines Andy says, in fifteen languages", "voice-tokenizer (latest)",
+           lambda: "{same} of {lines} lines Andy says, in {n} languages".format(
+               same=summary(newest("voice-tokenizer"))["same tokens"], lines=summary(newest("voice-tokenizer"))["lines"],
+               n={15: "fifteen"}.get(summary(newest("voice-tokenizer"))["languages"],
+                                     summary(newest("voice-tokenizer"))["languages"]))),
     # the public demo, for people who see less well
     Figure("pass on all 68 of its states", "accessibility (latest)",
            lambda: f"pass on all {a11y()['pages and states']} of its states" if a11y()["with an axe violation"] == 0
