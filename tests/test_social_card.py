@@ -140,3 +140,55 @@ def test_each_demo_scene_is_said_in_andys_voice_and_its_words_are_the_scenes_own
         assert c["heard back"] >= 0.85, name
     assert {c["lang"] for c in said.values()} >= {"en", "es", "zh", "ko", "ar", "hi", "uk"}
     assert build_static_space.scene_voice()["in-ko"]["file"] == "voice/scene-in-ko.mp3"
+
+
+def test_the_story_in_andys_other_languages_is_offered_only_where_every_chapter_passes():
+    """scripts/front_door_voice.py story_in: the story (STORY) in Andy's other languages, each chapter translated by
+    Muse Glimmer, said by SeamlessM4T v2 in the language's voice and heard back by Omnilingual ASR; its translation back
+    into English kept beside it. A language is offered only when every chapter passes the machine's checks, and the
+    build ships those alone; none is said to be checked by a native speaker until one has."""
+    import hashlib
+    import json
+
+    import front_door_voice
+
+    screen = ROOT / "heyandy_meta" / "screen"
+    made = json.loads((screen / "voice" / "story-in.json").read_text())
+    langs = made["languages"]
+    from heyandy_meta.companion.language import LANGUAGES
+
+    assert set(langs) == set(LANGUAGES) - {"en"} and made["checked by a native speaker"] == []
+    offered = {code for code, lang in langs.items() if lang["offered"]}
+    assert len(offered) >= 8
+    for code, lang in langs.items():
+        assert lang["chapters"].keys() == front_door_voice.STORY.keys(), code
+        assert lang["names said as"] == front_door_voice.SOUNDS.get(code, {})
+        for title, c in lang["chapters"].items():
+            assert hashlib.sha256((screen / c["file"]).read_bytes()).hexdigest() == c["sha256"]
+            assert c["said"] == front_door_voice.aloud(c["text"], lang["names said as"])  # the voice was given these words
+            if lang["offered"]:
+                latin = LANGUAGES[code].asr.endswith("_Latn")
+                for english in {front_door_voice.STORY[title], front_door_voice.PLAINER.get(title, front_door_voice.STORY[title])}:
+                    assert front_door_voice.problems(english, c["text"], latin) == [], (code, title)
+                assert not c["title"] or front_door_voice.problems(title, c["title"], latin) == [], (code, title)
+                assert c["heard back"] >= front_door_voice.HEARD and c["back"] and 1.0 <= c["seconds"] <= 16.0, (code, title)
+        assert lang["offered"] == (lang["why not"] == []), code
+    assert set(build_static_space.narration_in()) == offered
+    assert build_static_space.narration_in()[sorted(offered)[0]]["Your turn"]["file"].startswith("voice/story-")
+
+
+def test_a_translation_of_the_story_is_checked_by_machine_for_what_goes_wrong():
+    """November 2, Glimmer's first tries: a Korean line looped into "hello" over and over, "Identical cups?" came back
+    in English, Muse Glimmer was written in Arabic letters, and "You ask:" was left in English in Korean."""
+    import front_door_voice as f
+
+    cups = "Identical cups? SAM 3.1 Object Multiplex follows every one of them through the shuffle."
+    assert f.problems(cups, "Identical cups? SAM 3.1 Object Multiplex sigue a cada uno.") == ["English left: identical cups"]
+    assert f.problems(cups, "¿Tazas idénticas? SAM 3.1 Object Multiplex sigue a cada una al barajarlas.") == []
+    assert f.problems("Muse Glimmer translates.", "ميوز غليمر يترجم.", latin=False) == ["lost Muse Glimmer"]
+    assert f.problems("You ask: Hey Andy, where's my mug?", "You ask: 안녕하세요, 앤디, 제 머그컵은 어디에 있나요?", latin=False) \
+        == ["English left: you ask"]
+    assert "a word over and over" in f.problems("And what I never do.", "안녕하세요, " * 30, latin=False)
+    assert f.problems("Five looks.", "다섯 번, 6번.", latin=False) == ["a figure the English hasn't"]
+    assert f.problems("I watch your hand.", "Ich beobachte Ihre Hand.") == []  # one shared word in Latin letters may be its own
+    assert f.aloud("SAM 3.1 Object Multiplex와 SAM 3.1", f.SOUNDS["ko"]) == "샘 쓰리 포인트 원 오브젝트 멀티플렉스와 샘 쓰리 포인트 원"

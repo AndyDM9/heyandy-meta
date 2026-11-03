@@ -1,0 +1,1984 @@
+{
+ "what": "The story in Andy's other languages: translated by Muse Glimmer, said by SeamlessM4T v2, heard back by Omnilingual ASR, translated back by Glimmer",
+ "checked by a native speaker": [],
+ "languages": {
+  "ar": {
+   "offered": true,
+   "why not": [],
+   "names said as": {
+    "SAM 3.1 Object Multiplex": "سام ثلاثة فاصلة واحد أوبجكت ملتيبلكس",
+    "SAM 3.1": "سام ثلاثة فاصلة واحد",
+    "MapAnything": "ماب إني ثينغ",
+    "Muse Spark": "ميوز سبارك",
+    "Muse Glimmer": "ميوز غليمر"
+   },
+   "chapters": {
+    "Andy, on the table": {
+     "title": "أندي، على الطاولة",
+     "text": "هذا أنا، على الطاولة. أتجه نحو صوتك، أنظر حول الغرفة، وأشير.",
+     "how": "whole line",
+     "back": "I am this, on the table. I head toward your voice, I look around the room, and I point.",
+     "said": "هذا أنا، على الطاولة. أتجه نحو صوتك، أنظر حول الغرفة، وأشير.",
+     "seconds": 5.71,
+     "file": "voice/story-ar-00.mp3",
+     "heard back": 1.0,
+     "sha256": "62af7273cda3a289efcbb056d811c58f8977b70bc471bf106053fddd1b954b93"
+    },
+    "Meet Andy": {
+     "title": "تعرف على أندي",
+     "text": "مرحبًا، أنا آندي. أجد ما فقدت، وأشير إليه. هذه هي التلفاز بجانبي.",
+     "how": "whole line",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Arabic into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Arabic: only the English translation of the text between  and",
+     "said": "مرحبًا، أنا آندي. أجد ما فقدت، وأشير إليه. هذه هي التلفاز بجانبي.",
+     "seconds": 6.57,
+     "file": "voice/story-ar-01.mp3",
+     "heard back": 0.95,
+     "sha256": "5a9fcd9179b42d9550647fc70ad39a09e6f132e371d0880d7b9e68382d1fb189"
+    },
+    "You ask": {
+     "title": "اسأل أنت",
+     "text": "تسأل: مرحبًا Andy، أين كوبي؟ أطّلع حول الغرفة، ويحدّد SAM 3.1 كل ما يمكن أن يكونه.",
+     "how": "as on the robot",
+     "back": "I ask: Hello Andy, where is the cup? I look around the room, and SAM 3.1 identifies everything it could be.",
+     "said": "تسأل: مرحبًا Andy، أين كوبي؟ أطّلع حول الغرفة، ويحدّد سام ثلاثة فاصلة واحد كل ما يمكن أن يكونه.",
+     "seconds": 8.04,
+     "file": "voice/story-ar-02.mp3",
+     "heard back": 0.92,
+     "sha256": "92c7eee543d9a2f1f5c996b91abe37985ccdf0e975a5b0dd683c1f8a178ab688"
+    },
+    "It finds it": {
+     "title": "إنه يجدها",
+     "text": "هناك. أشير، أتحقق من هدفي بكاميرتي الخاصة، ويخبرني MapAnything بمدى بعده.",
+     "how": "whole line",
+     "back": "There. I point, I check my target with my own camera, and MapAnything tells me how far it is.",
+     "said": "هناك. أشير، أتحقق من هدفي بكاميرتي الخاصة، ويخبرني ماب إني ثينغ بمدى بعده.",
+     "seconds": 6.84,
+     "file": "voice/story-ar-03.mp3",
+     "heard back": 0.8,
+     "sha256": "50ecf0b7832f1cb299fc948fa1d3341b06aaf6acd5b66548f1831bb62f5fcbb7"
+    },
+    "It doesn't give up": {
+     "title": "إنه لا يستسلم",
+     "text": "لم يُعثر عليه؟ أظل أبحث بينما تواصل يومك، وأخبرك فور ظهوره.",
+     "how": "whole line",
+     "back": "I haven't found it? I keep searching while you continue your day, and I'll tell you as soon as it appears.",
+     "said": "لم يُعثر عليه؟ أظل أبحث بينما تواصل يومك، وأخبرك فور ظهوره.",
+     "seconds": 5.84,
+     "file": "voice/story-ar-04.mp3",
+     "heard back": 0.97,
+     "sha256": "49107323a7768e2ac7cf7036657ebf3e0eafbc86c1a315069c5345c201f838e7"
+    },
+    "It guides your hand": {
+     "title": "إنه يرشد يدك",
+     "text": "هل ترى بصعوبة؟ أراقب يدك وأتحدث بها إلى الشيء، من جانبك: نحوك، وعلى اليمين.",
+     "how": "whole line",
+     "back": "Do you see with difficulty? I watch your hand and speak with it to the thing, from your side: toward you, and on the right.",
+     "said": "هل ترى بصعوبة؟ أراقب يدك وأتحدث بها إلى الشيء، من جانبك: نحوك، وعلى اليمين.",
+     "seconds": 6.89,
+     "file": "voice/story-ar-05.mp3",
+     "heard back": 1.0,
+     "sha256": "f2101d1670b83de002ff680b18f96b7d5965e29dc35b53e9959237d371515d2e"
+    },
+    "It knows your room": {
+     "title": "إنه يعرف غرفتك",
+     "text": "خمس نظرات، وأعرف غرفتك ثلاثية الأبعاد، وأغراضك مثبتة. شكلها فقط، أبدًا ليست صورة.",
+     "how": "whole line",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Arabic into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Arabic: only the English translation of the text between  and",
+     "said": "خمس نظرات، وأعرف غرفتك ثلاثية الأبعاد، وأغراضك مثبتة. شكلها فقط، أبدًا ليست صورة.",
+     "seconds": 7.54,
+     "file": "voice/story-ar-06.mp3",
+     "heard back": 0.98,
+     "sha256": "a54f98d5c6f5e28955bbccfd4a07c28f42cd7e8bd1603bc58fe91910c327c907"
+    },
+    "Identical cups, told apart": {
+     "title": "أكواب متطابقة، تميّزت",
+     "text": "هل أكواب متطابقة؟ SAM 3.1 Object Multiplex يتبع كل واحد منهم خلال الخلط.",
+     "how": "as on the robot",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Arabic into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Arabic: only the English translation of the text between  and",
+     "said": "هل أكواب متطابقة؟ سام ثلاثة فاصلة واحد أوبجكت ملتيبلكس يتبع كل واحد منهم خلال الخلط.",
+     "seconds": 7.41,
+     "file": "voice/story-ar-07.mp3",
+     "heard back": 0.96,
+     "sha256": "5e23292102c0dc5392fe219095e5792f91c22e67b4f77f4753794f9f524e260e"
+    },
+    "Before you go": {
+     "title": "قبل أن تذهب",
+     "text": "هل تخرج؟ أشير إلى ما ستترك وراءك، ويتحقق Muse Spark مما إذا كنت ستحتاج إلى مظلة.",
+     "how": "whole line",
+     "back": "I go out? I point to what you will leave behind, and Muse Spark checks if you will need an umbrella.",
+     "said": "هل تخرج؟ أشير إلى ما ستترك وراءك، ويتحقق ميوز سبارك مما إذا كنت ستحتاج إلى مظلة.",
+     "seconds": 7.45,
+     "file": "voice/story-ar-08.mp3",
+     "heard back": 0.97,
+     "sha256": "be8968a39845eefee89fc39df43986b2a7aced737564497365131d55ecbffc80"
+    },
+    "Your language": {
+     "title": "أندي",
+     "text": "أسمع وأتحدث خمس عشرة لغة. Muse Glimmer يترجم، على الكمبيوتر بجانبي.",
+     "how": "whole line",
+     "back": "I hear and speak fifteen languages. Muse Glimmer translates, on the computer next to me.",
+     "said": "أسمع وأتحدث خمس عشرة لغة. ميوز غليمر يترجم، على الكمبيوتر بجانبي.",
+     "seconds": 6.24,
+     "file": "voice/story-ar-09.mp3",
+     "heard back": 0.96,
+     "sha256": "63594bbb6360cc9dd874304edf1d6c7df0e9e4289400421bab1aa02c1be2d307"
+    },
+    "What it never does": {
+     "title": "ما لا يفعله أبدًا",
+     "text": "وما لا أفعل أبدًا: صورك وصوتك يبقيان في المنزل، لا أقدّم نصائح صحية، وأقول إنني ذكاء اصطناعي.",
+     "how": "whole line",
+     "back": "I never do: your pictures and your voice stay at home, I don't give health advice, and I say that I am artificial intelligence.",
+     "said": "وما لا أفعل أبدًا: صورك وصوتك يبقيان في المنزل، لا أقدّم نصائح صحية، وأقول إنني ذكاء اصطناعي.",
+     "seconds": 7.76,
+     "file": "voice/story-ar-10.mp3",
+     "heard back": 0.99,
+     "sha256": "4e209714f9e8589ba8fd045c400c86573f81825e70aaa8f963264e4f5f6c8393"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "ذلك أنا. الآن دورك: أرني شيئًا منك.",
+     "how": "whole line",
+     "back": "That is me. Now it's your turn: show me something of yours.",
+     "said": "ذلك أنا. الآن دورك: أرني شيئًا منك.",
+     "seconds": 3.84,
+     "file": "voice/story-ar-11.mp3",
+     "heard back": 1.0,
+     "sha256": "a71d9d8f7f83234e6473fbfade690afc12b4163e813939f77ea932a013427130"
+    }
+   }
+  },
+  "de": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy, auf dem Tisch",
+     "text": "Das bin ich, auf dem Tisch. Ich drehe mich zu Ihrer Stimme, schaue mich im Raum um und zeige.",
+     "how": "whole line",
+     "back": "I am this, on the table. I turn toward your voice, look around the room and show.",
+     "said": "Das bin ich, auf dem Tisch. Ich drehe mich zu Ihrer Stimme, schaue mich im Raum um und zeige.",
+     "seconds": 6.05,
+     "file": "voice/story-de-00.mp3",
+     "heard back": 1.0,
+     "sha256": "6058f537b76f16a78999c9f3e141b83625d9179c1b2e37eafa8ceb74fc0be8dd"
+    },
+    "Meet Andy": {
+     "title": "Triff Andy",
+     "text": "Hallo, ich bin Andy. Ich finde, was Sie verloren haben, und zeige darauf. Das ist der Fernseher neben mir.",
+     "how": "whole line",
+     "back": "Hello, I am Andy. I think I found what you lost, and I am pointing at it. That is the television next to me.",
+     "said": "Hallo, ich bin Andy. Ich finde, was Sie verloren haben, und zeige darauf. Das ist der Fernseher neben mir.",
+     "seconds": 7.74,
+     "file": "voice/story-de-01.mp3",
+     "heard back": 1.0,
+     "sha256": "e2da4131d2c07098f02162ca08f722aadb92a18f0e971a9ac5cd677cf1c14f38"
+    },
+    "You ask": {
+     "title": "Fragst du",
+     "text": "Sie fragen: Hey Andy, wo ist meine Tasse? Ich schaue mich im Raum um, und SAM 3.1 umreißt alles, was es sein könnte.",
+     "how": "whole line",
+     "back": "Sie fragen: Hey Andy, where is my cup? I look around the room, and SAM 3.1 outlines everything it could be.",
+     "said": "Sie fragen: Hey Andy, wo ist meine Tasse? Ich schaue mich im Raum um, und SAM 3.1 umreißt alles, was es sein könnte.",
+     "seconds": 8.32,
+     "file": "voice/story-de-02.mp3",
+     "heard back": 0.94,
+     "sha256": "bcdadf08f9f51c55e0ffe979828dff0f806fb04bef1e67d87140a574a363599b"
+    },
+    "It finds it": {
+     "title": "Es findet es",
+     "text": "Da ist es. Ich zeige darauf, prüfe mein Ziel mit meiner eigenen Kamera, und MapAnything sagt mir, wie weit es entfernt ist.",
+     "how": "whole line",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from German into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in German: only the English translation of the text between  and",
+     "said": "Da ist es. Ich zeige darauf, prüfe mein Ziel mit meiner eigenen Kamera, und MapAnything sagt mir, wie weit es entfernt ist.",
+     "seconds": 8.32,
+     "file": "voice/story-de-03.mp3",
+     "heard back": 1.0,
+     "sha256": "107d070c58e88499a435581b78f7f08fd5d9ec20e6ef52605e2a5a3e532d703d"
+    },
+    "It doesn't give up": {
+     "title": "Es gibt nicht auf",
+     "text": "Nicht gefunden? Ich suche weiter, während Sie Ihren Tag fortsetzen, und sage Ihnen Bescheid, sobald es auftaucht.",
+     "how": "whole line",
+     "back": "I can't find it? I'll keep looking while you continue your day, and let you know as soon as it shows up.",
+     "said": "Nicht gefunden? Ich suche weiter, während Sie Ihren Tag fortsetzen, und sage Ihnen Bescheid, sobald es auftaucht.",
+     "seconds": 7.27,
+     "file": "voice/story-de-04.mp3",
+     "heard back": 1.0,
+     "sha256": "6a77a9b34b530ff5836a24416ca7ca639427922001751f5418e99ef3541c5980"
+    },
+    "It guides your hand": {
+     "title": "Es führt deine Hand",
+     "text": "Sehen Sie nicht gut? Ich beobachte Ihre Hand und führe sie auf das Ding, von Ihrer Seite: auf Sie zu, und rechts.",
+     "how": "whole line",
+     "back": "Do you not see well? I observe your hand and guide it onto the thing, from your side: towards you, and to the right.",
+     "said": "Sehen Sie nicht gut? Ich beobachte Ihre Hand und führe sie auf das Ding, von Ihrer Seite: auf Sie zu, und rechts.",
+     "seconds": 7.36,
+     "file": "voice/story-de-05.mp3",
+     "heard back": 1.0,
+     "sha256": "88ed18cca501f4a2db9cfc0530c7d55813aa721a7c45fa38ffa1fdc1b49e1057"
+    },
+    "It knows your room": {
+     "title": "Es kennt dein Zimmer",
+     "text": "Fünf Blicke, und ich kenne Ihr Zimmer in 3D, Ihre Dinge festgepinnt. Nur die Form, nie ein Bild.",
+     "how": "whole line",
+     "back": "Five glances, and I know your room in 3D, your things pinned down. Only the shape, never an image.",
+     "said": "Fünf Blicke, und ich kenne Ihr Zimmer in 3D, Ihre Dinge festgepinnt. Nur die Form, nie ein Bild.",
+     "seconds": 6.49,
+     "file": "voice/story-de-06.mp3",
+     "heard back": 0.92,
+     "sha256": "4824ce5f186164eb181b2b8ab0b41b97940ca80d529113d9a6900435635b88bb"
+    },
+    "Identical cups, told apart": {
+     "title": "Identische Tassen, unterschieden",
+     "text": "Identische Tassen? SAM 3.1 Object Multiplex folgt jeder einzelnen von ihnen durch das Durcheinander.",
+     "how": "whole line",
+     "back": "Identical cups? SAM 3.1 Object Multiplex follows each one of them through the mess.",
+     "said": "Identische Tassen? SAM 3.1 Object Multiplex folgt jeder einzelnen von ihnen durch das Durcheinander.",
+     "seconds": 7.77,
+     "file": "voice/story-de-07.mp3",
+     "heard back": 0.95,
+     "sha256": "cf063c97470e85309e09dd2c60fd2f5d0c2e2cf75f59799e15bcf89facb32f8c"
+    },
+    "Before you go": {
+     "title": "Bevor du gehst",
+     "text": "Gehen Sie aus? Ich zeige auf das, was Sie zurücklassen würden, und Muse Spark prüft, ob Sie einen Regenschirm benötigen.",
+     "how": "whole line",
+     "back": "Would you like to go out? I point to what you would leave behind, and Muse Spark checks if you need an umbrella.",
+     "said": "Gehen Sie aus? Ich zeige auf das, was Sie zurücklassen würden, und Muse Spark prüft, ob Sie einen Regenschirm benötigen.",
+     "seconds": 7.7,
+     "file": "voice/story-de-08.mp3",
+     "heard back": 1.0,
+     "sha256": "9a5ce1c8ad9dbe4102b057aafd966e0e603723fee56e5b93896f483b22e9fc1f"
+    },
+    "Your language": {
+     "title": "Deine Sprache",
+     "text": "Ich höre und spreche fünfzehn Sprachen. Muse Glimmer übersetzt, am Computer neben mir.",
+     "how": "whole line",
+     "back": "I speak and hear fifteen languages. Muse Glimmer translates, on the computer next to me.",
+     "said": "Ich höre und spreche fünfzehn Sprachen. Muse Glimmer übersetzt, am Computer neben mir.",
+     "seconds": 6.47,
+     "file": "voice/story-de-09.mp3",
+     "heard back": 0.89,
+     "sha256": "504795914e78ed94c3036d8cd96edaeee420c617b82f467a4b20442c0e614024"
+    },
+    "What it never does": {
+     "title": "Was es nie tut",
+     "text": "And was ich nie tue: Ihre Bilder und Stimme bleiben zu Hause, ich gebe keine Gesundheitsratschläge, und ich sage, ich bin eine KI.",
+     "how": "whole line",
+     "back": "And what I never do: Your images and voice stay at home, I give no health advice, and I say I am an AI.",
+     "said": "And was ich nie tue: Ihre Bilder und Stimme bleiben zu Hause, ich gebe keine Gesundheitsratschläge, und ich sage, ich bin eine KI.",
+     "seconds": 7.39,
+     "file": "voice/story-de-10.mp3",
+     "heard back": 0.99,
+     "sha256": "d442e1c0c75882107b86a464984cf8d6ace2de509c6a3edcac124456c7889a6d"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Das bin ich. Jetzt bist du dran: zeig mir etwas von dir.",
+     "how": "whole line",
+     "back": "I am this. Now it's your turn: show me something of yours.",
+     "said": "Das bin ich. Jetzt bist du dran: zeig mir etwas von dir.",
+     "seconds": 4.43,
+     "file": "voice/story-de-11.mp3",
+     "heard back": 1.0,
+     "sha256": "1ba97413aa70459010f5f8563bf6b37ad71c5586a016aa3c7689723ff29a626c"
+    }
+   }
+  },
+  "es": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy, sobre la mesa",
+     "text": "Esto soy yo, sobre la mesa. Me giro hacia su voz, miro alrededor de la habitación y señalo.",
+     "how": "whole line",
+     "back": "I am this, on the table. I turn toward your voice, I look around the room and I point.",
+     "said": "Esto soy yo, sobre la mesa. Me giro hacia su voz, miro alrededor de la habitación y señalo.",
+     "seconds": 5.9,
+     "file": "voice/story-es-00.mp3",
+     "heard back": 0.95,
+     "sha256": "2ddf04f9e046ddf40b0bf269b0973db067f21c82ea1d8fd99bbeda81154e847a"
+    },
+    "Meet Andy": {
+     "title": "Conoce a Andy",
+     "text": "Hola, soy Andy. Encuentro lo que ha perdido, y señalo hacia ello. Esta es la TV a mi lado.",
+     "how": "whole line",
+     "back": "Hello, I'm Andy. I find what you've lost, and I point to it. This is the TV next to me.",
+     "said": "Hola, soy Andy. Encuentro lo que ha perdido, y señalo hacia ello. Esta es la TV a mi lado.",
+     "seconds": 6.46,
+     "file": "voice/story-es-01.mp3",
+     "heard back": 0.96,
+     "sha256": "dada9ee17a7922d0fed858a3fad3a9e1b3303ed646f76c75ae0c2b20b9f957bd"
+    },
+    "You ask": {
+     "title": "Usted pregunta",
+     "text": "Le dices: Hola Andy, ¿dónde está mi taza? Miro a mi alrededor por la habitación, y SAM 3.1 delinea todo lo que podría serlo.",
+     "how": "whole line",
+     "back": "You say: Hello Andy, where is my mug? I look around the room, and SAM 3.1 outlines everything that could be it.",
+     "said": "Le dices: Hola Andy, ¿dónde está mi taza? Miro a mi alrededor por la habitación, y SAM 3.1 delinea todo lo que podría serlo.",
+     "seconds": 8.3,
+     "file": "voice/story-es-02.mp3",
+     "heard back": 0.93,
+     "sha256": "70a53349b1ef898e9a81ac4e1094d1776542d6a09fd52f053e9ec4567b499759"
+    },
+    "It finds it": {
+     "title": "Encuentra a Andy",
+     "text": "There it is. Apunto, reviso mi puntería con mi propia cámara, y MapAnything me dice a qué distancia está.",
+     "how": "sentence by sentence",
+     "back": "There it is. I aim, I check my aim with my own camera, and MapAnything tells me how far it is.",
+     "said": "There it is. Apunto, reviso mi puntería con mi propia cámara, y MapAnything me dice a qué distancia está.",
+     "seconds": 6.48,
+     "file": "voice/story-es-03.mp3",
+     "heard back": 0.99,
+     "sha256": "63b049885fd82836da5233f659c69af2c77e3947cfe04eddaa20c8ecbe7e56f5"
+    },
+    "It doesn't give up": {
+     "title": "No se rinde",
+     "text": "No encontrado. Sigo buscando mientras usted sigue con su día, y le aviso en cuanto aparezca.",
+     "how": "whole line",
+     "back": "I wasn't found. I keep looking while you go on with your day, and I'll let you know as soon as it appears.",
+     "said": "No encontrado. Sigo buscando mientras usted sigue con su día, y le aviso en cuanto aparezca.",
+     "seconds": 5.7,
+     "file": "voice/story-es-04.mp3",
+     "heard back": 0.96,
+     "sha256": "4de060483c65e8ed02ece80299ad7469b9a0471e5a6a2566ae38e5c68ae6260a"
+    },
+    "It guides your hand": {
+     "title": "Te guía la mano",
+     "text": "¿No ve bien? Observo su mano y lo hablo hacia la cosa, desde su lado: hacia usted, y a la derecha.",
+     "how": "whole line",
+     "back": "Do you not see well? I observe your hand and I speak to you about the thing, from its side: towards you, and to the right.",
+     "said": "¿No ve bien? Observo su mano y lo hablo hacia la cosa, desde su lado: hacia usted, y a la derecha.",
+     "seconds": 6.09,
+     "file": "voice/story-es-05.mp3",
+     "heard back": 0.98,
+     "sha256": "40fbbcba48087810f47f7f6f2ded973c74aab9a161c50731ecd071fffeb75336"
+    },
+    "It knows your room": {
+     "title": "Sabe tu habitación",
+     "text": "Cinco miradas, y conozco su habitación en 3D, sus cosas fijadas. Solo su forma, nunca una imagen.",
+     "how": "whole line",
+     "back": "Five glances, and I know his room in 3D, his things fixed. Only his shape, never an image.",
+     "said": "Cinco miradas, y conozco su habitación en 3D, sus cosas fijadas. Solo su forma, nunca una imagen.",
+     "seconds": 7.23,
+     "file": "voice/story-es-06.mp3",
+     "heard back": 0.97,
+     "sha256": "a339f88986f30e688e96fe81802319de2c8513781234b7de0b357d97bcc3ca5d"
+    },
+    "Identical cups, told apart": {
+     "title": "Tazas idénticas, diferenciadas",
+     "text": "¿Tazas idénticas? SAM 3.1 Object Multiplex sigue a cada uno de ellos mientras se los baraja.",
+     "how": "sentence by sentence, from plainer English",
+     "back": "I need to translate the Spanish text between  and",
+     "said": "¿Tazas idénticas? SAM 3.1 Object Multiplex sigue a cada uno de ellos mientras se los baraja.",
+     "seconds": 6.48,
+     "file": "voice/story-es-07.mp3",
+     "heard back": 0.99,
+     "sha256": "88b3b1be46cb9a8bec138f195e6d48659904e2ac4c192c20637572ad03dfb0fe"
+    },
+    "Before you go": {
+     "title": "Antes de que te vayas",
+     "text": "¿Saliendo? Señalo lo que dejaría atrás, y Muse Spark comprueba si necesitará un paraguas.",
+     "how": "whole line",
+     "back": "Leaving? I point out what I would leave behind, and my Muse Spark checks if I will need an umbrella.",
+     "said": "¿Saliendo? Señalo lo que dejaría atrás, y Muse Spark comprueba si necesitará un paraguas.",
+     "seconds": 6.12,
+     "file": "voice/story-es-08.mp3",
+     "heard back": 1.0,
+     "sha256": "29418d64c7d7ccc5bfc14c5352877bfeccd03c60313113b3b1c1437306cf9d01"
+    },
+    "Your language": {
+     "title": "Tu idioma",
+     "text": "Escucho y hablo quince idiomas. Muse Glimmer traduce, en la computadora a mi lado.",
+     "how": "whole line",
+     "back": "I listen to and speak fifteen languages. Muse Glimmer translates, on the computer next to me.",
+     "said": "Escucho y hablo quince idiomas. Muse Glimmer traduce, en la computadora a mi lado.",
+     "seconds": 5.57,
+     "file": "voice/story-es-09.mp3",
+     "heard back": 0.98,
+     "sha256": "c1e6e791cfe7ac60869e2a611f40541dd7845dfe338b463472cc6127450de2fa"
+    },
+    "What it never does": {
+     "title": "Lo que nunca hace",
+     "text": "Y lo que nunca hago: sus fotos y su voz se quedan en casa, no doy consejos de salud y digo que soy una IA.",
+     "how": "as on the robot",
+     "back": "I never do this: your photos and your voice stay at home, I don't give health advice and I say that I'm an AI.",
+     "said": "Y lo que nunca hago: sus fotos y su voz se quedan en casa, no doy consejos de salud y digo que soy una IA.",
+     "seconds": 6.11,
+     "file": "voice/story-es-10.mp3",
+     "heard back": 0.99,
+     "sha256": "af27d0671f803d04819322ab542cddad8a722b2876b70dc64c8e5d13b1b602c4"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Soy yo. Ahora es su turno: muéstreme algo de lo suyo.",
+     "how": "as on the robot",
+     "back": "I am me. Now it's your turn: show me something of yours.",
+     "said": "Soy yo. Ahora es su turno: muéstreme algo de lo suyo.",
+     "seconds": 4.15,
+     "file": "voice/story-es-11.mp3",
+     "heard back": 1.0,
+     "sha256": "d2f14a81ac8bc8f4ec31299cf92b2dbe6e22938f68387ed2b07b10deaf59541a"
+    }
+   }
+  },
+  "fr": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy, sur la table",
+     "text": "C’est moi, sur la table. Je me tourne vers votre voix, je regarde autour de la pièce, et je pointe.",
+     "how": "whole line",
+     "back": "I’m on the table. I turn toward your voice, I look around the room, and I point.",
+     "said": "C’est moi, sur la table. Je me tourne vers votre voix, je regarde autour de la pièce, et je pointe.",
+     "seconds": 5.79,
+     "file": "voice/story-fr-00.mp3",
+     "heard back": 0.96,
+     "sha256": "4d84e2275da92080fc9c2886fa7cd8d4073cef59fea35a9d09e18a8bc91a7e91"
+    },
+    "Meet Andy": {
+     "title": "Rencontrez Andy",
+     "text": "Bonjour, je suis Andy. Je trouve ce que vous avez perdu, et je l'indique. C'est la télévision à côté de moi.",
+     "how": "whole line",
+     "back": "Hello, I am Andy. I find what you have lost, and I indicate it. It is the television next to me.",
+     "said": "Bonjour, je suis Andy. Je trouve ce que vous avez perdu, et je l'indique. C'est la télévision à côté de moi.",
+     "seconds": 7.09,
+     "file": "voice/story-fr-01.mp3",
+     "heard back": 1.0,
+     "sha256": "2e36350f49692784bdd8fe0055ba0ad274ac112a8ead5ea4397164efbffb8d24"
+    },
+    "You ask": {
+     "title": "Demandez à Andy",
+     "text": "Tu demandes : Hé Andy, où est ma tasse ? Je regarde autour de la pièce, et SAM 3.1 délimite tout ce qui pourrait être elle.",
+     "how": "whole line",
+     "back": "You ask: Hey Andy, where is my mug? I look around the room, and SAM 3.1 outlines everything that could be it.",
+     "said": "Tu demandes : Hé Andy, où est ma tasse ? Je regarde autour de la pièce, et SAM 3.1 délimite tout ce qui pourrait être elle.",
+     "seconds": 7.61,
+     "file": "voice/story-fr-02.mp3",
+     "heard back": 0.9,
+     "sha256": "a5365af6070ccc47a23386b2cbe9d8be0ab5362d155be4d34b75bedf932263c7"
+    },
+    "It finds it": {
+     "title": "Il le trouve",
+     "text": "Voilà. Je pointe, je vérifie mon tir avec ma propre caméra, et MapAnything me dit à quelle distance il se trouve.",
+     "how": "whole line",
+     "back": "Here it is. I point, I check my shot with my own camera, and MapAnything tells me how far away it is.",
+     "said": "Voilà. Je pointe, je vérifie mon tir avec ma propre caméra, et MapAnything me dit à quelle distance il se trouve.",
+     "seconds": 6.86,
+     "file": "voice/story-fr-03.mp3",
+     "heard back": 0.89,
+     "sha256": "43cdcaa5e7970e3dde8f2ee2e62de0463195df471a57c633e7e427fd71823ea5"
+    },
+    "It doesn't give up": {
+     "title": "Il ne renonce pas",
+     "text": "Not trouvé ? Je continue à regarder pendant que vous poursuivez votre journée, et je vous préviens dès que ça apparaît.",
+     "how": "sentence by sentence",
+     "back": "I didn't find it? I'll keep looking while you go on with your day, and I'll let you know as soon as it appears.",
+     "said": "Not trouvé ? Je continue à regarder pendant que vous poursuivez votre journée, et je vous préviens dès que ça apparaît.",
+     "seconds": 6.3,
+     "file": "voice/story-fr-04.mp3",
+     "heard back": 0.95,
+     "sha256": "9b9b90f7ffaf3cd37abdf568a8db8bc38cf6a5f9333241f3f566205963298555"
+    },
+    "It guides your hand": {
+     "title": "Il guide ta main",
+     "text": "Pouvez-vous mal voir ? Je regarde votre main et je la parle sur la chose, de votre côté : vers vous, et à droite.",
+     "how": "whole line",
+     "back": "Can you see badly? I look at your hand and I speak it on the thing, from your side: towards you, and to the right.",
+     "said": "Pouvez-vous mal voir ? Je regarde votre main et je la parle sur la chose, de votre côté : vers vous, et à droite.",
+     "seconds": 6.37,
+     "file": "voice/story-fr-05.mp3",
+     "heard back": 1.0,
+     "sha256": "b2efaf23da649849f8bed6a07fabce045e192c26f0f026015f729fc0d52b4ec0"
+    },
+    "It knows your room": {
+     "title": "Il connaît votre chambre",
+     "text": "Cinq regards, et je connais votre chambre en 3D, vos affaires épinglées. Sa forme seulement, jamais une image.",
+     "how": "whole line",
+     "back": "Five glances, and I know your room in 3D, your pinned belongings. Its shape only, never an image.",
+     "said": "Cinq regards, et je connais votre chambre en 3D, vos affaires épinglées. Sa forme seulement, jamais une image.",
+     "seconds": 6.93,
+     "file": "voice/story-fr-06.mp3",
+     "heard back": 0.96,
+     "sha256": "2b6ea8da162cb98bee9d51520b373315959b2176e16e756719e3e409dddaf494"
+    },
+    "Identical cups, told apart": {
+     "title": "Des tasses identiques, distinguées",
+     "text": "Identiques tasses ? SAM 3.1 Object Multiplex suit chaque personne pendant le mélange.",
+     "how": "as on the robot",
+     "back": "Identical cups? SAM 3.1 Object Multiplex follows each person during the mixing.",
+     "said": "Identiques tasses ? SAM 3.1 Object Multiplex suit chaque personne pendant le mélange.",
+     "seconds": 6.69,
+     "file": "voice/story-fr-07.mp3",
+     "heard back": 0.78,
+     "sha256": "4a432588f4854a0bb30809bc31646154c25fea27192a330dbafc8c1fdd4814ce"
+    },
+    "Before you go": {
+     "title": "Avant que tu partes",
+     "text": "Sortez-vous ? Je pointe ce que vous laisseriez derrière, et Muse Spark vérifie si vous aurez besoin d’un parapluie.",
+     "how": "whole line",
+     "back": "Are you going out? I point out what you would leave behind, and Muse Spark checks if you will need an umbrella.",
+     "said": "Sortez-vous ? Je pointe ce que vous laisseriez derrière, et Muse Spark vérifie si vous aurez besoin d’un parapluie.",
+     "seconds": 6.77,
+     "file": "voice/story-fr-08.mp3",
+     "heard back": 0.94,
+     "sha256": "3dfee2cef53fde141fa8b6da6b786fb765e39990368d6e1825035cee941d49c3"
+    },
+    "Your language": {
+     "title": "Votre langue",
+     "text": "Je parle et j'entends quinze langues. Muse Glimmer traduit, sur l'ordinateur à côté de moi.",
+     "how": "whole line",
+     "back": "I speak and I hear fifteen languages. Muse Glimmer translates, on the computer next to me.",
+     "said": "Je parle et j'entends quinze langues. Muse Glimmer traduit, sur l'ordinateur à côté de moi.",
+     "seconds": 6.04,
+     "file": "voice/story-fr-09.mp3",
+     "heard back": 0.96,
+     "sha256": "4fd3b40c7b24b6eed2a5f92d99d4412dfd1ba871aa7d637b0697e70352c9d380"
+    },
+    "What it never does": {
+     "title": "Ce qu’il ne fait jamais",
+     "text": "Et ce que je ne fais jamais : vos images et votre voix restent à la maison, je ne donne aucun conseil de santé, et je dis que je suis une IA.",
+     "how": "whole line",
+     "back": "I never do this: your images and your voice stay at home, I give no health advice, and I say that I am an AI.",
+     "said": "Et ce que je ne fais jamais : vos images et votre voix restent à la maison, je ne donne aucun conseil de santé, et je dis que je suis une IA.",
+     "seconds": 7.09,
+     "file": "voice/story-fr-10.mp3",
+     "heard back": 0.97,
+     "sha256": "1d2440659ec4cb0587e0718014d3e28eac4df9e16ac6d0c15ba8a627bc3d4ba5"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "C’est moi. Maintenant c’est à toi : montre-moi quelque chose qui est à toi.",
+     "how": "whole line",
+     "back": "I’m the one. Now it’s your turn: show me something that’s yours.",
+     "said": "C’est moi. Maintenant c’est à toi : montre-moi quelque chose qui est à toi.",
+     "seconds": 4.76,
+     "file": "voice/story-fr-11.mp3",
+     "heard back": 0.9,
+     "sha256": "2c58df42ebbef99b69a7ed3ec5999e3e5567f56feee3fed1fd106db685e0a026"
+    }
+   }
+  },
+  "hi": {
+   "offered": true,
+   "why not": [],
+   "names said as": {
+    "SAM 3.1 Object Multiplex": "सैम थ्री पॉइंट वन ऑब्जेक्ट मल्टीप्लेक्स",
+    "SAM 3.1": "सैम थ्री पॉइंट वन",
+    "MapAnything": "मैप एनीथिंग",
+    "Muse Spark": "म्यूज़ स्पार्क",
+    "Muse Glimmer": "म्यूज़ ग्लिमर"
+   },
+   "chapters": {
+    "Andy, on the table": {
+     "title": "एंडी, मेज़ पर",
+     "text": "यह मैं हूँ, मेज़ पर। मैं आपकी आवाज़ की ओर मुड़ता हूँ, कमरे के आस-पास देखता हूँ, और इशारा करता हूँ।",
+     "how": "whole line",
+     "back": "I am this, on the table. I turn toward your voice, look around the room, and gesture.",
+     "said": "यह मैं हूँ, मेज़ पर। मैं आपकी आवाज़ की ओर मुड़ता हूँ, कमरे के आस-पास देखता हूँ, और इशारा करता हूँ।",
+     "seconds": 8.1,
+     "file": "voice/story-hi-00.mp3",
+     "heard back": 0.86,
+     "sha256": "9c6c400f7abfd675e03918a12227887db3882296eefad2eba10d70f2e71531ed"
+    },
+    "Meet Andy": {
+     "title": "Andy से मिलो",
+     "text": "नमस्ते, मैं एंडी हूँ। मैं वह चीज़ ढूँढता हूँ जो आपने खोई है, और उसकी ओर इशारा करता हूँ। यह मेरे बगल में टीवी है।",
+     "how": "whole line",
+     "back": "Hello, I'm Andy. I find the thing you lost and point to it. It's the TV next to me.",
+     "said": "नमस्ते, मैं एंडी हूँ। मैं वह चीज़ ढूँढता हूँ जो आपने खोई है, और उसकी ओर इशारा करता हूँ। यह मेरे बगल में टीवी है।",
+     "seconds": 9.55,
+     "file": "voice/story-hi-01.mp3",
+     "heard back": 0.8,
+     "sha256": "55883046d937a8479ca28311ea76dc2b2fd8861b9f5d48f988cbab641eb6037e"
+    },
+    "You ask": {
+     "title": "तुम पूछते हो",
+     "text": "तुम पूछते हो: हे एंडी, मेरा मग कहाँ है? मैं कमरे के चारों ओर देखता हूँ, और SAM 3.1 हर उस चीज़ को रेखांकित करता है जो वह हो सकती है।",
+     "how": "as on the robot",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Hindi into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Hindi: only the English translation of the text between  and",
+     "said": "तुम पूछते हो: हे एंडी, मेरा मग कहाँ है? मैं कमरे के चारों ओर देखता हूँ, और सैम थ्री पॉइंट वन हर उस चीज़ को रेखांकित करता है जो वह हो सकती है।",
+     "seconds": 10.7,
+     "file": "voice/story-hi-02.mp3",
+     "heard back": 0.91,
+     "sha256": "134e1d6692c066916f713030c08afe4880f62fc40c2c2f61df7acbbd2d04e913"
+    },
+    "It finds it": {
+     "title": "यह इसे पाता है",
+     "text": "वहाँ है। मैं इशारा करता हूँ, अपने कैमरे से अपना निशाना जाँचता हूँ, और MapAnything मुझे बताता है कि यह कितनी दूर है।",
+     "how": "whole line",
+     "back": "There it is. I point, check my target with my camera, and MapAnything tells me how far it is.",
+     "said": "वहाँ है। मैं इशारा करता हूँ, अपने कैमरे से अपना निशाना जाँचता हूँ, और मैप एनीथिंग मुझे बताता है कि यह कितनी दूर है।",
+     "seconds": 9.21,
+     "file": "voice/story-hi-03.mp3",
+     "heard back": 0.96,
+     "sha256": "97c8e6bad32ed99bba9405d3921bd91cebc13955505e4b37478c905bdaffba72"
+    },
+    "It doesn't give up": {
+     "title": "यह हार नहीं मानता",
+     "text": "मिल नहीं रहा? मैं देखता रहूँगा जब आप अपना दिन जारी रखें, और जैसे ही वह मिले आपको बता दूँगा।",
+     "how": "as on the robot",
+     "back": "I can't find it? I'll keep looking as you go about your day, and I'll let you know as soon as I find it.",
+     "said": "मिल नहीं रहा? मैं देखता रहूँगा जब आप अपना दिन जारी रखें, और जैसे ही वह मिले आपको बता दूँगा।",
+     "seconds": 7.02,
+     "file": "voice/story-hi-04.mp3",
+     "heard back": 0.86,
+     "sha256": "9d17ed1b9cdbe1d464e42c701952914c7b2f4155378b2a8e5ed6dd31664b75e2"
+    },
+    "It guides your hand": {
+     "title": "यह तुम्हारे हाथ को मार्गदर्शित करता है",
+     "text": "अच्छी तरह नहीं देख पा रहे? मैं आपका हाथ देखता हूँ और उसे चीज़ पर बात करता हूँ, आपकी ओर से: आपकी तरफ, और दाएँ।",
+     "how": "whole line",
+     "back": "I can't see well? I look at your hand and talk to it about the thing, on your behalf: towards you, and to the right.",
+     "said": "अच्छी तरह नहीं देख पा रहे? मैं आपका हाथ देखता हूँ और उसे चीज़ पर बात करता हूँ, आपकी ओर से: आपकी तरफ, और दाएँ।",
+     "seconds": 8.94,
+     "file": "voice/story-hi-05.mp3",
+     "heard back": 0.92,
+     "sha256": "820af71ea6e1dd0ac2ac16685b30686ca0c80f047866d487d6c4ec16408d56ea"
+    },
+    "It knows your room": {
+     "title": "यह आपके कमरे को जानता है",
+     "text": "पाँच नज़रें, और मैं तुम्हारा कमरा 3D में जानता हूँ, तुम्हारी चीज़ें पिन की हुई। सिर्फ़ उसका आकार, कभी तस्वीर नहीं।",
+     "how": "whole line",
+     "back": "I have five eyes, and I know your room in 3D, your things pinned. Only their shape, never a picture.",
+     "said": "पाँच नज़रें, और मैं तुम्हारा कमरा 3D में जानता हूँ, तुम्हारी चीज़ें पिन की हुई। सिर्फ़ उसका आकार, कभी तस्वीर नहीं।",
+     "seconds": 8.56,
+     "file": "voice/story-hi-06.mp3",
+     "heard back": 1.0,
+     "sha256": "34dc667b8c2b45e0255079641bc9cd7fec419ffb606326b07b1960840639770f"
+    },
+    "Identical cups, told apart": {
+     "title": "एक जैसे कप, पहचान में अलग",
+     "text": "कप जो बिल्कुल एक जैसे दिखते हैं? SAM 3.1 Object Multiplex हर एक का पीछा करता है जबकि वे शफ़ल किए जा रहे हैं।",
+     "how": "as on the robot, from plainer English",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Hindi into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Hindi: only the English translation of the text between  and",
+     "said": "कप जो बिल्कुल एक जैसे दिखते हैं? सैम थ्री पॉइंट वन ऑब्जेक्ट मल्टीप्लेक्स हर एक का पीछा करता है जबकि वे शफ़ल किए जा रहे हैं।",
+     "seconds": 9.02,
+     "file": "voice/story-hi-07.mp3",
+     "heard back": 0.9,
+     "sha256": "7da534a0ac44cb8b9d8f31c0ea98a03187e1983bb34faae50aa7c7ee6c89b945"
+    },
+    "Before you go": {
+     "title": "तुम जाने से पहले",
+     "text": "जाने का इरादा है? मैं उस चीज़ की ओर इशारा करता हूँ जिसे आप पीछे छोड़ देंगे, और Muse Spark जाँचता है कि आपको छतरी की ज़रूरत पड़ेगी या नहीं।",
+     "how": "whole line",
+     "back": "I intend to go? I point to the thing you will leave behind, and Muse Spark checks whether you will need an umbrella or not.",
+     "said": "जाने का इरादा है? मैं उस चीज़ की ओर इशारा करता हूँ जिसे आप पीछे छोड़ देंगे, और म्यूज़ स्पार्क जाँचता है कि आपको छतरी की ज़रूरत पड़ेगी या नहीं।",
+     "seconds": 10.51,
+     "file": "voice/story-hi-08.mp3",
+     "heard back": 1.0,
+     "sha256": "73c15f40d0041a15e9f6bdc5860fb5f3257b553f4b38d02ff6c8f53ab869d3e6"
+    },
+    "Your language": {
+     "title": "आपकी भाषा",
+     "text": "मैं पंद्रह भाषाएँ सुन और बोल सकता हूँ। मेरे बगल में कंप्यूटर पर Muse Glimmer अनुवाद करता है।",
+     "how": "whole line",
+     "back": "I can hear and speak fifteen languages. Muse Glimmer translates on the computer next to me.",
+     "said": "मैं पंद्रह भाषाएँ सुन और बोल सकता हूँ। मेरे बगल में कंप्यूटर पर म्यूज़ ग्लिमर अनुवाद करता है।",
+     "seconds": 6.89,
+     "file": "voice/story-hi-09.mp3",
+     "heard back": 0.91,
+     "sha256": "2901c67ae910daceff306dbe0000aa7bd9cd00204e7382d52de2eefc9f884c65"
+    },
+    "What it never does": {
+     "title": "यह कभी नहीं करता",
+     "text": "और जो मैं कभी नहीं करता: आपकी तस्वीरें और आवाज़ घर में रहती हैं, मैं कोई स्वास्थ्य सलाह नहीं देता, और मैं कहता हूँ कि मैं एक AI हूँ।",
+     "how": "whole line",
+     "back": "I never do: your pictures and voice stay at home, I don't give health advice, and I say that I am an AI.",
+     "said": "और जो मैं कभी नहीं करता: आपकी तस्वीरें और आवाज़ घर में रहती हैं, मैं कोई स्वास्थ्य सलाह नहीं देता, और मैं कहता हूँ कि मैं एक AI हूँ।",
+     "seconds": 9.28,
+     "file": "voice/story-hi-10.mp3",
+     "heard back": 0.97,
+     "sha256": "fa01659459ee3f42f737ef8a66c50807652affb1d8a4ed4611ec6d1622f5af48"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "वो मैं हूँ। अब आपकी बारी है: मुझे अपना कुछ दिखाइए।",
+     "how": "whole line",
+     "back": "I am. Now it's your turn: show me something of yours.",
+     "said": "वो मैं हूँ। अब आपकी बारी है: मुझे अपना कुछ दिखाइए।",
+     "seconds": 4.97,
+     "file": "voice/story-hi-11.mp3",
+     "heard back": 0.9,
+     "sha256": "9c466eba66228b3f5e9d00a6349c24caa542e3811acaa78b5291c37904303695"
+    }
+   }
+  },
+  "it": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy, sul tavolo",
+     "text": "Questo sono io, sul tavolo. Mi giro alla tua voce, guardo intorno alla stanza e indico.",
+     "how": "whole line",
+     "back": "This is me, on the table. I turn at your voice, I look around the room and I point.",
+     "said": "Questo sono io, sul tavolo. Mi giro alla tua voce, guardo intorno alla stanza e indico.",
+     "seconds": 5.51,
+     "file": "voice/story-it-00.mp3",
+     "heard back": 0.97,
+     "sha256": "142b6140e8b3c24e44b1fe4f520f8898ffec211f6b3a001355cbb0e52c5d0e2f"
+    },
+    "Meet Andy": {
+     "title": "Incontra Andy",
+     "text": "Ciao, sono Andy. Trovo ciò che hai perso e lo indico. Questa è la TV accanto a me.",
+     "how": "whole line",
+     "back": "Hi, I'm Andy. I find what you lost and point it out. This is the TV next to me.",
+     "said": "Ciao, sono Andy. Trovo ciò che hai perso e lo indico. Questa è la TV accanto a me.",
+     "seconds": 6.51,
+     "file": "voice/story-it-01.mp3",
+     "heard back": 0.99,
+     "sha256": "6d684ffaa37a96826e9f5543e5e7514146469e918c79310e092c45440ebf69b7"
+    },
+    "You ask": {
+     "title": "Chiedi a Andy",
+     "text": "Chiede: Ehi Andy, dov'è la mia tazza? Guardo intorno alla stanza e SAM 3.1 delinea tutto ciò che potrebbe essere.",
+     "how": "as on the robot",
+     "back": "Asks: Hey Andy, where is my mug? I look around the room and SAM 3.1 outlines everything that could be.",
+     "said": "Chiede: Ehi Andy, dov'è la mia tazza? Guardo intorno alla stanza e SAM 3.1 delinea tutto ciò che potrebbe essere.",
+     "seconds": 7.98,
+     "file": "voice/story-it-02.mp3",
+     "heard back": 0.94,
+     "sha256": "bacbecc3d16c06e9cb924aaaf17a6aa0054b9e6847cce9877928b5fa1a376c57"
+    },
+    "It finds it": {
+     "title": "Trova Andy",
+     "text": "Eccolo lì. Indico, controllo la mira con la mia telecamera e MapAnything mi dice quanto è lontano.",
+     "how": "whole line",
+     "back": "There it is. I point, I check the aim with my camera and MapAnything tells me how far it is.",
+     "said": "Eccolo lì. Indico, controllo la mira con la mia telecamera e MapAnything mi dice quanto è lontano.",
+     "seconds": 6.5,
+     "file": "voice/story-it-03.mp3",
+     "heard back": 0.86,
+     "sha256": "cdf4bbbf58825325bbe30af2a719a663a20f8310697e4e3dc11689f96e8ffcb6"
+    },
+    "It doesn't give up": {
+     "title": "Non si arrende",
+     "text": "Non trovato? Continuo a cercare mentre lei va avanti con la sua giornata, e le faccio sapere nel momento in cui spunta.",
+     "how": "whole line",
+     "back": "Not found? I keep looking while you go on with your day, and I'll let you know the moment it pops up.",
+     "said": "Non trovato? Continuo a cercare mentre lei va avanti con la sua giornata, e le faccio sapere nel momento in cui spunta.",
+     "seconds": 7.41,
+     "file": "voice/story-it-04.mp3",
+     "heard back": 1.0,
+     "sha256": "98272427f0de0f8969348cf67c32a57d3678b24debfe752d4110911e0b9f0f85"
+    },
+    "It guides your hand": {
+     "title": "Ti guida la mano",
+     "text": "Non vedi bene? Guardo la tua mano e la parlo sulla cosa, dal tuo lato: verso di te, e a destra.",
+     "how": "whole line",
+     "back": "You don't see well? I look at your hand and I speak it on the thing, from your side: towards you, and to the right.",
+     "said": "Non vedi bene? Guardo la tua mano e la parlo sulla cosa, dal tuo lato: verso di te, e a destra.",
+     "seconds": 6.94,
+     "file": "voice/story-it-05.mp3",
+     "heard back": 0.93,
+     "sha256": "c9fef92e100189f31e2d49c8365f974c2fcfb108b401100969b9de1e5a329abc"
+    },
+    "It knows your room": {
+     "title": "Sa che la tua stanza",
+     "text": "Cinque sguardi, e conosco la tua stanza in 3D, le tue cose fissate. Solo la sua forma, mai un'immagine.",
+     "how": "whole line",
+     "back": "Five glances, and I know your room in 3D, your things fixed. Only its shape, never an image.",
+     "said": "Cinque sguardi, e conosco la tua stanza in 3D, le tue cose fissate. Solo la sua forma, mai un'immagine.",
+     "seconds": 7.29,
+     "file": "voice/story-it-06.mp3",
+     "heard back": 0.99,
+     "sha256": "38416dc7a68224b427dda21a034536fc72d9fc4b6065a22392eceb88f0022ee7"
+    },
+    "Identical cups, told apart": {
+     "title": "Tazze identiche, distinte",
+     "text": "Tazze identiche? SAM 3.1 Object Multiplex segue ognuno di loro attraverso il mescolamento.",
+     "how": "as on the robot",
+     "back": "Identical mugs? SAM 3.1 Object Multiplex follows each of them through the mixing.",
+     "said": "Tazze identiche? SAM 3.1 Object Multiplex segue ognuno di loro attraverso il mescolamento.",
+     "seconds": 7.16,
+     "file": "voice/story-it-07.mp3",
+     "heard back": 0.9,
+     "sha256": "b7d514692432ccc9a05cda3db888d6f7411737d8f608e67fa93ac45d8f48b8e9"
+    },
+    "Before you go": {
+     "title": "Prima che tu vada",
+     "text": "Andando fuori? Indico ciò che lasceresti indietro, e Muse Spark controlla se avrai bisogno di un ombrello.",
+     "how": "whole line",
+     "back": "Going out? I point out what you would leave behind, and Muse Spark checks if you will need an umbrella.",
+     "said": "Andando fuori? Indico ciò che lasceresti indietro, e Muse Spark controlla se avrai bisogno di un ombrello.",
+     "seconds": 7.55,
+     "file": "voice/story-it-08.mp3",
+     "heard back": 0.99,
+     "sha256": "5f07d888dcbf46ac8fc5ed15b37855ffd99a16c150c7ed2be821f0bd77038c65"
+    },
+    "Your language": {
+     "title": "Il tuo linguaggio",
+     "text": "Ascolto e parlo quindici lingue. Muse Glimmer traduce, sul computer accanto a me.",
+     "how": "whole line",
+     "back": "I speak and listen to fifteen languages. Muse Glimmer translates on the computer next to me.",
+     "said": "Ascolto e parlo quindici lingue. Muse Glimmer traduce, sul computer accanto a me.",
+     "seconds": 5.99,
+     "file": "voice/story-it-09.mp3",
+     "heard back": 0.89,
+     "sha256": "20f7d08930c98fe1fc9063fffc924b57e8982931c2ae699c8594c6eaf1c61960"
+    },
+    "What it never does": {
+     "title": "Quello che non fa mai",
+     "text": "E e ciò che non faccio mai: le tue foto e la tua voce restano a casa, non do consigli sulla salute e dico che sono un'IA.",
+     "how": "whole line",
+     "back": "I and what I never do: your photos and your voice stay at home, I don't give health advice and I say that I'm an AI.",
+     "said": "E e ciò che non faccio mai: le tue foto e la tua voce restano a casa, non do consigli sulla salute e dico che sono un'IA.",
+     "seconds": 7.09,
+     "file": "voice/story-it-10.mp3",
+     "heard back": 0.97,
+     "sha256": "3769faf040915c3a8d4cafbe86c25879d184a120ff8c58083f0c30dc688dd4b2"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Ecco me. Ora tocca a te: mostrami qualcosa che è tuo.",
+     "how": "whole line",
+     "back": "Here I am. Now it's your turn: show me something that is yours.",
+     "said": "Ecco me. Ora tocca a te: mostrami qualcosa che è tuo.",
+     "seconds": 3.93,
+     "file": "voice/story-it-11.mp3",
+     "heard back": 0.94,
+     "sha256": "b7492b6b90844f10b64b559b3329c29e868da082fe77e34ee4da366cc4034abb"
+    }
+   }
+  },
+  "ko": {
+   "offered": true,
+   "why not": [],
+   "names said as": {
+    "SAM 3.1 Object Multiplex": "샘 쓰리 포인트 원 오브젝트 멀티플렉스",
+    "SAM 3.1": "샘 쓰리 포인트 원",
+    "MapAnything": "맵 애니씽",
+    "Muse Spark": "뮤즈 스파크",
+    "Muse Glimmer": "뮤즈 글리머"
+   },
+   "chapters": {
+    "Andy, on the table": {
+     "title": "앤디, 테이블 위에",
+     "text": "이건 테이블 위에 있는 저예요. 저는 당신의 목소리에 반응해 방을 둘러보고 가리킵니다.",
+     "how": "whole line",
+     "back": "I am the one on the table. I react to your voice, look around the room and point.",
+     "said": "이건 테이블 위에 있는 저예요. 저는 당신의 목소리에 반응해 방을 둘러보고 가리킵니다.",
+     "seconds": 8.02,
+     "file": "voice/story-ko-00.mp3",
+     "heard back": 0.94,
+     "sha256": "f4153a880e6177583562be09a4d8de030e3e7fa8de9b1f4c18ce0621c62c7d6d"
+    },
+    "Meet Andy": {
+     "title": "앤디를 만나다",
+     "text": "안녕하세요, 저는 앤디예요. 당신이 잃어버린 것을 찾고, 그것이 어디에 있는지 가리켜요. 이건 제 옆에 있는 TV예요.",
+     "how": "whole line",
+     "back": "Hello, I'm Andy. You find what you lost and point to where it is. This is the TV next to me.",
+     "said": "안녕하세요, 저는 앤디예요. 당신이 잃어버린 것을 찾고, 그것이 어디에 있는지 가리켜요. 이건 제 옆에 있는 TV예요.",
+     "seconds": 11.42,
+     "file": "voice/story-ko-01.mp3",
+     "heard back": 0.79,
+     "sha256": "f4a40f00c07f54f13006716d2de3119b7f8e01cdcb4e54e658070d1a9e5a68e1"
+    },
+    "You ask": {
+     "title": "앤디에게 묻다",
+     "text": "안녕하세요, 앤디. 제 머그컵이 어디에 있는지 알려주실 수 있을까요? SAM 3.1이 방 안을 둘러보며, 그 안에 있을 수 있는 모든 것을 윤곽으로 표시합니다.",
+     "how": "as on the robot",
+     "back": "Hello, Andy. Can you tell me where my mug is? SAM 3.1 looks around the room, outlining everything that could be inside it.",
+     "said": "안녕하세요, 앤디. 제 머그컵이 어디에 있는지 알려주실 수 있을까요? 샘 쓰리 포인트 원이 방 안을 둘러보며, 그 안에 있을 수 있는 모든 것을 윤곽으로 표시합니다.",
+     "seconds": 14.05,
+     "file": "voice/story-ko-02.mp3",
+     "heard back": 0.86,
+     "sha256": "fc6efa9a71bd3195320a291bab14f2be5630048e367dec56c7febab66b7124a3"
+    },
+    "It finds it": {
+     "title": "그것은 그것을 찾는다",
+     "text": "그거예요. 제가 가리키고, 제 카메라로 조준을 확인하고, MapAnything가 얼마나 멀리 떨어져 있는지 알려줍니다.",
+     "how": "whole line",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Korean into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Korean: only the English translation of the text between  and",
+     "said": "그거예요. 제가 가리키고, 제 카메라로 조준을 확인하고, 맵 애니씽가 얼마나 멀리 떨어져 있는지 알려줍니다.",
+     "seconds": 9.62,
+     "file": "voice/story-ko-03.mp3",
+     "heard back": 0.91,
+     "sha256": "81d519125dfa6f109a3c91c332016d0659f132a1df27438ce18f91fa043dd237"
+    },
+    "It doesn't give up": {
+     "title": "안디는 포기하지 않는다",
+     "text": "찾지 못했나요? 계속 찾아보면서 당신은 하루를 보내고, 나타나자마자 알려드릴게요.",
+     "how": "whole line",
+     "back": "I couldn't find it? As you keep looking, you'll spend the day, and as soon as it appears, I'll let you know.",
+     "said": "찾지 못했나요? 계속 찾아보면서 당신은 하루를 보내고, 나타나자마자 알려드릴게요.",
+     "seconds": 7.5,
+     "file": "voice/story-ko-04.mp3",
+     "heard back": 0.97,
+     "sha256": "d8a7cf1a1324c672ad864f1a8125c9aabb8e4a24ffe7f218bb0848467d4c4bcb"
+    },
+    "It guides your hand": {
+     "title": "손을 이끄는 것",
+     "text": "잘 보이지 않나요? 당신의 손을 지켜보며, 당신의 쪽에서 그 물건으로 말을 옮깁니다: 당신을 향해, 그리고 오른쪽으로.",
+     "how": "whole line",
+     "back": "Can you not see well? While watching your hand, I move the object from your side toward you, and to the right.",
+     "said": "잘 보이지 않나요? 당신의 손을 지켜보며, 당신의 쪽에서 그 물건으로 말을 옮깁니다: 당신을 향해, 그리고 오른쪽으로.",
+     "seconds": 10.9,
+     "file": "voice/story-ko-05.mp3",
+     "heard back": 0.98,
+     "sha256": "9aff577f15ef4d3c3383f4afa082f2dbe842186715c5531bd812939790936dd2"
+    },
+    "It knows your room": {
+     "title": "네 방을 아는 로봇",
+     "text": "다섯 번의 시선으로, 당신의 방을 3차원으로 알고, 당신의 물건들을 고정된 채로. 그 형태만, 사진은 절대 아닙니다.",
+     "how": "whole line",
+     "back": "I know your room in three dimensions with five glances, your things fixed in place. Only the shape, never a photo.",
+     "said": "다섯 번의 시선으로, 당신의 방을 3차원으로 알고, 당신의 물건들을 고정된 채로. 그 형태만, 사진은 절대 아닙니다.",
+     "seconds": 10.6,
+     "file": "voice/story-ko-06.mp3",
+     "heard back": 0.95,
+     "sha256": "1d5555bdb957c4098df3ca134059f72f7f434f5e9ea492174d276a799a2c4a74"
+    },
+    "Identical cups, told apart": {
+     "title": "같은 컵인데 구분이 된다고요.",
+     "text": "같은 컵이요? SAM 3.1 Object Multiplex는 그들 모두를 뒤섞는 동안 따라갑니다.",
+     "how": "as on the robot",
+     "back": "Is it the same cup? SAM 3.1 Object Multiplex follows them all while they are being mixed up.",
+     "said": "같은 컵이요? 샘 쓰리 포인트 원 오브젝트 멀티플렉스는 그들 모두를 뒤섞는 동안 따라갑니다.",
+     "seconds": 8.74,
+     "file": "voice/story-ko-07.mp3",
+     "heard back": 0.87,
+     "sha256": "af94f95a94d09132a2b9e4f9722f2e334eca3203e5e9695ff635e5fb40bf1cba"
+    },
+    "Before you go": {
+     "title": "가기 전에",
+     "text": "나가세요? 내가 당신이 뒤에 남길 것을 가리키고, Muse Spark가 우산이 필요할지 확인합니다.",
+     "how": "whole line",
+     "back": "I see you pointing to what you’ll leave behind, and I check if Muse Spark will need an umbrella.",
+     "said": "나가세요? 내가 당신이 뒤에 남길 것을 가리키고, 뮤즈 스파크가 우산이 필요할지 확인합니다.",
+     "seconds": 8.37,
+     "file": "voice/story-ko-08.mp3",
+     "heard back": 0.95,
+     "sha256": "d848c3071103bc5e7ff9d43437ac8ce60380b9f080e9802203a3abb99ea15bbd"
+    },
+    "Your language": {
+     "title": "안디의 작은 집",
+     "text": "저는 열다섯 개 언어를 듣고 말합니다. 제 옆 컴퓨터에서 Muse Glimmer가 번역합니다.",
+     "how": "whole line",
+     "back": "I speak and listen to fifteen languages. Muse Glimmer translates from the computer next to me.",
+     "said": "저는 열다섯 개 언어를 듣고 말합니다. 제 옆 컴퓨터에서 뮤즈 글리머가 번역합니다.",
+     "seconds": 7.69,
+     "file": "voice/story-ko-09.mp3",
+     "heard back": 0.91,
+     "sha256": "9a480953cda337cc1106093cb2d7a7a98dc2f7e3490ea079725b66277f7a8ef4"
+    },
+    "What it never does": {
+     "title": "안디가 절대 하지 않는 일",
+     "text": "그리고 제가 절대 하지 않는 일: 당신의 사진과 목소리는 집에 머무르고, 저는 건강에 대한 조언을 하지 않으며, 저는 제가 AI라고 말합니다.",
+     "how": "whole line",
+     "back": "I never do this: your photos and voice stay at home, I don't give health advice, and I say that I'm an AI.",
+     "said": "그리고 제가 절대 하지 않는 일: 당신의 사진과 목소리는 집에 머무르고, 저는 건강에 대한 조언을 하지 않으며, 저는 제가 AI라고 말합니다.",
+     "seconds": 11.28,
+     "file": "voice/story-ko-10.mp3",
+     "heard back": 0.96,
+     "sha256": "e97843d43a855210bbc18d9f5aedd0e77a680d7ffa1aa7981cfb592ad5472556"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "저예요. 이제 당신 차례예요: 제게 당신의 것을 보여주세요.",
+     "how": "whole line",
+     "back": "I am. Now it's your turn: show me yours.",
+     "said": "저예요. 이제 당신 차례예요: 제게 당신의 것을 보여주세요.",
+     "seconds": 5.88,
+     "file": "voice/story-ko-11.mp3",
+     "heard back": 0.89,
+     "sha256": "c72131e3d621885fd756a0c782ca7cb61bbdcc9c66d1f6967a13bed904e63c09"
+    }
+   }
+  },
+  "pl": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy na stole",
+     "text": "To jest ja, na stole. Odwracam się na twój głos, roglądam się po pokoju i wskazuję palcem.",
+     "how": "whole line",
+     "back": "I am here, on the table. I turn toward your voice, I look around the room and I point with my finger.",
+     "said": "To jest ja, na stole. Odwracam się na twój głos, roglądam się po pokoju i wskazuję palcem.",
+     "seconds": 7.18,
+     "file": "voice/story-pl-00.mp3",
+     "heard back": 1.0,
+     "sha256": "140f7613db50a927f1a0c3966e2188d26e92344c1306efc057feb87bc10cac4f"
+    },
+    "Meet Andy": {
+     "title": "Poznaj Andy",
+     "text": "Cześć, jestem Andy. Znajduję to, co zgubiłeś, i wskazuję na to. To jest telewizor obok mnie.",
+     "how": "whole line",
+     "back": "Hi, I'm Andy. I find what you lost and point to it. It's the TV next to me.",
+     "said": "Cześć, jestem Andy. Znajduję to, co zgubiłeś, i wskazuję na to. To jest telewizor obok mnie.",
+     "seconds": 8.27,
+     "file": "voice/story-pl-01.mp3",
+     "heard back": 0.94,
+     "sha256": "334bced315370f64b48716a092917707a46dac77a933bb6313f475ead4d04272"
+    },
+    "You ask": {
+     "title": "Poproś Andy",
+     "text": "Pytasz: Hej Andy, gdzie jest mój kubek? Patrzę wokół pokoju, a SAM 3.1 zaznacza wszystko, co mogłoby być nim.",
+     "how": "as on the robot",
+     "back": "I ask: Hey Andy, where is my cup? I look around the room, and SAM 3.1 marks everything that could be it.",
+     "said": "Pytasz: Hej Andy, gdzie jest mój kubek? Patrzę wokół pokoju, a SAM 3.1 zaznacza wszystko, co mogłoby być nim.",
+     "seconds": 8.5,
+     "file": "voice/story-pl-02.mp3",
+     "heard back": 0.96,
+     "sha256": "43226461c2d5f4b1d5dda1b857cab20b1200825f81274c0ff09468ffc4a2ff96"
+    },
+    "It finds it": {
+     "title": "Ono to znajduje",
+     "text": "Tam jest. Wskazuję, sprawdzam celowanie własną kamerą, a MapAnything mówi mi, jak daleko to jest.",
+     "how": "whole line",
+     "back": "There it is. I'm pointing, checking the aim with my own camera, and MapAnything tells me how far it is.",
+     "said": "Tam jest. Wskazuję, sprawdzam celowanie własną kamerą, a MapAnything mówi mi, jak daleko to jest.",
+     "seconds": 7.08,
+     "file": "voice/story-pl-03.mp3",
+     "heard back": 0.98,
+     "sha256": "9db1397872963d2ff76756a195ed7a186d6a593050073f535721142fe7366a2c"
+    },
+    "It doesn't give up": {
+     "title": "Nie się poddaje",
+     "text": "Nie znaleziono? Nadal szukam, podczas gdy Ty zajmujesz się swoim dniem, i dam Ci znać w momencie, gdy się pojawi.",
+     "how": "whole line",
+     "back": "I didn't find it? I'm still looking, while you go about your day, and I'll let you know as soon as it appears.",
+     "said": "Nie znaleziono? Nadal szukam, podczas gdy Ty zajmujesz się swoim dniem, i dam Ci znać w momencie, gdy się pojawi.",
+     "seconds": 7.57,
+     "file": "voice/story-pl-04.mp3",
+     "heard back": 1.0,
+     "sha256": "fbf678bb1d90f47b227f0d264751856e31cd3b60567cb6e002b5223423fe5000"
+    },
+    "It guides your hand": {
+     "title": "To prowadzi twoją dłoń",
+     "text": "Nie widzisz dobrze? Obserwuję Twoją dłoń i mówię ją na rzecz, z Twojej strony: ku Tobie, i w prawo.",
+     "how": "whole line",
+     "back": "You don't see well? I'm watching your hand and saying it for you, from your side: towards you, and to the right.",
+     "said": "Nie widzisz dobrze? Obserwuję Twoją dłoń i mówię ją na rzecz, z Twojej strony: ku Tobie, i w prawo.",
+     "seconds": 7.54,
+     "file": "voice/story-pl-05.mp3",
+     "heard back": 1.0,
+     "sha256": "38e7b44443d9d93a80af586c1c0ce6355ee654fa28d7043c907ceb74ecde2840"
+    },
+    "It knows your room": {
+     "title": "Wie zna twój pokój",
+     "text": "Pięć spojrzeń, i znam Twój pokój w 3D, Twoje rzeczy przypięte. Tylko jego kształt, nigdy obraz.",
+     "how": "whole line",
+     "back": "I translate one line of a short story that a small home robot tells about itself, out loud, from Polish into English, as close to its meaning as you can. 'I', 'me' and 'my' are the robot. Never add anything, never answer it, never write it in Polish: only the English translation of the text between  and",
+     "said": "Pięć spojrzeń, i znam Twój pokój w 3D, Twoje rzeczy przypięte. Tylko jego kształt, nigdy obraz.",
+     "seconds": 7.14,
+     "file": "voice/story-pl-06.mp3",
+     "heard back": 1.0,
+     "sha256": "da98e8a70631350c7c7d3b49491cfb59f45e0f0144d0737b1ac48df98585c23f"
+    },
+    "Identical cups, told apart": {
+     "title": "Torebki identyczne, odróżnione",
+     "text": "Identyczne kubki? SAM 3.1 Object Multiplex podąża za każdym z nich przez cały taniec.",
+     "how": "as on the robot",
+     "back": "Identical cups? SAM 3.1 Object Multiplex follows each of them throughout the dance.",
+     "said": "Identyczne kubki? SAM 3.1 Object Multiplex podąża za każdym z nich przez cały taniec.",
+     "seconds": 7.02,
+     "file": "voice/story-pl-07.mp3",
+     "heard back": 0.93,
+     "sha256": "75f2a7cdd7e4430daf87405a66f3ee09a28d24d4c2a5123ffb27d31fa8849572"
+    },
+    "Before you go": {
+     "title": "Zanim odejdziesz",
+     "text": "Wychodzisz? Wskazuję, co zostawiłbyś z tyłu, a Muse Spark sprawdza, czy będziesz potrzebować parasola.",
+     "how": "whole line",
+     "back": "I’m leaving? I point out what you’d leave behind, and Muse Spark checks if you’ll need an umbrella.",
+     "said": "Wychodzisz? Wskazuję, co zostawiłbyś z tyłu, a Muse Spark sprawdza, czy będziesz potrzebować parasola.",
+     "seconds": 7.41,
+     "file": "voice/story-pl-08.mp3",
+     "heard back": 1.0,
+     "sha256": "c336ae990afd5a3198fa545fe4a41ac6cb00a3b82b88316519712a83b6a5d24d"
+    },
+    "Your language": {
+     "title": "Twój język",
+     "text": "Słyszę i mówię w piętnastu językach. Muse Glimmer tłumaczy na komputerze obok mnie.",
+     "how": "whole line",
+     "back": "I hear and speak in fifteen languages. Muse Glimmer translates on the computer next to me.",
+     "said": "Słyszę i mówię w piętnastu językach. Muse Glimmer tłumaczy na komputerze obok mnie.",
+     "seconds": 6.62,
+     "file": "voice/story-pl-09.mp3",
+     "heard back": 0.99,
+     "sha256": "1eaa033780eb1451d9b658720e82a53bdeaf6713c50021a6e18386554215721e"
+    },
+    "What it never does": {
+     "title": "Co nigdy nie robi",
+     "text": "A co ja nigdy nie robię: twoje zdjęcia i głos zostają w domu, nie udzielam porad zdrowotnych i mówię, że jestem AI.",
+     "how": "whole line",
+     "back": "I never do this: your photos and voice stay at home, I don't give health advice and I say that I'm an AI.",
+     "said": "A co ja nigdy nie robię: twoje zdjęcia i głos zostają w domu, nie udzielam porad zdrowotnych i mówię, że jestem AI.",
+     "seconds": 7.19,
+     "file": "voice/story-pl-10.mp3",
+     "heard back": 0.98,
+     "sha256": "0972ded4b980b0ee981e46ed894b50ab30727a1b80d1cc4edeea49de34975279"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "To jest ja. Teraz twoja kolej: pokaż mi coś swojego.",
+     "how": "whole line",
+     "back": "I am this. Now it's your turn: show me something of yours.",
+     "said": "To jest ja. Teraz twoja kolej: pokaż mi coś swojego.",
+     "seconds": 4.76,
+     "file": "voice/story-pl-11.mp3",
+     "heard back": 0.96,
+     "sha256": "b53a60cc0a69033484a1591a733e62e62baca820e6a9b388738e6d87e4bb3d08"
+    }
+   }
+  },
+  "pt": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy, sobre a mesa",
+     "text": "Isto sou eu, na mesa. Eu me volto para a sua voz, olho ao redor da sala e aponto.",
+     "how": "sentence by sentence",
+     "back": "I am this, on the table. I turn toward your voice, look around the room and point.",
+     "said": "Isto sou eu, na mesa. Eu me volto para a sua voz, olho ao redor da sala e aponto.",
+     "seconds": 5.75,
+     "file": "voice/story-pt-00.mp3",
+     "heard back": 1.0,
+     "sha256": "9ff295b5d127c4533d30b8a99b09f254a038f342e3e762688280ad7ca899617e"
+    },
+    "Meet Andy": {
+     "title": "Conheça o Andy",
+     "text": "Olá, eu sou o Andy. Eu encontro o que você perdeu e aponto para ele. Esta é a TV ao meu lado.",
+     "how": "whole line",
+     "back": "Hello, I'm Andy. I find what you lost and point to it. This is the TV next to me.",
+     "said": "Olá, eu sou o Andy. Eu encontro o que você perdeu e aponto para ele. Esta é a TV ao meu lado.",
+     "seconds": 7.0,
+     "file": "voice/story-pt-01.mp3",
+     "heard back": 0.95,
+     "sha256": "dedf5e07f450d154ed5cd90947ce6151152212fb917a0ebdc93c5b16c4c33396"
+    },
+    "You ask": {
+     "title": "Você pergunta",
+     "text": "Você pergunta: Ei Andy, onde está minha caneca? Eu olho ao redor da sala, e SAM 3.1 delineia tudo o que poderia ser ela.",
+     "how": "whole line",
+     "back": "You ask: Hey Andy, where is my mug? I look around the room, and SAM 3.1 outlines everything that could be it.",
+     "said": "Você pergunta: Ei Andy, onde está minha caneca? Eu olho ao redor da sala, e SAM 3.1 delineia tudo o que poderia ser ela.",
+     "seconds": 8.15,
+     "file": "voice/story-pt-02.mp3",
+     "heard back": 0.9,
+     "sha256": "830b5d3b13bae7e7510239711f210e95921e79e198eaab15755c6083ac4b66c6"
+    },
+    "It finds it": {
+     "title": "Ele encontra isso",
+     "text": "There it is. I aponto, verifico a minha mira com a minha própria câmera, e o MapAnything me diz a que distância está.",
+     "how": "sentence by sentence",
+     "back": "I point, I check my aim with my own camera, and MapAnything tells me how far it is.",
+     "said": "There it is. I aponto, verifico a minha mira com a minha própria câmera, e o MapAnything me diz a que distância está.",
+     "seconds": 7.82,
+     "file": "voice/story-pt-03.mp3",
+     "heard back": 0.82,
+     "sha256": "107477e0ce0b2b99cd4f5d7a3471c19d4c3d57ffb676b53e16749a10b7e8cd34"
+    },
+    "It doesn't give up": {
+     "title": "Não desiste",
+     "text": "Não encontrado? Eu continuo procurando enquanto você segue com seu dia, e aviso você assim que aparecer.",
+     "how": "whole line",
+     "back": "Not found? I keep looking while you go on with your day, and I'll let you know as soon as it shows up.",
+     "said": "Não encontrado? Eu continuo procurando enquanto você segue com seu dia, e aviso você assim que aparecer.",
+     "seconds": 6.69,
+     "file": "voice/story-pt-04.mp3",
+     "heard back": 0.99,
+     "sha256": "5c4a3575c15a53b5efd5d4540b92f2b130c287cbfdb29350735d49d60bcb1ff0"
+    },
+    "It guides your hand": {
+     "title": "Ele guia sua mão",
+     "text": "Não vê bem? Eu observo sua mão e falo-a para a coisa, do seu lado: em sua direção, e à direita.",
+     "how": "whole line",
+     "back": "Can you see well? I watch your hand and tell it to the thing on your side: toward you, and to the right.",
+     "said": "Não vê bem? Eu observo sua mão e falo-a para a coisa, do seu lado: em sua direção, e à direita.",
+     "seconds": 7.0,
+     "file": "voice/story-pt-05.mp3",
+     "heard back": 0.96,
+     "sha256": "9f2c50d5ea1856de87e8004f922a93ebf91a964f817c45afc4466491a1255963"
+    },
+    "It knows your room": {
+     "title": "Sabe o seu quarto",
+     "text": "Cinco olhares, e eu conheço seu quarto em 3D, suas coisas fixadas. Apenas a sua forma, nunca uma imagem.",
+     "how": "as on the robot",
+     "back": "Five glances, and I know your room in 3D, your things fixed. Only your shape, never an image.",
+     "said": "Cinco olhares, e eu conheço seu quarto em 3D, suas coisas fixadas. Apenas a sua forma, nunca uma imagem.",
+     "seconds": 7.17,
+     "file": "voice/story-pt-06.mp3",
+     "heard back": 0.96,
+     "sha256": "e59170b8ec9fb508ca7a4c073814e9bfed87e2580a092c5d427c9438e59fa14f"
+    },
+    "Identical cups, told apart": {
+     "title": "Xícaras idênticas, distinguidas",
+     "text": "Xícaras idênticas? SAM 3.1 Object Multiplex segue cada um deles através da confusão.",
+     "how": "as on the robot",
+     "back": "Are the cups identical? SAM 3.1 Object Multiplex follows each of them through the confusion.",
+     "said": "Xícaras idênticas? SAM 3.1 Object Multiplex segue cada um deles através da confusão.",
+     "seconds": 7.37,
+     "file": "voice/story-pt-07.mp3",
+     "heard back": 0.88,
+     "sha256": "f44cf086bceea74330dc4a48198570d290e9bed1c2163a437b9acb7c8bda573b"
+    },
+    "Before you go": {
+     "title": "Antes de você ir",
+     "text": "Saindo? Eu aponto para o que você deixaria para trás, e o Muse Spark verifica se você precisará de um guarda-chuva.",
+     "how": "whole line",
+     "back": "Leaving? I point to what you would leave behind, and Muse Spark checks if you will need an umbrella.",
+     "said": "Saindo? Eu aponto para o que você deixaria para trás, e o Muse Spark verifica se você precisará de um guarda-chuva.",
+     "seconds": 7.45,
+     "file": "voice/story-pt-08.mp3",
+     "heard back": 1.0,
+     "sha256": "17a333aaa0829aaffd067fd4e131d8286d43a5803c7bfc17e99d557458a1c1fa"
+    },
+    "Your language": {
+     "title": "Seu idioma",
+     "text": "Eu ouço e falo quinze línguas. Muse Glimmer traduz, no computador ao meu lado.",
+     "how": "whole line",
+     "back": "I speak and hear fifteen languages. Muse Glimmer translates on the computer next to me.",
+     "said": "Eu ouço e falo quinze línguas. Muse Glimmer traduz, no computador ao meu lado.",
+     "seconds": 5.84,
+     "file": "voice/story-pt-09.mp3",
+     "heard back": 0.91,
+     "sha256": "8b9c2a4644f1720b0b0743d398f4abb5a050929339828e376c5013cdba46bd30"
+    },
+    "What it never does": {
+     "title": "O que ele nunca faz",
+     "text": "E o que eu nunca faço: suas fotos e voz ficam em casa, eu não dou conselhos de saúde e digo que sou uma IA.",
+     "how": "whole line",
+     "back": "I never do this: your photos and voice stay at home, I don't give health advice and I say I'm an AI.",
+     "said": "E o que eu nunca faço: suas fotos e voz ficam em casa, eu não dou conselhos de saúde e digo que sou uma IA.",
+     "seconds": 6.28,
+     "file": "voice/story-pt-10.mp3",
+     "heard back": 0.94,
+     "sha256": "afc6c1a7e60a2868228437269fb6f78755e375d3ee513951c9ccd838b5a76ccd"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Eu sou eu. Agora é a sua vez: mostre-me algo seu.",
+     "how": "as on the robot",
+     "back": "I am me. Now it's your turn: show me something of yours.",
+     "said": "Eu sou eu. Agora é a sua vez: mostre-me algo seu.",
+     "seconds": 4.28,
+     "file": "voice/story-pt-11.mp3",
+     "heard back": 1.0,
+     "sha256": "7a5b22fd7f070d65c38c842c62dc24aced6231222fe014e3c4dc1e0889fcc342"
+    }
+   }
+  },
+  "ru": {
+   "offered": true,
+   "why not": [],
+   "names said as": {
+    "SAM 3.1 Object Multiplex": "Сэм три точка один Обджект Мультиплекс",
+    "SAM 3.1": "Сэм три точка один",
+    "MapAnything": "Мэп Энисинг",
+    "Muse Spark": "Мьюз Спарк",
+    "Muse Glimmer": "Мьюз Глиммер"
+   },
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Энди, на столе",
+     "text": "Это я, на столе. Я поворачиваюсь к вашему голосу, оглядываю комнату и указываю.",
+     "how": "whole line",
+     "back": "I am here, on the table. I turn toward your voice, look around the room and point.",
+     "said": "Это я, на столе. Я поворачиваюсь к вашему голосу, оглядываю комнату и указываю.",
+     "seconds": 6.36,
+     "file": "voice/story-ru-00.mp3",
+     "heard back": 1.0,
+     "sha256": "db1ae8bc2130681666b514533f35e9f97c99ae972229d84f5d221d691941dc57"
+    },
+    "Meet Andy": {
+     "title": "Познакомьтесь с Энди",
+     "text": "Привет, я Энди. Я нахожу то, что вы потеряли, и указываю на это. Это телевизор рядом со мной.",
+     "how": "whole line",
+     "back": "Hi, I'm Andy. I find what you lost and point to it. It's the TV next to me.",
+     "said": "Привет, я Энди. Я нахожу то, что вы потеряли, и указываю на это. Это телевизор рядом со мной.",
+     "seconds": 7.59,
+     "file": "voice/story-ru-01.mp3",
+     "heard back": 1.0,
+     "sha256": "7feec7094ce34664f86ed2cc7ae579e80e213d8158b2b0ec677c2ff5f4895d6d"
+    },
+    "You ask": {
+     "title": "Ты спрашиваешь",
+     "text": "Ты спрашиваешь: Эй, Энди, где моя кружка? Я оглядываюсь по комнате, и SAM 3.1 Object Multiplex выделяет всё, что может быть ею.",
+     "how": "whole line",
+     "back": "You ask: Hey Andy, where is my mug? I look around the room, and SAM 3.1 Object Multiplex highlights everything that could be it.",
+     "said": "Ты спрашиваешь: Эй, Энди, где моя кружка? Я оглядываюсь по комнате, и Сэм три точка один Обджект Мультиплекс выделяет всё, что может быть ею.",
+     "seconds": 9.45,
+     "file": "voice/story-ru-02.mp3",
+     "heard back": 0.9,
+     "sha256": "7e3ae140214470d402178bb8385fa77dee465ebef9bac77f8755a78ea7863715"
+    },
+    "It finds it": {
+     "title": "Оно находит это",
+     "text": "Вот оно. Я указываю, проверяю прицел своей собственной камерой, и MapAnything говорит мне, как далеко оно находится.",
+     "how": "whole line",
+     "back": "Here it is. I point, check the sight with my own camera, and MapAnything tells me how far it is.",
+     "said": "Вот оно. Я указываю, проверяю прицел своей собственной камерой, и Мэп Энисинг говорит мне, как далеко оно находится.",
+     "seconds": 7.71,
+     "file": "voice/story-ru-03.mp3",
+     "heard back": 0.94,
+     "sha256": "8a5266725de9837e244486bc3e7da03caf0eb4779e1932445edff328317f05b1"
+    },
+    "It doesn't give up": {
+     "title": "Оно не сдается",
+     "text": "Не нашли? Я продолжаю искать, пока вы занимаетесь своими делами, и сообщу вам, как только оно появится.",
+     "how": "whole line",
+     "back": "Didn't find it? I keep looking while you do your things, and I'll let you know as soon as it appears.",
+     "said": "Не нашли? Я продолжаю искать, пока вы занимаетесь своими делами, и сообщу вам, как только оно появится.",
+     "seconds": 6.77,
+     "file": "voice/story-ru-04.mp3",
+     "heard back": 1.0,
+     "sha256": "6af08a374dd5fad66cf53052310de8b621fe9875782e7927fd24fcccb273ce05"
+    },
+    "It guides your hand": {
+     "title": "Оно ведёт твою руку",
+     "text": "Плохо видите? Я наблюдаю за вашей рукой и направляю её к предмету, с вашей стороны: к вам, и направо.",
+     "how": "whole line",
+     "back": "I see poorly? I watch your hand and guide it to the object, on your side: towards you, and to the right.",
+     "said": "Плохо видите? Я наблюдаю за вашей рукой и направляю её к предмету, с вашей стороны: к вам, и направо.",
+     "seconds": 7.46,
+     "file": "voice/story-ru-05.mp3",
+     "heard back": 1.0,
+     "sha256": "57daa76a12262af8211cc52e1c45b9f6fdcdc1868035df60cb5cb209a0e0b7ac"
+    },
+    "It knows your room": {
+     "title": "Оно знает твою комнату",
+     "text": "Пять взглядов, и я знаю вашу комнату в 3D, ваши вещи закреплены. Только её форма, никогда не изображение.",
+     "how": "whole line",
+     "back": "Five glances, and I know your room in 3D, your things are fixed. Only its shape, never the image.",
+     "said": "Пять взглядов, и я знаю вашу комнату в 3D, ваши вещи закреплены. Только её форма, никогда не изображение.",
+     "seconds": 7.48,
+     "file": "voice/story-ru-06.mp3",
+     "heard back": 0.95,
+     "sha256": "6c4156dd716c384062cae7667edc6bb658dfce4f9ad7f7cc3366994ebb44ce8b"
+    },
+    "Identical cups, told apart": {
+     "title": "Одинаковые чашки, различимые",
+     "text": "Одинаковые чашки? SAM 3.1 Object Multiplex следует за каждым из них через перемешивание.",
+     "how": "as on the robot",
+     "back": "Identical cups? SAM 3.1 Object Multiplex follows each of them through the mixing.",
+     "said": "Одинаковые чашки? Сэм три точка один Обджект Мультиплекс следует за каждым из них через перемешивание.",
+     "seconds": 7.17,
+     "file": "voice/story-ru-07.mp3",
+     "heard back": 0.93,
+     "sha256": "4973f7454276d73cd16f30963fc610b65982e93e45c310cccef04f76b970e194"
+    },
+    "Before you go": {
+     "title": "Прежде чем ты уйдешь",
+     "text": "Выходите? Я указываю на то, что вы оставите позади, а Muse Spark проверяет, понадобится ли вам зонт.",
+     "how": "whole line",
+     "back": "Are you going out? I point out what you will leave behind, and Muse Spark checks if you will need an umbrella.",
+     "said": "Выходите? Я указываю на то, что вы оставите позади, а Мьюз Спарк проверяет, понадобится ли вам зонт.",
+     "seconds": 7.12,
+     "file": "voice/story-ru-08.mp3",
+     "heard back": 0.89,
+     "sha256": "26d81e799658a24afab195f66643704975176ac63d40c3c049249389c3ce3dbd"
+    },
+    "Your language": {
+     "title": "Твой язык",
+     "text": "Я слышу и говорю на пятнадцати языках. Muse Glimmer переводит на компьютере рядом со мной.",
+     "how": "whole line",
+     "back": "I hear and speak fifteen languages. Muse Glimmer translates on the computer next to me.",
+     "said": "Я слышу и говорю на пятнадцати языках. Мьюз Глиммер переводит на компьютере рядом со мной.",
+     "seconds": 6.44,
+     "file": "voice/story-ru-09.mp3",
+     "heard back": 0.99,
+     "sha256": "ad3cad996331485b92cfbede1b39daef4490949ba8cddd009a09d99af24db1c8"
+    },
+    "What it never does": {
+     "title": "Что оно никогда не делает",
+     "text": "А чего я никогда не делаю: ваши фотографии и голос остаются дома, я не даю медицинских советов и говорю, что я ИИ.",
+     "how": "whole line",
+     "back": "I never do this: your photos and voice stay at home, I don't give medical advice and I say that I'm an AI.",
+     "said": "А чего я никогда не делаю: ваши фотографии и голос остаются дома, я не даю медицинских советов и говорю, что я ИИ.",
+     "seconds": 7.35,
+     "file": "voice/story-ru-10.mp3",
+     "heard back": 0.98,
+     "sha256": "ba2a2e339141cbaaa4cc59d68645ab4548e313314383dbdcc26dd0bc5d3f4f6e"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Это я. Теперь твоя очередь: покажи мне что-нибудь своё.",
+     "how": "whole line",
+     "back": "I am. Now it's your turn: show me something of yours.",
+     "said": "Это я. Теперь твоя очередь: покажи мне что-нибудь своё.",
+     "seconds": 4.62,
+     "file": "voice/story-ru-11.mp3",
+     "heard back": 0.96,
+     "sha256": "f4ae59debb2e255479284c4e0e7ec2fd84864f1504646bf9229e1c400874ba3b"
+    }
+   }
+  },
+  "tl": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy, sa mesa",
+     "text": "Ito ako, nasa mesa. Lumiliko ako sa iyong boses, tumitingin sa paligid ng silid, at nagtuturo.",
+     "how": "whole line",
+     "back": "I am here, on the table. I turn toward your voice, I look around the room, and I point.",
+     "said": "Ito ako, nasa mesa. Lumiliko ako sa iyong boses, tumitingin sa paligid ng silid, at nagtuturo.",
+     "seconds": 9.05,
+     "file": "voice/story-tl-00.mp3",
+     "heard back": 1.0,
+     "sha256": "17d75f1e0c044b7cf572864e7454694beebeeae06ecc46090adfe3584ae91c09"
+    },
+    "Meet Andy": {
+     "title": "Kita si Andy",
+     "text": "Kumusta, ako si Andy. Nakita ko po ang nawawala ninyo, at itinuro ko ito. Ito ang TV sa tabi ko.",
+     "how": "as on the robot",
+     "back": "I am Andy. I saw yours missing, and I pointed it out. This is the TV beside me.",
+     "said": "Kumusta, ako si Andy. Nakita ko po ang nawawala ninyo, at itinuro ko ito. Ito ang TV sa tabi ko.",
+     "seconds": 10.04,
+     "file": "voice/story-tl-01.mp3",
+     "heard back": 1.0,
+     "sha256": "d5923ceac2b62aaaea5abd47b90fc72d0342b25c31a0a6e8a795569c97279104"
+    },
+    "You ask": {
+     "title": "Hiling Mo",
+     "text": "Ikaw ay nagtatanong: Hey Andy, nasaan ang aking mug? Tinitingnan ko ang paligid ng silid, at ang SAM 3.1 ay nag-o-outline ng lahat ng maaaring ito.",
+     "how": "as on the robot",
+     "back": "Hey Andy, where are my ...? I'm looking around the room, and SAM 3.1 is outlining everything it could be.",
+     "said": "Ikaw ay nagtatanong: Hey Andy, nasaan ang aking mug? Tinitingnan ko ang paligid ng silid, at ang SAM 3.1 ay nag-o-outline ng lahat ng maaaring ito.",
+     "seconds": 12.08,
+     "file": "voice/story-tl-02.mp3",
+     "heard back": 0.94,
+     "sha256": "902564b52c038d3bc9b5c8e514d0c6f5dc3bc7173634255061ec4535927401f6"
+    },
+    "It finds it": {
+     "title": "Nakikita Niya",
+     "text": "Nariyan na. Tinuturo ko, chine-check ko ang aking layunin gamit ang aking sariling camera, at sinasabi sa akin ng MapAnything kung gaano kalayo ito.",
+     "how": "whole line",
+     "back": "I’m here. I’m pointing, I’m checking my goal using my own camera, and MapAnything is telling me how far it is.",
+     "said": "Nariyan na. Tinuturo ko, chine-check ko ang aking layunin gamit ang aking sariling camera, at sinasabi sa akin ng MapAnything kung gaano kalayo ito.",
+     "seconds": 11.14,
+     "file": "voice/story-tl-03.mp3",
+     "heard back": 0.89,
+     "sha256": "7988343b143e6d103a92c35884937310c24417e4f69adcb27f4541eb66f4ae9f"
+    },
+    "It doesn't give up": {
+     "title": "Hindi ito sumusuko",
+     "text": "Hindi nakita? Patuloy akong naghahanap habang ikaw ay nagpapatuloy sa iyong araw, at sasabihin ko sa iyo ang sandaling ito ay lumitaw.",
+     "how": "whole line",
+     "back": "I didn't see it? I keep looking while you go on with your day, and I'll tell you the moment it appears.",
+     "said": "Hindi nakita? Patuloy akong naghahanap habang ikaw ay nagpapatuloy sa iyong araw, at sasabihin ko sa iyo ang sandaling ito ay lumitaw.",
+     "seconds": 10.8,
+     "file": "voice/story-tl-04.mp3",
+     "heard back": 0.99,
+     "sha256": "0dfd7243991ce123b1b6e7c95dd9364439b2cf8a16ae73174de5fa481bc11a8c"
+    },
+    "It guides your hand": {
+     "title": "Ito ay gumagabay sa iyong kamay",
+     "text": "Hindi mo makita nang maayos? Pinapanood ko ang iyong kamay at pinag-uusapan ito sa bagay, mula sa iyong panig: patungo sa iyo, at tama.",
+     "how": "whole line",
+     "back": "You can't see it properly? I'm watching your hand and discussing it with the thing, from your side: towards you, and right.",
+     "said": "Hindi mo makita nang maayos? Pinapanood ko ang iyong kamay at pinag-uusapan ito sa bagay, mula sa iyong panig: patungo sa iyo, at tama.",
+     "seconds": 10.89,
+     "file": "voice/story-tl-05.mp3",
+     "heard back": 0.88,
+     "sha256": "04c12401c3992ef12db3208a9b3d2b01ea8de95eaa7290eb85bd175fb9962df7"
+    },
+    "It knows your room": {
+     "title": "Alam nito ang iyong silid",
+     "text": "Limang tingin, at alam ko ang iyong silid sa 3D, ang iyong mga bagay na nakapin. Ang hugis lamang, hindi kailanman isang larawan.",
+     "how": "whole line",
+     "back": "Five looks, and I know your room in 3D, your pinned things. The shape only, never a picture.",
+     "said": "Limang tingin, at alam ko ang iyong silid sa 3D, ang iyong mga bagay na nakapin. Ang hugis lamang, hindi kailanman isang larawan.",
+     "seconds": 10.58,
+     "file": "voice/story-tl-06.mp3",
+     "heard back": 0.97,
+     "sha256": "4bab56254bb49263a5dc382463bdd19ef60c4c59253aea117a9e95975922a5a9"
+    },
+    "Identical cups, told apart": {
+     "title": "Mga tasa na magkatulad, nakikilala",
+     "text": "Magkaparehong tasa? SAM 3.1 Object Multiplex ay sumusunod sa bawat isa sa kanila sa buong shuffle.",
+     "how": "as on the robot",
+     "back": "I, me and my",
+     "said": "Magkaparehong tasa? SAM 3.1 Object Multiplex ay sumusunod sa bawat isa sa kanila sa buong shuffle.",
+     "seconds": 9.13,
+     "file": "voice/story-tl-07.mp3",
+     "heard back": 0.96,
+     "sha256": "c7d6b643601774be7fd8be298765b1dfa20b01f2d82666e8122c458803ddc91d"
+    },
+    "Before you go": {
+     "title": "Bago ka umalis",
+     "text": "Lalabas ka ba? Tinuturo ko ang maiiwan mo, at sinisiyasat ng Muse Spark kung kakailanganin mo ng payong.",
+     "how": "whole line",
+     "back": "Do you go out? I point out what you will leave behind, and Muse Spark investigates whether you will need an umbrella.",
+     "said": "Lalabas ka ba? Tinuturo ko ang maiiwan mo, at sinisiyasat ng Muse Spark kung kakailanganin mo ng payong.",
+     "seconds": 8.93,
+     "file": "voice/story-tl-08.mp3",
+     "heard back": 0.98,
+     "sha256": "0a3bd6166b0299361ecf04498384df6e759f33f9f02a375bef0a1c8a180ab514"
+    },
+    "Your language": {
+     "title": "Ang Paglalakbay ni Andy sa Gabi",
+     "text": "Nakikinig at nagsasalita ako ng labinlimang wika. Isinasalin ng Muse Glimmer, sa computer sa tabi ko.",
+     "how": "whole line",
+     "back": "I listen to and speak fifteen languages. Muse Glimmer translates it, on the computer beside me.",
+     "said": "Nakikinig at nagsasalita ako ng labinlimang wika. Isinasalin ng Muse Glimmer, sa computer sa tabi ko.",
+     "seconds": 9.23,
+     "file": "voice/story-tl-09.mp3",
+     "heard back": 0.91,
+     "sha256": "69f1f9286ab6ca57d47f4835d152bc72ab93512f1def7d20e7f7727503c32485"
+    },
+    "What it never does": {
+     "title": "Hindi ito kailanman ginagawa",
+     "text": "At saka ang hindi ko kailanman ginagawa: ang iyong mga larawan at boses ay nananatili sa bahay, hindi ako nagbibigay ng payo sa kalusugan, at sinasabi kong ako ay isang AI.",
+     "how": "whole line",
+     "back": "And also what I never do: your photos and voice stay at home, I don't give health advice, and I say that I am an AI.",
+     "said": "At saka ang hindi ko kailanman ginagawa: ang iyong mga larawan at boses ay nananatili sa bahay, hindi ako nagbibigay ng payo sa kalusugan, at sinasabi kong ako ay isang AI.",
+     "seconds": 12.18,
+     "file": "voice/story-tl-10.mp3",
+     "heard back": 0.99,
+     "sha256": "f3030a85b7011d63f609d85786980f43fd366717520727044d0c46988dce5d80"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Iyon ako. Ngayon ikaw naman: ipakita mo sa akin ang isa mong bagay.",
+     "how": "whole line",
+     "back": "I am that. Now you: show me one of your things.",
+     "said": "Iyon ako. Ngayon ikaw naman: ipakita mo sa akin ang isa mong bagay.",
+     "seconds": 6.5,
+     "file": "voice/story-tl-11.mp3",
+     "heard back": 1.0,
+     "sha256": "006643d680ad59d80214894ef13738d885c4fa679c60e157ed385f51186aba98"
+    }
+   }
+  },
+  "uk": {
+   "offered": true,
+   "why not": [],
+   "names said as": {
+    "SAM 3.1 Object Multiplex": "Сем три крапка один Обджект Мультиплекс",
+    "SAM 3.1": "Сем три крапка один",
+    "MapAnything": "Меп Енісінг",
+    "Muse Spark": "М'юз Спарк",
+    "Muse Glimmer": "М'юз Гліммер"
+   },
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Енді на столі",
+     "text": "Це я, на столі. Я повертаюся до вашого голосу, озираюся по кімнаті та вказую.",
+     "how": "whole line",
+     "back": "I am here, on the table. I return to your voice, look around the room and point.",
+     "said": "Це я, на столі. Я повертаюся до вашого голосу, озираюся по кімнаті та вказую.",
+     "seconds": 6.94,
+     "file": "voice/story-uk-00.mp3",
+     "heard back": 1.0,
+     "sha256": "7a29ea0c60fc63ff83c09dd5b7dad5270d73086e541311e5a68bcb21e5b7dc9b"
+    },
+    "Meet Andy": {
+     "title": "Познайомся з Енді",
+     "text": "Привіт, я Енді. Я знаходжу те, що ви загубили, і вказую на це. Це телевізор поруч зі мною.",
+     "how": "whole line",
+     "back": "Hello, I am Andy. I find what you lost and point to it. This is the TV next to me.",
+     "said": "Привіт, я Енді. Я знаходжу те, що ви загубили, і вказую на це. Це телевізор поруч зі мною.",
+     "seconds": 8.59,
+     "file": "voice/story-uk-01.mp3",
+     "heard back": 1.0,
+     "sha256": "0e87a03b2f66868980ab3f560a513704131a9a82575c012777b8f340aab7088a"
+    },
+    "You ask": {
+     "title": "Ти питаєш",
+     "text": "Ви запитуєте: Ей, Енді, де моя чашка? Я оглядаюся по кімнаті, і SAM 3.1 обводить усе, що може бути ним.",
+     "how": "as on the robot",
+     "back": "You ask: Hey, Andy, where is my cup? I look around the room, and SAM 3.1 outlines everything that could be it.",
+     "said": "Ви запитуєте: Ей, Енді, де моя чашка? Я оглядаюся по кімнаті, і Сем три крапка один обводить усе, що може бути ним.",
+     "seconds": 9.5,
+     "file": "voice/story-uk-02.mp3",
+     "heard back": 0.93,
+     "sha256": "74d500162e09ec7154b0820a3e5ab77aa9cbc3edd08927dd5dcb49b7cf81b6e5"
+    },
+    "It finds it": {
+     "title": "Воно знаходить його",
+     "text": "Там воно. Я вказую, перевіряю приціл власною камерою, і MapAnything каже мені, як далеко воно знаходиться.",
+     "how": "whole line",
+     "back": "There it is. I point, check the sight with my own camera, and MapAnything tells me how far it is.",
+     "said": "Там воно. Я вказую, перевіряю приціл власною камерою, і Меп Енісінг каже мені, як далеко воно знаходиться.",
+     "seconds": 8.62,
+     "file": "voice/story-uk-03.mp3",
+     "heard back": 0.98,
+     "sha256": "e8d9611aed87f2af3e92342ef46a330e843fc46aae94b313e4775386767b47d6"
+    },
+    "It doesn't give up": {
+     "title": "Воно не здається",
+     "text": "Не знайшов? Я продовжую шукати, поки ви займаєтеся своїми справами, і повідомлю вам, щойно воно з’явиться.",
+     "how": "whole line",
+     "back": "I didn't find it? I keep looking while you take care of your business, and I'll let you know as soon as it appears.",
+     "said": "Не знайшов? Я продовжую шукати, поки ви займаєтеся своїми справами, і повідомлю вам, щойно воно з’явиться.",
+     "seconds": 8.74,
+     "file": "voice/story-uk-04.mp3",
+     "heard back": 0.97,
+     "sha256": "bd40f5cfab84cdabcb4c92d47e38dd1b70a70e9e718ee0c9ad404715380a18a9"
+    },
+    "It guides your hand": {
+     "title": "Воно веде твою руку",
+     "text": "Погано бачите? Я стежу за вашою рукою і веду її до речі, з вашого боку: до вас, і праворуч.",
+     "how": "whole line",
+     "back": "I see poorly? I follow your hand and lead it to the thing, from your side: towards you, and to the right.",
+     "said": "Погано бачите? Я стежу за вашою рукою і веду її до речі, з вашого боку: до вас, і праворуч.",
+     "seconds": 8.37,
+     "file": "voice/story-uk-05.mp3",
+     "heard back": 0.89,
+     "sha256": "8a376a8674376afd83be98accecfc5828e186ee38924f5470f0c0c7642c92af2"
+    },
+    "It knows your room": {
+     "title": "Воно знає вашу кімнату",
+     "text": "П'ять поглядів, і я знаю вашу кімнату в 3D, ваші речі закріплені. Лише її форма, ніколи не зображення.",
+     "how": "whole line",
+     "back": "Five glances, and I know your room in 3D, your things are pinned. Only its shape, never the image.",
+     "said": "П'ять поглядів, і я знаю вашу кімнату в 3D, ваші речі закріплені. Лише її форма, ніколи не зображення.",
+     "seconds": 8.52,
+     "file": "voice/story-uk-06.mp3",
+     "heard back": 0.94,
+     "sha256": "31e1714e813aa9393a603f2923502899e58c4251d84204eae18d445cf2d78594"
+    },
+    "Identical cups, told apart": {
+     "title": "Однакові чашки, що їх розрізняють",
+     "text": "Ідентичні чашки? SAM 3.1 Object Multiplex слідує за кожним із них через перемішування.",
+     "how": "as on the robot",
+     "back": "Identical cups? SAM 3.1 Object Multiplex follows each of them through the shuffling.",
+     "said": "Ідентичні чашки? Сем три крапка один Обджект Мультиплекс слідує за кожним із них через перемішування.",
+     "seconds": 7.85,
+     "file": "voice/story-uk-07.mp3",
+     "heard back": 0.93,
+     "sha256": "04af7edb5316efa8358ef1d6f1d2d6fa9c63a205dc1744a9d624560da0becb64"
+    },
+    "Before you go": {
+     "title": "Перш ніж піти",
+     "text": "Виходите? Я вказую на те, що ви залишите позаду, і Muse Spark перевіряє, чи знадобиться вам парасолька.",
+     "how": "whole line",
+     "back": "Are you leaving? I'm pointing out what you'll leave behind, and Muse Spark checks if you'll need an umbrella.",
+     "said": "Виходите? Я вказую на те, що ви залишите позаду, і М'юз Спарк перевіряє, чи знадобиться вам парасолька.",
+     "seconds": 8.19,
+     "file": "voice/story-uk-08.mp3",
+     "heard back": 0.96,
+     "sha256": "32dea26ed12e44a2d327a0888bdf746db32c764c97905305ee1b81f3eb15ff89"
+    },
+    "Your language": {
+     "title": "Твій мовний код",
+     "text": "Я чую і говорю п'ятнадцятьма мовами. Muse Glimmer перекладає на комп'ютері поруч зі мною.",
+     "how": "whole line",
+     "back": "I hear and speak fifteen languages. Muse Glimmer translates on the computer next to me.",
+     "said": "Я чую і говорю п'ятнадцятьма мовами. М'юз Гліммер перекладає на комп'ютері поруч зі мною.",
+     "seconds": 7.3,
+     "file": "voice/story-uk-09.mp3",
+     "heard back": 0.99,
+     "sha256": "7bc5faf0af095ae97a6ff72e23d1deee94172ffe2faa4288b56517fd4c89bf02"
+    },
+    "What it never does": {
+     "title": "Що воно ніколи не робить",
+     "text": "А чого я ніколи не роблю: ваші фото й голос залишаються вдома, я не даю порад щодо здоров’я, і кажу, що я ШІ.",
+     "how": "whole line",
+     "back": "I never do this: your photos and voice stay at home, I don't give health advice, and I say that I'm AI.",
+     "said": "А чого я ніколи не роблю: ваші фото й голос залишаються вдома, я не даю порад щодо здоров’я, і кажу, що я ШІ.",
+     "seconds": 8.26,
+     "file": "voice/story-uk-10.mp3",
+     "heard back": 0.96,
+     "sha256": "99f978180045706e5ea21f1a0af36648f8968993e3774eceb863b41a28829c87"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Це я. Тепер твоя черга: покажи мені щось своє.",
+     "how": "whole line",
+     "back": "I am. Now it's your turn: show me something of yours.",
+     "said": "Це я. Тепер твоя черга: покажи мені щось своє.",
+     "seconds": 4.8,
+     "file": "voice/story-uk-11.mp3",
+     "heard back": 0.9,
+     "sha256": "7a6d6c0369ec11b9d35d5cfbb7f06675729d1fecb2b160aab0a0b2a64ccd9cf4"
+    }
+   }
+  },
+  "vi": {
+   "offered": true,
+   "why not": [],
+   "names said as": {},
+   "chapters": {
+    "Andy, on the table": {
+     "title": "Andy trên bàn",
+     "text": "Đây là tôi, trên bàn. Tôi quay về phía giọng của bạn, nhìn quanh phòng, và chỉ.",
+     "how": "whole line",
+     "back": "I am here, on the table. I turn toward your voice, look around the room, and point.",
+     "said": "Đây là tôi, trên bàn. Tôi quay về phía giọng của bạn, nhìn quanh phòng, và chỉ.",
+     "seconds": 5.21,
+     "file": "voice/story-vi-00.mp3",
+     "heard back": 0.89,
+     "sha256": "2b5deb74ec815df9763cad6e4d40f87cce55c1c212a36be1bdf8668981b89948"
+    },
+    "Meet Andy": {
+     "title": "Gặp Andy",
+     "text": "Xin chào, tôi là Andy. Tôi tìm thấy những gì bạn đã mất và chỉ vào nó. Đây là TV bên cạnh tôi.",
+     "how": "whole line",
+     "back": "I am Andy. I found what you lost and pointed to it. This is the TV next to me.",
+     "said": "Xin chào, tôi là Andy. Tôi tìm thấy những gì bạn đã mất và chỉ vào nó. Đây là TV bên cạnh tôi.",
+     "seconds": 6.86,
+     "file": "voice/story-vi-01.mp3",
+     "heard back": 0.98,
+     "sha256": "a7244e1d9272287dcbe83aa3f10194cd3019d90540d072cc8c8f689f224e1e04"
+    },
+    "You ask": {
+     "title": "Bạn hỏi Andy",
+     "text": "Bạn hỏi: Chào Andy, cái cốc của tôi đâu? Tôi nhìn quanh phòng, và SAM 3.1 phác thảo mọi thứ có thể là nó.",
+     "how": "whole line",
+     "back": "You ask: Hello Andy, where is my cup? I look around the room, and SAM 3.1 outlines everything that could be it.",
+     "said": "Bạn hỏi: Chào Andy, cái cốc của tôi đâu? Tôi nhìn quanh phòng, và SAM 3.1 phác thảo mọi thứ có thể là nó.",
+     "seconds": 7.02,
+     "file": "voice/story-vi-02.mp3",
+     "heard back": 0.89,
+     "sha256": "8b0bea6bcd06ba9149540730f695ece432eae137a444b5b63bb1b191532b11db"
+    },
+    "It finds it": {
+     "title": "Nó tìm thấy nó",
+     "text": "Ở đó rồi. Tôi chỉ, kiểm tra hướng ngắm bằng camera của chính tôi, và MapAnything cho tôi biết nó cách bao xa.",
+     "how": "whole line",
+     "back": "There it is. I just, check the aiming direction with my own camera, and MapAnything tells me how far it is away.",
+     "said": "Ở đó rồi. Tôi chỉ, kiểm tra hướng ngắm bằng camera của chính tôi, và MapAnything cho tôi biết nó cách bao xa.",
+     "seconds": 6.88,
+     "file": "voice/story-vi-03.mp3",
+     "heard back": 0.85,
+     "sha256": "62d4221703b15010529df230fa6baea0a0151fc73a34b75fde6cb4b873fef98d"
+    },
+    "It doesn't give up": {
+     "title": "Nó không bỏ cuộc",
+     "text": "Không tìm thấy? Tôi cứ tiếp tục tìm trong khi bạn làm việc của mình, và sẽ báo cho bạn ngay khi nó xuất hiện.",
+     "how": "whole line",
+     "back": "I can't find it? I'll keep looking while you do your work, and I'll let you know as soon as it appears.",
+     "said": "Không tìm thấy? Tôi cứ tiếp tục tìm trong khi bạn làm việc của mình, và sẽ báo cho bạn ngay khi nó xuất hiện.",
+     "seconds": 6.32,
+     "file": "voice/story-vi-04.mp3",
+     "heard back": 0.97,
+     "sha256": "db4c1a93c704f3d187bef71780e499e77d1e1d093a1613ba45926f77d5002b51"
+    },
+    "It guides your hand": {
+     "title": "Nó dẫn dắt bàn tay của bạn",
+     "text": "Không nhìn rõ à? Con theo dõi tay của bạn và nói nó lên đồ vật, từ phía bạn: về phía bạn, và bên phải.",
+     "how": "whole line",
+     "back": "Can you see clearly? I follow your hand and say it up object, from your side: towards you, and to the right.",
+     "said": "Không nhìn rõ à? Con theo dõi tay của bạn và nói nó lên đồ vật, từ phía bạn: về phía bạn, và bên phải.",
+     "seconds": 6.82,
+     "file": "voice/story-vi-05.mp3",
+     "heard back": 0.87,
+     "sha256": "d02b36ed652dc5fefed56d12051509c81af5ed51d59479ac8a8cfe505e3d7199"
+    },
+    "It knows your room": {
+     "title": "Nó biết phòng của bạn",
+     "text": "Năm cái nhìn, và tôi biết phòng của bạn trong 3D, những thứ của bạn được ghim lại. Chỉ hình dạng của nó, không bao giờ là một bức tranh.",
+     "how": "whole line",
+     "back": "Five glances, and I know your room in 3D, your things pinned down. Only its shape, never a picture.",
+     "said": "Năm cái nhìn, và tôi biết phòng của bạn trong 3D, những thứ của bạn được ghim lại. Chỉ hình dạng của nó, không bao giờ là một bức tranh.",
+     "seconds": 7.47,
+     "file": "voice/story-vi-06.mp3",
+     "heard back": 0.87,
+     "sha256": "7fdd47c40592a69c24edcfcdc0872fdee557dce0e0e442f7d5686b1160139c99"
+    },
+    "Identical cups, told apart": {
+     "title": "Những chiếc cốc giống hệt nhau, được phân biệt",
+     "text": "Chiếc cốc giống hệt nhau? SAM 3.1 Object Multiplex theo dõi từng người trong số họ qua cuộc xáo trộn.",
+     "how": "as on the robot",
+     "back": "The cups are identical? SAM 3.1 Object Multiplex tracks each of them through the shuffle.",
+     "said": "Chiếc cốc giống hệt nhau? SAM 3.1 Object Multiplex theo dõi từng người trong số họ qua cuộc xáo trộn.",
+     "seconds": 6.78,
+     "file": "voice/story-vi-07.mp3",
+     "heard back": 0.84,
+     "sha256": "7b5796b876bb7430fcec4a034108553590a32648dd434c09ac3aea2ef538b243"
+    },
+    "Before you go": {
+     "title": "Trước khi bạn đi",
+     "text": "Đi ra ngoài à? Tôi chỉ vào thứ bạn sẽ để lại phía sau, và Muse Spark kiểm tra xem bạn có cần ô không.",
+     "how": "whole line",
+     "back": "Are you going out? I only care about what you will leave behind, and Muse Spark checks if you need an umbrella.",
+     "said": "Đi ra ngoài à? Tôi chỉ vào thứ bạn sẽ để lại phía sau, và Muse Spark kiểm tra xem bạn có cần ô không.",
+     "seconds": 6.71,
+     "file": "voice/story-vi-08.mp3",
+     "heard back": 0.83,
+     "sha256": "3c99c4d6546a4501ca5c5ca4ea45ca3d338fdaf6e87dd2a2de5a173ffe2c0502"
+    },
+    "Your language": {
+     "title": "Ngôi nhà của Andy",
+     "text": "Tôi nghe và nói được mười lăm ngôn ngữ. Muse Glimmer dịch, trên máy tính bên cạnh tôi.",
+     "how": "whole line",
+     "back": "I hear and speak fifteen languages. Muse Glimmer translates, on the computer next to me.",
+     "said": "Tôi nghe và nói được mười lăm ngôn ngữ. Muse Glimmer dịch, trên máy tính bên cạnh tôi.",
+     "seconds": 5.48,
+     "file": "voice/story-vi-09.mp3",
+     "heard back": 0.95,
+     "sha256": "d21b3aee2f9920db31fa421ccc1d25d0e6fc92a3b8b7e541968d2618a8f32de2"
+    },
+    "What it never does": {
+     "title": "Điều mà nó không bao giờ làm",
+     "text": "Và điều tôi không bao giờ làm: những bức ảnh và giọng nói của bạn ở nhà, tôi không đưa lời khuyên sức khỏe, và tôi nói rằng tôi là một AI.",
+     "how": "whole line",
+     "back": "I never do this: your photos and voice at home, I don't give health advice, and I say that I am an AI.",
+     "said": "Và điều tôi không bao giờ làm: những bức ảnh và giọng nói của bạn ở nhà, tôi không đưa lời khuyên sức khỏe, và tôi nói rằng tôi là một AI.",
+     "seconds": 7.85,
+     "file": "voice/story-vi-10.mp3",
+     "heard back": 0.97,
+     "sha256": "d2ead09bdc9c8ea0b4a2e094b66c3d99df278c543869fa2af2b25f5803195e9e"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "Đó là tôi. Giờ đến lượt bạn: cho tôi xem thứ gì đó của bạn.",
+     "how": "whole line",
+     "back": "That is me. Now it's your turn: show me something of yours.",
+     "said": "Đó là tôi. Giờ đến lượt bạn: cho tôi xem thứ gì đó của bạn.",
+     "seconds": 4.26,
+     "file": "voice/story-vi-11.mp3",
+     "heard back": 0.97,
+     "sha256": "bed101f21804dbb40af7eab10d4a7059ca584e8abde0ac7e083202663a2a68cb"
+    }
+   }
+  },
+  "zh": {
+   "offered": true,
+   "why not": [],
+   "names said as": {
+    "MapAnything": "迈普艾尼辛"
+   },
+   "chapters": {
+    "Andy, on the table": {
+     "title": "安迪，在桌上",
+     "text": "这是我，在桌子上。我转向您的声音，环顾房间，并指向。",
+     "how": "whole line",
+     "back": "I am here on the table. I turn toward your voice, look around the room, and point.",
+     "said": "这是我，在桌子上。我转向您的声音，环顾房间，并指向。",
+     "seconds": 7.28,
+     "file": "voice/story-zh-00.mp3",
+     "heard back": 0.98,
+     "sha256": "7bb49fedc4352f9b5daf3162d6229f77eda9a602e5d5ecafb96c91cbb0578351"
+    },
+    "Meet Andy": {
+     "title": "遇见安迪",
+     "text": "您好，我是安迪。我找到您丢失的东西，并指向它。这是旁边的电视。",
+     "how": "whole line",
+     "back": "I am Andy. I found the thing you lost, and I am pointing to it. It is the TV next to it.",
+     "said": "您好，我是安迪。我找到您丢失的东西，并指向它。这是旁边的电视。",
+     "seconds": 8.82,
+     "file": "voice/story-zh-01.mp3",
+     "heard back": 0.91,
+     "sha256": "5fde87595f957839d1ab842effe3f09a7cf41ba32a5ea94112a7dfa4270c2222"
+    },
+    "You ask": {
+     "title": "你问",
+     "text": "您问：嘿，Andy，我的马克杯在哪儿？我环顾房间，SAM 3.1 将所有可能是它的东西都勾勒出来了。",
+     "how": "whole line",
+     "back": "You ask: Hey, Andy, where is my mug? I look around the room, SAM 3.1 outlines everything that could be it.",
+     "said": "您问：嘿，Andy，我的马克杯在哪儿？我环顾房间，SAM 3.1 将所有可能是它的东西都勾勒出来了。",
+     "seconds": 11.13,
+     "file": "voice/story-zh-02.mp3",
+     "heard back": 0.86,
+     "sha256": "4f7055e3a4450234f64c857de7041384d7b300ceb8a94aef2d689f1c66d79ccb"
+    },
+    "It finds it": {
+     "title": "它发现它",
+     "text": "就在那里。我指着它，用自己的摄像头检查瞄准，MapAnything告诉我它有多远。",
+     "how": "whole line",
+     "back": "I’m right there. I point at it, check the aim with my own camera, MapAnything tells me how far it is.",
+     "said": "就在那里。我指着它，用自己的摄像头检查瞄准，迈普艾尼辛告诉我它有多远。",
+     "seconds": 9.22,
+     "file": "voice/story-zh-03.mp3",
+     "heard back": 0.88,
+     "sha256": "cfeaecea7dd841bbcc60feec3216e0cdd7a2704889d09ce0e884ad170c3894f3"
+    },
+    "It doesn't give up": {
+     "title": "它不会放弃",
+     "text": "您没找到吗？我一边继续寻找，一边让您继续过您的日子，并在它出现的那一刻告诉您。",
+     "how": "whole line",
+     "back": "I didn't find it? I'll keep looking while letting you go on with your life, and tell you the moment it appears.",
+     "said": "您没找到吗？我一边继续寻找，一边让您继续过您的日子，并在它出现的那一刻告诉您。",
+     "seconds": 9.71,
+     "file": "voice/story-zh-04.mp3",
+     "heard back": 0.94,
+     "sha256": "77118fa6875f1f6755c035b5ac0d933522ccf358fc7f8eb8799f2ca55fb10240"
+    },
+    "It guides your hand": {
+     "title": "它引导你的手",
+     "text": "看不清？ 我盯着您的手，把它说到东西上，从您的这边：朝向您，右边。",
+     "how": "whole line",
+     "back": "I can't see? I'm staring at your hand, putting it on the thing, from your side: toward you, right.",
+     "said": "看不清？ 我盯着您的手，把它说到东西上，从您的这边：朝向您，右边。",
+     "seconds": 8.55,
+     "file": "voice/story-zh-05.mp3",
+     "heard back": 0.93,
+     "sha256": "ddca30320bcaaba69a8bd9654a2a92e8b1cbb9db3c30f90099a6a1248fdb87d8"
+    },
+    "It knows your room": {
+     "title": "它知道你的房间",
+     "text": "五次观察，我就知道您房间的三维模样，您的物品被定位。只是形状，从不拍照。",
+     "how": "whole line",
+     "back": "I have observed five times, and I already know the three-dimensional shape of your room, your items are located. Only the shape, never taking photos.",
+     "said": "五次观察，我就知道您房间的三维模样，您的物品被定位。只是形状，从不拍照。",
+     "seconds": 9.35,
+     "file": "voice/story-zh-06.mp3",
+     "heard back": 0.97,
+     "sha256": "3f1cf0e4165eb740778711749a83217072a0e1fd18112bc6bacfb7c2e12d098b"
+    },
+    "Identical cups, told apart": {
+     "title": "一模一样的杯子，却能分辨",
+     "text": "杯子看起来一模一样？SAM 3.1 Object Multiplex 在它们被打乱时跟踪每一个。",
+     "how": "whole line, from plainer English",
+     "back": "Do the cups look exactly the same? SAM 3.1 Object Multiplex tracks each one when they are shuffled.",
+     "said": "杯子看起来一模一样？SAM 3.1 Object Multiplex 在它们被打乱时跟踪每一个。",
+     "seconds": 7.71,
+     "file": "voice/story-zh-07.mp3",
+     "heard back": 0.77,
+     "sha256": "e857c014ab2c8b586d194ba06544d2148cf01f555ba612f2dcf1d8a6f78e9acf"
+    },
+    "Before you go": {
+     "title": "在你离开之前",
+     "text": "您要出门吗？我指着您会留下的东西，Muse Spark 检查您是否需要一把伞。",
+     "how": "whole line",
+     "back": "I’m going out? I point to the things you’ll leave behind, Muse Spark checks if you need an umbrella.",
+     "said": "您要出门吗？我指着您会留下的东西，Muse Spark 检查您是否需要一把伞。",
+     "seconds": 8.37,
+     "file": "voice/story-zh-08.mp3",
+     "heard back": 0.89,
+     "sha256": "005c66b9cbf2251cb53dc1eb1124d8c42edf29268d4ac2b4ba66ab2cd3723ab6"
+    },
+    "Your language": {
+     "title": "你的语言",
+     "text": "我听得懂并会说十五种语言。 Muse Glimmer 翻译，坐在我旁边的电脑上。",
+     "how": "whole line, as on the robot",
+     "back": "I understand and can speak fifteen languages. Muse Glimmer translate, sitting on the computer next to me.",
+     "said": "我听得懂并会说十五种语言。 Muse Glimmer 翻译，坐在我旁边的电脑上。",
+     "seconds": 7.49,
+     "file": "voice/story-zh-09.mp3",
+     "heard back": 0.78,
+     "sha256": "e88941aff9ac8ec0f29656144c7e7b0ed484c4d7f7ede8004fdfdea928c589c3"
+    },
+    "What it never does": {
+     "title": "它从不做的事",
+     "text": "而我从不做的事：您的照片和声音留在家中，我不提供健康建议，我会说我是一个人工智能。",
+     "how": "whole line",
+     "back": "I never do: your photos and sounds stay at home, I don't provide health advice, I will say I am an artificial intelligence.",
+     "said": "而我从不做的事：您的照片和声音留在家中，我不提供健康建议，我会说我是一个人工智能。",
+     "seconds": 9.58,
+     "file": "voice/story-zh-10.mp3",
+     "heard back": 0.96,
+     "sha256": "2cd27be6ef65c1edf7dfa31687e7897f1584a96d4d38954ec64dc636c2be67f5"
+    },
+    "Your turn": {
+     "title": "",
+     "text": "那是我。现在轮到您了：请给我看点您的东西。",
+     "how": "whole line",
+     "back": "I am. Now it's your turn: please show me some of yours.",
+     "said": "那是我。现在轮到您了：请给我看点您的东西。",
+     "seconds": 5.95,
+     "file": "voice/story-zh-11.mp3",
+     "heard back": 0.91,
+     "sha256": "04c1be97ef01169a38876fed0d5a938061fd8ceea2ad31dc6899bed154119bee"
+    }
+   }
+  }
+ }
+}

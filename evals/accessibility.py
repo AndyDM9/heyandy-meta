@@ -175,6 +175,9 @@ def states() -> list[tuple[str, str, str | None]]:
              ("welcome, Andy speaking", "index.html", "document.querySelector('#welcome .bubble').classList.add('own')"),
              ("welcome, choosing a language", "index.html", "document.querySelector('#welcome .langbtn').click()"),
              ("story", "index.html?story", None),
+             # told in another of Andy's languages: Arabic, right to left, where it's built, else another script
+             ("story, in the visitor's language", "index.html?story",
+              "exploreAll(); toldChoice = ['ar', 'hi', 'ko', 'ru', 'uk'].find(c => NARRATION_IN[c]) || null; startStory()"),
              ("end card", "index.html?story", "endCard()")]
             + [(f"scene: {s}", f"index.html?scene={s}", None) for s in SCENES]
             + [("Andy's eyes", "eyes.html", None), ("Andy, measured", "proof.html", None), ("under the hood", "hood.html", None),

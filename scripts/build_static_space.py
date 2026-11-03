@@ -112,6 +112,15 @@ def narration() -> dict:
     return {title: {"text": c["text"], "file": c["file"], "seconds": c["seconds"]} for title, c in told.items()}
 
 
+def narration_in() -> dict:
+    """The story in Andy's other languages that passed every check (scripts/front_door_voice.py story_in):
+    {language: {chapter title: {title, text, file, seconds}}}; a language that didn't is left out, and told in English."""
+    path = files("heyandy_meta.screen").joinpath("voice", "story-in.json")
+    langs = json.loads(path.read_text())["languages"] if path.is_file() else {}
+    return {code: {t: {"title": c["title"], "text": c["text"], "file": c["file"], "seconds": c["seconds"]}
+                   for t, c in lang["chapters"].items()} for code, lang in langs.items() if lang["offered"]}
+
+
 def scene_voice() -> dict:
     """Each demo scene's line in Andy's own voice (scripts/front_door_voice.py scene_lines): {scene: {text, file}}."""
     said = json.loads(files("heyandy_meta.screen").joinpath("voice", "scenes.json").read_text())["scenes"]
@@ -141,6 +150,7 @@ def main() -> None:
     flags += f" window.HEYANDY_ASKS = {json.dumps(front_door()[1], ensure_ascii=False)};"
     flags += f" window.HEYANDY_VOICES = {json.dumps(voices(), ensure_ascii=False)};"
     flags += f" window.HEYANDY_NARRATION = {json.dumps(narration(), ensure_ascii=False)};"
+    flags += f" window.HEYANDY_NARRATION_IN = {json.dumps(narration_in(), ensure_ascii=False)};"
     flags += f" window.HEYANDY_SCENE_VOICE = {json.dumps(scene_voice(), ensure_ascii=False)};"
     if args.clip:  # the robot itself, filmed: kept small, for a page anyone opens
         size = args.clip.stat().st_size
@@ -196,7 +206,7 @@ def main() -> None:
         for m in moments.values():
             name = m["file"].split("/", 1)[1]
             (OUT / "voice" / name).write_bytes(files("heyandy_meta.screen").joinpath("voice", name).read_bytes())
-    for chapter in narration().values():  # and the story, told in it
+    for chapter in [*narration().values(), *(c for lang in narration_in().values() for c in lang.values())]:  # and the story, told in it
         name = chapter["file"].split("/", 1)[1]
         (OUT / "voice" / name).write_bytes(files("heyandy_meta.screen").joinpath("voice", name).read_bytes())
     (OUT / "eyes").mkdir()

@@ -2253,3 +2253,55 @@ Found and fixed, each with a test:
   under a mouse, Andy's closing words played, no settings gear, nothing wider than the screen; the accessibility audit's
   end card: no violation at either width; the whole demo again (`accessibility-20261102-2306`): no axe violation in 66
   states, none of 1,543 texts below AA.
+
+## 103. The story, told in the visitor's own language (November 3, night)
+
+- **Why:** the front door greets a visitor in their own language (the browser's, or the one chosen with its globe), and
+  then the story, the demo's main act, was told in English: a Korean or Arabic speaker heard Andy introduce itself in
+  their language and then lost it. Andy speaks fifteen languages on the robot; its own demo spoke one.
+- **Now:** in each of Andy's other fourteen, each chapter's line (the words Andy says, `STORY`) and its title,
+  translated by Muse Glimmer on this computer, the model Andy translates its own words with; said by SeamlessM4T v2 in
+  that language's voice; heard back by Omnilingual ASR, sentence by sentence; and translated back into English by
+  Glimmer, kept beside each line in `heyandy_meta/screen/voice/story-in.json` so anyone can read what it says
+  (`scripts/front_door_voice.py --story-in`). On the page (`page.html`): the story in the language chosen at the front
+  door, else the browser's own; Andy's words as subtitles (`lang` and `dir` set, Arabic right to left), the
+  measurement under each chapter as measured, in English; Andy's closing words on the end card in it; *In English* a
+  press away, under the words; and the front door's story button names the language, and its minutes are the
+  language's own (75 s in Spanish to 121 s in Tagalog). The first chapter says who translated it: "checked by machine,
+  not yet by a native speaker".
+- **Checked by machine, every line** (`problems`): each model name kept as written, in Latin letters (SAM 3.1, SAM 3.1
+  Object Multiplex, MapAnything, Muse Spark, Muse Glimmer); no English left (in a language written in other letters, one
+  word is too many; in Latin letters one may be the language's own, German *Hand*); no word over and over; not far
+  longer than the English; no figure the English hasn't; heard back at 0.75 or better. A language is offered only when
+  all twelve chapters pass; the build ships those alone.
+- **What went wrong first:** Andy's own sentence-by-sentence path, made for its short replies, looped one Korean line
+  into "안녕하세요" (hello) 35 times, left "Identical cups?" in English in Spanish, and wrote Muse Glimmer in Arabic
+  letters, so the story has its own prompt (a line of a story a robot tells, the names kept, the listener addressed
+  politely), then sentence by sentence, then Andy's own path. The first run offered 9 of 14. Of the rest: Hindi's "a
+  word over and over" was the check's own (Python's `\w` splits Devanagari at a vowel sign: words are split at spaces
+  now); Tagalog kept "Hey Andy", the words that wake it; Arabic and Hindi wrote a name by its sound, in exactly the
+  spelling the voice is given, so that spelling is written back as the name; Spanish left "Identical cups" and "the
+  shuffle" in English by every way of asking, so that one line is translated from plainer English ("cups that look
+  exactly alike... while they're shuffled"); and Mandarin's voice said 十五种语言 so that it was heard as 初始无种预言,
+  the same each of three times (the voice is deterministic), so a line the voice stumbles on is said again in other
+  words (more simply, in other words, as on the robot, sentence by sentence), kept only if it passes everything.
+- **The names, aloud:** a voice for a language in other letters reads a Latin name badly (Korean: "SAM 3.1 Object
+  Multiplex" heard back as "트리포 1 업트 몰티플렉스"), and Glimmer's own spellings were worse ("SAM 3.1" as "세이엠 쓰리
+  원"; "Muse Spark" with a "٣" added), so each is given, by hand, as it sounds in Korean, Arabic, Hindi, Russian and
+  Ukrainian, and MapAnything in Mandarin (迈普艾尼辛, heard back at 0.87 in its line against 0.62 as written); the
+  words on screen keep the names as written.
+- **Result:** all fourteen offered, 168 chapters: heard back at a median 0.96, the lowest 0.77; 137 translated whole,
+  the rest by the fallbacks; 6.4 MB of clips, the page 45 KB larger (the words, inline). The safety chapter, translated
+  back, says in every language that pictures and voice stay home, that Andy gives no health advice and that it says it's
+  an AI. Not caught by machine, and found by reading the translations back: a few lines are plainly worded or slightly
+  off (Hindi's first try at "identical cups" was "cups of identity", fixed by the prompt saying what identical means;
+  Korean's "You ask" chapter drops the words "You ask"). That's why the page says no native speaker has checked it, and
+  `checked by a native speaker` in the manifest is empty until one has.
+- **Checked:** `tests/test_social_card.py`: every language and chapter in the manifest, each clip's hash, the words the
+  voice was given, every offered line passing every check against both the story's and any plainer English, and the
+  build shipping only those offered; the checks themselves on the first night's failures. `tests/test_page_runs.py`:
+  the story told in Arabic at a phone's width (subtitles with `lang` and `dir`, Arabic's clip, the translation note,
+  *In English* and back, the end card's words and clip in Arabic, nothing wider than the screen); a language not built
+  stays English; the front door's button names the language chosen with the globe and takes its minutes. The
+  accessibility audit gained the story told in another language (Arabic, where it's built):
+  `accessibility-20261103-0039`, no axe violation in 68 states, none of 1,572 texts below AA. 1,245 tests pass.

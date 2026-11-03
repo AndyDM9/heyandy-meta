@@ -594,3 +594,101 @@ def test_the_story_ends_with_andy_saying_its_your_turn_and_three_ways_on(browser
         assert s["top"] >= 0, width  # its top on the screen, even when it's taller (it scrolls)
         assert s["hover"] == "rgb(255, 220, 138)"  # the main way stays gold under a mouse
         assert s["played"] == ["story-11.mp3"]  # Andy's closing words, in its voice
+
+
+def test_the_story_is_told_in_the_visitors_language_and_english_is_a_press_away(browser):
+    """November 2: the front door greeted a visitor in their own language, and then told the story in English. Now, when
+    the Space is built with it, the story is told in the language chosen at the front door (or the browser's own): Andy's
+    words in that language's voice, as subtitles, the measurements under them as measured, a line saying who
+    translated it, Andy's closing words in it too, and English a press away; a language not built stays English."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    base = f"http://127.0.0.1:{server.server_address[1]}/?story"
+    built = """window.HEYANDY_NARRATION = { "Meet Andy": { text: "Hi, I'm Andy.", file: "voice/story-01.mp3", seconds: 5 },
+                                         "Your turn": { text: "That's me.", file: "voice/story-11.mp3", seconds: 3 } };
+               window.HEYANDY_NARRATION_IN = { ar: { "Meet Andy": { title: "تعرّف على Andy", text: "مرحبًا، أنا آندي.", file: "voice/story-ar-01.mp3", seconds: 5 },
+                                                     "Your turn": { title: "", text: "هذا أنا.", file: "voice/story-ar-11.mp3", seconds: 3 } } };
+               window.played = []; const A = window.Audio; window.Audio = function (src) { window.played.push(String(src).split('/').pop()); return new A(src); };"""
+    shown = """() => { const t = document.querySelector('#story .text'), h = t.querySelector('h2'), p = t.querySelector('p');
+      return { title: h.textContent, line: p.textContent, lang: [h.lang, p.lang, p.dir], proof: !!t.querySelector('.proof'),
+               mt: t.querySelector('.mt')?.textContent || '', tongue: document.querySelector('#story .tongue')?.textContent || null,
+               file: told(0).file.split('/').pop() } }"""
+    try:
+        page = browser.new_page(viewport={"width": 390, "height": 844})
+        page.add_init_script("try { localStorage.setItem('andy-lang', 'ar'); } catch (e) {}\n" + built)
+        page.goto(base)
+        page.wait_for_selector("#story .tongue", timeout=10000)
+        arabic = page.evaluate(shown)
+        page.click("#story .tongue")
+        english = page.evaluate(shown)
+        page.click("#story .tongue")
+        back = page.evaluate(shown)
+        page.evaluate("endCard()")
+        page.wait_for_selector("#end .bubble", timeout=3000)
+        ending = page.evaluate("[document.querySelector('#end .bubble').textContent, document.querySelector('#end .bubble').lang, window.played.slice(-1)[0]]")
+        wide = page.evaluate("document.documentElement.scrollWidth > innerWidth")
+        page.close()
+        plain = browser.new_page(viewport={"width": 1440, "height": 900})
+        plain.add_init_script("try { localStorage.setItem('andy-lang', 'ko'); } catch (e) {}\n" + built)  # Korean not built
+        plain.goto(base)
+        plain.wait_for_selector("#story .text h2", timeout=10000)
+        korean = plain.evaluate(shown)
+        plain.close()
+    finally:
+        server.shutdown()
+    assert arabic["title"] == "تعرّف على Andy" and arabic["line"] == "مرحبًا، أنا آندي." and arabic["lang"] == ["ar", "ar", "auto"]
+    assert arabic["file"] == "story-ar-01.mp3" and arabic["tongue"] == "In English"
+    assert "translated by Muse Glimmer" in arabic["mt"] and "not yet by a native speaker" in arabic["mt"]
+    assert english["title"] == "Meet Andy" and english["file"] == "story-01.mp3" and english["tongue"] == "العربية" and english["mt"] == ""
+    assert back["title"] == arabic["title"] and back["tongue"] == "In English"
+    assert ending == ["هذا أنا.", "ar", "story-ar-11.mp3"] and not wide  # Andy's closing words in the story's language
+    assert korean["title"] == "Meet Andy" and korean["tongue"] is None and korean["file"] == "story-01.mp3"
+
+
+def test_the_front_door_says_which_language_the_story_is_told_in(browser):
+    """A language chosen at the front door (its globe) tells the story in it, where the Space is built with it, and the
+    story's button says so; one not built leaves the button as it was."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})  # the public demo
+    try:
+        page = browser.new_page(viewport={"width": 390, "height": 844})
+        page.add_init_script("""window.HEYANDY_NARRATION_IN = { ko: { "Meet Andy": { title: "앤디를 만나 보세요", text: "안녕하세요.", file: "voice/story-ko-01.mp3", seconds: 5 } } };""")
+        page.goto(f"http://127.0.0.1:{server.server_address[1]}/")
+        page.wait_for_selector("#welcome .langbtn", timeout=10000)
+        before = page.text_content("#welcome .more button")
+        page.click("#welcome .langbtn")
+        page.click("#welcome button[lang=ko]")
+        korean = page.evaluate("[document.querySelector('#welcome .more button').textContent, document.querySelector('#welcome .more button .in').lang]")
+        page.click("#welcome .langbtn")
+        page.click("#welcome button[lang=fr]")
+        french = page.text_content("#welcome .more button")
+        page.close()
+    finally:
+        server.shutdown()
+    assert before.startswith("Watch Andy's story · ") and before.endswith(" min")
+    assert korean == [before + " · 한국어", "ko"] and french == before
+    long = browser.new_page(viewport={"width": 390, "height": 844})  # told in Korean, the story is as long as its words
+    try:
+        server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+        long.add_init_script("""try { localStorage.setItem('andy-lang', 'ko'); } catch (e) {}
+          window.HEYANDY_NARRATION_IN = { ko: { "You ask": { title: "", text: "", file: "x.mp3", seconds: 60 } } };""")
+        long.goto(f"http://127.0.0.1:{server.server_address[1]}/")
+        long.wait_for_selector("#welcome .more button .in", timeout=10000)
+        assert long.text_content("#welcome .more button") == "Watch Andy's story · 2 min · 한국어"
+    finally:
+        long.close()
+        server.shutdown()

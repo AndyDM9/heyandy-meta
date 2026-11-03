@@ -48,7 +48,8 @@ Built on Meta's models for people who live at home, starting with older adults, 
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
   the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
 - **Try it now, no robot needed:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) opens on Andy's face
-  and one thing to try first, Andy's eyes on your own things; its 75-second story, told by Andy in its own voice, is
+  and one thing to try first, Andy's eyes on your own things; its 75-second story, told by Andy in its own voice (and in
+  yours: all fourteen of its other languages, translated by Muse Glimmer and checked by machine), is
   Andy's own TV, its scenes recorded and replayed in your browser; *Ask Andy* plays the scene that matches what you
   type, Andy saying it in its own voice, in any of its fifteen languages, or **say** in English (tap 🎙: Meta's wav2vec
   2.0 hears you, in your browser). **Andy's eyes, live** is the real thing: show it your mug, sweep your phone round the

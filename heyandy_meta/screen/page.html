@@ -419,6 +419,8 @@
   #story .proof::before { content: ""; display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%;
                           margin-right: 0.5rem; vertical-align: 0.05rem; border: 2px solid currentColor; }
   #story .proof.robot { color: var(--outline); } #story .proof.robot::before { background: currentColor; }
+  #story .mt { display: block; margin-top: 0.35rem; font-size: 0.95rem; line-height: 1.3; color: rgba(245, 243, 239, 0.78); }
+  #story .text .tongue { display: inline-block; margin-top: 0.55rem; font-size: 1rem; padding: 0.4rem 1rem; }
   #story .ch { flex: none; font: 700 1.35rem/1 "Atkinson Mono", monospace; color: var(--outline); letter-spacing: 0.08em; }
   #story h2 { margin: 0; font-size: 2.6rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; }
   #story p { margin: 0.35rem 0 0; font-size: 1.6rem; color: rgba(245, 243, 239, 0.78); }
@@ -473,7 +475,7 @@
     #story .ch { font-size: 3.2vw; } #story h2 { font-size: 6.4vw; } #story p { font-size: 4vw; margin-top: 1vw; }
     #story nav { width: 100%; gap: 2vw; flex-wrap: wrap; }  /* the ask box its own row, the buttons under it (they overlapped) */
     #story nav form.ask { flex: 1 1 100%; } #story nav > button { flex: 1 1 auto; }
-    #story .proof { font-size: 3vw; margin-top: 1.5vw; }
+    #story .proof { font-size: 3vw; margin-top: 1.5vw; } #story .mt { font-size: 2.8vw; margin-top: 1vw; }
     #story button, #end a, #end button { font-size: 3.6vw; padding: 2.2vw 3.6vw; }
     body.storying .stage { transform: none; }
     body.exploring { height: auto; min-height: 100vh; overflow-y: auto; } body.exploring .stage { transform: none; }
@@ -495,7 +497,7 @@
   @keyframes st-in { from { opacity: 0; transform: translateY(0.8rem); } to { opacity: 1; transform: none; } }
   @media (pointer: coarse) {  /* a finger, not a mouse: every tap target at least 44 px (WCAG 2.5.5; 2.5.8 asks 24). The
                                  explore bar's scene buttons were 21 px tall on a phone (November 2) */
-    #demo button, #demo a, .tries button, #story nav button, form.ask button, form.ask input, #end a, #end button {
+    #demo button, #demo a, .tries button, #story nav button, #story .tongue, form.ask button, form.ask input, #end a, #end button {
       min-height: 44px; }
     #demo a, #end a { display: inline-flex; align-items: center; }
   }
@@ -897,7 +899,15 @@
   // chapter, when the Space is built with it; a chapter lasts as long as its words and a breath, if that's longer.
   const NARRATION = window.HEYANDY_NARRATION || null;
   let narrate = true, telling = null;
-  const told = (at) => NARRATION && NARRATION[STORY[at][2]];
+  // And in the visitor's own language, when it's one of Andy's other fourteen and the Space is built with it
+  // (window.HEYANDY_NARRATION_IN: scripts/front_door_voice.py story_in): each chapter's title and Andy's words, translated
+  // by Muse Glimmer, Andy's own translator, said in that language's voice, as subtitles under the TV. Checked by machine,
+  // not yet by a native speaker, and the story says so. The language chosen at the front door (its globe), else the
+  // browser's own; English a press away, and the measurements under each chapter stay as measured, in English.
+  const NARRATION_IN = window.HEYANDY_NARRATION_IN || {};
+  let tellIn = "en", toldChoice = null;  // the story's language now; the visitor's own pick in the story, this visit
+  const storyLang = () => { const want = toldChoice || chosenLang || visitorLanguage(); return NARRATION_IN[want] ? want : "en"; };
+  const told = (at) => (tellIn !== "en" && NARRATION_IN[tellIn]?.[STORY[at][2]]) || (NARRATION && NARRATION[STORY[at][2]]);
   const chapterSeconds = (at) => Math.max(STORY[at][1], narrate && told(at) ? told(at).seconds + 0.9 : 0);
   function hush() { if (telling) { telling.pause(); telling = null; } }
   // The demo's scenes, each said in Andy's own voice when the visitor asks or picks one (never while they go round by
@@ -941,6 +951,13 @@
       });
       voice.classList.add("voice"); voice.setAttribute("aria-pressed", String(narrate));
     }
+    tellIn = storyLang();
+    const mine = toldChoice && toldChoice !== "en" ? toldChoice : (() => { const w = chosenLang || visitorLanguage(); return NARRATION_IN[w] ? w : "en"; })();
+    if (mine !== "en") {  // the story in the visitor's language, or in English: a press either way, under its words
+      const swap = el("button"); swap.className = "tongue";
+      swap.onclick = () => { tellIn = toldChoice = tellIn === "en" ? mine : "en"; go(story.at); story.tongue.focus({ preventScroll: true }); };
+      story.tongue = swap; story.mine = mine;
+    }
     button("›", () => go(story.at + 1), "Next"); button("Explore every screen", exploreAll); nav.prepend(askForm(true));
     row.append(el("div", null, "ch"), text, nav); band.append(bars, row); document.body.prepend(band);  // first: on a phone it leads
     go(0); requestAnimationFrame(storyTick);
@@ -964,9 +981,21 @@
     const [name, , title, line] = STORY[story.at], band = $("story");
     chosen = name; pictureKey = "";
     band.querySelector(".ch").textContent = `${String(story.at + 1).padStart(2, "0")} / ${String(STORY.length).padStart(2, "0")}`;
-    const text = band.querySelector(".text"); text.replaceChildren(el("h2", title), el("p", line));
+    const text = band.querySelector(".text"), t = tellIn !== "en" && NARRATION_IN[tellIn]?.[title];
+    if (t) {  // Andy's words in the visitor's language: what it says, as subtitles
+      const h = el("h2", t.title || title), said = el("p", t.text);
+      for (const x of [h, said]) { x.lang = tellIn; x.dir = "auto"; }
+      text.replaceChildren(h, said);
+    } else text.replaceChildren(el("h2", title), el("p", line));
     const proof = !STORY[story.at][4] && PROOF[name];  // the filmed chapter is its own evidence
     if (proof) text.append(el("small", proof[1], "proof " + proof[0]));
+    if (t && story.at === 0) text.append(el("small", `In ${LANG_ENGLISH[tellIn]}: translated by Muse Glimmer, Andy's own translator, and checked by machine, not yet by a native speaker`, "mt"));
+    if (story.tongue) {  // the other of the two: the visitor's language, or English
+      const to = tellIn === "en" ? story.mine : "en", b = story.tongue;
+      b.textContent = `${to === "en" ? "In English" : ASK_LANGS[to]}`; b.lang = to;
+      b.setAttribute("aria-label", `Tell the story in ${to === "en" ? "English" : LANG_ENGLISH[to]}`);
+      text.append(b);
+    }
     text.classList.remove("fresh"); void text.offsetWidth; text.classList.add("fresh");
   }
   function storyTick() {
@@ -994,7 +1023,9 @@
     if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }
     const head = el("div", null, "head"), andy = el("div", null, "andy"), face = document.querySelector("#ambient .face").cloneNode(true);
     face.setAttribute("aria-hidden", "true");
-    const bubble = el("p", "That's me. Now it's your turn: show me something of yours.", "bubble");
+    const yours = tellIn !== "en" && NARRATION_IN[tellIn]?.["Your turn"];  // in the language the story was told in
+    const bubble = el("p", yours ? yours.text : "That's me. Now it's your turn: show me something of yours.", "bubble");
+    if (yours) { bubble.lang = tellIn; bubble.dir = "auto"; }
     andy.append(face, bubble);
     const words = el("div"), h1 = el("h1"); h1.id = "end-title";
     h1.append("Andy finds what you've lost. ", el("em", "Every model it runs is Meta's."));
@@ -1033,7 +1064,7 @@
     more.append(gh); inner.append(more);
     inner.append(el("small", "Sample data: no robot, camera or home here; the pictures are drawn. Built by HeyAndy, Inc. during Meta's hackathon (October 26 to November 4, 2026); our own earlier object-finding prototype is kept outside this code. Andy gives no health advice."));
     end.append(inner); document.body.append(end);
-    const closing = narrate && NARRATION && NARRATION["Your turn"];  // Andy's own voice, when the story was told in it
+    const closing = narrate && (yours || (NARRATION && NARRATION["Your turn"]));  // Andy's own voice, when the story was told in it
     if (closing) { telling = new Audio(closing.file); telling.play().catch(() => { telling = null; }); }
     end.tabIndex = -1; end.focus({ preventScroll: true });  // focus in the ending (Tab: its first way), no ring for a mouse
   }
@@ -1088,8 +1119,16 @@
                               "The pictures of your home and your voice never leave it.", "lede"),
                  cta, el("p", "Try Andy's eyes now: show it your mug, keys or glasses, then sweep your phone round the room. " +
                               "Meta's DINOv2 does the looking in this browser; your camera never leaves your device.", "note"));
-    const more = el("div", null, "more"), minutes = Math.max(1, Math.round(STORY.reduce((t, c) => t + c[1], 0) / 60));
-    const play = el("button", `Watch Andy's story · ${minutes} min`); play.onclick = () => leaveWelcome(true); more.append(play);
+    const more = el("div", null, "more");
+    const minutes = (code) => Math.max(1, Math.round(STORY.reduce((t, c) => {  // as long as its words, in the language told
+      const v = (code !== "en" && NARRATION_IN[code]?.[c[2]]) || (NARRATION && NARRATION[c[2]]);
+      return t + Math.max(c[1], v ? v.seconds + 0.9 : 0); }, 0) / 60));
+    const play = el("button"); play.onclick = () => leaveWelcome(true); more.append(play);
+    const playIn = (code) => {  // the story told in the visitor's language, where it's built: the button says which
+      play.replaceChildren(`Watch Andy's story · ${minutes(code || "en")} min`);
+      if (code && code !== "en" && NARRATION_IN[code]) { const n = el("span", ASK_LANGS[code], "in"); n.lang = code; play.append(" · ", n); }
+    };
+    playIn(storyLang());
     const link = (label, href) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; more.append(a); };
     if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO);
     if (window.HEYANDY_STATIC) { const m = el("a", "Every number, measured"); m.href = "proof.html"; more.append(m); }  // Andy, measured
@@ -1155,7 +1194,7 @@
       if (code !== "en") b.append(el("span", LANG_ENGLISH[code]));
       b.onclick = () => {
         fixed = chosenLang = code; try { localStorage.setItem("andy-lang", code); } catch (e) { /* this visit only */ }
-        playing?.stop(); clearInterval(cycle); showLang(code); button(); storyIn(code);
+        playing?.stop(); clearInterval(cycle); showLang(code); button(); storyIn(code); playIn(code);
         langs.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
         open(false); langbtn.focus({ preventScroll: true });
       };
