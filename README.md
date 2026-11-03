@@ -137,7 +137,7 @@ spotlights it with the robot's own "found" sound. Or show it a photo. Yours, not
 and photos go nowhere ([`eyes.html`](heyandy_meta/screen/eyes.html); the demo's "Find something of yours" opens it
 in **find mode**, each step the whole screen: a viewfinder with a frame to fill and a shutter under your thumb, then the
 sweep, the screen's edge glowing warmer as you get close, then the spotlight and a card of the find to share, drawn from
-its numbers, never the photo). It says
+its numbers, never the photo; Andy says what the robot says at each moment, in its own voice and your language). It says
 "There's your mug" only when it's alike *and* the same colour (DINOv2 overlooks colour, so a red twin of your blue mug
 would pass), asks "is it?" when it's close, and says plainly when it doesn't see it. Measured on museum photos (CC0):
 **the right thing found 20 times in 24, never a wrong one; never "found" in 24 tables without it, nor of its twin in

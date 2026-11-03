@@ -250,3 +250,37 @@ def test_a_find_shares_a_card_of_its_numbers_never_the_photo(site, pw):
     assert got[:5] == [1, "image/png", "andy-found-my-mug.png", 1200, 675]
     assert got[5].endswith("/eyes.html?find") and "found my mug" in got[6]
     assert saved == ["andy-found-my-mug.png", True]
+
+
+def test_find_mode_speaks_in_andys_own_voice_in_the_visitors_language(site, pw):
+    """Andy's eyes in find mode, voiced as the robot is: "Let me see." at the shutter, "Let me look around the room." as
+    the sweep starts, "There it is!" (or "There they are!" for a pair) at the find, by hand in the language chosen on the
+    front door (else the browser's), the words shown as they're said; the sound button silences it too."""
+    silent = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+    voice = {code: {m: {"text": f"{code}:{m}", "file": silent + f"#{code}-{m}"} for m in ("see", "look", "it", "they")}
+             for code in ("en", "ko")}
+    try:
+        browser = pw.chromium.launch(args=["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"])
+    except Exception as e:  # noqa: BLE001 - no browser here: skip
+        pytest.skip(f"no Chromium for Playwright: {e}")
+    try:
+        ctx = browser.new_context(viewport={"width": 390, "height": 844}, permissions=["camera"], locale="en-US")
+        pg = ctx.new_page()
+        pg.route("**/*", lambda r: r.abort() if not r.request.url.startswith(site) else r.continue_())
+        import json
+
+        pg.add_init_script(f"""window.EYES_VOICE = {json.dumps(voice)}; localStorage.setItem('andy-lang', 'ko');
+          window.said = []; const A = window.Audio; window.Audio = function (src) {{ window.said.push(String(src).split('#')[1]); return new A(src); }};""")
+        pg.goto(f"{site}/eyes.html?find")
+        pg.wait_for_function("window.EYES_READY === true", timeout=10000)
+        pg.wait_for_selector("#stage1 video", timeout=10000)
+        lang = pg.evaluate("window.eyesGuide.lang()")
+        pg.evaluate("document.getElementById('thing').value = 'keys'; window.eyesGuide.says('see'); window.eyesGuide.says('they')")
+        caption = [pg.text_content("#guideSays"), pg.get_attribute("#guideSays", "lang"), pg.is_visible("#guideSays")]
+        pg.evaluate("window.eyesGuide.hush(); window.eyesGuide.says('it')")
+        said = pg.evaluate("window.said")
+        ctx.close()
+    finally:
+        browser.close()
+    assert lang == "ko" and said == ["ko-see", "ko-they"]  # Korean, chosen on the front door; nothing once hushed
+    assert caption == ["ko:they", "ko", True]

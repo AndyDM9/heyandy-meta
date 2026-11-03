@@ -2188,3 +2188,25 @@ Found and fixed, each with a test:
   result's text escaped. The accessibility audit has the page as a state of its own: it found its top outside any
   landmark (fixed: a header and a labelled navigation). The whole demo again (`accessibility-20261102-2153`): no axe
   violation in 66 states, none of 1,493 texts below AA.
+
+## 100. Andy's eyes, in Andy's own voice (November 2, night)
+
+- **Why:** by now Andy speaks on the front door (section 94) and tells its story (section 98), and the most important
+  moment of the public demo, finding the visitor's own thing (section 92), was the one where it didn't: tones and
+  English words on the screen.
+- **Now** (`heyandy_meta/screen/eyes.html`, `scripts/front_door_voice.py` FIND): find mode says what the robot says at
+  the same moments, in its own voice (Meta's SeamlessM4T v2, made on our computer): "Let me see." at the shutter, "Let
+  me look around the room." as the sweep starts, and after the "found" sound "There it is!" (or "There they are!" for
+  keys, glasses and the like). In the visitor's language: the one chosen on the front door (the same site keeps it),
+  else the browser's own, else English; the robot's words for these moments are written by hand in all fifteen
+  (`companion/language.py` PHRASES), so nothing was translated for the page. Shown as said, a gold line under the title
+  (for anyone who can't hear it); the sweep's "Sound: off" silences it too. Sixty clips (four moments, fifteen
+  languages), 4 to 16 KB each.
+- **Heard back** by Omnilingual ASR, told the language: most at 0.8 to 1.00; the short exclamations lower, heard by
+  sound rather than spelling ("¡Ahí está!" as "allí está", "È lì!" as "elie", "هناك" as "unak", "Mal sehen." as
+  "malzin"); and one to check with a Korean speaker: "저기 있어요!" heard as "저 비서" (0.25).
+- **Checked:** end to end with the real model and a fake camera on the built Space: Andy said "Let me see.", "Let me
+  look around the room.", "There it is!", in that order, with no script error; a visitor who chose Korean on the
+  front door hears Korean, keys get "There they are!", and nothing is said once the sound is off
+  (`tests/test_eyes_page.py`); the clips' words are the hand-written ones and their hashes the files'
+  (`tests/test_social_card.py`).

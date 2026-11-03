@@ -1,0 +1,455 @@
+{
+ "what": "Andy's eyes, find mode, in Andy's own voice (SeamlessM4T v2)",
+ "languages": {
+  "en": {
+   "see": {
+    "text": "Let me see.",
+    "seconds": 1.01,
+    "file": "voice/find-en-see.mp3",
+    "heard back": 1.0,
+    "sha256": "897689035e1c3bc7b0d310102aa6ce0690660d2ea81bb16321ac56251eae4bac"
+   },
+   "look": {
+    "text": "Let me look around the room.",
+    "seconds": 1.44,
+    "file": "voice/find-en-look.mp3",
+    "heard back": 1.0,
+    "sha256": "f3e4fbb73e6d41ce65fad4d4337c1c06431fdd16b90e2268d242fb02ac5d4402"
+   },
+   "it": {
+    "text": "There it is!",
+    "seconds": 1.19,
+    "file": "voice/find-en-it.mp3",
+    "heard back": 1.0,
+    "sha256": "97d55485d32aa27342bec2704811f6f80acc6db402c14913191c272c6120aa12"
+   },
+   "they": {
+    "text": "There they are!",
+    "seconds": 1.28,
+    "file": "voice/find-en-they.mp3",
+    "heard back": 1.0,
+    "sha256": "2a6206dc3819e73426c21149f708305b83c1828f5b4ece7d226685ece48cd174"
+   }
+  },
+  "es": {
+   "see": {
+    "text": "Déjeme ver.",
+    "seconds": 1.22,
+    "file": "voice/find-es-see.mp3",
+    "heard back": 0.89,
+    "sha256": "8f78bab40cae5a928f00cb5bdcfd69bbea6dce56b570590f93ea6dd72b56a98d"
+   },
+   "look": {
+    "text": "Déjeme mirar la sala.",
+    "seconds": 1.72,
+    "file": "voice/find-es-look.mp3",
+    "heard back": 0.94,
+    "sha256": "f84a15408eca2fc199a68510eec38c5a0d75abeb2f93777fc118ea2fca7d9f56"
+   },
+   "it": {
+    "text": "¡Ahí está!",
+    "seconds": 1.01,
+    "file": "voice/find-es-it.mp3",
+    "heard back": 0.62,
+    "sha256": "d9e4205242b8dc2178a6f127b1d1ae8513d2c1a11b1c960a7653af55b1ec7b4b"
+   },
+   "they": {
+    "text": "¡Ahí están!",
+    "seconds": 0.98,
+    "file": "voice/find-es-they.mp3",
+    "heard back": 0.67,
+    "sha256": "477e2db9437f4fa6d66d61116084eae67b41d7e5c67d627565860bee1d249a64"
+   }
+  },
+  "zh": {
+   "see": {
+    "text": "我看看。",
+    "seconds": 1.39,
+    "file": "voice/find-zh-see.mp3",
+    "heard back": 0.86,
+    "sha256": "0023200c908dd908dab20c946cbb45a5562ca87fb7950f28c9b40607385d5198"
+   },
+   "look": {
+    "text": "我在房间里找找。",
+    "seconds": 2.26,
+    "file": "voice/find-zh-look.mp3",
+    "heard back": 0.8,
+    "sha256": "a792a137f6a606948a3da39d62baa66463e8361d60face398418e1e5aef7c6b1"
+   },
+   "it": {
+    "text": "在那儿！",
+    "seconds": 1.42,
+    "file": "voice/find-zh-it.mp3",
+    "heard back": 1.0,
+    "sha256": "f68ab6244a3bb7c74c37c537e6d4492d8bba3faa5b3c7eb80b7e0301db9e564b"
+   },
+   "they": {
+    "text": "在那儿！",
+    "seconds": 1.42,
+    "file": "voice/find-zh-they.mp3",
+    "heard back": 1.0,
+    "sha256": "f68ab6244a3bb7c74c37c537e6d4492d8bba3faa5b3c7eb80b7e0301db9e564b"
+   }
+  },
+  "tl": {
+   "see": {
+    "text": "Tingnan natin.",
+    "seconds": 1.72,
+    "file": "voice/find-tl-see.mp3",
+    "heard back": 1.0,
+    "sha256": "72d41cd604120c67dbaab59c801cdb1e44cc642a77c172963a3df3d0e56cf4e3"
+   },
+   "look": {
+    "text": "Titingnan ko po ang buong kuwarto.",
+    "seconds": 3.09,
+    "file": "voice/find-tl-look.mp3",
+    "heard back": 1.0,
+    "sha256": "4acbcf3b5a109f574da0b50a12ab171640a1725b01401845451c9de5a8b30bbb"
+   },
+   "it": {
+    "text": "Ayan na!",
+    "seconds": 1.42,
+    "file": "voice/find-tl-it.mp3",
+    "heard back": 1.0,
+    "sha256": "b088a89b6aaef27c93bd9644a6abbc8c0298e245e36f7cb4b9065dd66714aece"
+   },
+   "they": {
+    "text": "Ayan na sila!",
+    "seconds": 1.78,
+    "file": "voice/find-tl-they.mp3",
+    "heard back": 1.0,
+    "sha256": "ddfe6828fa7601fef606d7330e305f45e596f5dc3de4ae99b89ca6454bca6a5b"
+   }
+  },
+  "vi": {
+   "see": {
+    "text": "Để tôi xem.",
+    "seconds": 1.18,
+    "file": "voice/find-vi-see.mp3",
+    "heard back": 1.0,
+    "sha256": "37e706bdb51bfc06e6856df1d4d62fb4e421d5b95f7341a888f13707c43c5fa0"
+   },
+   "look": {
+    "text": "Để tôi nhìn quanh phòng.",
+    "seconds": 1.57,
+    "file": "voice/find-vi-look.mp3",
+    "heard back": 0.92,
+    "sha256": "a15eab09774b1f4b96e8e1de2d7689752be99460f30c3cefca6935e5cd7a464a"
+   },
+   "it": {
+    "text": "Kia rồi!",
+    "seconds": 1.19,
+    "file": "voice/find-vi-it.mp3",
+    "heard back": 0.83,
+    "sha256": "7c923e73a4a6480567c1b7cdbb73df8c5bfd309639d94bedf31d22ada67770b1"
+   },
+   "they": {
+    "text": "Kia rồi!",
+    "seconds": 1.19,
+    "file": "voice/find-vi-they.mp3",
+    "heard back": 0.83,
+    "sha256": "7c923e73a4a6480567c1b7cdbb73df8c5bfd309639d94bedf31d22ada67770b1"
+   }
+  },
+  "ko": {
+   "see": {
+    "text": "어디 볼게요.",
+    "seconds": 1.57,
+    "file": "voice/find-ko-see.mp3",
+    "heard back": 1.0,
+    "sha256": "1ce180ccd2439c6f60a7478c6e09090f587caed46de4c5e9ed21482c769850e1"
+   },
+   "look": {
+    "text": "방을 둘러볼게요.",
+    "seconds": 2.01,
+    "file": "voice/find-ko-look.mp3",
+    "heard back": 0.86,
+    "sha256": "cb7b47f8ccf7d87692671a0c315ddc7b5a27159d9913126bafbb93f68804624e"
+   },
+   "it": {
+    "text": "저기 있어요!",
+    "seconds": 1.62,
+    "file": "voice/find-ko-it.mp3",
+    "heard back": 0.25,
+    "sha256": "721d5bc7c6617e132bb374a33f473507de9f95adf00d9837c06ea9af37dd24c2"
+   },
+   "they": {
+    "text": "저기 있어요!",
+    "seconds": 1.62,
+    "file": "voice/find-ko-they.mp3",
+    "heard back": 0.25,
+    "sha256": "721d5bc7c6617e132bb374a33f473507de9f95adf00d9837c06ea9af37dd24c2"
+   }
+  },
+  "ru": {
+   "see": {
+    "text": "Сейчас посмотрю.",
+    "seconds": 1.85,
+    "file": "voice/find-ru-see.mp3",
+    "heard back": 1.0,
+    "sha256": "9ba58b823e36fab43654bc8516dc6394bb3697513c2df138ad984d88308eb493"
+   },
+   "look": {
+    "text": "Сейчас осмотрю комнату.",
+    "seconds": 2.26,
+    "file": "voice/find-ru-look.mp3",
+    "heard back": 0.95,
+    "sha256": "63c0f0fb15ea142ba7534d4b9b27b9a26b04fce5421dbdf212111d63624ee24e"
+   },
+   "it": {
+    "text": "Вон там!",
+    "seconds": 1.33,
+    "file": "voice/find-ru-it.mp3",
+    "heard back": 1.0,
+    "sha256": "3e3ca4b21f5c84a2f60cf22ca3c4f04d3a9b71a02a5260b3e05b0cacb0e66c3f"
+   },
+   "they": {
+    "text": "Вон они!",
+    "seconds": 1.35,
+    "file": "voice/find-ru-they.mp3",
+    "heard back": 1.0,
+    "sha256": "d4e22e7141850cb5288ab13ea0ce50ac31dfb747b85c630e99364034a47daaf8"
+   }
+  },
+  "ar": {
+   "see": {
+    "text": "دعني أرى.",
+    "seconds": 1.24,
+    "file": "voice/find-ar-see.mp3",
+    "heard back": 1.0,
+    "sha256": "41cafd370aec01cb87c85adf62149cf98e7233e0a3dd8cd317a1ac6f6dd81802"
+   },
+   "look": {
+    "text": "دعني أنظر في أرجاء الغرفة.",
+    "seconds": 2.31,
+    "file": "voice/find-ar-look.mp3",
+    "heard back": 0.95,
+    "sha256": "3fcad0b8e5913ca57601ab77db7abe38a310c23d04bec14bcf87a103cab80e5c"
+   },
+   "it": {
+    "text": "هناك!",
+    "seconds": 0.98,
+    "file": "voice/find-ar-it.mp3",
+    "heard back": 0.67,
+    "sha256": "0b37d865a2a0ec656dab8c1c96094917d15d5186d42f7b985dfa7817b2b46fa9"
+   },
+   "they": {
+    "text": "هناك!",
+    "seconds": 0.98,
+    "file": "voice/find-ar-they.mp3",
+    "heard back": 0.67,
+    "sha256": "0b37d865a2a0ec656dab8c1c96094917d15d5186d42f7b985dfa7817b2b46fa9"
+   }
+  },
+  "hi": {
+   "see": {
+    "text": "मैं देखता हूँ।",
+    "seconds": 1.35,
+    "file": "voice/find-hi-see.mp3",
+    "heard back": 1.0,
+    "sha256": "79dff2566221bd4271e9dbd2cbe6ae4637c436f3fe28c2bc142e5472ce74a5f3"
+   },
+   "look": {
+    "text": "मैं कमरे में चारों ओर देखता हूँ।",
+    "seconds": 2.58,
+    "file": "voice/find-hi-look.mp3",
+    "heard back": 1.0,
+    "sha256": "337fa5fd760d1c8cabe505dad6d317e9a2f4f01da9d9f91a6b64db5b7e0e4c02"
+   },
+   "it": {
+    "text": "वहाँ है!",
+    "seconds": 1.18,
+    "file": "voice/find-hi-it.mp3",
+    "heard back": 1.0,
+    "sha256": "f292f959639d46eb64e36281e95e27bbbcde638aab6e8ca0e892f4743f61f1c9"
+   },
+   "they": {
+    "text": "वहाँ हैं!",
+    "seconds": 1.14,
+    "file": "voice/find-hi-they.mp3",
+    "heard back": 1.0,
+    "sha256": "645d9529b79a359bc00d1529e60557626b035612d50f7cc34ba17ca250c6f30e"
+   }
+  },
+  "pt": {
+   "see": {
+    "text": "Deixa eu ver.",
+    "seconds": 1.48,
+    "file": "voice/find-pt-see.mp3",
+    "heard back": 1.0,
+    "sha256": "aea045ed4b26013859d65f87fb878368ab4d7f9a7764b193d4c14df9f07d3646"
+   },
+   "look": {
+    "text": "Deixa eu olhar pela sala.",
+    "seconds": 2.05,
+    "file": "voice/find-pt-look.mp3",
+    "heard back": 1.0,
+    "sha256": "4fb04c8f846531dec627ce3b16934f650ec8ded3033695e553b977b3794f8337"
+   },
+   "it": {
+    "text": "Ali está!",
+    "seconds": 1.37,
+    "file": "voice/find-pt-it.mp3",
+    "heard back": 0.86,
+    "sha256": "9c444ec82ffd338e60356b53583b1b1712fb4ba77cf2e2425c81c1a78a68f0f0"
+   },
+   "they": {
+    "text": "Ali estão!",
+    "seconds": 1.33,
+    "file": "voice/find-pt-they.mp3",
+    "heard back": 1.0,
+    "sha256": "e02205e6a9e1b74ee074a3ce489e5406ff41795e772fe49b4fcc39802957b155"
+   }
+  },
+  "fr": {
+   "see": {
+    "text": "Voyons.",
+    "seconds": 0.94,
+    "file": "voice/find-fr-see.mp3",
+    "heard back": 1.0,
+    "sha256": "7d1624647fc40e5954214c22809b488d7f801defab511a6bebf29bc86248aa7b"
+   },
+   "look": {
+    "text": "Je regarde dans la pièce.",
+    "seconds": 1.83,
+    "file": "voice/find-fr-look.mp3",
+    "heard back": 1.0,
+    "sha256": "d3577f0b789fdebea1c67282337c76e7f89545e5ebd9c84fe63e16faf39a1985"
+   },
+   "it": {
+    "text": "C'est là !",
+    "seconds": 1.15,
+    "file": "voice/find-fr-it.mp3",
+    "heard back": 1.0,
+    "sha256": "7fc30610e65d5d6267a7a709ab44579584ebfd8d22f5646c2f9cd80740a301aa"
+   },
+   "they": {
+    "text": "Les voilà !",
+    "seconds": 1.35,
+    "file": "voice/find-fr-they.mp3",
+    "heard back": 1.0,
+    "sha256": "3540723f67183fda50f8a4c7d2649e65c60568fc028c0e0be0663223c275572c"
+   }
+  },
+  "it": {
+   "see": {
+    "text": "Vediamo.",
+    "seconds": 0.76,
+    "file": "voice/find-it-see.mp3",
+    "heard back": 1.0,
+    "sha256": "ec105cbae3d81e8a9a7ab543d014cff0e82f010b8d0d1c869d9d99d4c0a4d4b2"
+   },
+   "look": {
+    "text": "Guardo nella stanza.",
+    "seconds": 1.7,
+    "file": "voice/find-it-look.mp3",
+    "heard back": 1.0,
+    "sha256": "2d7f7ff5233996fc5e16e7da5aaa95d91752df4977f90735b919e32f594380e9"
+   },
+   "it": {
+    "text": "È lì!",
+    "seconds": 0.81,
+    "file": "voice/find-it-it.mp3",
+    "heard back": 0.29,
+    "sha256": "6645b330a24eb85ed7397a44c1961188ac3318e97a0bb1ca18a99add4c846446"
+   },
+   "they": {
+    "text": "Sono lì!",
+    "seconds": 1.11,
+    "file": "voice/find-it-they.mp3",
+    "heard back": 1.0,
+    "sha256": "755fd6012729378b79c4e47450cfcf8fbbf6ba43f7db57118b8862be2da0b6f7"
+   }
+  },
+  "pl": {
+   "see": {
+    "text": "Zobaczmy.",
+    "seconds": 1.39,
+    "file": "voice/find-pl-see.mp3",
+    "heard back": 1.0,
+    "sha256": "f58345ef852bb0e4cd4332dd438c952c156fde373c5a020efa634e6ad6d09b87"
+   },
+   "look": {
+    "text": "Rozejrzę się po pokoju.",
+    "seconds": 2.11,
+    "file": "voice/find-pl-look.mp3",
+    "heard back": 1.0,
+    "sha256": "f1e2d1cebeb829610135723d4cf47cf46b4b3bf2653a60f6bf495a94ebd30fdd"
+   },
+   "it": {
+    "text": "Tam jest!",
+    "seconds": 1.28,
+    "file": "voice/find-pl-it.mp3",
+    "heard back": 1.0,
+    "sha256": "86ffcfe654dbcef12b3d9aeade8e36fbdf5a66c756798153ac2c4ca9ea40d73d"
+   },
+   "they": {
+    "text": "Tam są!",
+    "seconds": 1.24,
+    "file": "voice/find-pl-they.mp3",
+    "heard back": 1.0,
+    "sha256": "de5529c17fb3413c5522295acb0b8173a34dc9b3708c8e087994ed97b5ccd8b7"
+   }
+  },
+  "de": {
+   "see": {
+    "text": "Mal sehen.",
+    "seconds": 1.33,
+    "file": "voice/find-de-see.mp3",
+    "heard back": 0.67,
+    "sha256": "68a5769b8cc0b15e5e66eebee0b8ae07d016c9dde975c2a4b52718046da687cb"
+   },
+   "look": {
+    "text": "Ich schaue mich im Zimmer um.",
+    "seconds": 2.05,
+    "file": "voice/find-de-look.mp3",
+    "heard back": 0.98,
+    "sha256": "28936ceceace1b56ea3815c7f17f04e14be856b06d325fe0b6f69ab89e514fa6"
+   },
+   "it": {
+    "text": "Da drüben!",
+    "seconds": 1.37,
+    "file": "voice/find-de-it.mp3",
+    "heard back": 1.0,
+    "sha256": "3dbd05ff211a482d06461351d69508bff206372f6811b448ad1b9566816033ac"
+   },
+   "they": {
+    "text": "Da sind sie!",
+    "seconds": 1.35,
+    "file": "voice/find-de-they.mp3",
+    "heard back": 1.0,
+    "sha256": "6269353c070e06978c757760653b8e11730af5f0a261fc35aee6b47aa0869117"
+   }
+  },
+  "uk": {
+   "see": {
+    "text": "Зараз подивлюся.",
+    "seconds": 1.89,
+    "file": "voice/find-uk-see.mp3",
+    "heard back": 0.97,
+    "sha256": "57d0970dbea18bf643dbe037532b892a2d23ccc711cd30b07423e3edab40fb83"
+   },
+   "look": {
+    "text": "Зараз огляну кімнату.",
+    "seconds": 2.28,
+    "file": "voice/find-uk-look.mp3",
+    "heard back": 0.97,
+    "sha256": "0265b4b04329576a3a79f60a448956de83711a0cb51d4922bd6dab8d6c47b68a"
+   },
+   "it": {
+    "text": "Он там!",
+    "seconds": 1.39,
+    "file": "voice/find-uk-it.mp3",
+    "heard back": 0.73,
+    "sha256": "d0ce3991b42ad99c5a81a2bfcefef4ca41129f6f8f346af55605b707a0faf74f"
+   },
+   "they": {
+    "text": "Он вони!",
+    "seconds": 1.46,
+    "file": "voice/find-uk-they.mp3",
+    "heard back": 0.77,
+    "sha256": "08c73414a236df79c98ec8f7d638d12bed89c929442a4933af7ffa89af4bc0ae"
+   }
+  }
+ }
+}

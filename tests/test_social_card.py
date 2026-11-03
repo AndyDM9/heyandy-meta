@@ -99,3 +99,23 @@ def test_the_story_told_in_andys_voice_says_no_more_than_its_chapters():
         assert not re.search(r"\d", c["text"].replace("3.1", "").replace("3D", "")), title  # no figure the page doesn't show
     assert build_static_space.narration() == {t: {"text": c["text"], "file": c["file"], "seconds": c["seconds"]}
                                               for t, c in told.items()}
+
+
+def test_find_modes_words_are_andys_own_by_hand_in_each_language():
+    """scripts/front_door_voice.py FIND: the robot's own words at find mode's moments, by hand (companion/language.py
+    PHRASES), in every language that has them all; each clip's words and hash kept, heard back by Omnilingual ASR (a
+    short exclamation, under 1.7 s, can be heard far from its letters, "È lì!" as "elie": kept, and said in research.md)."""
+    import hashlib
+    import json
+
+    import front_door_voice
+
+    screen = ROOT / "heyandy_meta" / "screen"
+    langs = json.loads((screen / "voice" / "find.json").read_text())["languages"]
+    assert langs.keys() == front_door_voice.find_lines().keys() and len(langs) == 15
+    for code, moments in langs.items():
+        for moment, c in moments.items():
+            assert c["text"] == front_door_voice.find_lines()[code][moment]
+            assert hashlib.sha256((screen / c["file"]).read_bytes()).hexdigest() == c["sha256"]
+            assert c["heard back"] >= 0.6 or c["seconds"] < 1.7, (code, moment)
+    assert build_static_space.find_voice()["en"]["it"] == {"text": "There it is!", "file": "voice/find-en-it.mp3"}

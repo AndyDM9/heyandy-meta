@@ -112,6 +112,12 @@ def narration() -> dict:
     return {title: {"text": c["text"], "file": c["file"], "seconds": c["seconds"]} for title, c in told.items()}
 
 
+def find_voice() -> dict:
+    """Andy's eyes in find mode, in Andy's own voice (scripts/front_door_voice.py FIND): {language: {moment: {text, file}}}."""
+    langs = json.loads(files("heyandy_meta.screen").joinpath("voice", "find.json").read_text())["languages"]
+    return {code: {m: {"text": c["text"], "file": c["file"]} for m, c in moments.items()} for code, moments in langs.items()}
+
+
 def main() -> None:
     import argparse
 
@@ -164,7 +170,10 @@ def main() -> None:
     sample = json.loads(files("heyandy_meta.screen").joinpath("hood_sample.json").read_text())
     (OUT / "hood.json").write_text(json.dumps({**sample, "sample": True}))
     # Andy's eyes, on the visitor's own things: DINOv2 in the browser, and our cups for anyone without a photo
-    (OUT / "eyes.html").write_text(shared(files("heyandy_meta.screen").joinpath("eyes.html").read_text(), "eyes.html"))
+    eyes = files("heyandy_meta.screen").joinpath("eyes.html").read_text()  # with Andy's own voice for find mode
+    eyes = eyes.replace('<script type="module">', f"<script>window.EYES_VOICE = {json.dumps(find_voice(), ensure_ascii=False)};"
+                        "</script>\n<script type=\"module\">", 1)
+    (OUT / "eyes.html").write_text(shared(eyes, "eyes.html"))
     shutil.copy(ROOT / "docs" / "images" / "social-card.png", OUT / "card.png")  # what a shared link shows
     (OUT / "eyes-core.js").write_text(files("heyandy_meta.screen").joinpath("eyes-core.js").read_text())
     import proof_page  # Andy, measured: every scorecard, from the same files as evals/results/README.md
@@ -173,6 +182,10 @@ def main() -> None:
     (OUT / "voice").mkdir()  # Andy's own voice, introducing itself in each language (the front door)
     for code in voices():
         (OUT / "voice" / f"{code}.mp3").write_bytes(files("heyandy_meta.screen").joinpath("voice", f"{code}.mp3").read_bytes())
+    for moments in find_voice().values():  # and find mode's words
+        for m in moments.values():
+            name = m["file"].split("/", 1)[1]
+            (OUT / "voice" / name).write_bytes(files("heyandy_meta.screen").joinpath("voice", name).read_bytes())
     for chapter in narration().values():  # and the story, told in it
         name = chapter["file"].split("/", 1)[1]
         (OUT / "voice" / name).write_bytes(files("heyandy_meta.screen").joinpath("voice", name).read_bytes())

@@ -185,6 +185,10 @@
   #guide .chips button[aria-pressed="true"] { background: var(--gold); color: #12241d; border-color: var(--gold); }
   #guide .other { position: fixed; right: 4vw; top: calc(1.6vh + 64px + env(safe-area-inset-top)); z-index: 4; min-height: 44px;
                   font-size: 0.85em; background: rgba(11, 17, 15, 0.7); border-color: rgba(245, 243, 239, 0.3); }
+  #guide .says { position: fixed; left: 50%; top: calc(1.6vh + 120px + env(safe-area-inset-top)); translate: -50% 0; z-index: 4;
+                 max-width: 88vw; padding: 0.55em 1.1em; border-radius: 99em; background: var(--gold); color: #12241d;
+                 font: 750 clamp(16px, 4.4vw, 22px)/1.2 "Atkinson Next", sans-serif; box-shadow: 0 0.6em 1.6em rgba(0, 0, 0, 0.45); }
+  #guide .says[hidden] { display: none; }
   #guide .busy { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; align-content: center; gap: 2vh;
                  background: rgba(5, 8, 7, 0.82); text-align: center; padding: 8vw; font-size: clamp(20px, 5vw, 30px); font-weight: 700; }
   #guide .busy svg { width: min(40vw, 180px); color: #f5f3ef; animation: think 1.4s ease-in-out infinite; }
@@ -283,6 +287,7 @@
   <div class="chips" id="guideChips" role="group" aria-label="What is it?" hidden></div>
   <button type="button" class="other" id="guideCup" hidden>No camera? Our cup</button>
   <div class="busy" id="guideBusy" hidden aria-live="polite"></div>
+  <div class="says" id="guideSays" hidden aria-hidden="true"></div>
   <div class="done" id="guideDone" hidden></div>
 </div>
 <input type="file" id="file" accept="image/*" hidden>
@@ -507,7 +512,7 @@
     const rule = `Andy says "found" from ${Math.round(100 * E.SURE)}% alike and ${Math.round(100 * E.SAME_COLOUR)}% in colour`;
     if (verdict === "found") {
       $("said").textContent = `There's your ${name}.`;
-      if (!shown) { chime(); navigator.vibrate?.([60, 40, 120]); }
+      if (!shown) { chime(); navigator.vibrate?.([60, 40, 120]); setTimeout(() => andySays(PAIRS.has(name) ? "they" : "it"), 650); }
       $("why").textContent = `${pct}% like the one you showed me, ${col}% in colour (${rule}).`;
       if (guided) guideFound();
     } else {
@@ -639,6 +644,26 @@
   // ---- find mode: the two steps, each the whole screen, camera first (?find; the front door's "Find something of
   // yours" comes here). The steps are the ones above, unchanged: only how they're shown, and what follows each.
   const CHIPS = ["mug", "keys", "glasses", "phone", "wallet", "remote", "cup", "bottle"];
+  // Andy's own voice at find mode's moments, the robot's own words by hand in the visitor's language (the one chosen on
+  // the front door, else the browser's): the shutter, the sweep starting, the find. The words shown as Andy says them.
+  const VOICE = window.EYES_VOICE || null, PAIRS = new Set(["keys", "glasses", "scissors", "headphones", "earrings", "earphones"]);
+  const voiceLang = (() => {
+    let chosen = null; try { chosen = localStorage.getItem("andy-lang"); } catch (e) { /* this visit only */ }
+    if (VOICE && chosen && VOICE[chosen]) return chosen;
+    for (const l of navigator.languages || [navigator.language || "en"]) {
+      const c = String(l || "").toLowerCase().split("-")[0], code = c === "fil" ? "tl" : c;
+      if (VOICE && VOICE[code]) return code;
+    }
+    return "en";
+  })();
+  let saying = null, saysTimer = 0;
+  function andySays(moment) {
+    const v = VOICE && (VOICE[voiceLang] || VOICE.en), line = v && v[moment];
+    if (!line || !sound) return;
+    saying?.pause(); saying = new Audio(line.file); saying.play().catch(() => {});
+    const says = $("guideSays"); says.textContent = line.text; says.lang = voiceLang; says.hidden = !guided;
+    clearTimeout(saysTimer); saysTimer = setTimeout(() => { says.hidden = true; }, 3200);
+  }
   const frameEl = $("guideFrame");  // laid over the viewfinder itself, under its shutter
   function guideShow(step, title) {
     $("guideStep").textContent = `${step} OF 2`; $("guideTitle").textContent = title;
@@ -678,6 +703,7 @@
         const c = pics[1];
         box = { x: Math.max(0, want.x), y: Math.max(0, want.y), w: Math.min(want.w, c.width - Math.max(0, want.x)), h: Math.min(want.h, c.height - Math.max(0, want.y)) };
         drawBox(); guideBusy(`Looking at your ${named()}…`, "Learning it by sight, in this browser: the first time, DINOv2 downloads once (24 MB).");
+        andySays("see");
         remember();
       };
       const cancel = $("stage1").querySelector(".cam button:not(.main)");
@@ -690,6 +716,7 @@
   }
   function guideSweep() {
     guideShow(2, `Now sweep the room for your ${name}`);
+    andySays("look");
     sweep();
   }
   // The card a find shares: drawn here from the find's own numbers (how alike, the colour, the seconds), never from the
@@ -768,7 +795,8 @@
     $("go").focus({ preventScroll: true });
   }
   window.eyesGuide = { found: (cand) => {  // for the tests: the share sheet without a model (a find's numbers, if given)
-    name = named(); if (cand) { result = { candidates: [cand] }; shown = 0; } guideFound(); } };
+    name = named(); if (cand) { result = { candidates: [cand] }; shown = 0; } guideFound(); },
+    says: andySays, lang: () => voiceLang, hush: () => { sound = false; } };
   $("go").onclick = () => guide();
   $("guideClose").onclick = () => guideStop();
   $("guideCup").onclick = () => guideStop("", true);

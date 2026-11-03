@@ -8,7 +8,8 @@ each sounds like what the page shows. Made once, here (the voice service runs on
 build copies them.
 
     uv run python scripts/front_door_voice.py        # -> heyandy_meta/screen/voice/: <language>.mp3, voice.json,
-                                                     #    and the story's chapters, story-NN.mp3 and story.json
+                                                     #    the story's chapters, story-NN.mp3 and story.json,
+                                                     #    and find mode's words, find-<language>-<moment>.mp3
 """
 import hashlib
 import json
@@ -47,6 +48,23 @@ STORY = {
     "Your language": "I hear and speak fifteen languages. Muse Glimmer translates, on the computer beside me.",
     "What it never does": "And what I never do: your pictures and voice stay home, I give no health advice, and I say I'm an AI.",
 }
+
+
+# Andy's eyes, find mode (eyes.html): what the robot says at the same moments, by hand in each language
+# (companion/language.py PHRASES): the shutter, the sweep starting, and the find (one thing, or a pair: keys, glasses).
+FIND = {"see": "Let me see.", "look": "Let me look around the room.", "it": "There it is!", "they": "There they are!"}
+
+
+def find_lines() -> dict[str, dict[str, str]]:
+    """{language: {moment: Andy's hand-written words}}: only where every moment has its words."""
+    from heyandy_meta.companion.language import LANGUAGES, PHRASES
+
+    out = {}
+    for code in LANGUAGES:
+        words = {k: (v if code == "en" else PHRASES.get(code, {}).get(v)) for k, v in FIND.items()}
+        if all(words.values()):
+            out[code] = words
+    return out
 
 
 def mp3(samples, path: Path) -> float:
@@ -98,6 +116,22 @@ def main() -> None:
         print(f"story {n:02d}: {seconds:.2f} s, heard back {heard:.2f}  {title}")
     (OUT / "story.json").write_text(json.dumps({"what": "The story, told by Andy in its own voice (SeamlessM4T v2)",
                                                 "chapters": told}, ensure_ascii=False, indent=1))
+    from heyandy_meta.companion.language import LANGUAGES
+
+    found = {}
+    for code, words in find_lines().items():
+        speaker = LocalVoice("http://127.0.0.1:8092", voice=LANGUAGES[code].voice)
+        found[code] = {}
+        for moment, text in words.items():
+            samples = speaker.speak(text, rate=RATE)
+            path = OUT / f"find-{code}-{moment}.mp3"
+            seconds = mp3(samples, path)
+            heard = round(heard_back(text, speaker.transcribe(samples, RATE, language=LANGUAGES[code].asr)), 2)
+            found[code][moment] = {"text": text, "seconds": seconds, "file": f"voice/find-{code}-{moment}.mp3",
+                                   "heard back": heard, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        print(f"find {code}: " + ", ".join(f"{m} {c['heard back']:.2f}" for m, c in found[code].items()))
+    (OUT / "find.json").write_text(json.dumps({"what": "Andy's eyes, find mode, in Andy's own voice (SeamlessM4T v2)",
+                                               "languages": found}, ensure_ascii=False, indent=1))
 
 
 if __name__ == "__main__":
