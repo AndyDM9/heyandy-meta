@@ -136,3 +136,20 @@ def test_andys_ports_must_listen_on_this_computer_only():
     assert [w.split(" on ")[0] for w in wide] == ["SAM 3.1 and the vision models", "the voice", "MapAnything"]
     with pytest.raises(RuntimeError, match="no listening port"):
         listening_wide("LISTEN 0 128 0.0.0.0:22 0.0.0.0:*\n")  # nothing of Andy's read: not a pass
+
+
+def test_preflight_catches_microphones_too_faint_to_hear_the_name():
+    """November 3, about 10:36: the robot's microphone array gave Andy sound ten times too faint, Omnilingual ASR wrote
+    nonsense from it (more words a second than anyone says), and Andy answered nothing until the audio was reset."""
+    import preflight
+
+    faint = "\n".join(f"(heard {s}s of speech, room level 0.002, its own {lv}, {n} words heard, closest to its name 0.40; "
+                      "not for Andy)" for s, lv, n in [(1.2, 0.004, 41), (1.1, 0.004, 8), (8.3, 0.004, 78), (1.5, 0.005, 11),
+                                                       (4.4, 0.005, 61), (1.4, 0.003, 6)])
+    assert preflight.hearing_faint(faint)[0]
+    normal = "\n".join(f"(heard {s}s of speech, room level 0.004, its own {lv}, peak 0.61, {n} words heard, closest to "
+                       "its name 0.25; not for Andy)" for s, lv, n in [(2.1, 0.075, 5), (8.1, 0.067, 27), (1.9, 0.059, 3),
+                                                                       (1.7, 0.062, 4), (3.2, 0.095, 10)])
+    assert not preflight.hearing_faint(normal)[0]
+    assert preflight.hearing_faint("(heard 1.2s of speech, room level 0.002, its own 0.004, 41 words heard)") == \
+        (False, "1 sounds lately: too few to tell")

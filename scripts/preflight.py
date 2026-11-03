@@ -115,6 +115,26 @@ def journal(*args: str, run=subprocess.run) -> str:
     return out.stdout
 
 
+HEARD = re.compile(r"\(heard (\d+\.\d)s of speech, room level [\d.]+, its own ([\d.]+)(?:, peak [\d.]+)?"
+                   r"(?:, [^,;]*ceiling)?, (\d+) words heard")
+
+
+def hearing_faint(journal_text: str, least: int = 5) -> tuple[bool, str]:
+    """From Andy's journal lines for the sounds it let go (numbers only): is the robot's microphone array giving Andy
+    sound too faint to hear, so Omnilingual ASR writes nonsense? November 3, about 10:36: voices arrived at 0.003 to
+    0.009 (0.04 to 0.14 normally) and came out as more words a second than anyone says (78 in 8 s); Andy answered
+    nothing until the audio device was reset. Faint: the median loudness under 0.012 and most of them over 5 words a
+    second. Fewer than `least` sounds: too few to tell (not a fault)."""
+    found = [(float(s), float(level), int(n)) for s, level, n in HEARD.findall(journal_text)]
+    if len(found) < least:
+        return False, f"{len(found)} sounds lately: too few to tell"
+    levels = sorted(level for _, level, _ in found)
+    median = levels[len(levels) // 2]
+    fast = sum(n / max(s, 0.1) > 5.0 for s, _, n in found)
+    faint = median < 0.012 and fast * 2 > len(found)
+    return faint, f"the last {len(found)} sounds: loudness {median:.3f} (median), {fast} faster than speech"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cloud", action="store_true", help="also make one tiny Muse Spark call")
@@ -269,6 +289,14 @@ def main() -> None:
             raise RuntimeError(f"{bad} USB errors from the robot's audio ({port}): Andy may not hear -> "
                                "uv run python scripts/reset_robot_audio.py, then this again")
         return f"no USB errors ({port})"
+
+    @check("the robot's microphones loud enough to hear, from Andy's last sounds")
+    def _():
+        faint, said = hearing_faint(journal("--user", "-u", "heyandy-app", "--since", "-15min"))
+        if faint:
+            raise RuntimeError(f"{said}: the microphones are too faint and Andy may not hear its name -> "
+                               "uv run python scripts/reset_robot_audio.py, then this again")
+        return said
 
     @check("GPU power capped (a full-power card fell off the bus once)")
     def _():

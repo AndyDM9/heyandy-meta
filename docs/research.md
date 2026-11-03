@@ -2438,3 +2438,11 @@ Found and fixed, each with a test:
   room's level, its own loudness and peak (and how much sits at the ceiling: distortion), how many words were heard, and
   how near the nearest of them came to Andy's name (a number). Never a word. Nothing else uses the robot: checked with
   root, only its daemon and Andy are connected to it, and nothing else starts at boot that can.
+- **Ready for filming** (November 3, afternoon): in filming mode the director's cues ("take two", "next take", "cut",
+  "that's a wrap") are heard without the name, and only they are: before, a bare "take two" was let go once the
+  follow-up window had closed or the room had talked, and with it the clap the edit lines up on. Preflight reads the
+  last fifteen minutes of let-go sounds and fails when the microphones are too faint to hear the name (the morning's
+  fault: a median loudness under 0.012 and most sounds faster than anyone speaks), naming the reset. The demo script's
+  standalone lines all start with "Hey Andy"; a follow-up is marked as one. Checked for tonight: preflight with the
+  cloud READY; no GPU fault since the computer started (November 1); the TV recording (5.8 s, its start time beside
+  it); a piece burned from a made-up take (badge, the TV beside the robot, captions; wide and vertical).

@@ -104,7 +104,10 @@ class VoiceLoop:
         else:
             called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
         urgent = crisis(text) or emergency(text)  # within the window these are always heard, follow-ups used up or not
-        if not text or (not called and not (self.listening() or (urgent and self._clock() <= self.awake_until))):
+        # while filming, the director's cues are heard without the name: "take two", "cut", "that's a wrap". Called only
+        # once, at the start, a later "take two" was let go if the room had talked (the clap the edit lines up on gone)
+        cue = getattr(self.andy, "filming", None) is not None and _filming_cue(text)
+        if not text or (not called and not (cue or self.listening() or (urgent and self._clock() <= self.awake_until))):
             if text:
                 self.not_for_andy()
             return None  # not for Andy: dropped, never shown or kept
@@ -282,6 +285,14 @@ class VoiceLoop:
                         + (f", {words} words heard" if words is not None else "")
                         + (f", closest to its name {name:.2f}" if name is not None else ""))
             self.on_heard(text, reply)
+
+
+def _filming_cue(text: str) -> bool:
+    """A director's cue said on its own: "take two", "next take", "cut", "that's a wrap" (companion/intents.py)."""
+    from ..companion.intents import CUT, FILM_OFF, TAKE
+
+    t = text.strip()
+    return bool(TAKE.match(t) or CUT.match(t) or (FILM_OFF.search(t) and len(t.split()) <= 6))
 
 
 def _name_likeness(text: str) -> float:

@@ -487,3 +487,17 @@ def test_a_turn_keeps_its_own_times_listening_again_included():
     m = loop.marks
     assert m["ended"] <= m["heard"] <= m["again"][0] <= m["again"][1] <= m["began"]
     assert a.hood._before and a.hood._before[0][3] == "again"  # waiting for the turn's timeline
+
+
+def test_while_filming_the_directors_cues_are_heard_without_the_name():
+    """November 3: "take two" or "cut" without "Hey Andy" was let go once the follow-up window had closed (or the room
+    had talked), so no clap for the edit to line up on. In filming mode those cues alone are heard; nothing else is."""
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=0.0)
+    assert loop.heard("take two") is None and a.heard == []  # not filming: a cue is like anything else said
+    a.filming = {"since": 0, "takes": []}
+    for cue in ("take two", "take 3", "next take", "cut", "that's a wrap"):
+        assert loop.heard(cue) == "ok", cue
+    assert a.heard == ["take two", "take 3", "next take", "cut", "that's a wrap"]
+    assert loop.heard("take the cup off the table") is None and loop.heard("where are my keys") is None
+    assert len(a.heard) == 5
