@@ -94,7 +94,7 @@ The Cerebral Valley app, answering for the organizers ("Here's what the publishe
 > … Keep the README clear so judges can run the whole project from that one repo. ("Demo and Repo Query", 10:36 AM ET)
 
 **Ours:** one repository, created October 27 (its first commit that day), only the event's work; the README's "Run it"
-runs it from a fresh clone (checked November 3: 1,235 tests pass; the browser's and the robot's need their extras). The
+runs it from a fresh clone (checked November 3, evening: 1,259 tests pass, 11 skipped; the browser's and the robot's need their extras). The
 video: the robot filmed live with its TV in shot (the "Meta's models, live" strip), the short numbers card, at most 3:00.
 
 ## Prizes (section 9)
