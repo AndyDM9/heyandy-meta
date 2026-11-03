@@ -11,7 +11,7 @@ Runs in its own environment (scripts/setup-local-models.sh): hearing on GPU 1 be
 127.0.0.1 only.
 Audio is held in memory for one request; nothing is written or logged.
 
-    CUDA_VISIBLE_DEVICES=1 ~/opt/voice/.venv/bin/python local/voice_server.py
+    CUDA_VISIBLE_DEVICES=1,0 ~/opt/voice/.venv/bin/python local/voice_server.py --voice-model seamless --speaker 51
 
 POST /transcribe  body: float32 little-endian mono samples; headers X-Sample-Rate (default 16000), X-Language (or "auto")
                   (Omnilingual ASR's code, default eng_Latn; spa_Latn for Spanish)
@@ -209,7 +209,8 @@ if __name__ == "__main__":
     ap.add_argument("--port", type=int, default=8092)
     ap.add_argument("--tts-device", default="cuda:1", help="where SeamlessM4T v2 runs (this process sees GPU 1, then 0)")
     ap.add_argument("--speaker", type=int, default=0, help="which of SeamlessM4T v2's voices")
-    ap.add_argument("--voice-model", choices=["mms", "seamless"], default="mms",
-                    help="Meta's MMS-TTS (the founder's pick on the robot's speaker) or SeamlessM4T v2")
+    ap.add_argument("--voice-model", choices=["mms", "seamless"], default="seamless",
+                    help="Meta's SeamlessM4T v2 (Andy's voice, picked by ear and by Omnilingual ASR hearing it back) or "
+                         "MMS-TTS (Meta's too: the fallback if SeamlessM4T v2 can't load)")
     args = ap.parse_args()
     serve(*load(args.asr, args.tts_device, args.speaker, args.voice_model), args.asr, "127.0.0.1", args.port)

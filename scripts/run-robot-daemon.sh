@@ -13,8 +13,6 @@ if [ -n "$card" ]; then
 fi
 sink=$(pactl list short sinks 2>/dev/null | awk '/Reachy_Mini_Audio/ {print $2; exit}')
 [ -n "$sink" ] && pactl set-sink-volume "$sink" 100% || true
-# HEYANDY_CAMERA_FPS (unset: Pollen's 10) raises the camera's feed to apps here, for a test of the cup game.
-if [ -n "${HEYANDY_CAMERA_FPS:-}" ]; then
-  exec .venv/bin/python scripts/robot_daemon.py --headless "$@"
-fi
-exec .venv/bin/reachy-mini-daemon --headless "$@"
+# Through scripts/robot_daemon.py: the camera's and microphones' stream offered on this computer only (Pollen's would
+# listen on every address); and HEYANDY_CAMERA_FPS (unset: Pollen's 10) raises the camera's feed to apps here.
+exec .venv/bin/python scripts/robot_daemon.py --headless "$@"

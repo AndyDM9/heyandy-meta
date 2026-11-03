@@ -754,7 +754,11 @@ entered through a terminal), the TV's own steps read after each. A blue coffee c
 - **Spanish:** "¿dónde está mi reloj?" was translated "where are my keys?" 3 of 3 (Glimmer copying its worked
   example); a list of the everyday things' Spanish words now puts the thing the person said back; then found.
 - **Timings, request to the end of the spoken answer:** a plain find 19 to 25 s, then 13 to 19 s once "Let me look"
-  was said while the head moved; the time from the clock 2.5 to 4.4 s; the weather radar on the TV 30.9 s.
+  was said while the head moved; the time from the clock 2.5 to 4.4 s; the weather radar on the TV 30.9 s. And, timed
+  the same morning and written into the README then (commit 37486c5; the journal didn't keep a turn's times yet):
+  "the blue cup" 17.6 to 23 s, planned by Muse Spark or Glimmer; "the red cup" with only a blue one there, 40 to 50 s,
+  and no point; "I'm going out" 37 to 42.5 s (two places looked at again, and the weather); the map of things 39.1 s;
+  in Spanish, a find 20.6 to 25.5 s. (Found November 3 with no other source: §105.)
 
 ## 36. The story of a watched thing, and its habits (2026-10-31)
 
@@ -1983,9 +1987,16 @@ Found and fixed, each with a test:
 - **What's left:** GPU 1 still woke for most of them. Of its 215 wake-ups from rest (P8 to working), 184 came within 8
   s of a sound Andy then let go, and after each it stays at full clocks a median 27 s (90 s at the 90th percentile;
   114 W) before resting: 63% of the night. Its fan isn't the cause: in the minute after it switched on there were fewer
-  sounds, not more (27, against 44 in the minute before, over 24 starts). The next saving is hearing less
-  while resting (say, only sounds long and loud enough to be "Hey Andy"); it changes when Andy hears its name, so it
-  waits for the founder and a test with a voice, not a night's guess.
+  sounds, not more (27, against 44 in the minute before, over 24 starts).
+- **Why Andy doesn't hear less while resting** (decided November 3, morning): the sounds are as long as a request
+  (1.2 to 2.7 s; "Hey Andy, where are my glasses?" is about 2 s), and the journal keeps only the room's level, not each
+  sound's, so a gate on length or loudness would let real requests go too; and while resting Andy must still hear
+  crisis words in any of its fifteen languages, whose crisis reply is promised (a quiet "help" is short). Hearing on the
+  processor while resting keeps every word, but Andy hears with Omnilingual ASR's 1B model, and on this computer's
+  processor that would make the first answer to "Hey Andy" seconds slower. So the hearing is unchanged for the
+  hackathon. After it: a small screen first while resting, Omnilingual ASR's CTC model on the processor, passing to the
+  1B model on the GPU anything with Andy's name or a crisis word in it in any of the fifteen, measured with Andy's own
+  voice saying them before it's turned on.
 
 ## 90. Silence inside Andy's answers (November 2, evening)
 
@@ -2353,3 +2364,42 @@ Found and fixed, each with a test:
   a breath; every frame drawn; the subtitles in the story's language; the buttons hidden and where to try it said, in
   the story and on the end card; a language the Space doesn't tell the story in refused; the sound's filter run by
   ffmpeg, each line placed and cut where the page said.
+
+## 105. Aligned before the release (November 3, morning)
+
+- **Why:** the founder asked for the whole project checked for anything out of line, the day before submission. The
+  automatic checks were already green (`release_check.py`: nothing failing, five to-dos for November 4; `preflight.py`:
+  everything answered; `claims.py`: 89 figures, none differing), so two reviews read what they don't cover: one every
+  judge-facing text against the result files and the code, one what the code runs against what the documents say. Each
+  finding was checked again before anything changed.
+- **The robot's stream was on the home network.** Pollen's media server starts webrtcsink's own signalling server, the
+  door a WebRTC client knocks on for the camera's picture and the microphones' sound, and webrtcsink listens on every
+  address unless told (`ss -ltn`: `0.0.0.0:8443`). Preflight's list of Andy's ports didn't have it, so it said "all on
+  127.0.0.1". Now `scripts/robot_daemon.py`, which the daemon always starts through, tells it 127.0.0.1 (everything
+  that uses it here connects to 127.0.0.1:8443 or localhost), it won't start if Pollen's code no longer has the step it
+  wraps, and preflight checks the port. Restarted in a quiet hour: `127.0.0.1:8443`, preflight READY, the daemon's
+  media connected, Andy's camera focus held.
+- **The health line could be machine-translated.** When Llama Guard 3 takes advice out of a model's answer, Andy says
+  the sentences it kept and then its own health line. In Andy's other fourteen languages that whole text matched no
+  hand-written line, so it was cut into sentences and each of the health line's three ("If it's an emergency, please
+  call 911" too) was translated by Glimmer: §63 says it's never translated. Now Andy's fixed lines of more than one
+  sentence, and the crisis reply, are said whole and by hand wherever they come (`Translator.spoken`); a test in all
+  fourteen fails on the old code.
+- **"On this computer", in code.** The models' guard took any home-network address as local (right for the web
+  browser, which must never open one, and for the TV, which may be shown on one), so a model server elsewhere in the
+  house would have been accepted for pictures and words. Andy's models are now held to this computer only
+  (`on_this_computer`); the browser's and the TV's checks are unchanged.
+- **Smaller:** preflight's optional cloud check now goes through the spend cap and onto the ledger like Andy's own
+  calls; the voice server's default is SeamlessM4T v2, the voice Andy uses (MMS-TTS, Meta's too, is the fallback if it
+  can't load, and the README says so); an unused model price removed; two GPU labels corrected (the voice is on GPU 0).
+- **The documents:** the system card and the README said resting's saving over a night wasn't measured (it is,
+  §89); the demo script's aim (4 to 5 degrees) and a count (24 of 24, which the files make 23 of 24) were old, its film
+  cards misnamed, the YouTube description said Muse Spark gets words only (and screenshots of a page asked for); the
+  checklist asked for READY TO SUBMIT before the step that fills the brackets, and its history check found the docs'
+  own mentions of a key's name; the README's model table carried the browser's wav2vec 2.0 as one of Andy's eleven;
+  "What doesn't work yet" left out guiding a real hand and V-JEPA 2 with a person; two links pointed at an earlier run;
+  and the Space's own card said it opens as a story (it opens on the front door, the story told in the visitor's
+  language). Andy Finder's README now says its page, like every Reachy Mini app's, is served to the home network.
+- **Not changed, and why:** hearing less while resting (§89: the sounds are as long as a request, and a quiet "help"
+  must still be heard). Andy Finder's page stays on the home network (a Reachy Mini app is opened from a phone) and it
+  uses the owner's own key, said on its page.

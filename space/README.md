@@ -24,9 +24,13 @@ health advice**, and that's kept in code: a health question gets Andy's own word
 no model answers it, and Llama Guard 3 reads each sentence a model writes before Andy says it. Someone who says
 they've fallen hears "please call 911 right away. I'll find your phone", and Andy finds it and points at it.
 
-**It opens as a 75-second story:** ten chapters of the TV, each a real scene (meet Andy; you ask; it finds it, with
-the Reveal; it doesn't give up; it guides your hand; your room in 3D; identical cups told apart; before you go; your
-language, in Mandarin; what it never does), then where to go next. Pause, skip with the arrow keys, or "Explore every screen".
+**It opens on a front door:** Andy's face (tap it and Andy introduces itself in its own voice), what's been measured,
+and one thing to try first, Andy's eyes on your own things. A press away is **the 75-second story**, told by Andy in its
+own voice (Meta's SeamlessM4T v2), in English or in your own language, any of Andy's other fourteen (translated by Muse
+Glimmer, Andy's own translator, and checked by machine, not yet by a native speaker): ten chapters of the TV, each a
+real scene (meet Andy; you ask; it finds it, with the Reveal; it doesn't give up; it guides your hand; your room in 3D;
+identical cups told apart; before you go; your language, in Mandarin; what it never does), each saying what it rests
+on, then your turn. Pause, skip with the arrow keys, or "Explore every screen".
 
 **Andy's eyes, on your own things** (`eyes.html`: "Try it on your own things" at the top, or the story's end): show
 it something of yours once, then **sweep your phone's camera round the room** (a tone gets warmer as you near it) or

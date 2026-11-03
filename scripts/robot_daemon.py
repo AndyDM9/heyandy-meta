@@ -1,14 +1,26 @@
-"""Pollen's Reachy Mini daemon, with the camera's feed to apps on this computer at another rate when asked.
+"""Pollen's Reachy Mini daemon, its camera's and microphones' stream offered on this computer only; and the camera's
+feed to apps here at another rate when asked.
+
+The stream: Pollen's media server starts webrtcsink's own signalling server, the door a WebRTC client knocks on for
+the camera's picture and the microphones' sound, and webrtcsink listens on every address unless told otherwise
+(0.0.0.0:8443): anyone on the home network could have asked for them. Found November 3 (a review of Andy's ports;
+`ss -ltn` showed 0.0.0.0:8443, and the system card says nothing of Andy's is on the network). Everything that uses it
+is on this computer and connects to 127.0.0.1:8443 (the daemon's own relay, its dashboard through it) or localhost, so
+it's told 127.0.0.1. scripts/preflight.py checks it.
+
+The rate:
 
 Pollen's media server caps that feed at 10 frames a second (``IPC_FPS``, "it also paces every client"), though the
 Lite's camera captures 1920x1080 at 60 (measured November 1: the daemon at 27% of one core). Andy finds things from
 still frames, where 10 is plenty; the cup game follows cups crossing fast, and in simulated shuffles it picked the
 right cup in 3 of 5 at 10 frames a second and lost them in all 4 at 5 (docs/research.md sections 18, 29). So
 ``HEYANDY_CAMERA_FPS=20`` (say) raises the cap for a test of the cup game. Off unless it's set: nothing changes for
-the filming. Started by scripts/run-robot-daemon.sh only when HEYANDY_CAMERA_FPS is set.
+the filming. scripts/run-robot-daemon.sh starts the daemon through this file.
 """
 import os
 import sys
+
+LOCAL = "127.0.0.1"  # where the stream's signalling server listens: this computer only
 
 
 def cap(env=os.environ) -> int | None:
@@ -22,9 +34,28 @@ def cap(env=os.environ) -> int | None:
     return fps
 
 
+def local_only(media_server, host: str = LOCAL) -> None:
+    """Pollen's media server, made to start its stream's signalling server on this computer only. Raises if Pollen's
+    code no longer has the step it wraps, so the daemon doesn't start offering the stream to the network unnoticed."""
+    server = media_server.GstMediaServer
+    made = server._configure_webrtc  # AttributeError: Pollen changed it; better not to start than to start wide open
+    if getattr(made, "local_only", None) == host:
+        return
+
+    def configure(self, pipeline):
+        sink = made(self, pipeline)
+        sink.set_property("signalling-server-host", host)  # before the pipeline plays, when the server starts
+        return sink
+
+    configure.local_only = host
+    server._configure_webrtc = configure
+
+
 def main() -> int:
     from reachy_mini.media import media_server
 
+    local_only(media_server)
+    print(f"the camera's and microphones' stream: offered on {LOCAL} only", flush=True)
     fps = cap()
     if fps is not None:
         print(f"camera feed to local apps: {fps} frames a second (Pollen's default {media_server.IPC_FPS})", flush=True)

@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 
 from ..models import glimmer_fast
-from ..models.common import is_local
+from ..models.common import on_this_computer
 from .guide import ES as GUIDE_ES
 from .languages import EMERGENCY_LINES, FROM_EN, HEALTH_LINES, LINES, MORE, TO_EN
 from .languages import THINGS as THING_NAMES
@@ -153,11 +153,14 @@ def unchanged(text: str, out: str) -> bool:
     return letters(text) == letters(out)
 
 
+SENTENCE = re.compile(r"(?<=[.!?])\s+")  # where one of Andy's sentences ends and the next begins
+
+
 class Translator:
     """Muse Glimmer on this computer, as a translator. If it can't be reached, the words go through unchanged."""
 
     def __init__(self, endpoint: str = "http://127.0.0.1:8080", timeout: float = 8.0):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise ValueError(f"the translator runs only on this computer, not at {endpoint}")
         self.endpoint, self.timeout = endpoint.rstrip("/").removesuffix("/v1"), timeout
         self.failures = 0
@@ -212,10 +215,22 @@ class Translator:
         if text.startswith(disclosure):
             out.append(lang.disclosure)
             text = text[len(disclosure):]
-        if text.strip() in PHRASES.get(language, {}):
-            return " ".join(out + [PHRASES[language][text.strip()]])
-        out += [PHRASES.get(language, {}).get(s) or self._said(s, language)
-                for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s.strip()]
+        table = PHRASES.get(language, {})
+        if text.strip() in table:
+            return " ".join(out + [table[text.strip()]])
+        # Andy's fixed lines of more than one sentence, said whole wherever they come: the health line after the
+        # sentences Llama Guard 3 kept of a model's answer was split, and each of its sentences ("please call 911"
+        # too) machine-translated (found November 3); by hand, as everywhere else
+        whole = {k: v for k, v in table.items() if k in text and len(SENTENCE.split(k.strip())) > 1}
+        if crisis in text:
+            whole[crisis] = lang.crisis
+        parts = (re.split("(" + "|".join(map(re.escape, sorted(whole, key=len, reverse=True))) + ")", text.strip())
+                 if whole else [text.strip()])
+        for part in parts:
+            if part in whole:
+                out.append(whole[part])
+                continue
+            out += [table.get(s) or self._said(s, language) for s in SENTENCE.split(part.strip()) if s.strip()]
         return " ".join(out)
 
 

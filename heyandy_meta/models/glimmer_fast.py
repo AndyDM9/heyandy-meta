@@ -11,7 +11,7 @@ import json
 import urllib.error
 import urllib.request
 
-from .common import is_local
+from .common import on_this_computer
 
 STOP = ["<|eot|>", "<|end|>", "<|start|>"]
 
@@ -23,7 +23,7 @@ class FastUnavailable(RuntimeError):
 def answer(endpoint: str, messages: list[dict], max_tokens: int = 64, stop=(), timeout: float = 20.0) -> str:
     """The reply to ``messages`` (OpenAI-style; images as data URLs), with no reasoning first."""
     base = endpoint.rstrip("/").removesuffix("/v1")
-    if not is_local(base):
+    if not on_this_computer(base):
         raise ValueError(f"Glimmer runs on this computer, not at {base}")
     images = [part["image_url"]["url"].split(",", 1)[1] for m in messages if isinstance(m.get("content"), list)
               for part in m["content"] if part.get("type") == "image_url"]

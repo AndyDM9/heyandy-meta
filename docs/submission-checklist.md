@@ -19,7 +19,7 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 - [ ] Any last questions in Discord #questions (November 3 is the last full day for them).
 
 **On November 4, in this order** (first and last: `uv run python scripts/release_check.py --space`; it lists what's
-left and must end READY TO SUBMIT before step 6: the code pushed and its tests passed on GitHub, every figure, the
+left and must end READY TO SUBMIT before the form is sent in step 6, so the [brackets] are filled in step 2: the code pushed and its tests passed on GitHub, every figure, the
 results page and the shared-link card current, no bracket left, the video badge up, no key in the history, every link
 in the submission answering a visitor who isn't signed in, and the Space exactly the build)
 1. [ ] The video (the made cards: `uv run python scripts/film_cards.py --line "<the founder's words>"`; then the pieces and
@@ -29,12 +29,14 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        No take from the robot? The cards and the public demo's story, drawn as a film, make a 2:03 video on their own
        (`docs/demo-script.md`, "The story, as a film"): `film/andy-story.mp4`.
 2. [ ] `uv run python scripts/claims.py`: every figure in the submission, the system card and the README's top says what
-       its file says (a new run that changes one shows here; change the words, never the file).
+       its file says (a new run that changes one shows here; change the words, never the file). Fill the submission's
+       [brackets] now (the video's link, the X post's), so the release check can say READY TO SUBMIT.
    [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
        the link in it), the measured results, what was pre-existing, the limits; refresh the
        "What's new here" list up to date. The form text: `docs/submission.md`.
 3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
-       (`git log -p | grep -E "MODEL_API_KEY=|hf_[A-Za-z0-9]{20,}"` finds nothing). Never rewrite the history: its
+       (the release check's "keys in the history" line, which looks for a key's value, not its name: the docs name
+       MODEL_API_KEY often). Never rewrite the history: its
        dates show the work was done during the event.
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics) and
        check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload

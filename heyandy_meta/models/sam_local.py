@@ -7,7 +7,7 @@ import urllib.request
 
 from dataclasses import dataclass
 
-from .common import Mask, is_local, sam_asks
+from .common import Mask, on_this_computer, sam_asks
 
 
 @dataclass
@@ -29,7 +29,7 @@ class LocalUnavailable(RuntimeError):
 
 class LocalSam31:
     def __init__(self, endpoint: str = "http://127.0.0.1:8090", timeout: float = 10.0, min_score: float = 0.3):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise NotLocal(f"local SAM 3.1 must be on this computer or the home network, not {endpoint}")
         self.endpoint, self.timeout, self.min_score = endpoint.rstrip("/"), timeout, min_score
         self.last_latency_s = 0.0

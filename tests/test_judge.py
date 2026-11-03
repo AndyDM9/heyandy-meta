@@ -8,7 +8,7 @@ from PIL import Image
 
 from heyandy_meta.agent.tools import SearchTools
 from heyandy_meta.finder.judge import GlimmerJudge, NotLocal, crop
-from heyandy_meta.models.common import is_local
+from heyandy_meta.models.common import is_local, on_this_computer
 from heyandy_meta.finder.search import Finder
 from heyandy_meta.models.common import Mask
 from heyandy_meta.robot.body import Frame
@@ -45,6 +45,20 @@ MUG = Mask("mug", (900, 500, 980, 580), 0.8, center=(940, 540))
     ("http://[::1]:8080/v1", True), ("https://api.meta.ai/v1", False), ("http://8.8.8.8/v1", False)])
 def test_only_local_addresses_count_as_local(url, local):
     assert is_local(url) is local
+
+
+@pytest.mark.parametrize("url, here", [
+    ("http://127.0.0.1:8080/v1", True), ("http://localhost:8080/v1", True), ("http://[::1]:8080/v1", True),
+    ("http://192.168.1.20:8080/v1", False), ("http://10.0.0.5:8090", False), ("https://api.meta.ai/v1", False)])
+def test_andys_models_are_reached_on_this_computer_only(url, here):
+    """November 3: the models' guard took the home network as "here" too; the system card says pictures, sound and
+    words reach models on the computer beside the robot. A model server elsewhere in the house is refused now."""
+    assert on_this_computer(url) is here
+
+
+def test_a_model_server_on_the_home_network_is_refused():
+    with pytest.raises(NotLocal):
+        GlimmerJudge(endpoint="http://192.168.1.20:8080/v1")
 
 
 def test_pictures_are_never_sent_to_the_cloud():

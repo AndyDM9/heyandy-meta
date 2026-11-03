@@ -51,7 +51,7 @@ they were; reminders you asked for; conversation, pictures and web pages on its 
 | A web page can't instruct it | Prompt Guard 2 reads each page before Muse Spark sees it; every click reviewed in code | [§28](research.md#28-llama-prompt-guard-2-a-web-page-cant-instruct-andy-2026-10-27-night) |
 | Agents can't move the robot by themselves | named views and numbered places, never motor values; every argument checked in code | bad arguments refused and nothing moves (tests); and they work: 12 of 12 multi-part requests ([§26](research.md#26-the-agent-scorecard-2026-10-27-night)) |
 | Privacy | pictures and voice only to local models; a receipt each turn | a recorded day of 21 requests: 0 of 24 camera pictures reached the cloud; every word sent was on its receipt ([§31](research.md#31-privacy-you-can-ask-about-and-an-audit-of-it-2026-10-28)) |
-| Nothing of Andy's on the network | every one of its services listens on this computer only; the TV and the robot's daemon answer only their own names (DNS rebinding); its browser never photographs a page that came from this computer or the home network | preflight fails if a port listens wider; tested in the real browser ([§83](research.md#83-who-on-the-network-can-reach-andy-november-2-afternoon)) |
+| Nothing of Andy's on the network | every one of its services listens on this computer only, the robot's camera and microphone stream too (until November 3 the robot software's own stream server listened on the home network; now told this computer only); its models are reached on this computer only; the TV and the robot's daemon answer only their own names (DNS rebinding); its browser never photographs a page that came from this computer or the home network | preflight fails if a port listens wider; tested in the real browser ([§83](research.md#83-who-on-the-network-can-reach-andy-november-2-afternoon), [§105](research.md#105-aligned-before-the-release-november-3-morning)) |
 | Spend | a hard cap on Model API spend: a call past it is refused in code (Meta's own limit only emails) | `heyandy_meta/budget.py` |
 
 Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipts on its TV.
@@ -78,8 +78,9 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
 - **The note-in-view defence** is measured on drawn notes, not real handwriting through the robot's camera.
 - **It needs today's hardware:** two 24 GB GPUs for the whole of Andy: 40.5 GB at rest, the language model 17.6 GB of
   it (`scripts/gpu_budget.py`); Andy Finder needs none, through the Model API. Kept on, the two cards drew 188.1 W
-  ($24.92 a month at the U.S. average price; the cards only, `scripts/energy.py`). Resting when nobody's there is new
-  on November 2: its saving over a night isn't measured yet.
+  ($24.92 a month at the U.S. average price; the cards only, `scripts/energy.py`). Resting when nobody's there (from
+  November 2) saves about a quarter: the first night resting, the two cards drew 119.7 W against 164.4 W the night before
+  (`scripts/night.py`).
 - **It hears some of its own breathing:** its motors turning back, twice a breath; overnight 1,043 sounds an hour kept
   time with it (`evals/ego_noise.py`), each heard on this computer and let go. Resting stops it; awake, with people
   about, roughly a quarter of the sounds let go still do.

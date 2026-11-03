@@ -49,6 +49,7 @@ Developer Hackathon.
   Model API, and Meta keeps it under its normal terms. At Meta's price ($2.50 per 1,000 images) a find costs about half
   a cent: two pictures when it's in the first view (one to find it, one to check the point), seven at most. Use it in a room you're happy to share. The app's page shows
   which one is in use, and shows a camera picture only while it looks and for two minutes after a find, held in
-  memory, never saved.
+  memory, never saved. Like every Reachy Mini app's, its page is served to your home network (port 8042) so you can open
+  it from a phone: anyone on your Wi-Fi could open it too.
 
 Install it from the Reachy Mini dashboard (Applications, Discover Apps), or `pip install` this folder and start it.

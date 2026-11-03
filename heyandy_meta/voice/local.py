@@ -5,14 +5,14 @@ import urllib.request
 
 import numpy as np
 
-from ..models.common import is_local
+from ..models.common import on_this_computer
 from ..models.sam_local import LocalUnavailable, NotLocal
 
 
 class LocalVoice:
     def __init__(self, endpoint: str = "http://127.0.0.1:8092", voice: str = "eng", timeout: float = 10.0,
                  speed: float = 1.0, loudness: float = -21.0):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise NotLocal(f"speech stays on this computer or the home network, not {endpoint}")
         self.endpoint, self.voice, self.timeout = endpoint.rstrip("/"), voice, timeout
         self.speed, self.loudness = speed, loudness  # "speak more slowly", "speak up": set by voice

@@ -84,6 +84,22 @@ def test_spoken_keeps_the_disclosure_by_hand():
     assert out == LANGUAGES["es"].disclosure + " Déjeme buscar."
 
 
+@pytest.mark.parametrize("language", sorted(LANGUAGES.keys() - {"en"}))
+def test_the_health_line_after_a_models_words_is_still_andys_own_by_hand(language):
+    """November 3: when Llama Guard 3 took advice out of a model's answer, Andy's health line was added after the
+    sentences it kept, and the line, split into its sentences, was machine-translated ("please call 911" too). Now
+    it's said whole, by hand, in every language; only the model's own words are translated."""
+    from heyandy_meta.app import HEALTH_REPLY
+    from heyandy_meta.companion.language import PHRASES
+
+    g = Glimmer()
+    out = g.spoken("The radar shows rain later. " + HEALTH_REPLY, language, DISCLOSURE, CRISIS_REPLY)
+    assert out.endswith(PHRASES[language][HEALTH_REPLY]) and set(g.asked) == {"The radar shows rain later."}
+    g = Glimmer()  # and the crisis reply, by hand, after other words
+    out = g.spoken("The radar shows rain later. " + CRISIS_REPLY, language, DISCLOSURE, CRISIS_REPLY)
+    assert out.endswith(LANGUAGES[language].crisis) and set(g.asked) == {"The radar shows rain later."}
+
+
 def test_the_translator_only_runs_here():
     with pytest.raises(ValueError):
         Translator("https://api.example.com")

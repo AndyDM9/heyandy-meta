@@ -6,7 +6,8 @@ from urllib.parse import urlparse
 
 
 def is_local(url: str) -> bool:
-    """This computer or the home network: where pictures from a home may go."""
+    """This computer or the home network: inside the home (what the web browser never opens, and where the TV may be
+    shown). Andy's models are held to on_this_computer()."""
     host = urlparse(url).hostname or ""
     if host == "localhost":
         return True
@@ -15,6 +16,18 @@ def is_local(url: str) -> bool:
     except ValueError:
         return False
     return ip.is_loopback or ip.is_private
+
+
+def on_this_computer(url: str) -> bool:
+    """This computer only: where the camera's pictures, the microphone's sound and the person's words may go to a model
+    (the system card: "on the computer beside the robot"). Every model server of Andy's listens on 127.0.0.1."""
+    host = urlparse(url).hostname or ""
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
 
 
 @dataclass

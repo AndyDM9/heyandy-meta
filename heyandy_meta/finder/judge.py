@@ -24,7 +24,7 @@ from openai import APIError
 from PIL import Image
 
 from ..models import glimmer_fast
-from ..models.common import Mask, is_local
+from ..models.common import Mask, on_this_computer
 from ..robot.body import Frame
 
 SYSTEM = ("Reasoning effort: low. You look at pictures from a small home robot's camera and answer in one word or "
@@ -96,7 +96,7 @@ def _image(jpeg: bytes) -> dict:
 class GlimmerJudge:
     def __init__(self, model: str = "muse-glimmer-30B", endpoint: str = "http://127.0.0.1:8080/v1", client=None,
                  max_tokens: int = 256, guard=None):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise NotLocal(f"picture checks run only on this computer, not at {endpoint}")
         self.model, self.endpoint, self._client, self.max_tokens = model, endpoint, client, max_tokens
         self.fast = client is None  # straight to the answer, past Glimmer's reasoning (models/glimmer_fast.py)

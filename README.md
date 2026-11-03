@@ -81,8 +81,11 @@ with what it's for, what it isn't, and where it falls short: [Andy's system card
 | **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | Crisis words and health advice, in what's said and in each sentence a model writes; reads each web page before Muse Spark does |
 | **Muse Spark 1.3** (Model API) | Cloud: words, and screenshots of web pages you ask to see | Plans searches and multi-part requests; web answers; computer use |
 | **Muse Image 1.0** (Model API) | Cloud: words only | Pictures and the map of your things |
-| **wav2vec 2.0** (open weights) | Your browser, on the public demo only | Hears "Say it" |
 
+The public demo adds one more of Meta's open models, in your browser: **wav2vec 2.0** hears "Say it" (with DINOv2 for
+Andy's eyes).
+
+If SeamlessM4T v2 can't load, Meta's MMS-TTS speaks instead (`local/voice_server.py`; not needed since October 26).
 Nine of Andy's eleven are open weights on our own two GPUs ([each one's source and licence](docs/open-weights.md)),
 and every one of their files is verified: 54 of 54 files byte for byte what Meta published, at the revision Andy loads
 (`scripts/verify_all_weights.py`). The camera and microphone reach only those.
@@ -173,7 +176,7 @@ has none ([`say-it-20261101-1537.json`](evals/results/say-it-20261101-1537.json)
 SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short lines are written by hand in each. **Or just
 speak your language:** called in one of them, Andy notices, says so in it and answers (Andy's own voice in fourteen
 languages: the right one 31 times in 42, a wrong one never, and English never switched;
-[`hear-language-20261101-1217.json`](evals/results/hear-language-20261101-1217.json)). Of 104
+[`hear-language-20261101-1605.json`](evals/results/hear-language-20261101-1605.json)). Of 104
 everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
 first run; with the rules that run showed were missing, run again: **104 and 89** ([`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json)). Type
 into the demo's Ask Andy in any of them and its TV answers in that language.
@@ -227,14 +230,14 @@ Measured on the robot and in the demo, none of it what we expected, and what And
 | Privacy, a day of 21 requests | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |
 | The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
 | It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |
-| By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder 4 of 4 | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
+| By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder's "Ring it", 4 runs: the ringing monitor found twice, and twice "I can hear it, but I can't see it" for a phone that wasn't in view | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
 | Homes | the watch and the cup home, the keys **pointed at, then their home**, in 2 of 3 runs (run 1's record was lost, research §45; run 2: the search missed, and said so) | [`home-*`](evals/results) |
 | How soon it answers | the same search, profiled: the answer started **15.5 s** after the words; now **5.8 to 6.0 s**, said while pointing; the turn **20.5 s → 10.7 to 11.0 s** | [research §50](docs/research.md#50-andy-answers-while-it-points-2026-10-31), [`hood-20261031-2036.json`](evals/results/hood-20261031-2036.json) |
 | Andy's eyes, in the browser | your thing among three others: **found 20 of 24, never a wrong one** (the closest place 24 of 24); without it, **never "found" in 24**; its twin in other colours, **never "found"** for things in strong colours (the white cup's twin, only its flowers recoloured, 4 of 6); 2.7 s on a laptop's CPU | [`eyes-20261031-2154.json`](evals/results/eyes-20261031-2154.json) |
 | Andy's eyes, live | sweeping a camera (a video of one) over our cup and its look-alikes: **found both times, at 15 and 34 s**; over the look-alikes alone, **never "found" in 90 frames** | [`eyes-live-20261101-1153.json`](evals/results/eyes-live-20261101-1153.json) |
-| Fifteen languages | in the thirteen newest, everyday requests reach the right ability **104 of 104** written, **89 of 104** spoken (the first run, before the rules it showed were missing: 100 and 85); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json), [`hear-language-*`](evals/results/hear-language-20261101-1217.json) |
+| Fifteen languages | in the thirteen newest, everyday requests reach the right ability **104 of 104** written, **89 of 104** spoken (the first run, before the rules it showed were missing: 100 and 85); Spanish **41 of 41** and **36 of 41**; called in one of them, Andy **notices and switches 31 times in 42, never to a wrong one**, and English never switched | [`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json), [`hear-language-*`](evals/results/hear-language-20261101-1605.json) |
 | No health advice | health questions written after the rule, in all fifteen languages, through Andy's whole turn: held out, **25 of 34** answered by Andy's own words (a median 0.66 s), the rest by the conversation model, **none** judged advice (the first set: 55 of 72, and once the model said how long a cold lasts); everyday requests given the health line: **0 of 116**; every miss then added to the rule; and Llama Guard 3 reads each sentence of a model's answer first: held out, it heard advice in **11 of 25** advising answers and in **none of 168** of Andy's real ones, in 0.04 s | [`guard-replies-20261101-1711.json`](evals/results/guard-replies-20261101-1711.json), [`no-advice-second-20261101-1635.json`](evals/results/no-advice-second-20261101-1635.json), [`no-advice-20261101-1626.json`](evals/results/no-advice-20261101-1626.json) |
-| Are you OK? | everything: "I'm fine" in **2 s**; MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
+| Are you OK? | everything: "I'm fine", its check of every part **2 s** (the whole answer, said, 15.0 s); MapAnything stopped on purpose: **"Telling how far (MapAnything): I can still find things and point, but not say how far"** | [`selfcheck-20261031-1954.json`](evals/results/selfcheck-20261031-1954.json) |
 | What it's told | asked where the passport is: **answered from the words, with no look and no frame** | [`told-20261031-1811.json`](evals/results/told-20261031-1811.json) |
 
 Failures are kept too. Every scorecard on one page, with what it measures, its latest result read from the file,
@@ -559,7 +562,7 @@ A TV or monitor beside the robot shows, in large type read from across a room:
 - **what Andy found:** the picture it saw it in, with SAM 3.1's outline (kept in memory for two minutes, never saved);
   the plan step by step; the time it took;
 - **answers with their sources;**
-- **which Meta models worked on this turn,** on this computer or in the cloud (words only);
+- **which Meta models worked on this turn,** on this computer or in the cloud (words, and a web page's screenshots when you asked to see it);
 - **a privacy receipt:** exactly which words went to which cloud model this turn, or "✓ Nothing left this house";
 - **the day's privacy,** when asked: how many requests stayed in the house, and what went to which model;
 - **captions of Andy's words** (never the person's).
@@ -761,13 +764,15 @@ yet scored with real cups.
 - **Not yet tried on the robot with real things or a person:** the cup game (tracking measured on synthetic shuffles;
   identical cups crossing fast can still swap), "this is my mug" (measured on the robot's camera with things seen from
   other angles, not with two mugs), "what's that?" (Glimmer measured on public photos: 4 of 6), and "I'm going out"
-  (timed on the robot from typed requests, 37 to 42.5 s, but never with a person leaving and taking things). Each has a
-  founder's test written down.
+  (timed on the robot from typed requests, 37 to 42.5 s, but never with a person leaving and taking things); nor
+  guiding a hand (on the robot it imagined no hand in 34 frames of an empty table, but it has never guided a real one),
+  nor V-JEPA 2 noticing a thing put down with a person there. Each has a founder's test written down.
 - **Andy's eyes, live, hasn't met a real phone in a real room yet:** it's measured with a video standing in for the
   camera, on a laptop's CPU (about a frame a second); a phone's processor is slower, its graphics chip faster.
 - **Awake, Andy still hears some of its own breathing:** in the day, with people about, roughly a quarter of the sounds
   it let go kept time with it (`evals/ego_noise.py`); each is heard on this computer and let go, and counts in "what
-  did you hear today?". Resting when nobody's there stops it; the saving over a whole night is measured next.
+  did you hear today?". Resting when nobody's there stops it: the first night resting, the sounds no longer kept its
+  time (z 2.8), and the two cards drew 119.7 W against 164.4 W the night before.
 - **The Model API sometimes returns `404 model_not_found` on new accounts** (reported by other participants; Meta is
   investigating). Calls retry twice, then the robot answers on the device.
 - **Judged by a person once: one desk, one evening, one person** (13 of 15). Small things are the hard ones: at two of

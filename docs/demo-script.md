@@ -102,9 +102,10 @@ the room, the two points and the Reveal.
 TV's live view and the three figures carry it without sound; one caption line: "Pictures never leave the house. Every
 model is Meta's."
 
-**Cards (ready in `film/`, not committed):** `card-open.png` (HeyAndy's signature and the required line on what was
-pre-existing; replace the line with the founder's own words if they differ) and `card-end.png` (the signature, "Andy finds
-what you've lost, and points at it.", every model Meta's, no health advice, the links). The TV wears the same signature.
+**Cards (made by `scripts/film_cards.py` into `film/`, not committed):** `card-title.mp4` (HeyAndy's signature and the
+required line on what was pre-existing; `--line "..."` puts the founder's own words in), `card-numbers.mp4` (the figures,
+each read from `evals/results` when it's made, and the models) and `card-end.mp4` (the signature, every model Meta's, no
+health advice, the links). The TV wears the same signature.
 
 **Say "Hey Andy" on camera, every time.** HeyAndy is the company, and "Hey Andy" is how people call him: every
 request in the video says the brand out loud (and it wakes Andy more reliably than the name alone).
@@ -116,9 +117,9 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
 2. **The room:** staged. Nobody else in view, nothing personal (letters, photos, a phone or screen with anything
    private on it). The things for the takes in place: glasses (and a picture of glasses on the TV), the blue mug and a
    look-alike, keys, the remote; three opaque cups and a small bright ball if the cup game is in.
-   **Where to put things:** anywhere on the table in front of the robot. Since the head fix of October 31 (the base's
-   turn had been counted twice), the camera-checked aim is a median 4 to 5 degrees, under 9 at worst, across the table, out
-   to about 50 degrees each side (`unattended-20261031-0924` and `-1106`). Keys: a bunch of keys, not a single key, and not touching
+   **Where to put things:** anywhere on the table in front of the robot. On the final code (November 1: the focus held,
+   the true ray, the head read back), the camera-checked aim is a median 1.1 degrees, 2.2 at worst
+   (`unattended-20261101-2300`), across the table, out to about 50 degrees each side. Keys: a bunch of keys, not a single key, and not touching
    a keyboard.
 2b. **The dress rehearsal** (about 5 minutes, the room as it will be filmed, a phone on the table for the fall shot):
    every storyboard line as a whole turn on the robot, spoken in Andy's voice and heard by its ears, "what won't you
@@ -135,8 +136,8 @@ request in the video says the brand out loud (and it wakes Andy more reliably th
    at about 5 feet (closer is surer); the remote, far to the left, was past where the head can point ("I can't turn far
    enough to point"): put it in front. Again at about 5 pm, as the light went: the glasses missed in English (found a
    minute later in Mandarin), the remote still out of reach; the fall shot found the phone and pointed in 16.5 s. At
-   about 8 pm, on the table as it will be filmed (glasses, the blue cup, keys, the watch): 24 of 24 searches pointed
-   after one miss (`unattended-20261101-1903`, `-1914`); **the phone, upright in its stand between the two monitors,
+   about 8 pm, on the table as it will be filmed (glasses, the blue cup, keys, the watch): 23 of 24 searches pointed,
+   the one miss in the first run (`unattended-20261101-1903`, `-1914`); **the phone, upright in its stand between the two monitors,
    0 of 3: lay it flat on the table, in the open,** for "I fell" and "I'm ringing my phone" (laid flat: 3 of 3). Then
    the whole rehearsal, about 9 pm: **READY TO FILM, 11 of 11** (`rehearsal-20261101-1926`).
 3. **The TV:** Chrome full screen (F11) on `http://127.0.0.1:8765`. If Andy was speaking another language, "Hey Andy, speak English".
@@ -189,7 +190,7 @@ safety or loneliness claims; the people Andy is for are "people who live at home
 shown beyond a silhouette.
 
 **The robot in the public demo.** From the best take, about 10 seconds of the robot turning, looking and pointing
-(muted, 720p): `uv run python scripts/make_film.py burn film/take1.mp4 --start <s> --end <s+10> --badge "" --out
+(the page plays it muted; the build stops if it's over 15 MB): `uv run python scripts/make_film.py burn film/take1.mp4 --start <s> --end <s+10> --badge "" --out
 film/robot.mp4`, then build the Space with it, and the front door and the story open on the robot itself, its TV beneath:
 `uv run python scripts/build_static_space.py --clip film/robot.mp4 --video <the video's URL>` (under 15 MB, or it stops).
 
@@ -200,7 +201,7 @@ description, to paste:
 > Andy is a tabletop robot that finds what you've lost, points at it, and keeps your home's pictures in your home. It
 > speaks fifteen languages. Every model it runs is Meta's: SAM 3.1, Muse Glimmer, MapAnything, V-JEPA 2, DINOv2,
 > Omnilingual ASR, SeamlessM4T v2, Llama Guard 3 and Llama Prompt Guard 2 on the computer beside the robot; Muse Spark
-> and Muse Image in the cloud, for words only.
+> and Muse Image in the cloud, for words only (and, for Muse Spark, screenshots of a web page you ask to see).
 >
 > Before this week: a Reachy Mini robot and our own earlier object-finding prototype (none of its code is in the
 > repository). Everything in this video was built during Meta's Global AI Developer Hackathon by HeyAndy, Inc.

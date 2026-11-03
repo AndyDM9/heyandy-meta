@@ -155,7 +155,7 @@ def main() -> None:
     if args.clip:  # the robot itself, filmed: kept small, for a page anyone opens
         size = args.clip.stat().st_size
         if size > 15_000_000:
-            raise SystemExit(f"{args.clip} is {size / 1e6:.0f} MB: cut it to about 10 s at 720p (make_film.py burn --shape wide)")
+            raise SystemExit(f"{args.clip} is {size / 1e6:.0f} MB: cut it to about 10 s (make_film.py burn --start/--end), or make it smaller (ffmpeg -vf scale=-2:720)")
         seconds = float(subprocess.run(["/usr/bin/ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
                                         str(args.clip)], capture_output=True, text=True).stdout.strip() or 10)
         flags += (f" window.HEYANDY_CLIP = 'robot.mp4'; window.HEYANDY_CLIP_SECONDS = {min(20.0, round(seconds, 1))};"

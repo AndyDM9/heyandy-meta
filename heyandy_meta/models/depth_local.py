@@ -6,13 +6,13 @@ import time
 import urllib.error
 import urllib.request
 
-from .common import Mask, is_local
+from .common import Mask, on_this_computer
 from .sam_local import LocalUnavailable, NotLocal
 
 
 class LocalDepth:
     def __init__(self, endpoint: str = "http://127.0.0.1:8096", timeout: float = 5.0):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise NotLocal(f"MapAnything must be on this computer or the home network, not {endpoint}")
         self.endpoint, self.timeout = endpoint.rstrip("/"), timeout
         self.last_latency_s = 0.0

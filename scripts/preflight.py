@@ -63,8 +63,9 @@ def services_down(answer: str, services=SERVICES) -> list[str]:
     return [s for s, state in zip(services, states) if state != "active"]
 
 
-# Every port of Andy's: the robot's daemon, Glimmer, SAM 3.1 and the rest, the voice, Llama Guard, MapAnything, the TV
-PORTS = {8000: "the robot's daemon", 8080: "Muse Glimmer", 8090: "SAM 3.1 and the vision models", 8092: "the voice",
+# Every port of Andy's: the robot's daemon and its stream, Glimmer, SAM 3.1 and the rest, the voice, Llama Guard,
+# MapAnything, the TV
+PORTS = {8000: "the robot's daemon", 8443: "the robot's camera and microphones (WebRTC)", 8080: "Muse Glimmer", 8090: "SAM 3.1 and the vision models", 8092: "the voice",
          8094: "Llama Guard 3", 8096: "MapAnything", 8765: "the TV (its camera pictures)"}
 
 
@@ -214,7 +215,7 @@ def main() -> None:
         if lost or len(gpus) < 2:  # a card that fell off the bus (Xid 79) only comes back after a reboot
             raise RuntimeError(f"{len(gpus)} of 2 GPUs answer ({(lost or ['missing'])[0][:70]}): restart the computer, "
                                "then run this again")
-        return "GPU 0 (Glimmer) and GPU 1 (SAM 3.1, voice, guards)"
+        return "GPU 0 (Glimmer, the voice) and GPU 1 (SAM 3.1, hearing, guards)"
 
     @check("Glimmer and Llama Guard on their GPUs, not the processor")
     def _():
@@ -411,11 +412,18 @@ def main() -> None:
         def _():
             from openai import OpenAI
 
+            from heyandy_meta.budget import Budget, chat_cost
+
             env = dict(line.split("=", 1) for line in (Path.home() / ".config/heyandy-meta/env").read_text().splitlines()
                        if "=" in line)
+            budget = Budget(ledger=str(ROOT / "logs" / "spend.jsonl"))  # under the cap and on the ledger, like Andy's own
+            budget.check(chat_cost("muse-spark-1.3", 50, 200))
             c = OpenAI(base_url="https://api.meta.ai/v1", api_key=env["MODEL_API_KEY"].strip())
             r = c.chat.completions.create(model="muse-spark-1.3", reasoning_effort="minimal", max_tokens=200,
                                           messages=[{"role": "user", "content": "Say OK."}])
+            used = getattr(r, "usage", None)
+            budget.record("muse-spark-1.3", chat_cost("muse-spark-1.3", getattr(used, "prompt_tokens", 50) or 50,
+                                                      getattr(used, "completion_tokens", 200) or 200))
             return repr((r.choices[0].message.content or "").strip()[:20])
 
     failed = [name for ok, name, _ in results if not ok]

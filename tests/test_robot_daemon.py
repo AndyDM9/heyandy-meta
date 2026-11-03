@@ -1,4 +1,5 @@
-"""The camera-rate launcher: off unless asked, and only rates the camera does."""
+"""The robot's daemon, started through scripts/robot_daemon.py: its stream on this computer only, and the camera's rate
+off unless asked, only rates the camera does."""
 import sys
 from pathlib import Path
 
@@ -28,6 +29,52 @@ def test_the_constant_it_sets_is_still_pollens():
     assert isinstance(media_server.IPC_FPS, int)
 
 
-def test_the_daemon_script_uses_it_only_when_asked():
+def test_the_daemon_always_starts_through_it():
     sh = (Path(__file__).resolve().parents[1] / "scripts" / "run-robot-daemon.sh").read_text()
-    assert 'if [ -n "${HEYANDY_CAMERA_FPS:-}" ]' in sh and sh.rstrip().endswith('exec .venv/bin/reachy-mini-daemon --headless "$@"')
+    assert sh.rstrip().endswith('exec .venv/bin/python scripts/robot_daemon.py --headless "$@"')
+    assert "reachy-mini-daemon --headless" not in sh  # Pollen's own entry point would offer the stream to the network
+
+
+class _Sink:
+    def __init__(self):
+        self.props = {}
+
+    def set_property(self, name, value):
+        self.props[name] = value
+
+
+def test_the_stream_is_offered_on_this_computer_only():
+    """November 3: webrtcsink's signalling server listened on 0.0.0.0:8443, so the camera's and microphones' stream
+    could be asked for from the home network. Each sink Pollen's media server makes is now told 127.0.0.1, once."""
+    made = []
+
+    class Server:
+        def _configure_webrtc(self, pipeline):
+            sink = _Sink()
+            sink.set_property("run-signalling-server", True)
+            made.append(sink)
+            return sink
+
+    class Module:
+        GstMediaServer = Server
+
+    robot_daemon.local_only(Module)
+    robot_daemon.local_only(Module)  # twice is once
+    sink = Server()._configure_webrtc("pipeline")
+    assert sink.props == {"run-signalling-server": True, "signalling-server-host": "127.0.0.1"} and made == [sink]
+
+
+def test_it_wont_start_wide_open_if_pollen_changes_the_step_it_wraps():
+    class Module:
+        class GstMediaServer:
+            pass
+
+    with pytest.raises(AttributeError):
+        robot_daemon.local_only(Module)
+
+
+def test_pollens_media_server_still_has_the_step_and_the_property_it_sets():
+    media_server = pytest.importorskip("reachy_mini.media.media_server")
+    assert callable(media_server.GstMediaServer._configure_webrtc)
+    source = Path(media_server.__file__).read_text()
+    assert 'set_property("run-signalling-server", True)' in source  # what makes the server it binds

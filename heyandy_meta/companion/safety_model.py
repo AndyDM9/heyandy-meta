@@ -17,14 +17,14 @@ import time
 import urllib.error
 import urllib.request
 
-from ..models.common import is_local
+from ..models.common import on_this_computer
 
 SELF_HARM = "S11"
 
 
 class LlamaGuard:
     def __init__(self, endpoint: str = "http://127.0.0.1:8094", timeout: float = 3.0):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise ValueError(f"the safety check runs on this computer, not at {endpoint}")
         self.endpoint, self.timeout = endpoint.rstrip("/"), timeout
         self.unavailable, self.last_s = 0, 0.0
@@ -104,7 +104,7 @@ CHECK = ("You check what a person said to a home robot, for one thing only. Answ
 
 class GlimmerCheck:
     def __init__(self, endpoint: str = "http://127.0.0.1:8080", timeout: float = 4.0):
-        if not is_local(endpoint):
+        if not on_this_computer(endpoint):
             raise ValueError(f"the safety check runs on this computer, not at {endpoint}")
         self.endpoint, self.timeout, self.last_s = endpoint.rstrip("/").removesuffix("/v1"), timeout, 0.0
 
