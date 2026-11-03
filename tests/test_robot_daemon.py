@@ -78,3 +78,41 @@ def test_pollens_media_server_still_has_the_step_and_the_property_it_sets():
     assert callable(media_server.GstMediaServer._configure_webrtc)
     source = Path(media_server.__file__).read_text()
     assert 'set_property("run-signalling-server", True)' in source  # what makes the server it binds
+
+
+def test_remote_access_through_pollens_cloud_never_starts():
+    """November 3: with this computer's Hugging Face login, Pollen's daemon registered the robot with its cloud relay,
+    so the owner's account could open the camera's and microphones' stream from anywhere. It never starts now."""
+    import asyncio
+
+    logged = []
+
+    class Daemon:
+        logger = type("L", (), {"info": staticmethod(logged.append)})()
+
+        async def _start_central_signaling_relay(self):
+            raise AssertionError("the relay started")
+
+    class Module:
+        pass
+
+    Module.Daemon = Daemon
+    robot_daemon.no_remote(Module)
+    asyncio.run(Daemon()._start_central_signaling_relay())
+    assert logged == ["remote access through Pollen's cloud: off (scripts/robot_daemon.py)"]
+
+
+def test_it_wont_start_the_relay_unnoticed_if_pollen_renames_the_step():
+    class Module:
+        class Daemon:
+            pass
+
+    with pytest.raises(AttributeError):
+        robot_daemon.no_remote(Module)
+
+
+def test_pollens_daemon_still_starts_its_relay_through_the_step_replaced():
+    daemon = pytest.importorskip("reachy_mini.daemon.daemon")
+    source = Path(daemon.__file__).read_text()
+    assert source.count("await self._start_central_signaling_relay()") >= 2 and "start_central_relay(" in source
+

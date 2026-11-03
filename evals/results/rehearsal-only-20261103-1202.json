@@ -1,0 +1,26 @@
+{
+ "when": "2026-11-03 12:02",
+ "shots": [
+  {
+   "shot": "the network unplugged",
+   "said": "Hey Andy, where are my keys?",
+   "heard": "hey andy where are my keys",
+   "andy said": [
+    "Hmm, I couldn't find your keys from here. If it has a tracker that beeps, say: listen for my keys. I'll keep looking, and tell you when I see them. Where did you last have them?"
+   ],
+   "seconds": 29.4,
+   "pointed": false,
+   "language after": "en",
+   "ok": false,
+   "fix": [
+    "Andy didn't point: put the keys where the robot can see it, on the table in front, away from screens (it skips pictures on a TV, and its own TV may be showing the last thing it found)."
+   ],
+   "optional": false
+  }
+ ],
+ "not rehearsed": [
+  "\"What am I holding?\": needs someone holding something up to the robot.",
+  "The reminder two minutes later: needs the wait, and a person for Andy to turn to."
+ ],
+ "ready": false
+}

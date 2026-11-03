@@ -8,6 +8,12 @@ the camera's picture and the microphones' sound, and webrtcsink listens on every
 is on this computer and connects to 127.0.0.1:8443 (the daemon's own relay, its dashboard through it) or localhost, so
 it's told 127.0.0.1. scripts/preflight.py checks it.
 
+Remote access through Pollen's cloud, off: finding this computer's Hugging Face login, Pollen's daemon registers the
+robot with its central signalling relay (pollen-robotics-reachy-mini-central.hf.space), so the owner's account could
+open the camera's and microphones' stream from anywhere, through TURN servers on the internet. Andy never uses it
+(everything of Andy's is on this computer), and its promise is that pictures and voice stay home, so the relay never
+starts. Found November 3: its log since October 30 shows the relay running and no stream ever opened, local or remote.
+
 The rate:
 
 Pollen's media server caps that feed at 10 frames a second (``IPC_FPS``, "it also paces every client"), though the
@@ -51,11 +57,28 @@ def local_only(media_server, host: str = LOCAL) -> None:
     server._configure_webrtc = configure
 
 
+def no_remote(daemon_module) -> None:
+    """Pollen's daemon, made never to start its central signalling relay (remote access through Pollen's cloud). Raises
+    if Pollen's code no longer has the step it replaces, so the relay doesn't start unnoticed."""
+    daemon = daemon_module.Daemon
+    if not hasattr(daemon, "_start_central_signaling_relay"):  # Pollen changed it: better not to start than to start open
+        raise AttributeError("Pollen's daemon has no _start_central_signaling_relay: check how it starts its relay")
+
+    async def off(self) -> None:
+        self.logger.info("remote access through Pollen's cloud: off (scripts/robot_daemon.py)")
+
+    off.no_remote = True
+    daemon._start_central_signaling_relay = off
+
+
 def main() -> int:
+    from reachy_mini.daemon import daemon as daemon_module
     from reachy_mini.media import media_server
 
     local_only(media_server)
-    print(f"the camera's and microphones' stream: offered on {LOCAL} only", flush=True)
+    no_remote(daemon_module)
+    print(f"the camera's and microphones' stream: offered on {LOCAL} only; remote access through Pollen's cloud: off",
+          flush=True)
     fps = cap()
     if fps is not None:
         print(f"camera feed to local apps: {fps} frames a second (Pollen's default {media_server.IPC_FPS})", flush=True)

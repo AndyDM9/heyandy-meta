@@ -2446,3 +2446,11 @@ Found and fixed, each with a test:
   standalone lines all start with "Hey Andy"; a follow-up is marked as one. Checked for tonight: preflight with the
   cloud READY; no GPU fault since the computer started (November 1); the TV recording (5.8 s, its start time beside
   it); a piece burned from a made-up take (badge, the TV beside the robot, captions; wide and vertical).
+- **Remote access through Pollen's cloud, off.** Finding this computer's Hugging Face login, Pollen's daemon started
+  its central signalling relay (`pollen-robotics-reachy-mini-central.hf.space`): the robot registered for remote
+  WebRTC sessions by the owner's account, the stream carried through TURN servers on the internet, a status message
+  every 10 s. Andy never uses it. Its log, kept since the daemon was first started on October 30 at 20:58, has the
+  relay running nine times and not one stream opened ("consumer added" never), local or remote: nothing left the house
+  that way. `scripts/robot_daemon.py` now never starts it (and won't start if Pollen's code no longer has the step it
+  replaces); the system card says so.
+
