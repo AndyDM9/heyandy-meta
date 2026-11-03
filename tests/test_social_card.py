@@ -45,3 +45,14 @@ def test_a_shared_link_to_each_page_shows_the_card():
 def test_the_spaces_own_card_is_its_thumbnail():
     readme = (ROOT / "space" / "README.md").read_text().split("---")[1]
     assert "thumbnail: https://huggingface.co/spaces/heyandy-ai/andy/resolve/main/card.png" in readme
+
+
+def test_the_front_door_shows_the_cards_figures_and_the_language_scorecards_own_words():
+    """page.html's welcome: its numbers are the card's (made from the scorecards, checked by scripts/claims.py), and
+    "where are my glasses?" in each other language is the one evals/languages.py asks: no words written for the page."""
+    import build_static_space
+    from evals.languages import REQUESTS
+
+    figures, asks = build_static_space.front_door()
+    assert figures == [list(f) for f in social_card.figures()]
+    assert asks == [[code, asked[0]] for code, asked in REQUESTS.items()] and len(asks) == 13

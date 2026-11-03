@@ -164,13 +164,15 @@ def serve(directory: Path):
 
 
 def states() -> list[tuple[str, str, str | None]]:
-    """(name, path, what to run after loading): the story, its end card, each scene, Andy's eyes, under the hood."""
+    """(name, path, what to run after loading): the front door, the story, its end card, each scene, Andy's eyes,
+    under the hood."""
     import sys
 
     sys.path.insert(0, str(ROOT / "scripts"))
     from demo_screen import SCENES
 
-    return ([("story", "index.html", None), ("end card", "index.html", "endCard()")]
+    return ([("welcome", "index.html", None), ("story", "index.html?story", None),
+             ("end card", "index.html?story", "endCard()")]
             + [(f"scene: {s}", f"index.html?scene={s}", None) for s in SCENES]
             + [("Andy's eyes", "eyes.html", None), ("under the hood", "hood.html", None)])
 

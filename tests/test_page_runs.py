@@ -236,7 +236,7 @@ def test_the_story_opens_on_the_robot_when_the_space_has_a_clip(browser):
         return st.snapshot()
 
     server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
-    url = f"http://127.0.0.1:{server.server_address[1]}/"
+    url = f"http://127.0.0.1:{server.server_address[1]}/?story"  # past the front door
     seen = {}
     try:
         for with_clip in (True, False):
@@ -268,7 +268,7 @@ def test_each_story_chapter_says_what_it_rests_on_and_a_phone_can_press_every_bu
         return st.snapshot()
 
     server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
-    url = f"http://127.0.0.1:{server.server_address[1]}/"
+    url = f"http://127.0.0.1:{server.server_address[1]}/?story"  # past the front door
     try:
         page = browser.new_page(viewport={"width": 1920, "height": 1080})
         page.goto(url)
@@ -303,3 +303,78 @@ def test_each_story_chapter_says_what_it_rests_on_and_a_phone_can_press_every_bu
     assert kinds["cups"] == kinds["guide"] == kinds["out"] == "not"  # never tried on the robot with real things
     assert all(text.startswith(("On the robot", "Not yet", "Timed on the robot")) for _, cls, text in proofs if cls)
     assert overlaps == {390: [], "390 wider": False, 360: [], "360 wider": False}
+
+
+def test_the_public_demo_opens_on_a_front_door_with_one_thing_to_try_first(browser):
+    """November 2: the Space opened on the TV's dashboard under a bar of six controls, the robot nowhere, and the most
+    magical thing a visitor can do (Andy's eyes on their own things) behind "Explore every screen". Now a front door:
+    Andy's face, one line, the shared card's numbers, and one bright action, Andy's eyes; the story a press away.
+    Links that name a scene, ask, explore or ask for the story go straight there; Andy's own TV never shows it."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    base = f"http://127.0.0.1:{server.server_address[1]}/"
+    seen = {}
+    try:
+        for width, height in ((1440, 900), (390, 844), (360, 740)):
+            page = browser.new_page(viewport={"width": width, "height": height})
+            page.add_init_script("window.HEYANDY_FIGURES = [['250 of 253', 'searches on the robot ended in a point']];")
+            errors = []
+            page.on("pageerror", lambda e, errors=errors: errors.append(str(e)))
+            page.goto(base)
+            page.wait_for_selector("#welcome", timeout=10000)
+            seen[width] = page.evaluate("""() => { const w = document.getElementById('welcome'), cta = w.querySelector('a.cta');
+              const r = cta.getBoundingClientRect();
+              return { title: w.querySelector('h1').textContent, cta: cta.getAttribute('href'), ctaAbove: r.bottom <= innerHeight,
+                       tall: r.height, wide: document.documentElement.scrollWidth > innerWidth, figures: w.querySelectorAll('.proof li').length,
+                       behind: [...document.body.children].filter(e => e.id !== 'welcome').every(e => e.inert),
+                       storying: document.body.classList.contains('storying'), focused: document.activeElement === w } }""")
+            page.keyboard.press("Tab")
+            seen[width]["tab"] = page.evaluate("document.activeElement.className")
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(200)
+            seen[width]["after escape"] = page.evaluate("""() => [!!document.getElementById('welcome'), document.body.classList.contains('storying'),
+                                                              [...document.body.children].some(e => e.inert)]""")
+            seen[width]["errors"] = errors
+            page.close()
+        for query in ("?story", "?scene=found", "?explore", "?ask=where are my glasses"):
+            page = browser.new_page(viewport={"width": 1440, "height": 900})
+            page.goto(base + query)
+            page.wait_for_timeout(1200)
+            seen[query] = page.evaluate("!!document.getElementById('welcome')")
+            page.close()
+        page = browser.new_page(viewport={"width": 1440, "height": 900})  # built with the robot filmed: the robot first
+        page.add_init_script("window.HEYANDY_CLIP = 'robot.mp4';")
+        page.goto(base)
+        page.wait_for_selector("#welcome", timeout=10000)
+        seen["clip"] = page.evaluate("[!!document.querySelector('#welcome .robot video'), !!document.querySelector('#welcome .face')]")
+        page.close()
+    finally:
+        server.shutdown()
+    for width in (1440, 390, 360):
+        s = seen[width]
+        assert s["errors"] == [] and s["title"] == "Lost something? Andy points at it." and s["cta"] == "eyes.html"
+        assert s["ctaAbove"] and s["tall"] >= 44 and not s["wide"] and s["figures"] == 1  # the action on the first screen
+        assert s["behind"] and not s["storying"] and s["focused"] and s["tab"] == "cta"
+        assert s["after escape"] == [False, True, False]  # Escape: into the story, nothing left inert
+    assert not any(seen[q] for q in ("?story", "?scene=found", "?explore", "?ask=where are my glasses"))
+    assert seen["clip"] == [True, False]
+
+
+def test_andys_own_tv_never_shows_the_front_door(browser):
+    server = serve(ScreenState(), port=0)  # the robot's TV: no demo scenes
+    try:
+        page = browser.new_page(viewport={"width": 1920, "height": 1080})
+        page.goto(f"http://127.0.0.1:{server.server_address[1]}/")
+        page.wait_for_timeout(1500)
+        shown = page.evaluate("!!document.getElementById('welcome')")
+        page.close()
+    finally:
+        server.shutdown()
+    assert shown is False

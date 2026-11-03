@@ -526,6 +526,82 @@
   #reveal .credit { margin-top: 2rem; font-size: 1.35rem; color: rgba(245, 243, 239, 0.6); animation-delay: 1.9s !important; }
   #reveal .sig { position: absolute; top: 3.8rem; left: 5rem; height: 2.3rem; width: auto; color: #F5F3EF; opacity: 0;
                  animation: rv-fade 0.8s ease-out 0.6s forwards; }
+  /* The front door (the public demo only, before the story): who Andy is in a line, Andy's own face (it blinks, and
+     looks at whatever the visitor's about to press), what's been measured, and one thing to try first: Andy's eyes on
+     the visitor's own things, in their browser. Over the TV, which carries on unseen beneath. */
+  #welcome { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 20; overflow-y: auto; color: #F5F3EF;
+             background: radial-gradient(ellipse 80% 70% at 76% 40%, #26392f 0%, #0f1814 58%, #070a09 100%); }
+  #welcome .in { box-sizing: border-box; min-height: 100%; width: min(120rem, 90vw); margin: 0 auto; padding: 3.4rem 0 2.8rem;
+                 display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); grid-template-rows: auto 1fr auto;
+                 column-gap: 5rem; animation: w-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  #welcome .sig { grid-column: 1 / -1; height: 2.6rem; width: auto; color: #F5F3EF; opacity: 0.9; }
+  #welcome .pitch { align-self: center; padding: 3rem 0; }
+  #welcome h1 { margin: 0; font-size: clamp(3.6rem, 6.4vw, 8.6rem); font-weight: 800; line-height: 0.95; letter-spacing: -0.035em; }
+  #welcome h1 em { display: block; font-style: normal; color: var(--outline); }
+  #welcome .lede { margin: 2.2rem 0 3rem; max-width: 48rem; font-size: 1.8rem; line-height: 1.42; color: rgba(245, 243, 239, 0.84); }
+  #welcome .cta { display: inline-flex; align-items: center; gap: 1rem; min-height: 44px; padding: 1.3rem 2.4rem;
+                  border-radius: 99rem; background: var(--outline); color: #070a09; text-decoration: none;
+                  font: 800 2rem/1.1 "Atkinson Next", sans-serif; box-shadow: 0 0.9rem 2.6rem rgba(255, 209, 102, 0.22);
+                  transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  #welcome .cta span { transition: transform 0.15s ease; }
+  #welcome .cta:hover, #welcome .cta:focus-visible { transform: translateY(-0.15rem); box-shadow: 0 1.2rem 3rem rgba(255, 209, 102, 0.32); }
+  #welcome .cta:hover span, #welcome .cta:focus-visible span { transform: translateX(0.3rem); }
+  #welcome .cta:focus-visible, #welcome .more > *:focus-visible { outline: 0.25rem solid #F5F3EF; outline-offset: 0.3rem; }
+  #welcome .note { margin: 1rem 0 0 0.5rem; max-width: 46rem; font-size: 1.3rem; line-height: 1.4; color: rgba(245, 243, 239, 0.7); }
+  #welcome .more { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.6rem; }
+  #welcome .more a, #welcome .more button { box-sizing: border-box; min-height: 44px; display: inline-flex; align-items: center;
+           padding: 0.8rem 1.5rem; border-radius: 99rem; cursor: pointer; text-decoration: none; color: #F5F3EF;
+           font: 700 1.45rem/1 "Atkinson Next", sans-serif; background: rgba(245, 243, 239, 0.08);
+           border: 0.12rem solid rgba(245, 243, 239, 0.38); }
+  #welcome .more a:hover, #welcome .more button:hover { background: rgba(245, 243, 239, 0.18); }
+  #welcome .andy { align-self: center; justify-self: center; display: grid; justify-items: center; gap: 2.4rem; padding: 2rem 0; }
+  #welcome .face { width: min(30rem, 34vw); height: auto; color: #F5F3EF; overflow: visible;
+                   animation: breathe 6s ease-in-out infinite; filter: drop-shadow(0 1.6rem 3rem rgba(0, 0, 0, 0.45)); }
+  #welcome .eyes { transition: transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1); }
+  #welcome .eye { fill: #0f1814; transform-box: fill-box; transform-origin: center; transition: transform 0.09s ease; }
+  #welcome.blink .eye { transform: scaleY(0.08); }
+  #welcome .bubble { position: relative; box-sizing: border-box; width: min(30rem, 34vw); min-height: 6.4rem; padding: 1.1rem 1.6rem;
+                     border-radius: 1.6rem; background: #F5F3EF; color: #0f1814; text-align: center; }
+  #welcome .bubble::before { content: ""; position: absolute; top: -0.8rem; left: calc(50% - 0.8rem); width: 1.6rem; height: 1.6rem;
+                             background: #F5F3EF; transform: rotate(45deg); border-radius: 0.2rem; }
+  #welcome .bubble q { display: block; position: relative; font-size: 1.75rem; font-weight: 750; line-height: 1.25; quotes: "“" "”"; }
+  #welcome .bubble small { display: block; position: relative; margin-top: 0.35rem; font: 700 1.05rem/1.2 "Atkinson Mono", monospace;
+                           letter-spacing: 0.04em; color: #3d4c45; }
+  #welcome .bubble.swap q, #welcome .bubble.swap small { animation: w-swap 0.45s ease both; }
+  #welcome .proof { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.6rem; margin: 0; padding: 0; }
+  #welcome .proof li { list-style: none; border-top: 0.2rem solid var(--outline); padding-top: 1rem; font-size: 1.4rem;
+                       line-height: 1.35; color: rgba(245, 243, 239, 0.78); }
+  #welcome .proof b { display: block; margin-bottom: 0.4rem; font: 700 3rem/1 "Atkinson Mono", monospace; color: #F5F3EF; }
+  #welcome:focus { outline: none; }
+  #welcome .robot { position: relative; width: min(46rem, 40vw); border-radius: 2rem; overflow: hidden; background: #000;
+                    box-shadow: 0 1.6rem 3.6rem rgba(0, 0, 0, 0.5); }
+  #welcome .robot video { display: block; width: 100%; height: auto; }
+  #welcome .robot .badge { position: absolute; left: 1rem; bottom: 1rem; padding: 0.3rem 0.8rem; border-radius: 99rem;
+                           background: rgba(7, 10, 9, 0.78); color: #F5F3EF; font: 700 1.1rem/1.2 "Atkinson Mono", monospace; }
+  body.welcoming { overflow: hidden; }
+  @keyframes w-in { from { opacity: 0; transform: translateY(1.2rem); } to { opacity: 1; transform: none; } }
+  @keyframes w-swap { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: none; } }
+  @media (max-width: 900px), (max-aspect-ratio: 6/5) {
+    #welcome .in { grid-template-columns: 1fr; grid-template-rows: auto; width: auto; padding: 1.6rem 1.6rem 2.4rem; }
+    #welcome .sig { height: 2rem; }
+    #welcome .andy { order: -1; grid-row: 2; padding: 1.6rem 0 0; gap: 1.6rem; }
+    #welcome .face { width: min(15rem, 42vw); }
+    #welcome .bubble { width: 100%; min-height: 5.6rem; }
+    #welcome .pitch { grid-row: 3; padding: 2rem 0 2.4rem; }
+    #welcome h1 { font-size: clamp(3.2rem, 11vw, 5.2rem); }
+    #welcome .lede { font-size: 1.55rem; margin: 1.4rem 0 2rem; }
+    #welcome .cta { display: flex; justify-content: center; font-size: 1.8rem; }
+    #welcome .note { margin-left: 0; }
+    #welcome .more a, #welcome .more button { flex: 1 1 auto; justify-content: center; }
+    #welcome .proof { grid-row: 4; grid-template-columns: 1fr; gap: 1.2rem; }
+    #welcome .proof li { display: grid; grid-template-columns: max-content 1fr; align-items: baseline; gap: 1.2rem; padding-top: 0.8rem; }
+    #welcome .proof b { font-size: 2.2rem; margin: 0; white-space: nowrap; }
+    #welcome .robot { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #welcome .in, #welcome .face, #welcome .bubble.swap q, #welcome .bubble.swap small { animation: none; }
+    #welcome .eyes, #welcome .eye, #welcome .cta, #welcome .cta span { transition: none; }
+  }
   @keyframes rv-in { to { opacity: 1; } }
   @keyframes rv-out { to { opacity: 0; } }
   @keyframes rv-push { from { transform: none; } to { transform: translate(var(--tx), var(--ty)) scale(var(--k)); } }
@@ -800,6 +876,87 @@
     inner.append(el("small", "Sample data: no robot, camera or home here; the pictures are drawn. Built by HeyAndy, Inc. during Meta's hackathon (October 26 to November 4, 2026); our own earlier object-finding prototype is kept outside this code. Andy gives no health advice."));
     end.append(inner); document.body.append(end);
   }
+  // The front door: the public demo's first screen, before the story (a link that names a scene, asks Andy, explores
+  // or asks for the story itself, ?story, goes straight there). One thing to try first, Andy's eyes on your own things,
+  // and the story a press away. Its numbers are the shared-link card's, made from the scorecards when the Space is
+  // built (window.HEYANDY_FIGURES); its words in other languages are the ones Andy's language scorecard asks
+  // (window.HEYANDY_ASKS, evals/languages.py).
+  const ASKS = [["en", "Where are my glasses?"], ["es", "¿Dónde están mis gafas?"], ...(window.HEYANDY_ASKS || [])];
+  const ASK_LANGS = { en: "English", es: "Español", zh: "中文", tl: "Tagalog", vi: "Tiếng Việt", ko: "한국어", ru: "Русский",
+                 ar: "العربية", hi: "हिन्दी", pt: "Português", fr: "Français", it: "Italiano", pl: "Polski", de: "Deutsch",
+                 uk: "Українська" };
+  let welcomed = null;  // {timers, look}
+  function welcome() {
+    const w = el("div"); w.id = "welcome"; w.setAttribute("role", "dialog"); w.setAttribute("aria-modal", "true");
+    w.setAttribute("aria-labelledby", "w-title");
+    const inner = el("div", null, "in"), sig = document.querySelector("header .brand")?.cloneNode(true);
+    if (sig) { sig.setAttribute("class", "sig"); inner.append(sig); }
+    const pitch = el("div", null, "pitch"), h1 = el("h1");
+    h1.id = "w-title"; h1.append("Lost something? ", el("em", "Andy points at it."));
+    const cta = el("a", "Find something of yours ", "cta"); cta.href = "eyes.html";
+    const arrow = el("span", "→"); arrow.setAttribute("aria-hidden", "true"); cta.append(arrow);
+    pitch.append(h1, el("p", "A tabletop robot that finds your things and points at them, built on Meta's open models. " +
+                              "The pictures of your home and your voice never leave it.", "lede"),
+                 cta, el("p", "Try Andy's eyes now: show it your mug, keys or glasses, then sweep your phone round the room. " +
+                              "Meta's DINOv2 does the looking in this browser; your camera never leaves your device.", "note"));
+    const more = el("div", null, "more"), minutes = Math.max(1, Math.round(STORY.reduce((t, c) => t + c[1], 0) / 60));
+    const play = el("button", `Watch Andy's story · ${minutes} min`); play.onclick = () => leaveWelcome(true); more.append(play);
+    const link = (label, href) => { const a = el("a", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; more.append(a); };
+    if (window.HEYANDY_VIDEO) link("Watch the 3-minute video", window.HEYANDY_VIDEO);
+    link("How it's built", "https://github.com/AndyDM9/heyandy-meta");
+    pitch.append(more);
+    const andy = el("div", null, "andy"), face = document.querySelector("#ambient .face").cloneNode(true);
+    face.setAttribute("aria-hidden", "true");
+    const bubble = el("div", null, "bubble"), said = el("q"), lang = el("small");
+    bubble.setAttribute("aria-hidden", "true"); bubble.append(said, lang);
+    if (window.HEYANDY_CLIP) {  // built with the robot, filmed (--clip): the robot itself is the first thing seen
+      const box = el("div", null, "robot"), v = el("video");
+      v.src = window.HEYANDY_CLIP; v.muted = v.autoplay = v.playsInline = v.loop = true;
+      v.setAttribute("aria-label", "Andy on the table, filmed");
+      box.append(v, el("div", window.HEYANDY_CLIP_CAPTION || "Filmed on the robot · uncut · 1× speed", "badge"));
+      andy.append(box, bubble); v.play().catch(() => {});
+    } else andy.append(face, bubble);
+    inner.append(pitch, andy);
+    if (window.HEYANDY_FIGURES) {
+      const proof = el("ul", null, "proof"); proof.setAttribute("aria-label", "Measured");
+      for (const [big, small] of window.HEYANDY_FIGURES) { const li = el("li", " " + small); li.prepend(el("b", big)); proof.append(li); }
+      inner.append(proof);
+    }
+    w.append(inner);
+    const behind = [...document.body.children];
+    behind.forEach(e => { e.inert = true; });
+    document.body.append(w); document.body.classList.add("welcoming");
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches, eyes = face.querySelector(".eyes"), timers = [];
+    w.tabIndex = -1;  // focus starts in the front door (Tab reaches its first button), with no ring on a mouse's first look
+    let i = 0;
+    const say = () => {
+      const [code, text] = ASKS[i++ % ASKS.length];
+      said.textContent = text; said.dir = "auto"; lang.textContent = ASK_LANGS[code] || code;
+      if (!still) { bubble.classList.remove("swap"); void bubble.offsetWidth; bubble.classList.add("swap"); }
+    };
+    say(); if (!still) timers.push(setInterval(say, 2600));
+    const blink = () => { w.classList.add("blink"); setTimeout(() => w.classList.remove("blink"), 140); };
+    if (!still) timers.push(setInterval(() => { if (Math.random() < 0.6) blink(); }, 2400));
+    const look = (target) => {  // Andy looks at what you're about to press
+      if (still || !target) { eyes.style.transform = ""; return; }
+      const f = face.getBoundingClientRect(), t = target.getBoundingClientRect();
+      const dx = t.left + t.width / 2 - (f.left + f.width / 2), dy = t.top + t.height / 2 - (f.top + f.height / 2), d = Math.hypot(dx, dy) || 1;
+      eyes.style.transform = `translate(${(dx / d * 26).toFixed(1)}px, ${(dy / d * 16).toFixed(1)}px)`;
+    };
+    for (const target of [cta, ...more.children]) {
+      target.addEventListener("pointerenter", () => look(target)); target.addEventListener("focus", () => look(target));
+      target.addEventListener("pointerleave", () => look(null)); target.addEventListener("blur", () => look(null));
+    }
+    welcomed = { timers, behind };
+    w.focus({ preventScroll: true });
+  }
+  function leaveWelcome(toStory) {
+    if (!welcomed) return;
+    welcomed.timers.forEach(clearInterval); welcomed.behind.forEach(e => { e.inert = false; });
+    welcomed = null; document.getElementById("welcome")?.remove(); document.body.classList.remove("welcoming");
+    if (toStory) startStory();
+  }
+  addEventListener("keydown", e => { if (welcomed && e.key === "Escape") leaveWelcome(true); });
   addEventListener("keydown", e => {
     if (!story || e.target.closest?.("form.ask")) return;
     if (e.key === "ArrowRight") go(story.at + 1); else if (e.key === "ArrowLeft") go(story.at - 1);
@@ -1861,7 +2018,8 @@
       scenes = s.demo;
       const q = new URLSearchParams(location.search);
       if (q.get("ask")) ask(q.get("ask"));  // a shared link that asks: ?ask=I'm ringing my phone
-      else if (!chosen && !q.has("explore") && scenes.includes("room")) startStory(); else demoBar();
+      else if (!chosen && !q.has("explore") && scenes.includes("room")) { if (q.has("story")) startStory(); else welcome(); }
+      else demoBar();
     }
   }
   // Text that fits the screen it's on: when a card has more to show than its room (a short browser window, a long

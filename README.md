@@ -47,7 +47,8 @@ Built on Meta's models for people who live at home, starting with older adults, 
   its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
 - **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
   the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
-- **Try it now, no robot needed:** [the 75-second story](https://huggingface.co/spaces/heyandy-ai/andy) is Andy's own
+- **Try it now, no robot needed:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) opens on Andy's
+  face and one thing to try first, Andy's eyes on your own things; its 75-second story is Andy's own
   TV, its scenes recorded and replayed in your browser; *Ask Andy* plays the scene that matches what you type, in any of
   its fifteen languages, or **say** in English (tap 🎙: Meta's wav2vec 2.0 hears you, in your browser). **Andy's eyes,
   live** is the real thing: show it your mug, sweep your phone round the room, and Meta's DINOv2 finds yours.
@@ -140,7 +141,9 @@ and 34 s; never "found" in 90 frames of sweeping the others, none closer than 0.
 
 <p align="center"><img src="docs/images/eyes-live.webp" width="49%" alt="Andy's eyes sweeping live: on the left, my cup shown once; on the right, the camera's view of four cups with a red Live dot, DINOv2's view glowing gold over one cup, a solid box on it and the warmer meter almost full: &quot;That looks like it. Let me look closer…&quot;"> <img src="docs/images/eyes.webp" width="49%" alt="Andy's eyes in the browser: a cup shown once on the left; on the right, among three look-alike cups, the spotlight on the same cup from its other side, &quot;There's your cup. 85% like the one you showed me, 95% in colour&quot;"></p>
 
-**Ask Andy yourself, in the browser.** The demo opens as a 75-second story; type what you'd say to Andy at any point
+**Ask Andy yourself, in the browser.** The demo opens on a front door (Andy's face, one line, what's been measured,
+and one thing to try first: Andy's eyes on your own things), its 75-second story a press away (`?story` skips the door,
+as a link naming a scene or asking does); type what you'd say to Andy at any point
 ("where are my keys?", "help me reach it", "I'm ringing my phone", "show me the room") and the scene recorded from its
 TV for that plays, a search starting as the real one does. **Type it in any of Andy's fifteen languages** ("Где мои
 очки?", "내 안경 어디 있어?") and the TV answers in that language, as Andy does when it's called in one. The words are

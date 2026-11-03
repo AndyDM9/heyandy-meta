@@ -39,7 +39,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. First check
        GitHub Support has purged the old commits (the founder's ticket of November 1; the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card
-       (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the story opens on
+       (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the front door and the story open on
        about 10 s of the robot itself, `docs/demo-script.md`; then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`; then
        `uvx --from huggingface_hub python scripts/verify_space.py` must say none missing, extra or different), then make

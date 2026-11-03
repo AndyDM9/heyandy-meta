@@ -190,7 +190,7 @@ shown beyond a silhouette.
 
 **The robot in the public demo.** From the best take, about 10 seconds of the robot turning, looking and pointing
 (muted, 720p): `uv run python scripts/make_film.py burn film/take1.mp4 --start <s> --end <s+10> --badge "" --out
-film/robot.mp4`, then build the Space with it, and the story opens on the robot itself, its TV beneath:
+film/robot.mp4`, then build the Space with it, and the front door and the story open on the robot itself, its TV beneath:
 `uv run python scripts/build_static_space.py --clip film/robot.mp4 --video <the video's URL>` (under 15 MB, or it stops).
 
 **The YouTube upload** (youtube.com/@heyandyai; public, so judges can watch signed out). The video's own title and

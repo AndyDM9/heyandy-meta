@@ -2002,3 +2002,24 @@ Found and fixed, each with a test:
   and every turn in another language: section 57) is about 0.25 s of it. The journal's "turn answered" line now says
   when the words were heard, how long listening again took and when the turn began, and the hood shows listening again
   in the turn's timeline, so the next turns on the robot say where the rest goes.
+
+## 91. The public demo's front door (November 2, evening)
+
+- **Why:** the Space is where a judge, a community voter or someone from a post on X lands, mostly on a phone. It
+  opened on the TV's dashboard ("Monday", "Call Sam") under a story bar of six controls: the robot nowhere on screen,
+  and the most magical thing a visitor can do, Andy's eyes finding *their own* mug with Meta's DINOv2 in their browser
+  (section 53), two presses away behind "Explore every screen". On a phone the first screen was mostly controls.
+- **Now** (`heyandy_meta/screen/page.html` welcome, public demo only): a front door before the story. Andy's own face
+  (the TV's, blinking, and looking at whichever button the visitor points at or tabs to), a speech bubble saying
+  "where are my glasses?" in Andy's fifteen languages in turn (the words its language scorecard asks,
+  `evals/languages.py`, injected when the Space is built), one line ("Lost something? Andy points at it."), and one
+  bright action: *Find something of yours*, Andy's eyes. The story is a press away (or Escape); the 3-minute video when
+  the Space is built with it; the shared-link card's three figures underneath, made from the scorecards
+  (`scripts/social_card.py`, checked by `scripts/claims.py`). Built with the robot's clip (`--clip`), the robot itself
+  takes the face's place. A link that names a scene, asks Andy, explores or asks for the story (`?story`) goes straight
+  there; Andy's own TV never shows it. The shared link's title and description say the same as the door.
+- **Checked:** at a desktop's width and two phones' (390 and 360 px), the action is on the first screen, at least 44 px
+  tall, with no sideways scroll; the TV behind is inert while the door is open; Tab reaches the action first, Escape
+  starts the story (`tests/test_page_runs.py`). The accessibility audit (`evals/accessibility.py`) has the door as a
+  state of its own: no axe violation and no text below WCAG AA contrast, measured from the pixels, at both widths; the
+  whole demo again with it (`accessibility-20261102-1908`): no axe violation in 58 states, none of 1,220 texts below AA.

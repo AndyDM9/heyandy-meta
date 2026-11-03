@@ -480,14 +480,14 @@ FIGURES = [
            lambda: "{matched} of {files} files".format(**summary(newest("open-weights-all")))
            if summary(newest("open-weights-all"))["every file matches"] else "not every file matches"),
     # the public demo, for people who see less well
-    Figure("pass on all 56 of its states", "accessibility (latest)",
+    Figure("pass on all 58 of its states", "accessibility (latest)",
            lambda: f"pass on all {a11y()['pages and states']} of its states" if a11y()["with an axe violation"] == 0
            else f"fail on {a11y()['with an axe violation']} of {a11y()['pages and states']} states"),
-    Figure("none of 1,193 texts measured from the pixels is below AA contrast", "accessibility (latest)",
+    Figure("none of 1,220 texts measured from the pixels is below AA contrast", "accessibility (latest)",
            lambda: "{} of {:,} texts measured from the pixels is below AA contrast".format(
                "none" if a11y()["texts below WCAG AA contrast"] == 0 else a11y()["texts below WCAG AA contrast"],
                a11y()["texts measured from pixels"])),
-    Figure("none of 1,193 texts is below AA contrast", "accessibility (latest)",
+    Figure("none of 1,220 texts is below AA contrast", "accessibility (latest)",
            lambda: "{} of {:,} texts is below AA contrast".format(
                "none" if a11y()["texts below WCAG AA contrast"] == 0 else a11y()["texts below WCAG AA contrast"],
                a11y()["texts measured from pixels"])),

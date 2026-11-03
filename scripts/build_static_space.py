@@ -59,9 +59,9 @@ HOST = "https://heyandy-ai-andy.static.hf.space"  # the Space's own address (its
 SPACE_URL = "https://huggingface.co/spaces/heyandy-ai/andy"
 # What a shared link to each page says, with the card (scripts/social_card.py): (title, description, the page's address)
 SHARED = {
-    "index.html": ("Andy: finds what you've lost, and points at it",
-                   "The TV beside Andy, a tabletop robot built on Meta's models: a 75-second story, then ask it yourself. "
-                   "Your home's pictures and voice stay in your home.", SPACE_URL),
+    "index.html": ("Lost something? Andy points at it.",
+                   "A tabletop robot built on Meta's open models. Try its eyes on your own things in your browser, or "
+                   "watch its one-minute story. Your home's pictures and voice stay in your home.", SPACE_URL),
     "eyes.html": ("Andy's eyes, on your things",
                   "Show Andy's eyes your mug once, then sweep your phone round the room: Meta's DINOv2 in your browser. "
                   "Nothing leaves it.", f"{HOST}/eyes.html"),
@@ -88,6 +88,16 @@ def shared(html: str, name: str) -> str:
     return html.replace("</title>", "</title>\n" + "\n".join(tags), 1)
 
 
+def front_door() -> tuple[list, list]:
+    """What the front door shows (page.html welcome): the shared-link card's figures, made from the scorecards
+    (scripts/social_card.py, checked by scripts/claims.py), and "where are my glasses?" as Andy's language scorecard
+    asks it in each of its other languages (evals/languages.py), never words written for the page alone."""
+    import social_card
+    from evals.languages import REQUESTS
+
+    return [list(f) for f in social_card.figures()], [[code, asked[0]] for code, asked in REQUESTS.items()]
+
+
 def main() -> None:
     import argparse
 
@@ -101,6 +111,8 @@ def main() -> None:
     (OUT / "scenes").mkdir(parents=True)
     (OUT / "fonts").mkdir()
     flags = "window.HEYANDY_STATIC = true;" + (f" window.HEYANDY_VIDEO = {json.dumps(video)};" if video else "")
+    flags += f" window.HEYANDY_FIGURES = {json.dumps(front_door()[0], ensure_ascii=False)};"
+    flags += f" window.HEYANDY_ASKS = {json.dumps(front_door()[1], ensure_ascii=False)};"
     if args.clip:  # the robot itself, filmed: kept small, for a page anyone opens
         size = args.clip.stat().st_size
         if size > 15_000_000:
