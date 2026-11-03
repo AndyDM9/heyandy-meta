@@ -2484,3 +2484,10 @@ Found and fixed, each with a test:
   notes, and the piece, starting just after the clap, would have shown it for half a second: the clap (matched at
   0.98, anything else about 0.3) is now left out of the captions. Then `burn` (the badge, the TV beside the robot, the
   caption on time) and `cut` with the cards: 37.2 s, 1080p, -16 LUFS.
+- **The faint-microphone rule, a false alarm and the fix** (November 3, 14:50): the evening's watch (preflight's rule,
+  once a minute) flagged loud talk near the robot, which turns the array's gain down (1.76), followed by a quiet room
+  (0.002) with no turn answered. The fault's own mark was missing: at 10:41 even the loudest sounds were faint (0.009 at
+  most), while at 14:50 voices came in at 0.055 to 0.082. The rule now needs that too (the 90th percentile of the
+  sounds' loudness under 0.02); replayed: the fault flagged, the quiet room, the talk and the talk with the fault's gain
+  not. And the same afternoon, with the language rule widened: the fifteen-language measure again, into scratch, every
+  figure as published (104 of 104 written, 89 of 104 spoken, heard back 0.95).

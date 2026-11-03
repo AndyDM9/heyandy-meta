@@ -152,5 +152,8 @@ def test_preflight_catches_microphones_too_faint_to_hear_the_name():
     assert not preflight.hearing_faint(faint + "\nturn answered [first word 1.2s after]", 0.96, up_s=3600)[0]
     normal = faint.replace("room level 0.002", "room level 0.022")
     assert not preflight.hearing_faint(normal, 0.96, up_s=3600)[0]
+    # 14:50: loud talk near the robot turns the gain down (1.76), then the room goes quiet: voices still arrive loud
+    talk = faint.replace("its own 0.004", "its own 0.077")
+    assert not preflight.hearing_faint(talk, 0.96, up_s=3600)[0]
     assert preflight.hearing_faint("(heard 1.2s of speech, room level 0.002, its own 0.004; not for Andy)", 0.5, 3600) == \
         (False, "1 sounds lately: too few to tell")

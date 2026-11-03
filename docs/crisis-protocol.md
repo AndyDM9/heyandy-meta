@@ -13,10 +13,14 @@ questions. It is not a health, medical or mental-health product, and it never co
 - The check runs in code on what the person said, before any model sees it
   (`heyandy_meta/companion/safety.py`), then a second check by Llama Guard 3 on this computer
   (`heyandy_meta/companion/safety_model.py`), still before any other model; and for conversation (never a request),
-  a third look by Muse Glimmer on this computer, one narrow question; any of them gives the reply below.
+  a third look by Muse Glimmer on this computer, one narrow question about the person's words, given to it as a
+  quotation so a request in them is never answered (until November 3, "tell me a joke" or "can you help me" got the
+  reply below; `evals/second_look.py`); any of them gives the reply below.
 - Andy gives one fixed reply and does not try to counsel:
   > "I'm a robot, so I can't help with this the way a person can. You can call or text 988, the crisis line, any time,
   > day or night. If you're in danger right now, please call 911."
+- Said aloud, the numbers are said as they're dialled: "nine eight eight", "nine one one" (in Spanish "nueve uno uno").
+  Until November 3 Andy's voice said "nine hundred eleven"; now a test holds it (`heyandy_meta/voice/spoken.py`).
 - Nothing about it is stored or logged.
 - **Not yet built:** messaging a family member the person has chosen. When it exists, it will be opt-in, set by the
   person.

@@ -37,21 +37,25 @@ def port(devices: Path = Path("/sys/bus/usb/devices")) -> str | None:
     return None
 
 
-def faint(rooms, gain: float | None, answered: int = 0, up_s: float = 0.0, least: int = 8) -> tuple[bool, str]:
+def faint(rooms, gain: float | None, answered: int = 0, up_s: float = 0.0, least: int = 8,
+          loudness=None) -> tuple[bool, str]:
     """Has the microphone array gone too faint to hear by, as on November 3? rooms: the room's level beside each sound
-    Andy let go lately (numbers only); gain: the array's own automatic gain now (PP_AGCGAIN, from its daemon). The fault's
-    signature: a near-silent room level (under 0.003) with the gain barely on (under 2), where a quiet room turns the
-    gain up (19.99 at noon); no turn answered lately (one answered: it hears its name); and the daemon up ten minutes
-    (the gain starts low after a reset and climbs). Replayed over the day, the loudness of the sounds alone also
-    flagged a quiet room's faint noises, so it isn't used. Fewer than `least` sounds: too few to tell."""
-    rooms = sorted(rooms)
+    Andy let go lately; loudness: each of those sounds' own loudness (numbers only); gain: the array's own automatic
+    gain now (PP_AGCGAIN, from its daemon). The fault's signature: even the loudest sounds faint (the 90th percentile
+    under 0.02: at 10:41 nothing came above 0.009, while voices arrive at 0.04 to 0.14), a near-silent room level
+    (under 0.003) with the gain barely on (under 2), no turn answered lately (one answered: it hears its name), and the
+    daemon up ten minutes (the gain starts low after a reset and climbs). Without the loudest sounds' test, loud talk
+    near the robot (which turns the gain down) and then a quiet room looked the same (14:50, a false alarm). Fewer than
+    `least` sounds: too few to tell."""
+    rooms, loud = sorted(rooms), sorted(loudness or [])
     if answered:
         return False, f"{answered} turns answered lately: it hears its name"
-    if len(rooms) < least:
-        return False, f"{len(rooms)} sounds lately: too few to tell"
-    room = rooms[len(rooms) // 2]
-    said = f"room level {room:.3f} (median of {len(rooms)}), the array's gain {'unread' if gain is None else f'{gain:.2f}'}"
-    return (gain is not None and gain < 2.0 and room < 0.003 and up_s >= 600), said
+    if len(rooms) < least or len(loud) < least:
+        return False, f"{min(len(rooms), len(loud))} sounds lately: too few to tell"
+    room, loudest = rooms[len(rooms) // 2], loud[int(len(loud) * 0.9)]
+    said = (f"room level {room:.3f} (median of {len(rooms)}), the loudest sounds {loudest:.3f}, the array's gain "
+            f"{'unread' if gain is None else f'{gain:.2f}'}")
+    return (gain is not None and gain < 2.0 and room < 0.003 and loudest < 0.02 and up_s >= 600), said
 
 
 def faults(kernel_log: str, where: str) -> int:

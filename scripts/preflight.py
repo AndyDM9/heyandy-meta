@@ -116,6 +116,7 @@ def journal(*args: str, run=subprocess.run) -> str:
 
 
 ROOM = re.compile(r"\(heard [\d.]+s of speech, room level ([\d.]+)[,;]")
+OWN = re.compile(r"\(heard [\d.]+s of speech, room level [\d.]+, its own ([\d.]+)")
 
 
 def array_gain(url: str = "http://127.0.0.1:8000/api/audio/config/parameter/PP_AGCGAIN") -> float | None:
@@ -135,7 +136,7 @@ def hearing_faint(journal_text: str, gain: float | None, up_s: float) -> tuple[b
     from heyandy_meta.robot.audio_watch import faint
 
     return faint([float(x) for x in ROOM.findall(journal_text)], gain, answered=journal_text.count("turn answered"),
-                 up_s=up_s)
+                 up_s=up_s, loudness=[float(x) for x in OWN.findall(journal_text)])
 
 
 def main() -> None:

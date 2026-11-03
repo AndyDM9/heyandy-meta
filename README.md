@@ -544,10 +544,14 @@ local/                     SAM 3.1 (finding, /track for the cup game), DINOv2 (/
 evals/                     the scorecards (on the robot: unattended searches, the dress rehearsal, homes, lost, the ring,
                            the room, its lens; simulated search and the agents; the privacy audit; Spanish and thirteen
                            more languages; the crisis check and no health advice in fifteen; Llama Guard reading answers;
-                           Andy's eyes; physical, to run) and their results, each listed in evals/results/README.md
-scripts/, deploy/          setting up and running the models and Andy on this computer; the screen on sample data
+                           Glimmer's second look for warning signs; the voice's tokenizer against Meta's; Andy's eyes;
+                           physical, to run) and their results, each listed in evals/results/README.md
+scripts/, deploy/          setting up and running the models and Andy on this computer: preflight.py (before a demo),
+                           robot_daemon.py (Pollen's daemon, kept to this computer), claims.py (every figure checked);
+                           the public demo (build_static_space.py); the film (make_film.py, film_cards.py, story_film.py)
 config/                    config.example.yaml (no secrets)
-docs/                      the hackathon's rules, research, the video plan, open weights
+docs/                      the system card, the crisis protocol, research, the hackathon's rules and the organizers'
+                           answers, the video plan, the submission's text and checklist, open weights
 tests/
 ```
 
