@@ -1,0 +1,115 @@
+{
+ "when": "2026-11-03 07:22",
+ "what": "Does Andy hear its own breathing? From the journal's times alone: never a sound, never a word.",
+ "breaths a second": 0.22,
+ "summary": {
+  "night, no turns (Nov 2)": {
+   "from": "2026-11-02 00:00",
+   "to": "2026-11-02 05:30",
+   "sounds let go": 5737,
+   "an hour": 1043,
+   "with the breath (once a breath)": {
+    "resultant": 0.143,
+    "z": 116.8
+   },
+   "with the breath (twice a breath)": {
+    "resultant": 0.579,
+    "z": 1925.9
+   },
+   "control": {
+    "largest z at any other rate": 5.1,
+    "at": 0.2265
+   },
+   "keeps time with the breath": true,
+   "phase in the breath (12 parts)": [
+    118,
+    121,
+    332,
+    767,
+    785,
+    384,
+    186,
+    141,
+    66,
+    349,
+    2087,
+    401
+   ],
+   "share above even (estimate)": 0.77,
+   "median seconds long": 1.4,
+   "median room level": 0.022
+  },
+  "day, people about (Nov 2)": {
+   "from": "2026-11-02 09:00",
+   "to": "2026-11-02 17:40",
+   "sounds let go": 3420,
+   "an hour": 395,
+   "with the breath (once a breath)": {
+    "resultant": 0.058,
+    "z": 11.3
+   },
+   "with the breath (twice a breath)": {
+    "resultant": 0.144,
+    "z": 70.7
+   },
+   "control": {
+    "largest z at any other rate": 11.2,
+    "at": 0.2302
+   },
+   "keeps time with the breath": true,
+   "phase in the breath (12 parts)": [
+    223,
+    232,
+    288,
+    416,
+    348,
+    265,
+    233,
+    227,
+    194,
+    248,
+    412,
+    334
+   ],
+   "share above even (estimate)": 0.23,
+   "median seconds long": 2.7,
+   "median room level": 0.004
+  },
+  "night 2026-11-03, resting": {
+   "from": "2026-11-03 00:00",
+   "to": "2026-11-03 05:30",
+   "sounds let go": 1473,
+   "an hour": 268,
+   "with the breath (once a breath)": {
+    "resultant": 0.003,
+    "z": 0.0
+   },
+   "with the breath (twice a breath)": {
+    "resultant": 0.044,
+    "z": 2.8
+   },
+   "control": {
+    "largest z at any other rate": 8.2,
+    "at": 0.1893
+   },
+   "keeps time with the breath": false,
+   "phase in the breath (12 parts)": [
+    145,
+    110,
+    107,
+    114,
+    143,
+    119,
+    135,
+    116,
+    119,
+    120,
+    115,
+    130
+   ],
+   "share above even (estimate)": 0.09,
+   "median seconds long": 1.9,
+   "median room level": 0.02
+  }
+ }
+}

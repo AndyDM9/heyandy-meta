@@ -26,6 +26,8 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        cards joined, sound evened out, length checked: `uv run python scripts/make_film.py cut film/cut.json --out film/andy.mp4`,
        `docs/demo-script.md` step 9): 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
        where anyone can watch it signed out.
+       No take from the robot? The cards and the public demo's story, drawn as a film, make a 2:03 video on their own
+       (`docs/demo-script.md`, "The story, as a film"): `film/andy-story.mp4`.
 2. [ ] `uv run python scripts/claims.py`: every figure in the submission, the system card and the README's top says what
        its file says (a new run that changes one shows here; change the words, never the file).
    [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put

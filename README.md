@@ -504,6 +504,12 @@ each "take one" gets a clap: two quick high notes, timed by Andy's own microphon
 "that's a wrap" ends it. (On the robot, the speaker plays a sound 0.52 to 0.77 s after it's sent, so it's timed by ear;
 `evals/results/filming-20261031-2112.json`, 8 of 8 claps heard.) The steps: `docs/demo-script.md`.
 
+**The story, as a film** (`scripts/story_film.py`): the public demo's story drawn frame by frame from the built Space,
+under a clock the script turns (each frame exactly its moment, not a screen recording), with Andy's own narration laid
+in where the page started it, its buttons hidden and where to try it said: 1920 by 1080, or 1080 by 1920 for a phone,
+in any of Andy's fifteen languages, with subtitles. A piece for the video's cut like any other
+([§104](docs/research.md#104-the-story-as-a-film-november-3-morning)).
+
 ## Layout
 
 <details><summary>Where everything is in this repository (open)</summary>
@@ -737,6 +743,10 @@ ten minutes with no turn and nothing going on, Andy rests: still and quiet, SAM 
 picture changes, and woken by anyone there or any turn
 ([§89](docs/research.md#89-what-andy-costs-to-keep-and-the-breath-it-heard-november-2-evening); [the night's
 picture](docs/images/breath-spike.png)).
+The first night it rested (November 3, midnight to 5:30, `scripts/night.py`): the two cards drew 119.7 W against 164.4
+W the night before, GPU 1 78.2 W against 135.3 W; Andy let go 268 sounds an hour against 1,043, and their times no
+longer kept the breath's (z 2.8). GPU 1 still woke for most of them, and stays up about half a minute each time: what's
+left to save is in [§89](docs/research.md#89-what-andy-costs-to-keep-and-the-breath-it-heard-november-2-evening).
 
 **The cup game, tracking only** (SAM 3.1 Object Multiplex on an RTX 3090, synthetic shuffles of three identical cups, 4
 swaps of 0.8 s each; `docs/research.md` sections 18 and 29): about 4 frames a second through the server, so a 4-second

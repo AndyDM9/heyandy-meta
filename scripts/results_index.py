@@ -234,9 +234,9 @@ def energy(f: str) -> str:
 
 def ego_noise(f: str) -> str:
     s = load(f)["summary"]
-    night = next(v for k, v in s.items() if k.startswith("night"))
-    twice = night["with the breath (twice a breath)"]
-    after = {k: v for k, v in s.items() if not k.startswith(("night", "day"))}
+    first = next(k for k in s if k.startswith("night"))  # the night before Andy rested; nights after it follow
+    night, twice = s[first], s[first]["with the breath (twice a breath)"]
+    after = {k: v for k, v in s.items() if k != first and not k.startswith("day")}
     line = (f"overnight, {night['an hour']:,} sounds an hour Andy let go kept time with its own breathing (z "
             f"{twice['z']:,.0f}; any other rate {night['control']['largest z at any other rate']} at most)")
     for k, v in after.items():

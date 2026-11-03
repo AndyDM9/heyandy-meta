@@ -214,3 +214,21 @@ description, to paste:
 card as 1080p MP4s in `film/` (sharp: each frame drawn on its own). The title's line is the founder's words: pass them
 with `--line "..."`. A figure the result files don't support stops the render (`--check` lists them with their files).
 
+**The story, as a film** (`scripts/story_film.py`; research §104): the public demo's story drawn frame by frame from the
+built Space and told in Andy's own voice, its buttons hidden and the Space's address under it. `film/story-en-wide.mp4`
+(1920 by 1080, 82.4 s) is a piece for the cut as it is; `--shape vertical` makes 1080 by 1920 for a phone (X, a
+WhatsApp status), in any of Andy's fifteen languages (`--lang ko ar`, or `all`). Build the Space first (with `--clip`,
+once there's one, and the film opens on the robot too).
+**If there's no take from the robot by November 4:** the title, the story, the numbers and the end card make a 2:03
+video on their own; it shows the demo, not the robot, and says so (each chapter's line says what it rests on, and the
+end card "Sample data: ... the pictures are drawn"). Takes go in before the numbers card when there are some (57 s of
+room under 3:00).
+```json
+[{"path": "film/card-title.mp4", "label": "title"}, {"path": "film/story-en-wide.mp4", "label": "the story (the public demo)"},
+ {"path": "film/card-numbers.mp4", "label": "numbers and models"}, {"path": "film/card-end.mp4", "label": "the end"}]
+```
+```bash
+uv run python scripts/story_film.py --lang en --shape wide vertical    # -> film/story-en-wide.mp4, story-en-vertical.mp4
+uv run python scripts/make_film.py cut film/cut-story.json --out film/andy-story.mp4   # 2:03
+```
+

@@ -1974,6 +1974,18 @@ Found and fixed, each with a test:
   whether someone's there. Someone there wakes it; so does any turn, filming (never resting in a take), a reminder said,
   or following. A lamp going on costs one look. `--no-rest` turns it off; the journal says when it rested and woke, and
   how often SAM was asked.
+- **The first night resting** (`uv run python scripts/night.py --date 2026-11-03`; `ego-noise-20261103-0722`): Andy
+  rested from 23:32 through the night. Midnight to 5:30, the two cards drew 119.7 W (164.4 W the night before): 2.87 kWh
+  a day, $15.86 a month against $21.78. GPU 1 78.2 W (135.3 W), resting 37% of the time at 15.5 W; GPU 0 41.5 W. Andy
+  let go 268 sounds an hour (1,043), 1.2 to 2.7 s long, and their times no longer kept the breath's: z 2.8 at twice a
+  breath (1,926), 8.2 at most at any other rate. So the breath's sounds are gone; the rest, about five seconds apart,
+  are something else, and without listening (never) the times can't say what.
+- **What's left:** GPU 1 still woke for most of them. Of its 215 wake-ups from rest (P8 to working), 184 came within 8
+  s of a sound Andy then let go, and after each it stays at full clocks a median 27 s (90 s at the 90th percentile;
+  114 W) before resting: 63% of the night. Its fan isn't the cause: in the minute after it switched on there were fewer
+  sounds, not more (27, against 44 in the minute before, over 24 starts). The next saving is hearing less
+  while resting (say, only sounds long and loud enough to be "Hey Andy"); it changes when Andy hears its name, so it
+  waits for the founder and a test with a voice, not a night's guess.
 
 ## 90. Silence inside Andy's answers (November 2, evening)
 
@@ -2305,3 +2317,39 @@ Found and fixed, each with a test:
   stays English; the front door's button names the language chosen with the globe and takes its minutes. The
   accessibility audit gained the story told in another language (Arabic, where it's built):
   `accessibility-20261103-0039`, no axe violation in 68 states, none of 1,572 texts below AA. 1,245 tests pass.
+
+## 104. The story, as a film (November 3, morning)
+
+- **Why:** the video is a quarter of the judging, and on the morning of November 3 there was no take from the robot
+  yet (`film/` held only the made cards); the founder was away. The public demo's story (§102, §103) already says what
+  Andy does, chapter by chapter, in Andy's own voice and in fifteen languages, each chapter with what it rests on. A
+  screen recording of it would be blurred, skip frames whenever the computer is busy, and couldn't be made again the
+  same.
+- **Now** (`scripts/story_film.py`): the story is drawn from the built Space (`dist/space-static`, what will be
+  published) in Chromium under a clock the script turns (Playwright's `page.clock`): the page's timers, its
+  `requestAnimationFrame` and its `Date` stand still between frames; each frame, the clock moves on a thirtieth of a
+  second, every running animation (the Web Animations API, CSS ones included) is set to that moment, and a screenshot is
+  taken. However long a frame takes to draw, it's exactly its moment. The page's `Audio` is replaced before its own
+  script runs: Andy's words aren't played, they're written down (the file, and when the page started and stopped it,
+  by its clock), then laid into the sound at those moments from the same files the page plays, cut where the page cut
+  them, and the whole evened out to -16 LUFS. A film can't be pressed, so the story's buttons are hidden and a line
+  says where to try it; nothing else on the page is changed. On a phone's shape (1080 by 1920) the TV's header and side
+  panels are left out, so its main card sits under the story. Beside each film: its subtitles (`.srt`, each chapter's
+  words for as long as they're on screen) and what it's made of (`.json`: the page's and each voice file's SHA-256,
+  each line's start and end).
+- **Made:** English at 1920 by 1080, 82.4 s, Andy's 11 lines (ten chapters and its closing words), 12.2 MB, drawn in 189
+  s; the same at 1080 by 1920 in 268 s; and the story in each of the other fourteen languages for a phone. With the made
+  cards (the title, the numbers re-rendered from today's results, the end), `make_film.py cut` makes a 2:03 video on
+  its own (`film/andy-story.mp4`, 1920 by 1080, -16 LUFS): a video for the form even with no take, and room for 57 s of
+  the robot's takes before the numbers card. It shows the demo, not the robot, and says so: each chapter's line says
+  what it rests on ("On the robot: ..." or "Not yet ..."), and the end card says "Sample data: no robot, camera or home
+  here; the pictures are drawn".
+- **Found while making it:** the made numbers card in `film/` was two days old (135 of 136 searches, 5.2°), behind
+  today's results (250 of 253, 1.1°); it's re-rendered, and its figures are read from `evals/results` when it is.
+  The TV's day and time, and its reminder's, come from the page's clock, so the film's clock is set: 10:30 on a
+  Wednesday morning, the same in every film.
+- **Checked** (`tests/test_story_film.py`): the real page, its chapters shortened, told in Arabic: Andy starts each
+  chapter's words as the chapter begins and stops them as it ends, its closing words on the end card, held for them and
+  a breath; every frame drawn; the subtitles in the story's language; the buttons hidden and where to try it said, in
+  the story and on the end card; a language the Space doesn't tell the story in refused; the sound's filter run by
+  ffmpeg, each line placed and cut where the page said.
