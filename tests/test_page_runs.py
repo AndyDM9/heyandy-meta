@@ -708,12 +708,18 @@ def test_the_map_of_watched_things_never_prints_one_name_over_another(browser):
                           {label: "glasses", yaw: -10, pitch: -21, metres: 1.18, ago_s: 5},
                           {label: "remote", yaw: 60, pitch: -10, metres: 2.0, ago_s: 50}];
           const svg = dial(places, false); document.body.append(svg); untangle(svg);
-          return [...svg.querySelectorAll("text.name")].map(t => { const b = t.getBBox(); return [t.textContent, b.x, b.y, b.x + b.width, b.y + b.height]; });
+          const f = svg.querySelector("text.front").getBBox();
+          window.leads = [...svg.querySelectorAll("g")].filter(g => g.querySelector("line.lead")).map(g => g.querySelector("text.name").textContent);
+          window.moved = [...svg.querySelectorAll("text.name")].filter(t => Math.abs(+t.getAttribute("y") - (+t.parentNode.querySelector("circle.dot").getAttribute("cy") + 4)) > 0.5).map(t => t.textContent);
+          return [...svg.querySelectorAll("text.name")].map(t => { const b = t.getBBox(); return [t.textContent, b.x, b.y, b.x + b.width, b.y + b.height]; })
+                 .concat([["front", f.x, f.y, f.x + f.width, f.y + f.height]]);
         }""")
+        leads, moved = page.evaluate("() => [window.leads, window.moved]")
         page.close()
     finally:
         server.shutdown()
-    assert [b[0] for b in boxes] == ["cup", "keys", "glasses", "remote"]
+    assert [b[0] for b in boxes] == ["cup", "keys", "glasses", "remote", "front"]
+    assert moved and sorted(leads) == sorted(moved)  # every name moved off its dot is tied back to it, and only those
     for i, a in enumerate(boxes):
         for b in boxes[i + 1:]:
             overlap = a[1] < b[3] and b[1] < a[3] and a[2] < b[4] and b[2] < a[4]

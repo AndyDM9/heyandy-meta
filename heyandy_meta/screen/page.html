@@ -219,6 +219,7 @@
   .trail { fill: none; stroke: var(--muted); stroke-width: 4; stroke-dasharray: 2 10; stroke-linecap: round; opacity: 0.8; }
   .trail.chosen { stroke: var(--outline); stroke-dasharray: none; stroke-width: 6; opacity: 1; }
   .dial .name { fill: var(--ink); font-size: 11px; font-weight: 700; }
+  .dial .lead { stroke: var(--muted); stroke-width: 1; }
   /* a halo of the panel's colour behind the dial's words, as on a map: a ring or a dot behind never touches a letter */
   .dial text { paint-order: stroke; stroke: var(--solid); stroke-width: 3px; stroke-linejoin: round; }
   .dial:not(.big) .name { font-size: 16px; }
@@ -1656,13 +1657,25 @@
     if (!svg.isConnected) return;
     const placed = [], box = t => { const b = t.getBBox(); return [b.x, b.y, b.x + b.width, b.y + b.height]; };
     const clear = b => !placed.some(q => b[0] < q[2] && q[0] < b[2] && b[1] < q[3] && q[1] < b[3]);
+    const front = svg.querySelector("text.front");
+    if (front) placed.push(box(front));  // the names keep clear of "front" too
     for (const t of svg.querySelectorAll("text.name")) {
       const y0 = +t.getAttribute("y"), h = t.getBBox().height;
+      let moved = 0;
       for (const d of [0, h, -h, 2 * h, -2 * h]) {
-        t.setAttribute("y", y0 + d);
+        t.setAttribute("y", y0 + d); moved = d;
         if (clear(box(t))) break;
       }
       placed.push(box(t));
+      const dot = t.parentNode.querySelector("circle.dot");
+      if (moved && dot) {  // a name moved off its dot is tied back to it (November 3: "glasses" two lines up, by no dot)
+        const b = box(t), right = t.getAttribute("text-anchor") === "end";
+        const line = document.createElementNS(svgNS, "line");
+        line.setAttribute("class", "lead");
+        line.setAttribute("x1", dot.getAttribute("cx")); line.setAttribute("y1", dot.getAttribute("cy"));
+        line.setAttribute("x2", right ? b[2] + 1 : b[0] - 1); line.setAttribute("y2", (b[1] + b[3]) / 2);
+        t.parentNode.insertBefore(line, t);
+      }
     }
   }
   function zoom(p) {  // about four times the thing's size, at least a third of the frame, in the frame's shape
