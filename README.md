@@ -12,7 +12,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
 ([heyandy.ai](https://heyandy.ai)) for Meta's Global AI Developer Hackathon (startup track, *Push the Frontier*).
 
 <p align="center">
-  <img src="docs/images/reveal-loop.webp" width="860" alt="Andy's TV the moment it finds a mug: the room goes dark, a spotlight opens on SAM 3.1's outline of the mug, and the seconds to find it, the degrees off target its camera measured and the distance count up">
+  <img src="docs/images/robot-pointing.jpg" width="860" alt="Andy, a small white tabletop robot, turned to point at a pair of orange glasses on the table. Behind it, its screen says: There they are! I see your glasses, with the picture it found them in and each of Meta's models as it works.">
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
   <a href="evals/results"><img alt="On the robot, judged by a person: 13 of 15 right, never a point at the wrong thing" src="https://img.shields.io/badge/Judged%20by%20a%20person-13%20of%2015%20right-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
 </p>
 
-<sub>Above: the TV the moment Andy finds something (the demo scene's drawn picture, not a home).</sub>
+<sub>Above: Andy pointing at the glasses it just found, filmed on the robot, from the uncut take in the video (the monitor's logo blurred).</sub>
 
 > **Built during the event:** everything in this repository, from its first commit on October 27 (the hackathon opened
 > October 26, 12 PM ET). **From before:** our own earlier object-finding prototype, kept outside this repository (none

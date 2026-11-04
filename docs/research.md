@@ -2610,3 +2610,11 @@ Found and fixed, each with a test:
   are you" isn't one; a sentence starting "hey and" or "hey any" is a call now. Also found: my 10:00 test of the raw
   microphones switched one channel only, so it proved nothing; a "room level" of 0.001 is just a quiet room through the
   array's noise suppression with its gain low, not a fault, so the "faint" rule in preflight may fire on a healthy array.
+- **Filming, and what a person's voice does that Andy's own doesn't** (November 4, afternoon). The rehearsals speak in
+  Andy's voice, close to its microphones; the founder's takes were the first long test of a person across the table, and
+  they showed what the morning's "deaf" Andy really was. Beyond the three faults above: "Hey Andy" was written "hey and",
+  "hey any", "hey wendy" and "hey engine" (now a call: "hey" and a word near the name, or one of those); "cut" was written
+  "cat" (now the cue too); "what am I holding?" fell over building the TV's card, and its title read "Your what you're
+  holding"; the found map cut off "1 step" at its edge. Each fixed with a test. Not fixed: words misheard as a thing stay on the
+  TV's watch list ("month" for "mug", cleared by hand before the takes used); and one false 988 reply, in the system card.
+

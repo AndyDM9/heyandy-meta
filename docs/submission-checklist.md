@@ -24,7 +24,7 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
 left and must end READY TO SUBMIT before the form is sent in step 6, so the [brackets] are filled in step 2: the code pushed and its tests passed on GitHub, every figure, the
 results page and the shared-link card current, no bracket left, the video badge up, no key in the history, every link
 in the submission answering a visitor who isn't signed in, and the Space exactly the build)
-1. [ ] The video (the made cards: `uv run python scripts/film_cards.py --line "<the founder's words>"`; then the pieces and
+1. [x] The video (made November 4, 2:59, from the founder's own camera; the shots in `docs/demo-script.md`, "What was filmed". The made cards: `uv run python scripts/film_cards.py --line "<the founder's words>"`; then the pieces and
        cards joined, sound evened out, length checked: `uv run python scripts/make_film.py cut film/cut.json --out film/andy.mp4`,
        `docs/demo-script.md` step 9): 3:00 or less; it opens with the founder's one line on what was pre-existing and what's new; uploaded
        where anyone can watch it signed out.
@@ -33,7 +33,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
 2. [ ] `uv run python scripts/claims.py`: every figure in the submission, the system card and the README's top says what
        its file says (a new run that changes one shows here; change the words, never the file). Fill the submission's
        [brackets] now (the video's link, the X post's), so the release check can say READY TO SUBMIT.
-   [ ] The README's first picture: the real robot pointing, a short loop or a frame from the best take (the founder's
+   [x] The README's first picture (done November 4, `docs/images/robot-pointing.jpg`): the real robot pointing, a short loop or a frame from the best take (the founder's
        camera, not the robot's), in place of the TV render (a judge-style review, November 3: in fifteen minutes a judge
        never saw the robot itself); the same clip is the Space's `--clip`.
    [ ] Andy Finder: the submission says it's in the app store from November 4 (`docs/submission.md`, "What's next");

@@ -100,6 +100,10 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   each seemed to help only because it restarted Andy; `scripts/reset_robot_audio.py` still does both. A near-silent
   sound is now never sent to the recogniser, so a voice that never gets as loud as a normal one isn't heard. The array's
   own gain falls low after loud speech and climbs slowly; preflight fails if the sound stays faint.
+- **Andy's name, and a false crisis reply:** in the founder's voice the recogniser often writes "Hey Andy" as something
+  else ("hey engine"), so a call can be missed; Andy now takes "hey" and a word near its name. While filming on
+  November 4, a sentence not about anything of the kind ("how did you do this?") once got the 988 reply. Better a
+  wrong offer of help than a missed one, but it is a real false alarm, unexplained so far: the words aren't kept.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it

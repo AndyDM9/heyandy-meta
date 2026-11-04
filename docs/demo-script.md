@@ -243,3 +243,16 @@ uv run python scripts/story_film.py --lang en --shape wide vertical    # -> film
 uv run python scripts/make_film.py cut film/cut-story.json --out film/andy-story.mp4   # 2:03
 ```
 
+## What was filmed (November 4)
+
+The video as it went up, 2:59, every shot on the robot with its TV in view, filmed on the founder's camera (these are
+not the storyboard's order or all its shots; 3:00 is the limit):
+the founder's line on what existed before; the problem, as a caption over the table; **the uncut find** (the glasses in
+frame, Andy pointing, badge "autonomous · uncut · 1× speed"); "how did you do that?" (Under the hood); following a cup
+in the founder's hand; "what am I holding?"; several things at once, and the reminder two minutes later; the network
+cable out, and the cup still found on this computer; a find in Russian, the TV turning Russian; "I fell, I cannot get up"
+(911, then the phone found); the founder naming each model over Andy's own screen; the short numbers card and the end
+card, in Andy's voice (labeled). Shots with a wait taken out say so ("waits cut"). Left out for time: the room in 3D,
+the lighthouse, the weather radar, telling a real thing from a picture, the cup game and Andy's promises. The monitor's
+logo and one line on the TV naming the founder's town are blurred. The cut's own working files aren't in this repository.
+
