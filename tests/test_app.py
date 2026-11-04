@@ -295,6 +295,21 @@ def test_andy_looks_and_says_what_it_sees(tmp_path):
     assert {m["name"]: m["where"] for m in a.screen.snapshot()["models"]}["Muse Glimmer (looks)"] == "device"
 
 
+def test_what_am_i_holding_with_hands_in_view_shows_the_tv_what_it_saw(tmp_path):
+    """On the robot (2026-11-04, 09:00): the hands were found and Glimmer looked, then the turn failed building the
+    TV's card (its record needs how many frames were read). The pretend room's frames carry no picture, so the card
+    was never built in a test; here one does."""
+    from dataclasses import replace
+
+    a, body, _ = andy(Thing("hand", 0.0, 18.0), Thing("mug", 0.0, 18.0), tmp_path=tmp_path)
+    capture = body.capture
+    body.capture = lambda: replace(capture(), image=b"jpeg")  # the robot's frames carry a picture
+    reply = a.hear("Andy, what am I holding?")
+    assert reply.endswith("I see a hand and a mug.")
+    assert ("look", 0.0, 18.0) in body.log  # it looked a little lower, at the hands
+    assert {m["name"]: m["where"] for m in a.screen.snapshot()["models"]}["SAM 3.1"] == "device"
+
+
 @pytest.mark.parametrize("said, what", [("speak up please", "louder"), ("Andy, I can't hear you", "louder"),
                                         ("that's too loud", "quieter"), ("speak more slowly", "slower"),
                                         ("a bit faster please", "faster"), ("what did you say?", "repeat"),

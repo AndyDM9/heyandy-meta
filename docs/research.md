@@ -2574,3 +2574,13 @@ Found and fixed, each with a test:
   (`scripts/reset_robot_audio.py`) at 07:40, the voice's direction answering every read; preflight with the cloud
   READY at 07:43, the gain climbing (2.72). Twice in two mornings, so the system card lists it among the known limits,
   and preflight runs again just before the cameras roll.
+- **A third time, two minutes after an answer; and "what am I holding?" fell over** (November 4, 09:00; numbers from
+  the journal only). Andy answered at 08:56:50; from 08:58:04 every sound it let go had a room level of 0.001, then
+  0.000, the same signature as 07:33, so the array had gone faint again, this time right after Andy had spoken and
+  moved. The USB reset at 09:09 brought the direction reads back (all answered) and preflight passed. Three times in
+  two mornings with no kernel error, the desktop's volumes full and only Andy and the daemon reading it: the array
+  sits behind a USB hub (port 1-5.2.1), and a direct port is the next thing to try. The same minute, the founder's
+  "what am I holding?" failed: the hands were found and Glimmer looked, then the TV's card couldn't be built (its
+  record needs how many frames were read, a field every search passes and this path didn't). The pretend room's
+  frames carry no picture, so no test had ever built that card; now one does, with a picture, and it fails with the
+  robot's exact error on the old line (`tests/test_app.py`).

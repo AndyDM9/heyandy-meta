@@ -1939,7 +1939,8 @@ class Andy:
         self._source, self._reason = "device", "Glimmer looked, on this computer"
         if box and frame.image:
             self.screen.found(Found("what you're holding", self.body.yaw, self.body.pitch, 1.0, frame,
-                                    Mask("what you're holding", box, None, ((box[0] + box[2]) / 2, (box[1] + box[3]) / 2))),
+                                    Mask("what you're holding", box, None, ((box[0] + box[2]) / 2, (box[1] + box[3]) / 2)),
+                                    looks=1),
                               seen or "")
         return seen or "I couldn't get a good look. Could you hold it a little closer to me?"
 
