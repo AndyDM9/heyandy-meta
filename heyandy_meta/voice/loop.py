@@ -37,6 +37,17 @@ FOLLOW_UPS = 6  # at most this many in a row without the name, then the name aga
 FAINT_LEVEL = 0.01  # a sound's own loudness (RMS) below which, without the name, it isn't speech for Andy
 
 
+NOISE_PEAK = 0.05  # a sound that never gets this loud isn't a voice: a voice peaks at 0.15 to 1, the room's noises at 0.01 to 0.04
+
+
+def _noise(utterance) -> bool:
+    """A stretch with nothing in it as loud as a voice. Given near-silence, speech-to-text writes words anyway (November
+    4: 62 of them from 8 s of quiet): they kept GPU 1 at 94%, held up hearing while they were written, and counted as
+    the room talking, which closed the follow-ups after every answer. So these never reach it."""
+    x = np.asarray(utterance, dtype=np.float32)
+    return not len(x) or float(np.abs(x).max()) < NOISE_PEAK
+
+
 def _loudness(utterance) -> float | None:
     """An utterance's own loudness (RMS), the number the journal reports; None when there are no samples."""
     x = np.asarray(utterance, dtype=np.float32)
@@ -121,9 +132,8 @@ class VoiceLoop:
         # November 4: with the microphone array gone faint, speech-to-text wrote words out of near-silence, and inside
         # the window after a reply Andy answered them, six in a row, talking to nobody. Without its name, a sound
         # quieter than any voice (a voice's own loudness is 0.04 to 0.14; the faint array's, under 0.01) isn't for it.
+        # And it isn't the room talking either: counted as that, it closed the follow-ups after every answer.
         if level is not None and level < FAINT_LEVEL and not called:
-            if text:
-                self.not_for_andy()
             return None
         if not text or (not called and not (cue or unasked or self.listening() or (urgent and self._clock() <= self.awake_until))):
             if text:
@@ -180,6 +190,9 @@ class VoiceLoop:
                 if screen and hearing:
                     screen.doing("Listening", "Looking at you")
             if utterance is None:
+                continue
+            if _noise(utterance):  # never heard, never counted as the room talking; its numbers go in the journal
+                self._report(None, None, utterance, endpointer, words=0)
                 continue
             self.utterance_end = time.monotonic() - endpointer.end_silence_s
             try:

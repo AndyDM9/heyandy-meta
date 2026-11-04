@@ -94,6 +94,54 @@ def test_a_near_silent_sound_without_the_name_is_not_a_follow_up():
     assert _loudness([]) is None and abs(_loudness([0.1, -0.1, 0.1, -0.1]) - 0.1) < 1e-6
 
 
+def test_near_silence_doesnt_make_the_room_look_busy_and_close_the_follow_ups():
+    """November 4: "he can not have continuous conversations". Words written from near-silence counted as a conversation
+    Andy wasn't part of, so after each answer it took nothing without its name."""
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    for i in range(8):
+        t[0] = float(i)
+        assert loop.heard("the state of the room is the state", level=0.003) is None
+    assert not loop.talking_room()
+    t[0] = 10
+    assert loop.heard("hey andy how are you", level=0.06) == "ok"
+    t[0] = 15
+    assert loop.heard("and what's the weather", level=0.06) == "ok"  # a follow-up, without the name
+
+
+def test_a_sound_with_nothing_as_loud_as_a_voice_never_reaches_speech_to_text():
+    import threading
+
+    from heyandy_meta.voice.loop import NOISE_PEAK, _noise
+
+    assert _noise(np.full(1600, NOISE_PEAK / 2, dtype=np.float32)) and _noise(np.zeros(0, dtype=np.float32))
+    assert not _noise(np.full(1600, NOISE_PEAK * 2, dtype=np.float32))
+
+    heard, stop = [], threading.Event()
+
+    class Voice:
+        language = "eng_Latn"
+
+        def transcribe(self, utterance, *a, **k):
+            heard.append(len(utterance))
+            return "hey andy how are you"
+
+    def mic(stop_event):
+        for level, seconds in ((0.0, 1.0), (0.02, 1.0), (0.0, 1.0), (0.3, 1.0), (0.0, 1.0)):
+            for c in chunks(seconds, 0):
+                yield (np.full(len(c), level, dtype=np.float32), level > 0, None)
+        stop_event.set()
+
+    a = Andy()
+    loop = VoiceLoop(a)
+    reports = []
+    loop.on_heard = lambda text, reply: reports.append(text)
+    loop.run(mic, Voice(), Endpointer(floor=0.002), stop)
+    assert len(heard) == 1  # the voice, not the faint sound before it
+    assert any("0 words heard" in str(r) for r in reports)  # the faint sound is still in the journal, by its numbers
+
+
 def test_just_the_name_gets_a_yes():
     a = Andy()
     assert VoiceLoop(a).heard("Andy.") == "Yes?" and a.said == ["Yes?"] and a.heard == []
@@ -182,10 +230,10 @@ def test_stop_is_heard_while_a_turn_is_running():
             return samples
 
     def mic(stop):
-        yield np.zeros(RATE, np.float32), True, None
+        yield np.full(RATE, 0.1, np.float32), True, None
         while not a.following:
             stop.wait(0.01)
-        yield np.zeros(RATE, np.float32), True, None
+        yield np.full(RATE, 0.1, np.float32), True, None
         stop.wait(3.0)
 
     a, replies = Playing(), []
@@ -230,10 +278,10 @@ def test_crisis_words_during_a_turn_stop_it_and_are_answered_next():
             return samples
 
     def mic(stop):
-        yield np.zeros(RATE, np.float32), True, None
+        yield np.full(RATE, 0.1, np.float32), True, None
         while not a.following:
             stop.wait(0.01)
-        yield np.zeros(RATE, np.float32), True, None
+        yield np.full(RATE, 0.1, np.float32), True, None
         stop.wait(3.0)
 
     a = Busy()
@@ -496,7 +544,7 @@ def test_a_turn_keeps_its_own_times_listening_again_included():
             return samples
 
     def mic(stop):
-        yield np.zeros(RATE, np.float32), True, None
+        yield np.full(RATE, 0.1, np.float32), True, None
         stop.wait(3.0)
 
     a = Talking()

@@ -1915,7 +1915,9 @@
     add("circle", { cx: tx, cy: ty, r: 9, class: "thing" });
     add("text", { x: tx + (tx >= 0 ? 15 : -15), y: ty + 4, "text-anchor": tx >= 0 ? "start" : "end" }, label);
     const steps_ = Math.max(1, Math.round(fy.metres / 0.7));
-    add("text", { x: tx / 2 + (tx >= 0 ? -10 : 10), y: ty / 2, "text-anchor": tx >= 0 ? "end" : "start", class: "far" },
+    // under the thing's name, on its side of the walk: at the walk's middle it sat on "you" when the thing was near
+    const below = tx >= 0 && Math.abs(ty + 20 - (ay + 4)) < 14 ? -14 : 20;  // above the name if "Andy" is under it
+    add("text", { x: tx + (tx >= 0 ? 15 : -15), y: ty + 4 + below - 4, "text-anchor": tx >= 0 ? "start" : "end", class: "far" },
         LANG === "es" ? `${steps_} pasos` : LANG === "en" ? `${steps_} step${steps_ === 1 ? "" : "s"}` : `${steps_} ${T("steps")}`);
     box.append(el("small", LANG === "es" ? "Desde donde está usted" : LANG === "en" ? `From where you are · your ${fy.clock} o'clock`
                                                                      : T("From where you are")), svg);
