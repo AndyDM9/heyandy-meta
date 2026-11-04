@@ -30,18 +30,18 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        where anyone can watch it signed out.
        No take from the robot? The cards and the public demo's story, drawn as a film, make a 2:03 video on their own
        (`docs/demo-script.md`, "The story, as a film"): `film/andy-story.mp4`.
-2. [ ] `uv run python scripts/claims.py`: every figure in the submission, the system card and the README's top says what
+2. [x] `uv run python scripts/claims.py`: every figure in the submission, the system card and the README's top says what
        its file says (a new run that changes one shows here; change the words, never the file). Fill the submission's
        [brackets] now (the video's link, the X post's), so the release check can say READY TO SUBMIT.
    [x] The README's first picture (done November 4, `docs/images/robot-pointing.jpg`): the real robot pointing, a short loop or a frame from the best take (the founder's
        camera, not the robot's), in place of the TV render (a judge-style review, November 3: in fifteen minutes a judge
        never saw the robot itself); the same clip is the Space's `--clip`.
-   [ ] Andy Finder: the submission says it's in the app store from November 4 (`docs/submission.md`, "What's next");
+   [x] Andy Finder: the submission says it's in the app store from November 4 (`docs/submission.md`, "What's next");
        the founder approved publishing it that day (November 3), step 7. If it can't be, change that line first.
-   [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
+   [x] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
        the link in it), the measured results, what was pre-existing, the limits; refresh the
        "What's new here" list up to date. The form text: `docs/submission.md`.
-3. [ ] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
+3. [x] A last look through the history for anything private: no keys, no `docs/private/`, no home pictures
        (the release check's "keys in the history" line, which looks for a key's value, not its name: the docs name
        MODEL_API_KEY often). Never rewrite the history: its
        dates show the work was done during the event.
@@ -50,7 +50,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        only); none of the other entry's names, its partners', the robot design's or the age words in any commit
        message or change (the one age word is inside a cited source's web address, which the public-text test allows);
        no key's value. On November 4, look only at the commits after `5926882`.
-4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics):
+4. [x] (November 4, 15:38 ET; the social preview is the founder's, by hand.) Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics):
        `gh repo edit AndyDM9/heyandy-meta --visibility public --accept-visibility-change-consequences` (gh 2.93 refuses
        a visibility change without the second flag; checked November 3), and
        check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload
@@ -59,7 +59,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        GitHub offers it only on a public repository), and switch off the empty wiki tab (`gh repo edit --enable-wiki=false`). GitHub Support
        has purged the old commits (the founder's ticket of November 1): checked November 3, none of the 182 replaced
        commits is served by its hash any more, nor their objects (the private status notes have the check).
-5. [ ] Rebuild and upload the Space with the video's link for the story's end card
+5. [x] (November 4, public, the upload verified as the build.) Rebuild and upload the Space with the video's link for the story's end card
        (`uv run python scripts/build_static_space.py --video <the video's URL> --clip film/robot.mp4`: the front door and the story open on
        about 10 s of the robot itself, `docs/demo-script.md`; then
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`; then
@@ -84,7 +84,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`). The organizers (November 4,
        3:49 AM): a submission can be edited until 9:00 PM ET, so send it as soon as the video is up and edit in what
        comes after (the X post's link); after 9:00 PM nothing can change.
-7. [ ] Publish Andy Finder (0.3.0: "Ring it" works with nothing set up; finds with the focus held, the true ray and its own aim check) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
+7. [x] Published November 4, https://huggingface.co/spaces/andydm/andy-finder. Publish Andy Finder (0.3.0: "Ring it" works with nothing set up; finds with the focus held, the true ray and its own aim check) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
        `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space --exclude "*.egg-info/*" --exclude "**/__pycache__/*"`
        (`hf upload` doesn't read `.gitignore`: without the exclusions, local build leftovers go up too). The `reachy_mini_python_app` tag lists it.
