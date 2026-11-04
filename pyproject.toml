@@ -1,6 +1,9 @@
 [project]
 name = "heyandy-meta"
 version = "0.0.1"
+description = "Andy: a tabletop robot that finds what you've lost and points at it, on Meta's models (Meta's Global AI Developer Hackathon)"
+readme = "README.md"
+authors = [{ name = "HeyAndy, Inc." }]
 requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
@@ -8,6 +11,10 @@ dependencies = [
     "meta-sam-parser==0.1.0",     # Meta's SAM 3.1 output parser (SAM License)
     "pillow>=10",                 # crops a found thing for the on-device picture checks
 ]
+
+[project.urls]
+Repository = "https://github.com/AndyDM9/heyandy-meta"
+Demo = "https://huggingface.co/spaces/heyandy-ai/andy"
 
 [project.optional-dependencies]
 dev = ["pytest", "numpy", "ruff"]  # numpy: the voice code (on the robot it comes with the robot extra)

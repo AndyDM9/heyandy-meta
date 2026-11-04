@@ -6,7 +6,7 @@ colorTo: yellow
 sdk: static
 pinned: false
 license: apache-2.0
-short_description: Reachy Mini turns to your ringing phone, and finds what you've lost
+short_description: Turns to your ringing phone, and finds what you've lost
 tags:
  - reachy_mini
  - reachy_mini_python_app

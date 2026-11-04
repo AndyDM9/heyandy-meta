@@ -192,3 +192,13 @@ def test_a_translation_of_the_story_is_checked_by_machine_for_what_goes_wrong():
     assert f.problems("Five looks.", "다섯 번, 6번.", latin=False) == ["a figure the English hasn't"]
     assert f.problems("I watch your hand.", "Ich beobachte Ihre Hand.") == []  # one shared word in Latin letters may be its own
     assert f.aloud("SAM 3.1 Object Multiplex와 SAM 3.1", f.SOUNDS["ko"]) == "샘 쓰리 포인트 원 오브젝트 멀티플렉스와 샘 쓰리 포인트 원"
+
+
+def test_each_space_cards_short_description_fits_hugging_faces_60_characters():
+    """November 3: Andy Finder's card said 67 characters; Hugging Face takes at most 60 and refuses the upload."""
+    import re
+
+    for card in (ROOT / "space" / "README.md", ROOT / "apps" / "andy_finder" / "README.md"):
+        front = card.read_text().split("---")[1]
+        said = re.search(r"^short_description: (.*)$", front, re.M).group(1).strip()
+        assert 0 < len(said) <= 60, (card.name, len(said), said)
