@@ -89,3 +89,6 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space --exclude "*.egg-info/*" --exclude "**/__pycache__/*"`
        (`hf upload` doesn't read `.gitignore`: without the exclusions, local build leftovers go up too). The `reachy_mini_python_app` tag lists it.
 8. [ ] After submitting: share the gallery page for the community vote.
+9. [ ] Also by 9:00 PM ET, if not yet done: claim the $150 Model API credit (the organizers' form, linked in
+       `docs/rules.md`; each participant claims their own, and unclaimed credit lapses with the deadline). Our run so
+       far is on our own card (`docs/going-live.md`), so nothing in the demo depends on it.
