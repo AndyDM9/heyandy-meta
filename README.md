@@ -537,7 +537,7 @@ heyandy_meta/models/       the model clients: Muse Spark (Model API), Muse Glimm
 heyandy_meta/router.py     who answers a turn: the device or the cloud
 apps/andy_finder/          a slim Reachy Mini app for everyone: find and point, from the dashboard
                            (SAM 3.1 on the computer if it's there, else through the Model API: then camera pictures go)
-heyandy_meta/network.py    whether the cloud is reachable right now
+heyandy_meta/network.py    whether the cloud is reachable right now, and a pulled cable noticed within a second
 heyandy_meta/budget.py     the hard cap on Model API spend
 local/                     SAM 3.1 (finding, /track for the cup game), DINOv2 (/embed) and Prompt Guard 2 (/guard);
                            MapAnything (how far, depth_server.py); hearing and speaking; all served on 127.0.0.1 only
@@ -553,6 +553,7 @@ config/                    config.example.yaml (no secrets)
 docs/                      the system card, the crisis protocol, research, the hackathon's rules and the organizers'
                            answers, the video plan, the submission's text and checklist, open weights
 tests/
+SECURITY.md                reporting a weakness privately, and what Andy is built to keep
 ```
 
 </details>

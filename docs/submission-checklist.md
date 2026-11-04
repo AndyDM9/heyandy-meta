@@ -42,7 +42,9 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        dates show the work was done during the event.
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics) and
        check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload
-       `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. GitHub Support
+       `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. Then switch on private
+       vulnerability reporting, where `SECURITY.md` sends reports (`gh api -X PUT repos/AndyDM9/heyandy-meta/private-vulnerability-reporting`;
+       GitHub offers it only on a public repository), and switch off the empty wiki tab (`gh repo edit --enable-wiki=false`). GitHub Support
        has purged the old commits (the founder's ticket of November 1): checked November 3, none of the 182 replaced
        commits is served by its hash any more, nor their objects (the private status notes have the check).
 5. [ ] Rebuild and upload the Space with the video's link for the story's end card

@@ -2,12 +2,16 @@ name: tests
 on: [push, pull_request]
 permissions:
   contents: read
+concurrency:  # a newer push replaces a run still going on the same branch
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30  # a hung browser test fails the run instead of holding it for six hours
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4, pinned to its commit
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e  # v6, pinned to its commit
       - run: uv sync --extra dev --extra browse --locked
       # the TV page in a real browser (tests/test_page_runs.py and the eyes pages): they caught a page that stopped
       # drawing in Chinese, and skip without a browser
