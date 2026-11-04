@@ -97,6 +97,29 @@ The Cerebral Valley app, answering for the organizers ("Here's what the publishe
 runs it from a fresh clone (checked November 3, evening: 1,259 tests pass, 11 skipped; the browser's and the robot's need their extras). The
 video: the robot filmed live with its TV in shot (the "Meta's models, live" strip), the short numbers card, at most 3:00.
 
+Later the same evening (read at 10:45 PM ET, read-only):
+
+> **The video's link:** "An unlisted YouTube link works as long as anyone with the link can watch it logged out, and
+> the exact link you paste into the form is the one judges will open." The X post is its own link on the same form,
+> and only that post's likes, reposts and comments count, through November 8. ("regarding video permissions")
+
+> **Running it:** "Hosting isn't required. Judges need a project that runs from the setup instructions in your public
+> GitHub repo, plus the 3-minute demo video. A hosted version is optional. For the API key, judges can use their own
+> Meta Model API key. Explain in the README how to add it … and never commit your own key. A keyless mode on recorded
+> sample runs is also accepted, as long as you include as much provenance as you can." ("How is the working project
+> seen")
+
+> **"Meta" in a name:** "organizers can't give permission to use Meta brand names, including 'Meta,' in a project
+> name … the safest route is a name without 'Meta.' … use your own original name and describe the project as built
+> with Meta's models." ("Is a project name with 'Meta' … allowed?", 8:47 PM ET)
+
+**Ours:** the video goes up public, and its link is checked signed out (the release check opens every link as a
+visitor). The README says how to add a Model API key (`MODEL_API_KEY`, kept out of the repository; the release check
+looks for a key's value in every commit), and the public demo is recorded runs with their provenance (each scene says
+what it was recorded with; the results page has every run's file). The project's name is "Andy, by HeyAndy", built
+with Meta's models; nothing calls it Meta's or "HeyAndy x Meta" (the package's one-line description did, until
+November 3).
+
 ## Prizes (section 9)
 
 **Startups:** $250K, $150K, $75K, $50K, $25K.

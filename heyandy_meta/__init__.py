@@ -1,1 +1,1 @@
-"""HeyAndy x Meta: a tabletop robot that finds what you've lost, built on Meta's models."""
+"""Andy, by HeyAndy: a tabletop robot that finds what you've lost, built on Meta's models."""
