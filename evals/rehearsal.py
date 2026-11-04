@@ -31,6 +31,7 @@ from heyandy_meta.voice.loop import VoiceLoop
 # (shot, language, what's said, what the shot needs): point / follow / cloud / zh
 SHOTS = [
     ("the uncut find", "en", "Hey Andy, where are my glasses?", "point"),
+    ("how it did that", "en", "Hey Andy, how did you do that?", "hood"),  # the TV shows under the hood
     ("follow the mug", "en", "Hey Andy, follow the mug.", "follow"),
     ("several things at once", "en", "Hey Andy, find the cup and remind me in two minutes to call Sam.", "point"),
     ("the network unplugged", "en", "Hey Andy, where are my keys?", "point offline"),  # the remote if one's in front
@@ -38,7 +39,7 @@ SHOTS = [
     ("a picture", "en", "Hey Andy, draw me a lighthouse at dawn.", "cloud"),
     ("the weather radar on the TV", "en", "Hey Andy, show me the weather radar on the TV.", "cloud"),
     ("in Mandarin, nothing said in English first", "zh", "安迪，我的眼镜在哪里？", "point zh"),
-    ("back to English", "en", "Andy, speak English.", "en"),
+    ("back to English", "en", "Hey Andy, speak English.", "en"),  # as the filming card says it
     ("its promises", "en", "Hey Andy, what won't you do?", "promises"),
     ("an emergency said (if it's in the video)", "en", "Hey Andy, I fell and I can't get up.", "point"),
 ]
@@ -115,6 +116,8 @@ def shot(andy, loop, name: str, code: str, line: str, needs: str) -> dict:
         problems.append(FIX["zh"])
     if needs == "promises" and "never give health advice" not in reply:
         problems.append("Andy didn't say its promises: it heard " + repr(heard))
+    if needs == "hood" and not andy.screen.hood_left():
+        problems.append("The TV didn't open under the hood: Andy heard " + repr(heard))
     if needs == "en" and andy.language != "en":
         problems.append(FIX["en"])
     return {"shot": name, "said": line, "heard": heard, "andy said": said, "seconds": round(took, 1), "pointed": pointed,

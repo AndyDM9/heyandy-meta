@@ -263,6 +263,9 @@ class ScreenState:
                     day.to[f] = day.to.get(f, 0) + 1
             self._in_turn = True
             self.models, self.outbox = {}, []
+            # the next request ends "under the hood" (November 3: it stayed 90 s, so a take straight after "how did you
+            # do that?" would have shown the hood page instead of the follow); "how did you do that?" opens it again
+            self._hood_until = 0.0
 
     def _today(self) -> Day:
         """Today's counts (the lock is held): a new day starts them again, from midnight."""

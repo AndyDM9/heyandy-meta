@@ -2531,3 +2531,9 @@ Found and fixed, each with a test:
   only the texts axe can't decide are, and the help panel, now on its own solid background clear of the band, had 16
   of them and has none (axe decides all 22 of its texts itself, all passing); the other four, a time and three lines
   of a web page, vary with what's shown.
+- **The rehearsal says the card, and the hood gives way** (November 3, evening). The dress rehearsal didn't try the
+  card's follow-up to the first find ("Hey Andy, how did you do that?", which opens under the hood on the TV) and said
+  "Andy, speak English" where the card says "Hey Andy, ...": it now says every line as it will be said (a test checks
+  the name is on each), and checks the TV opened under the hood. On the way: the hood stayed on the TV for 90 s
+  whatever came next, so a take started straight after it would have been filmed with the hood page instead of its
+  own turn. The next request now ends it (`screen/state.py` `new_turn`); the page goes back within a second.

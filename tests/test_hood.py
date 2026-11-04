@@ -98,6 +98,18 @@ def test_show_me_under_the_hood_opens_the_page_on_the_tv(tmp_path):
     assert parse("how did you do that?").kind == "hood" and parse("show me how you work").kind == "setup"
 
 
+def test_the_next_request_ends_under_the_hood_so_a_take_straight_after_shows_its_own_turn(tmp_path):
+    """November 3: the hood stayed on the TV for 90 s, so "follow the mug" said straight after "how did you do that?"
+    would have been filmed with the hood page on the TV instead of the follow."""
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.hear("Hey Andy, how did you do that?")
+    assert a.screen.snapshot()["hood"] is True
+    a.hear("Hey Andy, what time is it?")
+    assert a.screen.snapshot()["hood"] is False and a.screen.hood_left() == 0
+    a.hear("Hey Andy, how did you do that?")  # asked again, it opens again
+    assert a.screen.snapshot()["hood"] is True
+
+
 def test_the_hood_page_and_its_numbers_are_served_and_hold_no_words(tmp_path):
     a, _, _ = andy(Thing("keys", -20.0, 25.0), tmp_path=tmp_path)
     a.hear("where are my keys?")
