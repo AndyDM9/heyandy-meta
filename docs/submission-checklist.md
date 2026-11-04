@@ -16,7 +16,7 @@ https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit; re-rea
       evening: 13 of 15, `physical-fixed-20261101-2115`).
 - [ ] The 30-second clip on X as soon as a take is good (Most Viral counts engagement through November 8): the uncut
       find or the cup game, captions burned in. Keep its link for the form (step 6).
-- [x] Muse Spark live (since October 27, on our billing until the credits come; `docs/going-live.md`).
+- [x] Muse Spark live (since October 27; `docs/going-live.md`).
 - [x] Any last questions in Discord #questions (November 3 is the last full day for them): read November 3, the
       organizers' answers on the video and the repository in `docs/rules.md`.
 
@@ -91,6 +91,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space --exclude "*.egg-info/*" --exclude "**/__pycache__/*"`
        (`hf upload` doesn't read `.gitignore`: without the exclusions, local build leftovers go up too). The `reachy_mini_python_app` tag lists it.
 8. [ ] After submitting: share the gallery page for the community vote.
-9. [ ] Also by 9:00 PM ET, if not yet done: claim the $150 Model API credit (the organizers' form, linked in
-       `docs/rules.md`; each participant claims their own, and unclaimed credit lapses with the deadline). Our run so
-       far is on our own card (`docs/going-live.md`), so nothing in the demo depends on it.
+9. [x] Also by 9:00 PM ET, if not yet done: claim the $150 Model API credit (the organizers' form, linked in
+       `docs/rules.md`; each participant claims their own, and unclaimed credit lapses with the deadline). Not sent on
+       November 4: Billing already showed free credits in use and no card charge, and the form allows one claim
+       (`docs/going-live.md`).

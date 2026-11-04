@@ -34,7 +34,9 @@ they were; reminders you asked for; conversation, pictures and web pages on its 
   and Andy carries on.
 - **Words, when online:** Muse Spark (planning, web answers, harder conversation) and Muse Image (pictures) through
   Meta's Model API; web-page screenshots to Muse Spark only for "show me … on the TV". Every word sent is on that
-  turn's receipt on the TV; "what did you send to the cloud today?" adds up the day.
+  turn's receipt on the TV; "what did you send to the cloud today?" adds up the day. Our account runs on the hackathon's
+  free credits, and Meta's Billing page says that while it does, "your content may be used for product improvement": that
+  covers what goes through the API, so what's on the receipt, and not the camera or microphone.
 - **The one exception:** a switch for filming a staged room sends frames to SAM 3.1 through the API, and the TV says so.
 - **Kept on the computer:** what you tell it and where things were, as words and numbers; never a camera picture or a
   sound (only pictures you ask Muse Image to draw are saved).

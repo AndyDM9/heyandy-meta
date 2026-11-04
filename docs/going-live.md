@@ -1,7 +1,10 @@
 # Muse Spark and Muse Image: the cloud part
 
-Muse Spark has been live since October 27, on our own billing until the hackathon credits come. These steps are the
-founder's: the key is never shown to anyone else or put in the repository.
+Muse Spark has been live since October 27. The hackathon's free credits are on the account, and on November 4 Billing
+showed no card charge so far. Billing also says "While using free credits your content may be used for product
+improvement", so the words a turn sends (and web-page screenshots) fall under that while it uses them; the home's
+pictures and voice never go. These steps are the founder's: the key is never shown to anyone else or put in the
+repository.
 
 1. **Billing** on the Meta Model API: a spend limit set. The code also stops at $140 (`heyandy_meta/budget.py`).
 2. **An API key** for the HeyAndy, Inc. team. Standard tier only; never a `-contributor` model (Meta may train on their
