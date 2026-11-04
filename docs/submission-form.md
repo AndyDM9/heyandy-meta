@@ -25,7 +25,7 @@ WHAT ELSE IT DOES
 
 MEASURED
 - On the robot, judged by a person (three things, five places each on our desk, or hidden): 13 of 15 right, never a wrong point.
-- Alone in the room, its own camera judging: 250 of 253 unattended searches ended in a point. On the final code: a median 1.1 degrees off, 2.2 at worst, 7.8 s a find.
+- Alone in the room, its own camera judging: 250 of 253 unattended searches ended in a point. On the final code: a median 1.1 degrees off, 2.2 at worst, 7.8 s a find from a typed request.
 - Privacy audit, a day of 21 requests with the real models: no camera picture reached the cloud.
 Every result, failures included, is in evals/results/ and docs/research.md.
 
@@ -64,7 +64,7 @@ BEYOND A BASIC INTEGRATION
 
 ## Why are Meta's models important to your solution?
 
-Andy's promise is that a home's pictures and voice stay in the home. Meta's open weights are what make that promise possible: seeing, measuring, hearing, thinking, speaking and guarding all run on the computer beside the robot, with no inference provider.
+Andy's promise is that a home's pictures and voice stay in the home. Meta's open weights are what make that promise possible: seeing, measuring, hearing, thinking, speaking and guarding can all run on the computer beside the robot, with no inference provider.
 
 PRIVACY. The camera and microphone reach only models on that computer. Muse Spark and Muse Image get words, plus screenshots of web pages you ask to see, and the TV's receipt shows exactly what went. In a privacy audit of a day of 21 requests, with every outgoing request recorded, no camera picture reached the cloud (24 taken), every word sent was on its turn's receipt, and crisis words reached no model. The one exception is a switch for filming in a staged room: SAM 3.1 through the API, and the TV says so.
 
@@ -76,4 +76,4 @@ LANGUAGES. Omnilingual ASR hears, Muse Glimmer translates on the computer beside
 
 SAFETY. Llama Guard 3 reads what the person says before any other model, and reads each sentence a model writes before Andy says it. No model answers a health question: Andy's own words, written by hand in each language, do. Crisis words in any of its 15 languages get the 988 line from code. Prompt Guard 2 reads each web page before Muse Spark does.
 
-A PATH TO PEOPLE'S HOMES. Open weights let us measure what one home box would need. At rest Andy holds 40.5 GB: the language model (Muse Glimmer) is 17.6 GB and everything else 22.9 GB, one card's worth. Next is those on one card, with a smaller language model beside them, and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC). Meanwhile SAM 3.1 through the Model API brings the find to anyone with a Reachy Mini and no GPU: two pictures a find, about half a cent at Meta's $2.50 per 1,000 images.
+A PATH TO PEOPLE'S HOMES. Open weights let us measure what one home box would need. At rest Andy holds 40.5 GB of GPU memory: the language model (Muse Glimmer) is 17.6 GB and everything else 22.9 GB, one card's worth. Next is those on one card, with a smaller language model beside them, and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC). Meanwhile SAM 3.1 through the Model API brings the find to anyone with a Reachy Mini and no GPU: two pictures a find, about half a cent at Meta's $2.50 per 1,000 images.
