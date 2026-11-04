@@ -830,3 +830,30 @@ def test_the_story_band_never_covers_the_tv_on_a_desktop(browser):
     finally:
         server.shutdown()
     assert gaps and all(g >= 0 for g in gaps.values()), {k: v for k, v in gaps.items() if v < 0}
+
+
+def test_on_a_phone_the_story_band_leaves_room_and_no_caption_covers_the_picture(browser):
+    """November 3, a judge-style review on a phone: the story's band took 40% of the screen (the ask box a row of its
+    own) and Andy's caption, held at the bottom, covered the found picture."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    try:
+        page = browser.new_page(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        page.goto(f"http://127.0.0.1:{server.server_address[1]}/?story")
+        page.wait_for_function("() => typeof STORY !== 'undefined'", timeout=10000)
+        page.evaluate("() => { if (!story) startStory(); story.paused = true; go(2); }")
+        page.wait_for_timeout(600)
+        got = page.evaluate("""() => ({ ask: getComputedStyle(document.querySelector('#story nav form.ask')).display,
+                                         caption: getComputedStyle(document.getElementById('captions')).position,
+                                         share: document.getElementById('story').getBoundingClientRect().height / innerHeight })""")
+        page.close()
+    finally:
+        server.shutdown()
+    assert got["ask"] == "none" and got["caption"] != "sticky" and got["share"] < 0.37, got
