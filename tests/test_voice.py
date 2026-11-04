@@ -145,7 +145,8 @@ def test_a_stretch_is_cut_at_eight_seconds():
     ep = Endpointer()
     for c in chunks(1.0, 0):
         ep.feed(c)
-    out = [u for c in chunks(12.0, 0.3, 1) if (u := ep.feed(c)) is not None]
+    talk = [c for _ in range(30) for c in [*chunks(0.3, 0.3, 1), *chunks(0.1, 0)]]  # words, with gaps too short to end it
+    out = [u for c in talk if (u := ep.feed(c)) is not None]
     assert out and len(out[0]) / RATE == pytest.approx(8.0, abs=0.4)
 
 
@@ -534,3 +535,38 @@ def test_an_emergency_or_crisis_words_are_answered_without_the_name():
                  "my son fell off his bike last year", "i can't get up this early anymore", "when grandpa fell they called an ambulance",
                  "where are my keys"):
         assert loop.heard(said) is None, said
+
+
+def _feed(ears, level, seconds, flag=False, chunk_s=0.1):
+    """Steady sound for this long, in chunks as the robot gives them; the utterances that came out, as seconds."""
+    n, out = int(16000 * chunk_s), []
+    for _ in range(int(round(seconds / chunk_s))):
+        said = ears.feed(np.full(n, level, dtype=np.float32), flag)
+        if said is not None:
+            out.append(len(said) / 16000)
+    return out
+
+
+def test_a_floor_gone_too_low_climbs_back_so_a_voice_is_heard_on_its_own():
+    """November 3 and 4: the floor could only be learned while quiet, so once a moment of near-silence had taken it to
+    0.001, the room's own noise counted as speech for good: nothing was quiet again, every stretch ran the full 8 s
+    (hundreds an hour) and "Hey Andy" was buried in them. It looked like the microphones; a restart seemed to cure it."""
+    from heyandy_meta.voice.listen import Endpointer
+
+    ears = Endpointer(floor=0.001)
+    first = _feed(ears, 0.005, 6.0)  # the room's noise, taken for speech at first...
+    assert first and first[0] < 8.0 and ears.floor >= 0.004  # ...until the floor catches up, well before the 8 s cap
+    assert _feed(ears, 0.005, 10.0) == []  # the room is quiet again: nothing comes out of it
+    assert not ears.active
+    voice = _feed(ears, 0.06, 2.0) + _feed(ears, 0.005, 1.0)  # a sentence, then the room
+    assert len(voice) == 1 and 2.0 <= voice[0] < 3.5  # it comes out alone, not in an 8 s stretch
+
+
+def test_talking_with_gaps_between_words_doesnt_raise_the_floor():
+    from heyandy_meta.voice.listen import Endpointer
+
+    ears = Endpointer(floor=0.005)
+    for _ in range(12):  # 7.2 s of talk: words, and the room between them
+        _feed(ears, 0.08, 0.4)
+        _feed(ears, 0.005, 0.2)
+    assert ears.floor < 0.01
