@@ -34,6 +34,13 @@ HEY_LATER = re.compile(r"\b" + HEY + NAME + r"\b[\s,.!?]*(?=\S)", re.I)
 # a room's own talk could keep it answering: November 2, in a meeting near the robot, 26 turns in 20 minutes, each
 # within 20 s of the last, until the robot was unplugged (research.md section 79). So:
 FOLLOW_UPS = 6  # at most this many in a row without the name, then the name again: a backstop for a room that waits
+FAINT_LEVEL = 0.01  # a sound's own loudness (RMS) below which, without the name, it isn't speech for Andy
+
+
+def _loudness(utterance) -> float | None:
+    """An utterance's own loudness (RMS), the number the journal reports; None when there are no samples."""
+    x = np.asarray(utterance, dtype=np.float32)
+    return float(np.sqrt(np.mean(np.square(x)))) if len(x) else None
                 # for Andy to finish (the meeting's own talk over its answers is what ends a chain: below)
 # and when the room is talking (people, a call on speaker, the TV), this many utterances Andy wasn't called in, or said
 # over its own answer, within this long: a conversation it isn't part of, so it answers its name and takes nothing
@@ -83,14 +90,15 @@ class VoiceLoop:
         return getattr(self.andy, "following", False) and bool(
             STOP.search(text) or (getattr(self.andy, "playing", False) and DONE.search(text)))
 
-    def heard(self, text: str, voice_yaw: float | None = None) -> str | None:
-        """One utterance's text. Returns what Andy said, or None if it wasn't for Andy (counted either way: a number)."""
-        reply = self._heard(text, voice_yaw)
+    def heard(self, text: str, voice_yaw: float | None = None, level: float | None = None) -> str | None:
+        """One utterance's text (and its loudness, when known). Returns what Andy said, or None if it wasn't for Andy
+        (counted either way: a number)."""
+        reply = self._heard(text, voice_yaw, level)
         if text.strip():
             self._count(for_andy=reply is not None)
         return reply
 
-    def _heard(self, text: str, voice_yaw: float | None = None) -> str | None:
+    def _heard(self, text: str, voice_yaw: float | None = None, level: float | None = None) -> str | None:
         text = " ".join(text.split())
         if crisis(text) and not self.stops(text) and getattr(self.andy, "following", False):
             self.andy.stop_following()  # whatever Andy is doing, this comes first
@@ -110,6 +118,13 @@ class VoiceLoop:
         # crisis words and an emergency said as itself are answered without the name (November 3: someone who has
         # fallen may not say "Hey Andy"); companion/safety.py unasked_urgent keeps room talk out of it
         unasked = urgent and unasked_urgent(text)
+        # November 4: with the microphone array gone faint, speech-to-text wrote words out of near-silence, and inside
+        # the window after a reply Andy answered them, six in a row, talking to nobody. Without its name, a sound
+        # quieter than any voice (a voice's own loudness is 0.04 to 0.14; the faint array's, under 0.01) isn't for it.
+        if level is not None and level < FAINT_LEVEL and not called:
+            if text:
+                self.not_for_andy()
+            return None
         if not text or (not called and not (cue or unasked or self.listening() or (urgent and self._clock() <= self.awake_until))):
             if text:
                 self.not_for_andy()
@@ -264,7 +279,7 @@ class VoiceLoop:
             reply = None
             self.marks["began"] = time.monotonic()
             try:
-                reply = self.heard(text, yaw)
+                reply = self.heard(text, yaw, level=_loudness(utterance))
             except Exception as e:  # noqa: BLE001 - one bad turn must not leave Andy deaf
                 log.warning("a turn failed: %s: %s", type(e).__name__, e)
             finally:

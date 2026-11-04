@@ -75,6 +75,25 @@ def test_only_speech_for_andy_is_answered_and_follow_ups_need_no_name():
     assert loop.heard("talking to someone else") is None
 
 
+def test_a_near_silent_sound_without_the_name_is_not_a_follow_up():
+    """November 4: the microphone array gone faint, speech-to-text wrote words out of near-silence, and in the window
+    after a reply Andy answered them, six in a row, to nobody. A sound quieter than any voice isn't speech for Andy;
+    called by name, it's answered whatever the level."""
+    from heyandy_meta.voice.loop import _loudness
+
+    t = [0.0]
+    a = Andy()
+    loop = VoiceLoop(a, follow_up_s=20, clock=lambda: t[0])
+    assert loop.heard("hey andy where are my glasses", level=0.06) == "ok"
+    t[0] = 5
+    assert loop.heard("the state of the room is the state", level=0.004) is None  # words from near-silence: let go
+    assert loop.heard("and my keys", level=0.05) == "ok"  # a voice: a follow-up, as before
+    assert a.heard == ["where are my glasses", "and my keys"]
+    t[0] = 10
+    assert loop.heard("hey andy what time is it", level=0.004) == "ok"
+    assert _loudness([]) is None and abs(_loudness([0.1, -0.1, 0.1, -0.1]) - 0.1) < 1e-6
+
+
 def test_just_the_name_gets_a_yes():
     a = Andy()
     assert VoiceLoop(a).heard("Andy.") == "Yes?" and a.said == ["Yes?"] and a.heard == []
