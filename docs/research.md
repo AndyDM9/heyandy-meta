@@ -2556,3 +2556,12 @@ Found and fixed, each with a test:
   recorded search, not "live". Andy's eyes, when its download fails, says the connection, not the browser. The
   results page says when a shot the whole rehearsal missed was right on its own run after. The system card states
   the robot's stream server and Pollen's relay before November 3 as a known limit of its own, not inside a table cell.
+- **What a judge reads first, and what we say about the history and the business** (November 3, late; the founder's
+  calls on the judge-style review's three open points). The README's "In 30 seconds" is five bullets of twenty words
+  or fewer, every figure still checked by `scripts/claims.py`, with the demo, the run and the details a line under them;
+  "it can't call anyone and doesn't watch for falls" moved to the health paragraph beside the 911 line. "The history,
+  read plainly" (Built during the event): the first commit here, October 27 at 10:29 ET; the first hour of event work
+  committed in a repository that also held an October 24 skeleton (a README, a licence and stubs of a few lines; of
+  it, only the Apache-2.0 licence text is here, checked file by file); written with an AI coding assistant, each of
+  the 343 commits' trailers saying so. The submission's "What's next" says who it's for and that there's no price yet:
+  homes first, then one box and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC).

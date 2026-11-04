@@ -36,8 +36,8 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
    [ ] The README's first picture: the real robot pointing, a short loop or a frame from the best take (the founder's
        camera, not the robot's), in place of the TV render (a judge-style review, November 3: in fifteen minutes a judge
        never saw the robot itself); the same clip is the Space's `--clip`.
-   [ ] Andy Finder: the submission says it's in the app store from November 4 (`docs/submission.md`, "What's next").
-       If the founder doesn't publish it that day (step 7), change that line before submitting.
+   [ ] Andy Finder: the submission says it's in the app store from November 4 (`docs/submission.md`, "What's next");
+       the founder approved publishing it that day (November 3), step 7. If it can't be, change that line first.
    [ ] The README: the video at the top (uncomment the "Watch the 3-minute video" badge under the hero and put
        the link in it), the measured results, what was pre-existing, the limits; refresh the
        "What's new here" list up to date. The form text: `docs/submission.md`.

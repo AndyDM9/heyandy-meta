@@ -140,6 +140,9 @@ with today's receipts on the TV. Speech that isn't for Andy is dropped, never ke
   22.9 GB, one card's worth. Next, one box: those on one card, and a smaller language model beside them. Kept on,
   the two cards drew 188.1 W ($24.92 a month at the U.S. average price), mostly GPU 1 never resting: Andy was hearing
   its own breathing motors, found from the sounds' times alone. It now rests when nobody's there (research §89).
+- **Who it's for, and what comes before a price:** people who live on their own at home, and the family who would set
+  it up for them. There's no price yet: next is Andy in homes with those people, to learn what it must do before anyone
+  pays for it; then one box instead of two GPUs, and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC).
 - **Our own robot body** (in design) behind the same body interface; each language tried with people who speak it;
   the physical scorecard in more homes, with the people Andy is for.
 - **Where it stands:** home robots roam the house (Amazon's Astro, by invitation) or keep company at the table

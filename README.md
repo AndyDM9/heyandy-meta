@@ -32,37 +32,24 @@ Built on Meta's models for people who live at home, starting with older adults, 
 > [Built during the event, and what came before](#built-during-the-event-and-what-came-before).
 
 **In 30 seconds:**
-- **Who it's for.** Three in four adults 50 and older want to stay in their own homes as they age
-  ([AARP, 2024](https://www.aarp.org/press/releases/2024-12-10-new-aarp-report-majority-adults-50-plus-age-place-policies-communities-catch-up.html)),
-  and a quarter of Americans 65 and older live alone
-  ([Pew Research, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/)):
-  when the glasses go missing, there's no one to ask. Andy is someone to ask, and it can show you.
-- **It finds and points.** "Hey Andy, where are my glasses?" SAM 3.1 finds them, Andy points, checks its own aim with
-  its camera, and says where, from where you stand. *Moved round the desk and judged by a person, 13 of 15 right, and
-  never a point at the wrong thing; alone, its own camera judging, 250 of 253 unattended searches ended in a point.*
-- **When it matters most, it finds your phone.** "Hey Andy, I fell and I can't get up": "If you need help, please call
-  911 right away. I'll find your phone." Then it points at it. *On the robot: 16.5 to 27.1 s from the words, over five dress rehearsals.* Andy can't call
-  anyone and doesn't watch for falls; it does what a robot that finds things can.
-- **It speaks your language.** Fifteen of them, and it notices which one it's called in: "安迪，我的眼镜在哪里？" gets
-  its answer in Mandarin. Every model it runs is Meta's, hearing and voice included.
-- **Your home's pictures stay home.** The camera and microphone reach only Meta's open models on the computer beside
-  the robot; every word that goes to the cloud is on a receipt on the TV. Unplug the network and Andy carries on.
-- **Try it now, no robot needed:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) opens on Andy's face
-  and one thing to try first, Andy's eyes on your own things; its 75-second story, told by Andy in its own voice (and in
-  yours: all fourteen of its other languages, translated by Muse Glimmer and checked by machine), is
-  Andy's own TV, its scenes recorded and replayed in your browser; *Ask Andy* plays the scene that matches what you
-  type, Andy saying it in its own voice, in any of its fifteen languages, or **say** in English (tap 🎙: Meta's wav2vec
-  2.0 hears you, in your browser). **Andy's eyes, live** is the real thing: show it your mug, sweep your phone round the
-  room, and Meta's DINOv2 finds yours.
-- **Run it yourself:** two commands on a laptop, no GPU and no robot ([Run it](#run-it)); the whole Andy, from this
-  repository, on a computer with two 24 GB GPUs.
+- **Who it's for.** A quarter of Americans 65 and older live alone
+  ([Pew, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/));
+  Andy finds what goes missing.
+- **Finds and points.** "Where are my glasses?" SAM 3.1 finds them, Andy points: *13 of 15 right*, person-judged.
+- **In an emergency, your phone.** "I fell": "please call 911 right away. I'll find your phone." Then it points.
+- **Fifteen languages, every model Meta's.** It answers in the language it's called in, hearing and voice included.
+- **Pictures stay home.** Camera and microphone reach only models on the computer beside it; unplug the network, it carries on.
+
+**Try it now, no robot:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) (Andy's own TV, its scenes
+recorded on the robot, and Andy's eyes, live on your things) · **Run it yourself:** two commands on a laptop
+([Run it](#run-it)) · **The details:** [measured on the robot](#proof), and [what it does](#the-details-what-it-does).
 
 **Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. That's kept in code, not asked
 of a model: a health question, in any of its fifteen languages, gets Andy's own words, written by hand ("your doctor or
 pharmacist can; I can remind you to call them"), and no model answers it. Someone who says they've fallen hears
 "please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 to 27.1 s from
-the words). It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
+the words). It can't call anyone and doesn't watch for falls. It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
 ([docs/crisis-protocol.md](docs/crisis-protocol.md)). Ask it **"Hey Andy, what won't you do?"** and it says so, with
 today's receipts on its TV: no camera picture has left the house, how many health questions got its own words, how
 many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud. **All of it on one page,
@@ -413,6 +400,12 @@ The picture of what runs where is at the top: [Meta's models, and where each one
 
 ## Built during the event, and what came before
 **This repository was started after the kickoff** (October 26, 2026, 12 PM ET) and holds only work done during the event.
+
+**The history, read plainly:** the first commit here is October 27 at 10:29 ET. The first hour of event work that
+morning (09:27 to 10:05: the plan, the rules, the model clients) was committed in a repository that also held a
+pre-event skeleton (October 24: a README, a licence and stubs of a few lines), so we restarted here with event work
+only, as the rules ask; of that skeleton, only the Apache-2.0 licence text is here. Andy is written with an AI coding
+assistant (each commit's trailer says so), which is why commits come large and close together.
 
 **What existed before:**
 - **Our own earlier object-finding prototype,** built separately and kept outside this repository (a vision-language
