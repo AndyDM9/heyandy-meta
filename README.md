@@ -85,7 +85,8 @@ with what it's for, what it isn't, and where it falls short: [Andy's system card
 The public demo adds one more of Meta's open models, in your browser: **wav2vec 2.0** hears "Say it" (with DINOv2 for
 Andy's eyes).
 
-If SeamlessM4T v2 can't load, Meta's MMS-TTS speaks instead (`local/voice_server.py`; not needed since October 26).
+If SeamlessM4T v2 can't load, Meta's MMS-TTS speaks instead (`local/voice_server.py`). SeamlessM4T v2 has been Andy's voice
+since October 30.
 Nine of Andy's eleven are open weights on our own two GPUs ([each one's source and licence](docs/open-weights.md)),
 and every one of their files is verified: 54 of 54 files byte for byte what Meta published, at the revision Andy loads
 (`scripts/verify_all_weights.py`). Andy's voice reads its words with a copy of Meta's tokenizer re-saved here, which

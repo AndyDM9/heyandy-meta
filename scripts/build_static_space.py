@@ -49,7 +49,7 @@ def vendored(name: str, fetch=None) -> bytes:
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from demo_screen import IN_LANGUAGE, SCENES, sample_room, show  # noqa: E402
+from demo_screen import PLAYED, SCENES, sample_room, show  # noqa: E402
 from heyandy_meta.screen.server import FONTS, page  # noqa: E402
 from heyandy_meta.screen.state import ScreenState  # noqa: E402
 
@@ -165,7 +165,7 @@ def main() -> None:
     for name in FONTS:
         (OUT / "fonts" / name).write_bytes(files("heyandy_meta.screen").joinpath("fonts", name).read_bytes())
     shutil.copy(files("heyandy_meta.screen").joinpath("fonts", "OFL.txt"), OUT / "fonts" / "OFL.txt")
-    for scene in (*SCENES, *IN_LANGUAGE):  # the language scenes too: played by Ask Andy, not on the bar
+    for scene in PLAYED:  # the language scenes and the emergency too: played by Ask Andy, not on the bar
         state = ScreenState()
         show(state, scene)
         snap = state.snapshot()

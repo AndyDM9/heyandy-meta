@@ -280,6 +280,14 @@
    "file": "voice/scene-in-uk.mp3",
    "heard back": 1.0,
    "sha256": "b887c706312cbcdf432cf554c0e67bdb8697af379bcd5f70a4bfc7ee7f37f173"
+  },
+  "emergency": {
+   "text": "If you need help, please call 911 right away. I'll find your phone. There it is! I see your phone: ahead of you, on your left, about 2 steps from you, at your 11 o'clock.",
+   "lang": "en",
+   "seconds": 11.1,
+   "file": "voice/scene-emergency.mp3",
+   "heard back": 0.95,
+   "sha256": "4bccc2575f3fb74d0a74fcbcee8b1e455749b1aef1f9f217eb629c35fe2837df"
   }
  }
 }

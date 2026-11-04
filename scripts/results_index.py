@@ -118,10 +118,24 @@ def say_it(f: str) -> str:
 
 
 def rehearsal(f: str) -> str:
+    """A shot the whole run missed and a later run of it alone (`--only`, rehearsal-only-*) got right is said so, with
+    that run's file: November 3, "to fix: the network unplugged" read as offline failing, when the keys had been out
+    of the robot's view and, moved, were found on their own run at 12:09."""
     d = load(f)
     ok = sum(s["ok"] for s in d["shots"])
     missed = [s["shot"] for s in d["shots"] if not s["ok"]]
-    return f"**{ok} of {len(d['shots'])}** storyboard shots worked" + (f"; to fix: {', '.join(missed)}" if missed else ": READY")
+    stamp = f.removesuffix(".json").rsplit("-", 2)[-2:]
+    later = sorted(p.name for p in RESULTS.glob("rehearsal-only-*.json") if p.stem.rsplit("-", 2)[-2:] > stamp)
+    fixed = {}
+    for name in later:
+        for s in load(name)["shots"]:
+            if s["shot"] in missed and s["ok"]:
+                fixed.setdefault(s["shot"], name.removesuffix(".json"))
+    out = f"**{ok} of {len(d['shots'])}** storyboard shots worked"
+    if not missed:
+        return out + ": READY"
+    told = [f"{m} (then right on its own, `{fixed[m]}`)" if m in fixed else m for m in missed]
+    return out + ("; missed: " if len(fixed) == len(missed) else "; to fix: ") + ", ".join(told)
 
 
 def room(f: str) -> str:

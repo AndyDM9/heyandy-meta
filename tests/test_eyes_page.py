@@ -54,7 +54,9 @@ def test_the_page_runs_and_waits_for_your_thing_before_looking(page):
 
 def test_without_the_model_it_says_so_plainly(page):
     page.click("#ours1")
-    page.wait_for_function("document.getElementById('hint1').textContent.includes(\"couldn't start\")", timeout=10000)
+    page.wait_for_function("document.getElementById('hint1').textContent.includes(\"couldn't\")", timeout=10000)
+    said = page.evaluate("document.getElementById('hint1').textContent")
+    assert "couldn't download" in said and "connection" in said  # a failed download, said as one (not "your browser")
     assert page.get_attribute("#s2", "aria-disabled") == "true"  # nothing claimed
     assert page.errors == []
 
@@ -189,7 +191,7 @@ def test_find_mode_opens_the_camera_full_screen_with_the_shutter_under_a_thumb(s
         pg.click("#guideChips button:text('keys')")
         pg.click("#stage1 .cam button.main")  # no network, so no model: it says so, plainly, back on the page
         pg.wait_for_function("!document.body.classList.contains('guided')", timeout=15000)
-        assert "couldn't start" in pg.text_content("#hint1") and pg.get_attribute("#s2", "aria-disabled") == "true"
+        assert "couldn't download" in pg.text_content("#hint1") and pg.get_attribute("#s2", "aria-disabled") == "true"
         assert pg.evaluate("document.getElementById('thing').value") == "keys"
         assert pg.errors == []
     finally:

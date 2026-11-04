@@ -22,6 +22,7 @@ from PIL import Image, ImageDraw, ImageFilter
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from heyandy_meta.companion.language import LANGUAGES, THINGS  # noqa: E402
+from heyandy_meta.companion.safety import EMERGENCY_REPLY  # noqa: E402
 from heyandy_meta.companion.guide import height_above, instruction, on_surface, their_way  # noqa: E402
 from heyandy_meta.finder.geometry import pixel_to_angles  # noqa: E402
 from heyandy_meta.finder.perspective import from_them, on_plan  # noqa: E402
@@ -39,6 +40,10 @@ SAMPLE_WEB = Path(__file__).resolve().parents[1] / "docs" / "images" / "sample-w
 # the TV's code, November 1): one scene each, not in the demo's list of scenes, played when Ask Andy is typed in one.
 SAMPLE_WORDS = Path(__file__).resolve().parent / "demo_languages.json"
 IN_LANGUAGE = {f"in-{code}": code for code in ("tl", "vi", "ko", "ru", "ar", "hi", "pt", "fr", "it", "pl", "de", "uk")}
+# Played only when Ask Andy is typed the words (not on the bar): "I fell and I can't get up". November 3, a judge-style
+# review: typed, it played the mug found, the 911 line only in small grey type above it.
+ASKED = ("emergency",)
+PLAYED = (*SCENES, *IN_LANGUAGE, *ASKED)  # every scene the demo can play
 
 
 class Recorded:
@@ -70,6 +75,25 @@ def sample_frame() -> tuple[bytes, Mask]:
     l, t, r, b = box
     outline = f"M 0 0 L {r - l} 0 L {r - l} {b - t} L 0 {b - t} Z"
     return out.getvalue(), Mask("mug", box, 0.91, ((l + r) / 2, (t + b) / 2), (r - l) * (b - t), outline, (1.0, 1.0))
+
+
+@functools.lru_cache(maxsize=1)
+def phone_frame() -> tuple[bytes, Mask]:
+    """The same drawn table with a phone lying flat on it, where someone who fell left it, and the phone's outline."""
+    img = Image.new("RGB", (1920, 1080), (196, 184, 168))
+    d = ImageDraw.Draw(img)
+    d.rectangle((0, 640, 1920, 1080), fill=(139, 104, 74))  # the table top
+    d.rectangle((300, 330, 760, 640), fill=(60, 64, 72))  # a laptop
+    d.rectangle((320, 350, 740, 600), fill=(120, 150, 180))
+    d.polygon([(985, 742), (1175, 742), (1150, 700), (1010, 700)], fill=(28, 30, 36))  # the phone, flat, seen from above
+    d.polygon([(1000, 736), (1160, 736), (1140, 706), (1020, 706)], fill=(52, 58, 70))  # its dark screen
+    img = img.filter(ImageFilter.GaussianBlur(1.2))
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=88)
+    box = (985, 700, 1175, 742)
+    l, t, r, b = box
+    outline = f"M 25 0 L {r - l - 25} 0 L {r - l} {b - t} L 0 {b - t} Z"
+    return out.getvalue(), Mask("phone", box, 0.9, ((l + r) / 2, (t + b) / 2), (r - l) * (b - t), outline, (1.0, 1.0))
 
 
 HAND = [(1560, 612), (1470, 600), (1400, 588), (1300, 583), (1238, 590), (1234, 608), (1300, 616), (1240, 626), (1232, 646),
@@ -188,7 +212,7 @@ def show(state: ScreenState, scene: str) -> None:
     state.looking_out([])  # a scene's "still looking for" is its own, not the last scene's
     calls = recorded_calls()  # "Meta, live", as on the robot: mid-search, a look running; found, the last few done
     state.calls_sample = ({"live": [{**calls[3], "s": 0.31}], "done": [{**c, "ago": 1.0} for c in calls[:3][::-1]]} if scene == "finding"
-                          else {"live": [], "done": [{**c, "ago": 2.0} for c in calls[::-1][:5]]} if scene in ("found", "guide", "turned")
+                          else {"live": [], "done": [{**c, "ago": 2.0} for c in calls[::-1][:5]]} if scene in ("found", "guide", "turned", "emergency")
                           else None)
     state.new_turn()
     state.reminder_next("Call Sam", time.time() + 25 * 60)
@@ -228,6 +252,24 @@ def show(state: ScreenState, scene: str) -> None:
         state.doing("Pointing", "At your mug")
         for name, times in (("Omnilingual ASR (hearing)", 1), ("Muse Glimmer (plans)", 2), ("SAM 3.1", 4),
                             ("Muse Glimmer (picture check)", 2), ("MapAnything (how far)", 1), ("SeamlessM4T v2 (voice)", 1)):
+            state.used(name, "device", times)
+    elif scene == "emergency":  # "I fell and I can't get up": 911 first, in Andy's own words, then the phone found
+        state.looking("phone")
+        state.timer_start()
+        for s in ("an emergency said: 911 first, in my own words", "look: a little to my left, a little to my right",
+                  "look closer and point: confirmed, ahead", "checked: pointing at it, 1° off the middle", "MapAnything: 1.3 m away"):
+            state.step(s)
+        state.timer_stop()
+        state._timer = (time.monotonic() - 9.4, time.monotonic())  # a typical find on the robot, for the picture
+        jpeg, mask = phone_frame()
+        found = Found("phone", -6.0, 18.0, 0.9, Frame(jpeg, 1920, 1080, -6.0, 18.0), mask, looks=3, aim_deg=1.0, metres=1.3)
+        found.for_you = from_them((25.0, 5.0, 2.2), (found.yaw, found.pitch, found.metres))  # someone 2.2 m away, left of Andy
+        words = f"There it is! I see your phone: {found.for_you['words']}, at your {found.for_you['clock']} o'clock."
+        state.found(found, words)
+        state.said(f"{EMERGENCY_REPLY} {words}", "device", "an emergency said: 911 first, in Andy's own words, then its phone found")
+        state.doing("Pointing", "At your phone")
+        for name, times in (("Omnilingual ASR (hearing)", 1), ("SAM 3.1", 4), ("Muse Glimmer (picture check)", 2),
+                            ("MapAnything (how far)", 1), ("SeamlessM4T v2 (voice)", 2)):
             state.used(name, "device", times)
     elif scene == "mine":
         state.looking("mug")
@@ -469,7 +511,7 @@ def show(state: ScreenState, scene: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("scene", nargs="?", default="found", choices=(*SCENES, *IN_LANGUAGE))
+    ap.add_argument("scene", nargs="?", default="found", choices=PLAYED)
     ap.add_argument("--cycle", action="store_true")
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--host", default="127.0.0.1")
@@ -485,7 +527,7 @@ def main() -> None:
         show(state, "room")  # the room's shape is fetched separately (room.bin): kept for every visitor
         state._room["until"] = float("inf")
         serve(state, host=args.host, port=args.port, frame_ancestors="https://huggingface.co https://*.hf.space", any_host=True,
-              scenes={name: functools.partial(snapshot, name) for name in (*SCENES, *IN_LANGUAGE)}, listed=list(SCENES))
+              scenes={name: functools.partial(snapshot, name) for name in PLAYED}, listed=list(SCENES))
         print(f"public demo on http://{args.host}:{args.port}")
         while True:
             time.sleep(3600)

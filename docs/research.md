@@ -2544,3 +2544,15 @@ Found and fixed, each with a test:
   80 (the same seeded rooms, the same camera and noise model, so the difference is the search's fixes since). The new
   run is `sim-fixed.json`; October 30's is kept as `sim-fixed-oct30.json`. The planners' columns (Glimmer, Muse Spark)
   stay at November 1: rerunning them is twenty minutes of GPU 0, the card on the riser, the night before filming.
+- **A judge-style review of the public demo, and what it found** (November 3, evening; a separate reviewer given the
+  rubric, the repository and the built Space, nothing else). Typed into Ask Andy, "I fell and I can't get up" played
+  the mug found, the 911 line only in small grey type above it; "what's the weather tomorrow?" opened the web scene (a
+  page on banana bread) and every other question got the recorded weather answer; the Mandarin button asked for the
+  glasses over a scene that finds a cup. Now: the fall has its own scene (`scripts/demo_screen.py` `emergency`: the
+  911 line from code, then the phone found on the drawn table, said in Andy's own voice and heard back 0.95, "nine
+  one one" as on the robot); the weather asked about is the answer and a page asked for the web scene, each saying
+  what it was recorded with; any other question says Andy answers it out loud on the robot; the button asks for the
+  cup (杯子). The strip of Meta's models says "as recorded on the robot" in the public demo, where it replays a
+  recorded search, not "live". Andy's eyes, when its download fails, says the connection, not the browser. The
+  results page says when a shot the whole rehearsal missed was right on its own run after. The system card states
+  the robot's stream server and Pollen's relay before November 3 as a known limit of its own, not inside a table cell.

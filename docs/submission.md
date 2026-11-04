@@ -1,6 +1,6 @@
 # Submission text (for the form on November 4)
 
-*About 1,720 words, and 200 more in the table (rewritten November 2 after a judge's read, research.md 85; if the form limits length, the "Measured" languages and browser lines go first). Fill in the
+*About 1,930 words, and 240 more in the table (counted November 3; rewritten November 2 after a judge's read, research.md 85; if the form limits length, the "Measured" languages and browser lines go first). Fill in the
 [brackets] on the day. Every figure here is read from its source by `scripts/claims.py` and a test fails if one disagrees:
 run `uv run python scripts/claims.py` after any new run or edit.*
 
@@ -16,7 +16,7 @@ HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link
 https://huggingface.co/spaces/heyandy-ai/andy (Andy's eyes, live in your browser:
 https://heyandy-ai-andy.static.hf.space/eyes.html) · Code: https://github.com/AndyDM9/heyandy-meta
 
-**Before the event (October 26 to November 4):** a Reachy Mini Lite robot, and our own earlier object-finding
+**From before the event (it ran October 26 to November 4):** a Reachy Mini Lite robot, and our own earlier object-finding
 prototype (none of its code is in this repository). **Everything below was built during the event, on Meta's models.
 Every model Andy runs is Meta's: nine open-weight models on our own two GPUs, and Muse Spark and Muse Image through
 Meta's Model API.**

@@ -87,6 +87,11 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   about, roughly a quarter of the sounds let go still do.
 - **Its name is a person's name:** plain "Andy" calls it. A home with an Andy can make it answer only "Hey Andy"; then
   a call in another script (安迪) isn't heard either.
+- **Until November 3, the robot's own stream server listened on the home network**, and this computer's Hugging Face
+  login registered the robot with Pollen's cloud relay for remote viewing by the owner's account. Its log shows no
+  stream ever opened, local or remote, since October 30; the privacy audits record what Andy itself
+  sends, not who could have connected. Now it listens on this computer only and the relay is off
+  (`scripts/robot_daemon.py`), and preflight fails if a port listens wider.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it

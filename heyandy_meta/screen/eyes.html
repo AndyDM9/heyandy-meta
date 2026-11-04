@@ -447,7 +447,11 @@
       done();
     } catch (err) {
       btn.disabled = false; btn.textContent = "Remember it";
-      $("hint1").hidden = false; $("hint1").textContent = "Andy's eyes couldn't start in this browser (" + (err.message || err) + "). A recent Chrome, Edge, Safari or Firefox will do.";
+      // a download that failed is the connection, not the browser (November 3, a judge-style review offline)
+      const fetched = /fetch|network|load|download|404|50\d/i.test(String(err.message || err));
+      $("hint1").hidden = false; $("hint1").textContent = fetched
+        ? "Andy's eyes couldn't download what it runs on, Meta's DINOv2 and its runtime (" + (err.message || err) + "). Check the connection and try again."
+        : "Andy's eyes couldn't start in this browser (" + (err.message || err) + "). A recent Chrome, Edge, Safari or Firefox will do.";
       if (guided) guideStop($("hint1").textContent);
       return;
     }

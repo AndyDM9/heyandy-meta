@@ -76,12 +76,12 @@ def scene_lines() -> dict[str, tuple[str, str]]:
     """{scene: (what Andy says in it, its language)}: the public demo's scenes as the Space's build makes them
     (scripts/demo_screen.py), each one's caption, the words the TV shows Andy saying."""
     sys.path.insert(0, str(ROOT / "scripts"))
-    from demo_screen import IN_LANGUAGE, SCENES, show
+    from demo_screen import PLAYED, show
 
     from heyandy_meta.screen.state import ScreenState
 
     out = {}
-    for name in (*SCENES, *IN_LANGUAGE):
+    for name in PLAYED:
         state = ScreenState()
         show(state, name)
         snap = state.snapshot()

@@ -80,14 +80,14 @@ def test_a_health_question_typed_into_the_demo_shows_andys_own_words(browser):
     from heyandy_meta.companion.safety import HEALTH_REPLY
 
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-    from demo_screen import SCENES, show
+    from demo_screen import PLAYED, show
 
     def snapshot(name):
         st = ScreenState()
         show(st, name)
         return st.snapshot()
 
-    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in PLAYED})
     got = {}
 
     def typed(page_):
@@ -103,7 +103,7 @@ def test_a_health_question_typed_into_the_demo_shows_andys_own_words(browser):
     assert got["other"].startswith("Nothing matched that")
     from heyandy_meta.companion.safety import EMERGENCY_REPLY
 
-    assert got["emergency"] == EMERGENCY_REPLY and EMERGENCY_REPLY in got["fell"] and got["fellScene"] == "found"
+    assert got["emergency"] == EMERGENCY_REPLY and got["fellScene"] == "emergency" and "from code" in got["fell"]
     assert got["asleep"] != "find"
 
 
@@ -133,18 +133,18 @@ def test_every_demo_scene_draws_in_full(browser):
     """Each scene of the public demo, alone: the page draws it with no error, and the found scenes show their picture
     (the Mandarin scene once stopped at the list of things, and the TV stayed half empty)."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-    from demo_screen import IN_LANGUAGE, SCENES, show
+    from demo_screen import IN_LANGUAGE, PLAYED, SCENES, show
 
     def snapshot(name):
         st = ScreenState()
         show(st, name)
         return st.snapshot()
 
-    every = (*SCENES, *IN_LANGUAGE)
+    every = PLAYED
     server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in every}, listed=list(SCENES))
     shown = {}
     try:
-        pictured = {"found", "mandarin", "spanish", *IN_LANGUAGE}
+        pictured = {"found", "mandarin", "spanish", "emergency", *IN_LANGUAGE}
         count = "() => document.querySelectorAll('#card img, #card canvas, #card svg').length"
         for name in every:
             def look(page, name=name):
@@ -752,3 +752,41 @@ def test_the_help_panel_starts_below_the_demos_band_and_scrolls_when_taller_than
         assert s["shown"] and s["title"] > s["band"], (size, s)  # the title isn't under the band
         assert abs(s["left"] - s["right"]) < 2, (size, s)  # centred across
         assert s["scrolls"], (size, s)  # taller than the screen: it scrolls, nothing is cut off
+
+
+def test_what_a_judge_types_plays_the_scene_that_answers_it(browser):
+    """November 3, a judge-style review of the public demo: "I fell and I can't get up" played the mug found (911 only in
+    small grey type), "what's the weather tomorrow?" a web page on banana bread, "tell me a joke" the weather, and the
+    Mandarin button asked for the glasses over a scene that finds a cup."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import PLAYED, show
+
+    from heyandy_meta.companion.safety import EMERGENCY_REPLY
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in PLAYED})
+    got = {}
+
+    def typed(page_):
+        got.update(page_.evaluate("""() => ({
+          fell: route("I fell and I can't get up"), weather: route("what's the weather tomorrow?"), rain: route("will it rain?"),
+          radar: route("show me the weather radar on the TV"), joke: route("tell me a joke"), time: route("what time is it?"),
+          mug: route("where's my mug?"), zh: ASK_TRY.find((x) => /[\u4e00-\u9fff]/.test(x)) })"""))
+        page_.evaluate("() => ask(\"I fell and I can't get up\")")
+        page_.wait_for_timeout(1500)
+        got["caption"] = page_.evaluate("() => document.getElementById('captions').innerText")
+        page_.evaluate("() => ask('tell me a joke')")
+        got["joke note"] = page_.evaluate("() => asked.note")
+
+    try:
+        assert errors_on(browser, f"http://127.0.0.1:{server.server_address[1]}/?explore", 1500, typed) == []
+    finally:
+        server.shutdown()
+    assert got["fell"] == "emergency" and got["caption"].startswith(EMERGENCY_REPLY) and "phone" in got["caption"]
+    assert got["weather"] == got["rain"] == "answer" and got["radar"] == "web" and got["mug"] == "find"
+    assert got["joke"] == got["time"] == "help" and "answers that out loud" in got["joke note"]
+    assert "杯子" in got["zh"]  # the Mandarin scene finds a cup (我看到您的蓝色杯子), so its button asks for one

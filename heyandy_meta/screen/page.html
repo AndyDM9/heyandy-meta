@@ -1333,13 +1333,17 @@
     ["story", /\bwhat happened\b|\bstory of\b|\busually (?:leave|put|are|is)\b|\bwhere do i usually\b|\btoday\b/i],
     ["memory", /\b(?:remember|memory|keep(?:ing)? an eye)\b/i],
     ["drawing", /\b(?:draw|paint|sketch|picture of)\b/i],
-    ["web", /\b(?:weather|radar|forecast|rain|website|web page|online)\b/i],
+    // November 3, a judge-style review: "what's the weather tomorrow?" opened the web scene (a page on banana bread)
+    // and every other question got the recorded weather answer. A page asked for is the web scene; the weather asked
+    // about is the answer; any other question, what Andy can do (on the robot, it answers out loud)
+    ["web", /\b(?:radar|website|web ?page|wikipedia|recipe|online|on (?:the|your) (?:tv|screen))\b/i],
+    ["answer", /\b(?:weather|forecast|rain(?:ing|y)?|sunny|snow(?:ing)?|temperature|how (?:hot|cold|warm))\b/i],
     ["start", /\b(?:get(?:ting)? started|set (?:you |yourself )?up|first time|tour|how do i start)\b/i],
     ["help", /\bwhat can (?:you|i)\b|\bwhat do you do\b|^\W*help\W*$|\bhow does (?:it|this|andy) work\b/i],
     ["find", /\b(?:where|find|lost|misplaced|seen|look for|can'?t find|missing|can you see|do you see)\b/i],
-    ["answer", /^\W*(?:what|who|when|how|why|which|is|are|do|does|can|tell me)\b/i],
   ];
-  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "安迪，我的眼镜在哪里？", "Show me the room", "What won't you do?"];
+  const QUESTION = /^\W*(?:what|who|when|where|how|why|which|is|are|do|does|did|can|could|will|would|should|tell me)\b|\?\s*$/i;
+  const ASK_TRY = ["Where's my mug?", "Help me reach it", "I'm ringing my phone", "安迪，我的杯子在哪里？", "Show me the room", "What won't you do?"];
   // A health question typed, which matched no scene: what Andy says to it on the robot, its own words, never a model's
   // (companion/safety.py HEALTH_REPLY; on the robot the rule is wider, and tested)
   const HEALTH_TYPED = /\b(?:hurts?|aches?|aching|pain|sore|swollen|dizzy|fever|cough|rash|headaches?|migraines?|nause\w*|pills?|tablets?|medicines?|medications?|meds|doses?|tylenol|ibuprofen|aspirin|advil|statins?|insulin|antibiotics?|melatonin|vitamins?|blood (?:pressure|sugar)|cholesterol|diabet\w*|dementia|symptoms?|diagnos\w*|side effects?|depress\w*|anxious|anxiety)\b/i;
@@ -1382,7 +1386,7 @@
   function route(text) {
     const t = text.replace(/^\W*(?:hey |oye )?andy\W*/i, ""), lang = typedIn(text);
     if (lang && lang !== "en") return lang === "zh" ? "mandarin" : lang === "es" ? "spanish" : "in-" + lang;
-    if (EMERGENCY_TYPED.test(t)) return "find";  // 911 first, then the phone found: the search scene
+    if (EMERGENCY_TYPED.test(t)) return "emergency";  // 911 first, from code, then the phone found (scripts/demo_screen.py)
     const hit = (ASK.find(([, rx]) => rx.test(t)) || ["help"])[0];
     return (hit === "answer" || hit === "help") && HEALTH_TYPED.test(t) ? "help" : hit;  // never an answer, on the robot either
   }
@@ -1395,10 +1399,15 @@
     const scene = route(text), run = ++asking;
     const thing = (text.match(/\b(?:my|the|our)\s+([a-z][a-z ]{1,24}?)(?=\s*(?:[?.!,]|$|\bplease\b|\bis\b|\bare\b|\bgo\b))/i) || [])[1] || "";
     const other = thing && !/\b(?:mug|cup)s?\b/i.test(thing) && ["find", "guide", "turned"].includes(scene) && !EMERGENCY_TYPED.test(text);
+    const question = scene === "help" && QUESTION.test(text) && !HEALTH_TYPED.test(text);
     asked = { text, scene: scene === "find" ? "found" : scene,
               note: /^in-|^mandarin$|^spanish$/.test(scene) ? "On the robot, Andy notices the language it's asked in and answers in it. This scene was recorded finding a mug."
                   : other ? `This scene was recorded finding a mug; on the robot, Andy looks for your ${thing.toLowerCase()} the same way.`
+                  : scene === "emergency" ? "Its words come from code, never a model. Drawn here; on the robot, from the words to pointing at the phone: 16.5 to 27.1 s, over five dress rehearsals."
                   : EMERGENCY_TYPED.test(text) ? `On the robot, Andy says first: "${EMERGENCY_SAID}" Then it finds your phone and points at it (16.5 to 27.1 s on the robot). This scene was recorded finding a mug.`
+                  : scene === "web" && !/banana/i.test(text) ? "This scene was recorded showing Wikipedia's page on banana bread; on the robot, Andy opens what you ask for on its TV (Muse Spark, through the web)."
+                  : scene === "answer" ? "This answer was recorded; on the robot, Andy looks yours up (Muse Spark, through the web) and shows where it came from."
+                  : question ? "On the robot, Andy answers that out loud (Muse Glimmer on this computer, or Muse Spark when it needs the web). This demo has one answer recorded: ask about the weather."
                   : scene === "help" && HEALTH_TYPED.test(text) ? `On the robot, Andy says: "${HEALTH_SAID}" Its own words, written in code in each of its fifteen languages: no model answers a health question.`
                   : scene === "help" ? "Nothing matched that, so here's what Andy can do. On the robot, Andy also just talks." : "" };
     chosen = scene === "find" ? "finding" : asked.scene; pictureKey = ""; demoBar(); sayScene(chosen);
@@ -2238,7 +2247,9 @@
       if (x.where !== "on this computer") p.append(el("em", "· " + x.where));
       return p;
     };
-    box.replaceChildren(el("b", LANG === "es" ? "Modelos de Meta, en vivo · en esta computadora" : T("Meta's models, live · on this computer")),
+    // the public demo replays a search recorded on the robot (hood_sample.json): it says so, not "live" (November 3)
+    const replayed = window.HEYANDY_STATIC && (!LANG || LANG === "en");
+    box.replaceChildren(el("b", replayed ? "Meta's models, as recorded on the robot" : LANG === "es" ? "Modelos de Meta, en vivo · en esta computadora" : T("Meta's models, live · on this computer")),
                         ...c.live.map(x => pill(x, true)), ...c.done.slice(0, Math.max(0, 5 - c.live.length)).map(x => pill(x, false)));
   }
   // The privacy receipt: on every turn, exactly which words went to which cloud model, or that nothing did.
