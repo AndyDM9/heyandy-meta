@@ -2584,3 +2584,16 @@ Found and fixed, each with a test:
   record needs how many frames were read, a field every search passes and this path didn't). The pretend room's
   frames carry no picture, so no test had ever built that card; now one does, with a picture, and it fails with the
   robot's exact error on the old line (`tests/test_app.py`).
+- **A fourth time, and what the gain control says** (November 4, 09:16 to 09:26; numbers only). Andy answered ten
+  turns between 09:12:57 and 09:15:25, each to a person's speech in its follow-up window (hearing is off while it
+  speaks); from 09:16:08 every sound let go had a room level of 0.001 and its own loudness under 0.005: faint again,
+  a minute after the last answer, the third episode of the morning and the third to follow Andy speaking. The robot's
+  daemon can write the array's parameters (`POST /api/audio/config/apply`, verified back), so the gain control was
+  tested as the cause: with the gain pinned at 0.87 and the control on (its ceiling 64, its adaptation 0.9 s), the gain
+  was set to 16 by hand; it held, and the next five sounds' own loudness rose about eighteenfold with it while the
+  room level stayed 0.001: the raw signal into the gain control is itself near zero, so the fault sits in the device's
+  capture path, and the USB reset (09:24, all direction reads answering, preflight READY at 09:26) is the cure, not the
+  gain. On USB the array sits on the robot's own hub (with its motors' serial port and camera), under one more hub with
+  only the robot on it. For filming: a direct port if the cable goes through anything, the speaker a notch lower, and
+  the watch's faster mark (five near-silent sounds, forty seconds after an answer; replayed on the morning's journal:
+  the faint stretch flagged, the healthy, the just-answered and the night's quiet not).
