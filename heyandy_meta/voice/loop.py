@@ -26,6 +26,7 @@ WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + CALL + PAUS
 # "Hey Andy" as speech-to-text also writes it: "hey and how are you", "hey any where are my glasses" (November 4: short
 # sentences at a good level, nearest word "and"). Alone "and" is everyday speech, but nobody starts a sentence "hey and".
 HEY_HEARD = re.compile(r"^\W*hey[\s,]+(\w+)\b" + PAUSE, re.I)
+HEARD_AS = {"end", "engine", "enji", "angie", "angel", "endim"}  # November 4, the founder's takes: not spelled alike, but it was the name
 HEARD_ALIKE = 0.66  # "wendy" 0.67, "indy" 0.75, "and" and "any" 0.86, "sandy" 0.89; "andrew" 0.6 and "buddy" 0.44 aren't
 
 
@@ -37,7 +38,7 @@ def _hey_heard(text: str):
     if not m:
         return None
     word = m.group(1).lower()
-    return m if word == "end" or SequenceMatcher(None, word, "andy").ratio() >= HEARD_ALIKE else None
+    return m if word in HEARD_AS or SequenceMatcher(None, word, "andy").ratio() >= HEARD_ALIKE else None
 
 
 # The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.

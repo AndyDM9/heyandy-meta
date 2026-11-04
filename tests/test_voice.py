@@ -623,7 +623,8 @@ def test_talking_with_gaps_between_words_doesnt_raise_the_floor():
 @pytest.mark.parametrize("said, rest", [("hey and how are you", "how are you"), ("Hey, and how are you?", "how are you?"),
                                         ("hey any where are my glasses", "where are my glasses"),
                                         ("hey sandy what time is it", "what time is it"),
-                                        ("hey wendy how are you", "how are you")])
+                                        ("hey wendy how are you", "how are you"),
+                                        ("hey engine where are my glasses", "where are my glasses")])
 def test_hey_andy_as_speech_to_text_writes_it_is_a_call(said, rest):
     """November 4: "Hey Andy, how are you?" written "hey and how are you": "and" alone counted only before a clear
     request, and this is chat, so it was let go, again and again, at a good level."""
