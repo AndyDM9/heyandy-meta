@@ -50,7 +50,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        only); none of the other entry's names, its partners', the robot design's or the age words in any commit
        message or change (the one age word is inside a cited source's web address, which the public-text test allows);
        no key's value. On November 4, look only at the commits after `5926882`.
-4. [x] (November 4, 15:38 ET; the social preview is the founder's, by hand.) Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics):
+4. [x] (November 4, 15:38 ET; the social preview set at 16:45 ET.) Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics):
        `gh repo edit AndyDM9/heyandy-meta --visibility public --accept-visibility-change-consequences` (gh 2.93 refuses
        a visibility change without the second flag; checked November 3), and
        check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload
