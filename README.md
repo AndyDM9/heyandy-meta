@@ -59,7 +59,7 @@ with what it's for, what it isn't, and where it falls short: [Andy's system card
 
 | Model | Where | What it does |
 |---|---|---|
-| **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once |
+| **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once (made-up shuffles so far) |
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Andy's fourteen other languages |
 | **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
 | **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
@@ -363,7 +363,8 @@ found, "You're all set", in three sentences.
    in between, on the computer beside the robot (about 0.5 s a sentence), so every ability works in each and the
    person's words stay home (Spanish: 41 of 41 written requests reach the right ability; the other thirteen: 104 of 104,
    89 spoken). Saying it's an AI, the crisis reply (988 has help in Spanish, and interpreters by phone for the
-   rest), Andy's short phrases and the TV's everyday words are written by hand, never machine-translated; the crisis
+   rest) and Andy's short phrases are written by hand, never machine-translated (the TV's everyday words too, in English
+   and Spanish; in the other thirteen they're Glimmer's translations, made on this computer); the crisis
    words are caught in each language before any model. The TV follows the language. Called in one of them, Andy
    notices on its own: when it didn't understand, it listens again without a language, and switches if it was another
    of its own. "Speak English" switches back; it's remembered.
@@ -405,7 +406,8 @@ The picture of what runs where is at the top: [Meta's models, and where each one
 morning (09:27 to 10:05: the plan, the rules, the model clients) was committed in a repository that also held a
 pre-event skeleton (October 24: a README, a licence and stubs of a few lines), so we restarted here with event work
 only, as the rules ask; of that skeleton, only the Apache-2.0 licence text is here. Andy is written with an AI coding
-assistant (each commit's trailer says so), which is why commits come large and close together.
+assistant (each commit's trailer says so), which is why commits come large and close together. The repository is
+named `heyandy-meta` for the event it was built for; the project is Andy, by HeyAndy.
 
 **What existed before:**
 - **Our own earlier object-finding prototype,** built separately and kept outside this repository (a vision-language

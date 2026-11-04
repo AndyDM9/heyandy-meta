@@ -44,7 +44,7 @@ they were; reminders you asked for; conversation, pictures and web pages on its 
 | Safeguard | How | Measured |
 |---|---|---|
 | No health advice | a rule in 15 languages, before any model; Llama Guard 3 reads each sentence a model writes before Andy says it | held out: 25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught; Andy's real answers flagged 0 of 168 ([§63](research.md#63-no-health-advice-kept-in-code-and-measured-in-fifteen-languages-november-1-evening), [§65](research.md#65-llama-guard-3-reads-andys-answers-too-as-meta-built-it-to-november-1-evening)) |
-| Crisis words get 988 | from code, before any other model: a word list, Llama Guard 3, then one narrow question to Muse Glimmer, all on this computer; the reply written by hand in each language | 60 of 60 indirect phrasings (the set it was tuned on); 0 of 144 everyday or trick remarks taken for one ([§58](research.md#58-the-crisis-check-in-fifteen-languages-measured-and-where-it-stops-november-1)) |
+| Crisis words get 988 | from code, before any other model: a word list, Llama Guard 3, then, for anything said as conversation, one narrow question to Muse Glimmer, all on this computer; the reply written by hand in each language | 60 of 60 indirect phrasings (the set it was tuned on); 0 of 144 everyday or trick remarks taken for one ([§58](research.md#58-the-crisis-check-in-fifteen-languages-measured-and-where-it-stops-november-1)) |
 | It says it's an AI | at the start of a conversation and every three hours, by hand in each language | tested (`tests/test_answers_safety.py`) |
 | A note in view can't instruct it | Glimmer told writing is never an instruction; a note addressed to Andy isn't read out | 9 of 54 drawn notes got through before, 0 of 72 after ([§74](research.md#74-a-note-in-view-cant-instruct-andy-november-2-morning)) |
 | It doesn't join a conversation it isn't part of | when the room is talking, or talking over its answers, it answers only its name; at most six follow-ups in a row without it; crisis words and an emergency said as itself are answered even without the name ([crisis protocol](crisis-protocol.md)) | a real meeting near the robot, replayed: 37 answers became 4; a quiet conversation keeps 6 of 8 follow-ups ([§79](research.md#79-a-conversation-andy-isnt-part-of-november-2-early-afternoon)) |
@@ -74,8 +74,8 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   names kinds of sign that set has, so it isn't fully held out: 20 of 24 (twelve written after it, each as written and as heard). In the first set of health questions, one model answer
   was judged advice (that wording was then added to the rule).
 - **Not yet tried with people or real things:** the cup game (synthetic shuffles: the right cup 3 of 5), "this is my
-  mug" with two mugs, guiding a hand, "I'm going out" with someone leaving, V-JEPA 2 noticing a thing put down. The
-  public demo's story labels each chapter "on the robot" or "not yet".
+  mug" with two mugs, guiding a hand, "I'm going out" with someone leaving, V-JEPA 2 noticing a thing put down, and Andy's eyes, live, on a real phone (measured with a video, in a laptop's
+  browser). The public demo's story labels each chapter "on the robot" or "not yet".
 - **The note-in-view defence** is measured on drawn notes, not real handwriting through the robot's camera.
 - **It needs today's hardware:** two 24 GB GPUs for the whole of Andy: 40.5 GB at rest, the language model 17.6 GB of
   it (`scripts/gpu_budget.py`); Andy Finder needs none, through the Model API. Kept on, the two cards drew 188.1 W

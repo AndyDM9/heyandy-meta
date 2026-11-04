@@ -77,3 +77,6 @@ llama-server at http://127.0.0.1:8080 serves: Muse-Glimmer-30B-KQuant-17GB-Q4_K_
 
 Every turn, the TV lists the models that worked on it and where ("On this computer: SAM 3.1 x4, Muse Glimmer (picture
 check)").
+
+Not among the nine: Meta's MMS-TTS (`facebook/mms-tts-eng` and `-spa`), downloaded as the voice `local/voice_server.py`
+falls back to if SeamlessM4T v2 can't load. SeamlessM4T v2 has loaded every time since October 30, so it hasn't spoken.

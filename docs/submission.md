@@ -1,6 +1,6 @@
 # Submission text (for the form on November 4)
 
-*About 1,930 words, and 240 more in the table (counted November 3; rewritten November 2 after a judge's read, research.md 85; if the form limits length, the "Measured" languages and browser lines go first). Fill in the
+*About 2,000 words, and 240 more in the table (counted November 4; rewritten November 2 after a judge's read, research.md 85; if the form limits length, the "Measured" languages and browser lines go first). Fill in the
 [brackets] on the day. Every figure here is read from its source by `scripts/claims.py` and a test fails if one disagrees:
 run `uv run python scripts/claims.py` after any new run or edit.*
 
@@ -16,8 +16,11 @@ HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link
 https://huggingface.co/spaces/heyandy-ai/andy (Andy's eyes, live in your browser:
 https://heyandy-ai-andy.static.hf.space/eyes.html) · Code: https://github.com/AndyDM9/heyandy-meta
 
-**From before the event (it ran October 26 to November 4):** a Reachy Mini Lite robot, and our own earlier object-finding
-prototype (none of its code is in this repository). **Everything below was built during the event, on Meta's models.
+**From before the event (it ran October 26 to November 4):** a Reachy Mini Lite robot with its maker's open-source
+software, our own earlier object-finding prototype (none of its code is in this repository), the HeyAndy name and logo,
+and an October 24 skeleton of a repository (a README, a licence, stubs of a few lines), of which only the licence text
+is here; the first hour of event work was committed there, then restarted here (the README's "The history, read
+plainly"). **Everything below was built during the event, on Meta's models.
 Every model Andy runs is Meta's: nine open-weight models on our own two GPUs, and Muse Spark and Muse Image through
 Meta's Model API.**
 
@@ -42,15 +45,16 @@ keeps what it sees and hears in the house.
   Omnilingual ASR hears, Muse Glimmer translates on the computer beside the robot, SeamlessM4T v2 speaks. Saying it's an
   AI and the crisis reply are written by hand in each language.
 - **The public demo, in your browser.** Tap 🎙 and Meta's wav2vec 2.0 hears you (7 of 7 fresh clips); or show Andy's
-  eyes (DINOv2) your mug and sweep your phone round the room. Nothing leaves the browser. Its story is told in the
-  visitor's own language, any of Andy's fifteen: Muse Glimmer translates, SeamlessM4T v2 says it, Omnilingual ASR hears it back. axe-core's WCAG 2.2 AA
+  eyes (DINOv2) your mug and sweep your phone round the room (measured so far in a laptop's browser, with a video for the
+  camera). Nothing leaves the browser. Its story is told in the visitor's own language, any of Andy's fifteen, recorded
+  once on this computer: Muse Glimmer translated it, SeamlessM4T v2 said it, Omnilingual ASR heard it back. axe-core's WCAG 2.2 AA
   checks pass on all 68 of its states.
 - **Meta's models, live.** The TV shows each model call as it happens, and each turn stage by stage: that showed the
   answer waiting for the point, so Andy now answers while pointing, 9.6 s sooner.
 - **It remembers, and doesn't give up.** What you tell it ("my passport is in the top drawer"); a missed search becomes
   a promise, and when the thing turns up Andy points and says so, unprompted. **V-JEPA 2** notices a thing put down (not yet tried with a person).
 - **"I'm ringing my phone"** turns Andy to the ringing; **"help me reach it"** talks a hand onto the thing ("toward
-  you, and right") for someone who can't see well.
+  you, and right") for someone who can't see well (not yet with a real hand).
 - **And:** several requests at once (an agent); reminders in person; the weather radar on the TV (Muse Spark's
   computer use).
 
@@ -58,7 +62,7 @@ keeps what it sees and hears in the house.
 
 | Model | Where | What it does |
 |---|---|---|
-| **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once |
+| **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once (made-up shuffles so far) |
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Andy's fourteen other languages |
 | **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
 | **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
@@ -123,7 +127,7 @@ That's kept in code: a health question gets Andy's own words, by hand in each la
 out: 25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught); Llama Guard 3
 reads each sentence a model writes before Andy says it. It says it's an AI at the start and every three hours. Crisis
 words in any of its fifteen languages get the 988 line from code, checked on this computer (a word list, Llama Guard 3,
-then one narrow question to Muse Glimmer): 60 of 60 indirect phrasings (the set it was tuned on), none of 144 everyday
+then, for anything said as conversation, one narrow question to Muse Glimmer): 60 of 60 indirect phrasings (the set it was tuned on), none of 144 everyday
 requests and trick remarks taken for one; the limit, published: warning signs said in ways no list has: 42 of 45
 (all Glimmer's: the list and Llama Guard caught none; its question, reworded November 3, names kinds of sign that set
 has, so the fairer figure is 20 of 24 (twelve written after it, each as written and as heard)). Ask **"Hey Andy, what won't you do?"** and it says so,
