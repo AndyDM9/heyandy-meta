@@ -26,7 +26,7 @@ def test_watch_reports_the_start_and_each_change_only():
             stop.set()
             return True
 
-    watch(seen.append, stop, every_s=0, check=check)
+    watch(seen.append, stop, every_s=0, check=check, link=lambda: None)
     assert seen == [True, False, True]
 
 

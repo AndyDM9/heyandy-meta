@@ -134,7 +134,7 @@ class Andy:
         self.finder = Finder(self.body, self.segmenter, check=self._check,
                              on_look=lambda yaw, pitch: self.screen.step(f"looking {side(yaw)}"),
                              on_frame=lambda frame, masks: self.screen.glimpse(frame, masks))
-        self.router = Router(self.device, self.cloud or NoCloud())
+        self.router = Router(self.device, self.cloud or NoCloud(), self._receipt_conversation if self.cloud else None)
         self.disclosure = Disclosure(self.clock)
         self._last_glance = self.clock()
         self.lost = Lost(self.places.path.parent / "lost.json", clock=self.clock)  # what a search missed: Andy keeps looking

@@ -1074,7 +1074,7 @@
     tile("main", "Find something of yours →", "Your phone's camera and Meta's DINOv2, in your browser: nothing leaves it.", "eyes.html?find");
     const ask = tile("ask", "Ask Andy", "Type or say it, in any of its fifteen languages.");
     ask.append(askForm(true), tries(true));
-    if (window.HEYANDY_VIDEO) tile("", "Watch the 3-minute video →", "Andy on the table, finding things, uncut.", window.HEYANDY_VIDEO);
+    if (window.HEYANDY_VIDEO) tile("", "Watch the 3-minute video →", "Andy on the table, finding things, at normal speed.", window.HEYANDY_VIDEO);
     else if (window.HEYANDY_STATIC) tile("", "Every number, measured →", "Every scorecard: its result, how to run it again, its file.", "proof.html");
     inner.append(ways);
     const more = el("div", null, "go"), url = location.origin + location.pathname.replace(/index\.html$/, "");

@@ -154,8 +154,13 @@ def main() -> None:
             andy.remote_url = f"http://{ip}:{args.remote_port}"
             serve_remote(andy.screen, andy.pairing, andy.ask_from_phone, ip, args.remote_port)
             print(f"Phones on the home network: {andy.remote_url} (say \"Andy, connect my phone\")")
-    print(f"TV page: http://{args.tv_host}:{args.tv_port}  ·  Muse Spark: {'on' if andy.spark else 'off'}  ·  "
+    paid = os.environ.get("HEYANDY_PAID_CALLS") == "1"
+    spark = ("on" if paid else "off until HEYANDY_PAID_CALLS=1 is set too") if andy.spark else "off"
+    print(f"TV page: http://{args.tv_host}:{args.tv_port}  ·  Muse Spark: {spark}  ·  "
           f"{'robot' if args.robot else 'pretend living room'}  ·  Ctrl-D to quit")
+    if not args.robot:
+        print("In the room: glasses (and a picture of them on its TV), keys, two mugs, a remote. The room plays SAM 3.1's "
+              "part. Try: where are my glasses? remind me at 5 pm to call the dentist. what won't you do?")
     stop = threading.Event()
 
     def ticks():

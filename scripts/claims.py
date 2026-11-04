@@ -312,6 +312,7 @@ FIGURES = [
     Figure("a median 0.9 degrees, and scan to scan within 1", "room (latest)", room),
     Figure("1.3 times too wide", "research.md §33", quote="1.3 times too wide"),
     Figure("9.6 s sooner", "research.md §50", quote="The answer comes about 9.6 s sooner"),
+    Figure("4 of 4 on the robot", "research.md §35", quote="**no point, 4 of 4**"),
     # simulated search and the agents
     Figure("pointed at the wrong one 15 times in 100", "sim-fixed",
            lambda: f"pointed at the wrong one {sim('sim-fixed.json', 'described')['false_finds']} times in {sim('sim-fixed.json', 'described')['trials']}"),

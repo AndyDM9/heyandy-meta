@@ -137,6 +137,25 @@ the title card's one line on what existed before (a Reachy Mini; our own earlier
 robot's takes with the TV in shot, where the "Meta's models, live" strip names each model as it works, and "how did you
 do that?" opens the card that says how; no pitch, and the end card is one line.
 
+The afternoon of November 4 (read at 5:05 PM ET, read-only), the organizers' answers in #questions:
+
+> **How judges test:** "Judges work mainly from the 3-minute video and the public repo, and they may test with their own
+> keys. A hosted demo isn't required." The README "should explain how to add a key, for example with a .env.example
+> file, without committing any key." ("A few questions on judging and live demos")
+
+> **The freeze:** "after that your submission and repo are frozen as they stand, so any README or repo changes need to
+> be pushed before then." ("Github submission")
+
+> **The team name:** "the team name is just a label on the submission form." ("Meta AI Hackathon")
+
+> **LinkedIn:** "Yes, you can cross-post on LinkedIn with a link to your X post. Only likes, reposts and comments on the
+> X post you link in your submission count toward Most Viral." ("Most Viral Project: LinkedIn cross-posting, tagging,
+> official visual and engagement window")
+
+Several teams also reported an automatic email saying their public repository is private; the organizers were asked and
+hadn't answered when read. **Ours:** no such email by 5:30 PM ET, and the repository opens signed out. `.env.example` and
+the README's "With your own Meta Model API key" follow the first answer; nothing is pushed after 9:00 PM ET.
+
 ## Prizes (section 9)
 
 **Startups:** $250K, $150K, $75K, $50K, $25K.

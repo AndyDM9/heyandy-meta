@@ -78,7 +78,7 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
        And the card a shared link shows: paste the Space's link into a new post on X, and don't send it: Andy's card
        (`docs/images/social-card.png`), not Hugging Face's plain one; the same with the GitHub link once its preview is set.
-6. [x] (Submitted November 4, 4:28 PM ET, team number 3071; the form's answers: `docs/submission-form.md`.) Submit: the project's name ("Andy, by HeyAndy": no "Meta" in it, the organizers' answer of November 3), the team's name (HeyAndy, Inc.), the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
+6. [x] (Submitted November 4, 4:28 PM ET, team number 3071; the form's answers, corrected that evening: `docs/submission-form.md`, `docs/research.md` section 106.) Submit: the project's name ("Andy, by HeyAndy": no "Meta" in it, the organizers' answer of November 3), the team's name (HeyAndy, Inc.), the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 2,000 words on what it is and what's new (`docs/submission.md`; its header says what goes first if the form
        limits length): fill its [brackets], the video's link;
        nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`). The form itself, read November 4, is shorter:
