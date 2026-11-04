@@ -2565,3 +2565,12 @@ Found and fixed, each with a test:
   it, only the Apache-2.0 licence text is here, checked file by file); written with an AI coding assistant, each of
   the 343 commits' trailers saying so. The submission's "What's next" says who it's for and that there's no price yet:
   homes first, then one box and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC).
+- **The microphones went faint again, and the watch caught it** (November 4, morning; numbers from the journal only,
+  never a word). Between 07:23:39 and 07:33:25 the room's level beside each sound Andy let go fell from 0.020 to
+  0.001, and the sounds' own loudness from 0.045 to 0.343 down to 0.003 to 0.012, with the array's own gain at 1.60
+  (a quiet room turns it up). As on November 3: no USB error in the kernel's log, the robot's microphone at full volume
+  in the desktop's sound settings, and only Andy and the robot's daemon reading it. The night's watch (preflight's
+  rule, once a minute) said so at 07:39, nobody having spoken to Andy since the night before; the USB reset
+  (`scripts/reset_robot_audio.py`) at 07:40, the voice's direction answering every read; preflight with the cloud
+  READY at 07:43, the gain climbing (2.72). Twice in two mornings, so the system card lists it among the known limits,
+  and preflight runs again just before the cameras roll.

@@ -92,6 +92,11 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   stream ever opened, local or remote, since October 30; the privacy audits record what Andy itself
   sends, not who could have connected. Now it listens on this computer only and the relay is off
   (`scripts/robot_daemon.py`), and preflight fails if a port listens wider.
+- **Its microphone array has twice gone faint** (the mornings of November 3 and 4): the sound it hears fell to about a
+  tenth, with no USB error in the kernel's log and nothing changed that we could find; on November 3 Andy then
+  answered nothing until the array's USB was reset (`scripts/reset_robot_audio.py`, under a minute; Andy restarts with
+  it). Preflight fails on it and names the reset, and a watch caught the second before anyone spoke; Andy doesn't yet
+  say so on its TV, where a false alarm would be in shot.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it
