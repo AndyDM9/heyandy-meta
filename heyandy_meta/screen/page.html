@@ -486,6 +486,11 @@
     #story .proof { font-size: 3vw; margin-top: 1.5vw; } #story .mt { font-size: 2.8vw; margin-top: 1vw; }
     #story button, #end a, #end button { font-size: 3.6vw; padding: 2.2vw 3.6vw; }
     body.storying .stage { transform: none; }
+    /* November 3, a judge-style review on a phone: the band took 40% of the screen and Andy's caption, held at the
+       bottom, covered the found picture. In the story the band is the story (asking comes after it, or from
+       "Explore every screen"), and the caption sits in the page, under the picture */
+    body.storying #story nav form.ask { display: none; }
+    body.storying #captions { position: relative; bottom: auto; }
     body.exploring { height: auto; min-height: 100vh; overflow-y: auto; } body.exploring .stage { transform: none; }
     body.exploring #demo { position: relative; padding: 3vw 4vw; }
     #end { padding: 8vw 0; }
