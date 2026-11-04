@@ -69,9 +69,11 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        And the card a shared link shows: paste the Space's link into a new post on X, and don't send it: Andy's card
        (`docs/images/social-card.png`), not Hugging Face's plain one; the same with the GitHub link once its preview is set.
 6. [ ] Submit: the team's name (HeyAndy, Inc.), the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
-       about 1,700 words on what it is and what's new (`docs/submission.md`: fill its [brackets], the video's link;
+       about 2,000 words on what it is and what's new (`docs/submission.md`; its header says what goes first if the form
+       limits length): fill its [brackets], the video's link;
        nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`).
 7. [ ] Publish Andy Finder (0.3.0: "Ring it" works with nothing set up; finds with the focus held, the true ray and its own aim check) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
        `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
-       `hf upload <account>/andy-finder apps/andy_finder . --repo-type space`. The `reachy_mini_python_app` tag lists it.
+       `hf upload <account>/andy-finder apps/andy_finder . --repo-type space --exclude "*.egg-info/*" --exclude "**/__pycache__/*"`
+       (`hf upload` doesn't read `.gitignore`: without the exclusions, local build leftovers go up too). The `reachy_mini_python_app` tag lists it.
 8. [ ] After submitting: share the gallery page for the community vote.
