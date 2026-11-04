@@ -2514,3 +2514,11 @@ Found and fixed, each with a test:
   filmed. November 2's real fault failed every read. Trouble now is five or more failed reads in one look, or
   failures look after look (a dead control while Andy talks through most of a look); one alone is only logged
   (`robot/audio_watch.py`, a test replays both).
+- **The unplugged shot, noticed in a second** (November 3, evening). Pulling the cable had never been tried for real
+  (the rehearsal plays the shot by telling Andy it's offline). Checked: the cable is this computer's only way out
+  (Wi-Fi off); the robot's camera, microphones and motors don't use it (`localhost_only`, the camera through a local
+  socket); a plain "where are my keys?" is the fixed search on this computer, no cloud. But Andy learned it was
+  offline only at its next look at the cloud, up to 10 s later, so a find asked straight after the pull would show
+  the TV still online, and the drawing asked straight after plugging back in would say "not connected". The link is
+  now read on this computer every second (`network.wired`: the default route's carrier; nothing sent), and for 30 s
+  after it comes back the cloud is tried each second until it answers. The badge is drawn dark, to read across a room.
