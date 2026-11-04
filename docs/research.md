@@ -2522,3 +2522,12 @@ Found and fixed, each with a test:
   the TV still online, and the drawing asked straight after plugging back in would say "not connected". The link is
   now read on this computer every second (`network.wired`: the default route's carrier; nothing sent), and for 30 s
   after it comes back the cloud is tried each second until it answers. The badge is drawn dark, to read across a room.
+- **Before going public, the repository as others will see it** (November 3, evening; filming moved to the morning
+  of November 4). `SECURITY.md`: a weakness reported privately (GitHub's private reporting, on once public), and what
+  Andy is built to keep, each point checked against the running system. The tests' workflow pins its two actions to
+  their commits, stops a hung run at 30 minutes, and lets a newer push replace a run. The lock's 301 packages: no
+  known vulnerability (pip-audit). The accessibility audit again on tonight's page (`accessibility-20261103-1958`):
+  no axe violation in 68 states, none of 1,557 texts below AA. Fewer measured from the pixels than at 15:43 (1,577):
+  only the texts axe can't decide are, and the help panel, now on its own solid background clear of the band, had 16
+  of them and has none (axe decides all 22 of its texts itself, all passing); the other four, a time and three lines
+  of a web page, vary with what's shown.
