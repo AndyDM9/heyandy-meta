@@ -304,3 +304,12 @@ def test_a_card_with_more_than_its_room_shrinks_together_and_pictures_give_way_f
     assert "    fitAll();\n    ambient(s);" in page  # after every render; it only works when what's shown changes
     assert ".split > figure svg { height: 100%; width: auto; max-width: 100%; }" in page
     assert "#help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: flex;" in page and "overflow-y: auto;" in page  # the help scrolls
+
+
+def test_the_found_title_reads_as_english_for_what_youre_holding():
+    """November 4, on camera: "Your what you're holding". A thing gets "Your"; a phrase like that doesn't."""
+    from pathlib import Path
+
+    page = (Path(__file__).resolve().parents[1] / "heyandy_meta/screen/page.html").read_text()
+    assert r'/^what\b/i.test(p.label) ? p.label[0].toUpperCase() + p.label.slice(1)' in page
+

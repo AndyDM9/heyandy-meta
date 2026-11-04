@@ -1729,7 +1729,7 @@
     svg.append(defs, img, dim, edge);
     const words = el("div", null, "words");
     words.append(el("div", LANG === "es" ? "Encontrado · SAM 3.1 en esta computadora" : T("Found · SAM 3.1, on this computer"), "kick"),
-                 el("h1", (LANG === "en" ? "Your " : "") + p.label, p.label.length > 11 ? "long" : null));
+                 el("h1", /^what\b/i.test(p.label) ? p.label[0].toUpperCase() + p.label.slice(1) : (LANG === "en" ? "Your " : "") + p.label, p.label.length > 11 ? "long" : null));
     const nums = el("div", null, "nums"), count = [];
     const num = (value, fmt, label) => { const d = el("div"), v = el("b", fmt(0)); d.append(v, el("span", label)); nums.append(d); count.push([v, value, fmt]); };
     if (seconds != null) num(seconds, x => x.toFixed(1) + " s", T("to find it"));
