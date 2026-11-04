@@ -471,7 +471,9 @@
   #end .go .main { background: var(--outline); color: #070a09; border-color: var(--outline); font-weight: 800; }
   #end small { display: block; margin-top: 2.4rem; font-size: 1.3rem; color: rgba(245, 243, 239, 0.55); }
   /* the TV, whole and unchanged, a little smaller below the story's band */
-  body.storying .stage { transform: scale(0.85); transform-origin: 50% 100%; }
+  /* as large as fits under the story's band, measured each chapter (November 3: at 0.85 the band covered the TV's
+     day and Andy's state) */
+  body.storying .stage { transform: scale(var(--story-scale, 0.85)); transform-origin: 50% 100%; transition: transform 0.35s ease; }
   @media (max-aspect-ratio: 1/1) {  /* a phone, held upright: the band on top, the TV below it, laid out for the phone */
     body.storying { height: auto; min-height: 100vh; overflow-y: auto; background: #070a09; }
     body.storying #story { position: relative; padding: 4vw 4.5vw 4.5vw; }
@@ -1002,7 +1004,15 @@
       text.append(b);
     }
     text.classList.remove("fresh"); void text.offsetWidth; text.classList.add("fresh");
+    requestAnimationFrame(storyScale);
   }
+  function storyScale() {  // the TV, as large as fits under this chapter's band
+    const band = $("story");
+    if (!band || getComputedStyle(band).position !== "fixed") return;  // a phone: the band is above the TV, not over it
+    const h = band.getBoundingClientRect().height;
+    document.documentElement.style.setProperty("--story-scale", Math.max(0.55, Math.min(0.92, (innerHeight - h - 16) / innerHeight)).toFixed(3));
+  }
+  addEventListener("resize", () => requestAnimationFrame(storyScale));
   function storyTick() {
     if (!story) return;
     const band = $("story"), secs = chapterSeconds(story.at);

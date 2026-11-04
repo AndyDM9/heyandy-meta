@@ -790,3 +790,32 @@ def test_what_a_judge_types_plays_the_scene_that_answers_it(browser):
     assert got["weather"] == got["rain"] == "answer" and got["radar"] == "web" and got["mug"] == "find"
     assert got["joke"] == got["time"] == "help" and "answers that out loud" in got["joke note"]
     assert "杯子" in got["zh"]  # the Mandarin scene finds a cup (我看到您的蓝色杯子), so its button asks for one
+
+
+def test_the_story_band_never_covers_the_tv_on_a_desktop(browser):
+    """November 3, a judge-style review: at a fixed 0.85 the story's band covered the TV's day and Andy's state on a
+    1080p screen. The TV is now sized under each chapter's band, measured."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from demo_screen import SCENES, show
+
+    def snapshot(name):
+        st = ScreenState()
+        show(st, name)
+        return st.snapshot()
+
+    server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    gaps = {}
+    try:
+        for size in ((1920, 1080), (1366, 768)):
+            page = browser.new_page(viewport={"width": size[0], "height": size[1]})
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/?story")
+            page.wait_for_function("() => typeof STORY !== 'undefined'", timeout=10000)
+            for i in range(page.evaluate("() => STORY.length")):
+                page.evaluate(f"() => {{ if (!story) startStory(); story.paused = true; go({i}); }}")
+                page.wait_for_timeout(500)
+                gaps[(size, i)] = page.evaluate("() => document.querySelector('.stage').getBoundingClientRect().top"
+                                                " - document.getElementById('story').getBoundingClientRect().bottom")
+            page.close()
+    finally:
+        server.shutdown()
+    assert gaps and all(g >= 0 for g in gaps.values()), {k: v for k, v in gaps.items() if v < 0}
