@@ -818,9 +818,12 @@ def test_the_story_band_never_covers_the_tv_on_a_desktop(browser):
             page.goto(f"http://127.0.0.1:{server.server_address[1]}/?story")
             page.wait_for_function("() => typeof STORY !== 'undefined'", timeout=10000)
             page.evaluate("() => document.fonts.ready")
-            for i in range(page.evaluate("() => STORY.length")):
-                page.evaluate(f"() => {{ if (!story) startStory(); story.paused = true; go({i}); }}")
-                page.wait_for_timeout(900)  # the TV's resize eases over 0.35 s
+            page.evaluate("() => { if (!story) startStory(); story.paused = true; }")
+            n = page.evaluate("() => STORY.length")
+            for i in list(range(n)) + list(range(n - 1, -1, -1)):  # forward and back: the band grows and shrinks
+                # the same moment the chapter opens, before any frame (CI: a taller band once ran over it while it eased)
+                gaps[(size, i, "at once")] = page.evaluate(f"() => {{ go({i}); return ({GAP})(); }}")
+                page.wait_for_timeout(500)
                 gaps[(size, i)] = page.evaluate(GAP)
             # the band grows after it was measured (the fonts arriving late, as on CI): the TV moves down with it
             page.evaluate("() => { document.querySelector('#story .text').style.paddingBottom = '30px'; }")

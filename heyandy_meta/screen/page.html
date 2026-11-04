@@ -475,6 +475,7 @@
   /* as large as fits under the story's band, measured each chapter (November 3: at 0.85 the band covered the TV's
      day and Andy's state) */
   body.storying .stage { transform: scale(var(--story-scale, 0.85)); transform-origin: 50% 100%; transition: transform 0.35s ease; }
+  html.story-shrink body.storying .stage { transition: none; }
   @media (max-aspect-ratio: 1/1) {  /* a phone, held upright: the band on top, the TV below it, laid out for the phone */
     body.storying { height: auto; min-height: 100vh; overflow-y: auto; background: #070a09; }
     body.storying #story { position: relative; padding: 4vw 4.5vw 4.5vw; }
@@ -1013,13 +1014,17 @@
       text.append(b);
     }
     text.classList.remove("fresh"); void text.offsetWidth; text.classList.add("fresh");
-    requestAnimationFrame(storyScale);
+    storyScale();  // now, before the next frame is drawn: the band's new height is read at once
   }
   function storyScale() {  // the TV, as large as fits under this chapter's band
     const band = $("story");
     if (!band || getComputedStyle(band).position !== "fixed") return;  // a phone: the band is above the TV, not over it
-    const h = band.getBoundingClientRect().height;
-    document.documentElement.style.setProperty("--story-scale", Math.max(0.55, Math.min(0.92, (innerHeight - h - 16) / innerHeight)).toFixed(3));
+    const h = band.getBoundingClientRect().height, root = document.documentElement;
+    const next = Math.max(0.55, Math.min(0.92, (innerHeight - h - 16) / innerHeight));
+    const now = parseFloat(root.style.getPropertyValue("--story-scale")) || 0.85;
+    // smaller at once, so a taller band never covers it even for a moment (CI, November 3: 17 px for 0.3 s); larger, eased
+    root.classList.toggle("story-shrink", next < now);
+    root.style.setProperty("--story-scale", next.toFixed(3));
   }
   addEventListener("resize", () => requestAnimationFrame(storyScale));
   function storyTick() {
