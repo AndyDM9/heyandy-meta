@@ -1902,7 +1902,8 @@
     const box = el("div", null, "plan"), svg = document.createElementNS(svgNS, "svg"), k = 38;  // px per metre
     const b = fy.bearing * Math.PI / 180, tx = Math.sin(b) * fy.metres * k, ty = -Math.cos(b) * fy.metres * k, ay = -fy.andy_m * k;
     const xs = [0, tx, 0], ys = [0, ty, ay], pad = 34;
-    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+    const words = 126, near = 72;  // the thing's name and "2 steps" sit beyond it, "you" and "Andy" on the other side: room for them
+    const x0 = Math.min(...xs) - (tx < 0 ? words : near), x1 = Math.max(...xs) + (tx >= 0 ? words : near), y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
     svg.setAttribute("viewBox", `${x0} ${y0} ${x1 - x0} ${y1 - y0}`); svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", `From where you are: your ${label}, ${fy.words}`);
     const add = (tag, attrs, text) => { const e = document.createElementNS(svgNS, tag); for (const [a, v] of Object.entries(attrs)) e.setAttribute(a, v); if (text) e.textContent = text; svg.append(e); return e; };

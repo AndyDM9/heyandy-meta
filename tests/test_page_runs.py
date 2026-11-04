@@ -860,3 +860,27 @@ def test_on_a_phone_the_story_band_leaves_room_and_no_caption_covers_the_picture
     finally:
         server.shutdown()
     assert got["ask"] == "none" and got["caption"] != "sticky" and got["share"] < 0.37, got
+
+
+@pytest.mark.parametrize("bearing, metres, label", [(-60, 0.7, "glasses"), (-20, 1.4, "glasses"), (40, 0.7, "phone"), (90, 2.1, "keys")])
+def test_the_found_maps_words_all_fit_inside_it(browser, bearing, metres, label):
+    """November 4, on camera: "glasses" lost a letter and "1 step" its 1: past the edge of the map, they were cut off."""
+    state = ScreenState()
+    server = serve(state, port=0)
+    page = browser.new_page(viewport={"width": 1920, "height": 1080})
+    try:
+        page.goto(f"http://127.0.0.1:{server.server_address[1]}/")
+        page.wait_for_timeout(300)
+        spilled = page.evaluate(
+            """([bearing, metres, label]) => {
+                const box = plan({bearing, metres, andy_m: 1.0, words: "ahead", clock: 10}, label);
+                document.body.append(box);
+                const svg = box.querySelector("svg"), [x, y, w, h] = svg.getAttribute("viewBox").split(" ").map(Number);
+                return [...svg.querySelectorAll("text")].map(t => [t.textContent, t.getBBox()])
+                    .filter(([, b]) => b.x < x || b.x + b.width > x + w || b.y < y || b.y + b.height > y + h)
+                    .map(([text]) => text);
+            }""", [bearing, metres, label])
+        assert spilled == []
+    finally:
+        page.close()
+        server.shutdown()
