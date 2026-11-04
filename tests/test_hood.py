@@ -96,6 +96,7 @@ def test_show_me_under_the_hood_opens_the_page_on_the_tv(tmp_path):
     assert "on the screen" in a.hear("Hey Andy, show me under the hood")
     assert a.screen.snapshot()["hood"] is True and a.screen.hood_left() > 60
     assert parse("how did you do that?").kind == "hood" and parse("show me how you work").kind == "setup"
+    assert parse("Hey Andy, how did you do this?").kind == "hood"  # November 4, filming: "this" got a model's guess
 
 
 def test_the_next_request_ends_under_the_hood_so_a_take_straight_after_shows_its_own_turn(tmp_path):

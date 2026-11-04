@@ -76,7 +76,7 @@ TAKE = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?(?:take (?P<n>one|two
 CUT = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?(?:cut|cat)\W*$", re.I)  # "cat": "cut" as the recogniser writes it for some voices
 FILM_OFF = re.compile(r"\bthat'?s a wrap\b|\b(?:stop|done|finished|end) filming\b|\bwe'?re done filming\b|\bfilming (?:is )?over\b", re.I)
 # "show me under the hood": the TV's /hood page (screen/hood.py)
-HOOD = re.compile(r"\bunder the hood\b|\bhow (?:did|do) you (?:do|find) (?:that|it)\b|\bshow me (?:the|your) (?:timings|workings|insides)\b|"
+HOOD = re.compile(r"\bunder the hood\b|\bhow (?:did|do) you (?:do|find) (?:that|this|it)\b|\bshow me (?:the|your) (?:timings|workings|insides)\b|"
                   r"\bhow fast (?:are|were) you\b|\bdebajo del cap[oó]\b", re.I)
 # "are you OK?": Andy checks itself (companion/selfcheck.py)
 SELF_CHECK = re.compile(r"\bare you (?:ok|okay|alright|all right|working(?: properly)?|broken)\b|\b(?:check|test) yourself\b|"

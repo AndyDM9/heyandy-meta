@@ -61,7 +61,7 @@ own list (talking about being a burden, giving away possessions, wanting to slee
   Guard 3 caught **none of 45**, in English too; Glimmer's look caught **16**. So a sign said in a new way can still
   pass. Andy never counsels, and it isn't a safety device.
 
-## Health questions get Andy's own words, never a model's
+## Health questions the rule catches get Andy's own words, never a model's
 Since November 1 this is kept in code, as the crisis reply is (`companion/safety.py`, `health`). In conversation, a
 symptom said ("my knee has been swollen for three days") or a question about a medicine, a
 condition, a reading or the body ("can I take ibuprofen with my blood pressure pills?", "is 150 over 95 good?") gets:

@@ -34,8 +34,8 @@ they were; reminders you asked for; conversation, pictures and web pages on its 
   MapAnything, DINOv2, V-JEPA 2, Omnilingual ASR, SeamlessM4T v2, Llama Guard 3, Prompt Guard 2). Unplug the network
   and Andy carries on.
 - **Words, when online:** Muse Spark (planning, web answers, harder conversation) and Muse Image (pictures) through
-  Meta's Model API; web-page screenshots to Muse Spark only for "show me … on the TV". Every word sent is on that
-  turn's receipt on the TV; "what did you send to the cloud today?" adds up the day. Our account runs on the hackathon's
+  Meta's Model API; web-page screenshots to Muse Spark only for "show me … on the TV". Every word from the home is on that
+  turn's receipt on the TV, a long piece cut where the TV says so; "what did you send to the cloud today?" adds up the day. Our account runs on the hackathon's
   free credits, and Meta's Billing page says that while it does, "your content may be used for product improvement": that
   covers what goes through the API, so what's on the receipt, and not the camera or microphone.
 - **The one exception:** a switch for filming a staged room sends frames to SAM 3.1 through the API, and the TV says so.
@@ -105,8 +105,12 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   own gain falls low after loud speech and climbs slowly; preflight fails if the sound stays faint.
 - **Andy's name, and a false crisis reply:** in the founder's voice the recogniser often writes "Hey Andy" as something
   else ("hey engine"), so a call can be missed; Andy now takes "hey" and a word near its name. While filming on
-  November 4, a sentence not about anything of the kind ("how did you do this?") once got the 988 reply. Better a
-  wrong offer of help than a missed one, but it is a real false alarm, unexplained so far: the words aren't kept.
+  November 4, Andy followed its answer to "how did you do this?" with the 988 reply. That sentence isn't the cause: the
+  word list, Llama Guard 3 and Muse Glimmer all clear it. The timing points to about two seconds of sound heard during
+  its answer, below a voice's usual level, written by speech-to-text as words the safety rules match: those are held and
+  answered when a turn ends, so nothing urgent is dropped. Andy's own voice and the clip's sound, played to speech-to-text
+  135 times, didn't reproduce it, and the words aren't kept, so the cause isn't proven. Better a wrong offer of help than
+  a missed one, so the rule stands.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it

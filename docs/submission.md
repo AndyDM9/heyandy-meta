@@ -81,7 +81,7 @@ Meta's own download server; `scripts/verify_all_weights.py`, November 2). Llama 
 from those files; every model's source and licence: `docs/open-weights.md`.
 
 **Pictures and voice from a home never leave it.** The camera and microphone reach only models on the computer beside
-the robot. Every turn, the TV shows a privacy receipt: exactly which words went to which cloud model, or "Nothing left
+the robot. Every turn, the TV shows a privacy receipt: which words went to which cloud model, or "Nothing left
 this house"; "Hey Andy, what did you send to the cloud today?" adds up the day's, and "what did you hear today?" says how
 often someone spoke near it and how few were for it (kept: no sound, and not a word of the rest). Unplug the network
 and Andy carries on.

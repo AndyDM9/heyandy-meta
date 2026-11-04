@@ -20,8 +20,8 @@ and measured in simulation or on photos, not yet on the robot with real things.)
 Frontier*), on Meta's models, and **every model it runs is Meta's**: Muse Glimmer, SAM 3.1 (with Object Multiplex), MapAnything (how
 far), V-JEPA 2, DINOv2, Omnilingual ASR, SeamlessM4T v2 (its voice), Llama Guard 3 and Llama Prompt Guard 2 from their
 open weights on the computer beside the robot, and Muse Spark and Muse Image through the Meta Model API. **Andy gives no
-health advice**, and that's kept in code: a health question gets Andy's own words in each of its fifteen languages and
-no model answers it, and Llama Guard 3 reads each sentence a model writes before Andy says it. Someone who says
+health advice**, and that's kept in code: a health question the rule catches gets Andy's own words in each of its fifteen languages and
+no model answers it; one it misses reaches a model told never to advise, and Llama Guard 3 reads that answer before Andy says it. Someone who says
 they've fallen hears "please call 911 right away. I'll find your phone", and Andy finds it and points at it.
 
 **It opens on a front door:** Andy's face (tap it and Andy introduces itself in its own voice), what's been measured,
