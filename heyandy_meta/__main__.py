@@ -110,6 +110,9 @@ def main() -> None:
     ap.add_argument("--depth", default="http://127.0.0.1:8096", help="MapAnything on this computer: how far away")
     ap.add_argument("--voice-name", default="eng", help="eng or spa (Meta's SeamlessM4T v2 voice)")
     ap.add_argument("--quiet", action="store_true", help="never print what was said (for running as a service)")
+    ap.add_argument("--mic", default=os.environ.get("HEYANDY_MIC") or None,
+                    help="hear through this PipeWire source (a headset) instead of the robot's microphone array "
+                         "(HEYANDY_MIC in the environment does the same; November 4: the array went faint)")
     ap.add_argument("--no-rest", action="store_true", help="never rest: keep breathing and looking for faces however "
                     "long nobody's there (companion/rest.py)")
     ap.add_argument("--home", default=os.environ.get("HEYANDY_HOME", ""),
@@ -193,8 +196,14 @@ def main() -> None:
 
         rest = andy.rest = Rest(after_s=float("inf") if args.no_rest else Rest().after_s, woke_at=andy.clock())
         ears = Endpointer()
-        threading.Thread(target=loop.run, args=(andy.body.listen, LocalVoice(args.voice_url), ears, stop),
-                         daemon=True).start()
+        if args.mic:  # a microphone on this computer in place of the robot's array (voice/desk_mic.py)
+            from .voice.desk_mic import listen_from
+
+            mic = listen_from(args.mic, andy.body)
+            print(f"hearing through {args.mic}, not the robot's microphone array; not turning to the voice", flush=True)
+        else:
+            mic = andy.body.listen
+        threading.Thread(target=loop.run, args=(mic, LocalVoice(args.voice_url), ears, stop), daemon=True).start()
         from .robot.audio_watch import AudioWatch
 
         # Its ears and voice, watched: November 2 they stopped for half an hour and nothing said so
