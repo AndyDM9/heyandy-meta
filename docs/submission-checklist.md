@@ -45,7 +45,9 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        (the release check's "keys in the history" line, which looks for a key's value, not its name: the docs name
        MODEL_API_KEY often). Never rewrite the history: its
        dates show the work was done during the event.
-4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics) and
+4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics):
+       `gh repo edit AndyDM9/heyandy-meta --visibility public --accept-visibility-change-consequences` (gh 2.93 refuses
+       a visibility change without the second flag; checked November 3), and
        check a fresh clone passes its tests. Then Settings -> General -> Social preview -> upload
        `docs/images/social-card.png` (by hand: GitHub has no API for it), so a posted link shows Andy's card. Then switch on private
        vulnerability reporting, where `SECURITY.md` sends reports (`gh api -X PUT repos/AndyDM9/heyandy-meta/private-vulnerability-reporting`;
@@ -58,11 +60,14 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        `hf upload heyandy-ai/andy dist/space-static . --repo-type space`; then
        `uvx --from huggingface_hub python scripts/verify_space.py` must say none missing, extra or different), then make
        it public (if a scorecard changed since, `uv run python scripts/social_card.py` first: a test says so):
-       `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility. Open it signed out: the
+       `huggingface.co/spaces/heyandy-ai/andy` -> Settings -> visibility, or from here (the env loaded):
+       `uvx --from huggingface_hub python -c "from huggingface_hub import HfApi; HfApi().update_repo_settings('heyandy-ai/andy', repo_type='space', private=False)"`.
+       (The build with `--clip` and `--video` was tried November 3 with a stand-in clip: the story's first chapter plays
+       it and the end card links the video.) Open it signed out: the
        the story (about 75 seconds) should play, end on the card, and "Watch the 3-minute video" should open the video;
        type "where are my keys?" in "Ask Andy": "Let me look", the views, then the find; tap 🎙 and say it (wav2vec 2.0
        downloads once, 95 MB): the same scene, and Chrome asks for the microphone only then; type "what won't you do?" (the
-       promises card) and "I fell and I can't get up" (the note: 911 first, then the phone). Then "Try it on your own
+       promises card) and "I fell and I can't get up" (its own scene: the 911 line, then the phone found). Then "Try it on your own
        things": "No photo to hand? Use our cup", then "Our four cups" should end "There's your cup." (DINOv2 downloads
        once, 24 MB), and a photo of your own mug, then of the table, should work on a phone too; then "Sweep the room, live" on the
        phone (allow the camera): sweep slowly, the tone gets warmer, and the spotlight lands on your mug.
