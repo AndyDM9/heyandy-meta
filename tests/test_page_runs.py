@@ -804,17 +804,22 @@ def test_the_story_band_never_covers_the_tv_on_a_desktop(browser):
         return st.snapshot()
 
     server = serve(ScreenState(), port=0, scenes={n: functools.partial(snapshot, n) for n in SCENES})
+    GAP = "() => document.querySelector('.stage').getBoundingClientRect().top - document.getElementById('story').getBoundingClientRect().bottom"
     gaps = {}
     try:
         for size in ((1920, 1080), (1366, 768)):
             page = browser.new_page(viewport={"width": size[0], "height": size[1]})
             page.goto(f"http://127.0.0.1:{server.server_address[1]}/?story")
             page.wait_for_function("() => typeof STORY !== 'undefined'", timeout=10000)
+            page.evaluate("() => document.fonts.ready")
             for i in range(page.evaluate("() => STORY.length")):
                 page.evaluate(f"() => {{ if (!story) startStory(); story.paused = true; go({i}); }}")
-                page.wait_for_timeout(500)
-                gaps[(size, i)] = page.evaluate("() => document.querySelector('.stage').getBoundingClientRect().top"
-                                                " - document.getElementById('story').getBoundingClientRect().bottom")
+                page.wait_for_timeout(900)  # the TV's resize eases over 0.35 s
+                gaps[(size, i)] = page.evaluate(GAP)
+            # the band grows after it was measured (the fonts arriving late, as on CI): the TV moves down with it
+            page.evaluate("() => { document.querySelector('#story .text').style.paddingBottom = '30px'; }")
+            page.wait_for_timeout(900)
+            gaps[(size, "grown")] = page.evaluate(GAP)
             page.close()
     finally:
         server.shutdown()

@@ -967,6 +967,9 @@
     }
     button("›", () => go(story.at + 1), "Next"); button("Explore every screen", exploreAll); nav.prepend(askForm(true));
     row.append(el("div", null, "ch"), text, nav); band.append(bars, row); document.body.prepend(band);  // first: on a phone it leads
+    // its height changes with each chapter's words and when the fonts arrive (CI, November 3: measured before them,
+    // the first chapter's band ran 5 px over the TV): measured again whenever it does
+    if (window.ResizeObserver) new ResizeObserver(() => storyScale()).observe(band);
     go(0); requestAnimationFrame(storyTick);
   }
   function clip(on) {  // the robot, filmed (--clip): over the TV for its chapter, gone after
