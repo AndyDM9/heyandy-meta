@@ -12,7 +12,7 @@ run `uv run python scripts/claims.py` after any new run or edit.*
 camera, all on the computer beside it: on the final code a median 1.1 degrees off, and when a person judged where it
 pointed, 13 of 15 right and never a wrong point.
 
-HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: [link] · X: [link] · Live demo:
+HeyAndy, Inc. · Startup track · *Push the Frontier* (robotics) · Video: https://youtu.be/kwCDD4w2_UM · X: https://x.com/heyandyai/status/2118078811254239743 · Live demo:
 https://huggingface.co/spaces/heyandy-ai/andy (Andy's eyes, live in your browser:
 https://heyandy-ai-andy.static.hf.space/eyes.html) · Code: https://github.com/AndyDM9/heyandy-meta
 

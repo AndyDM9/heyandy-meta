@@ -17,7 +17,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
 
 <p align="center">
   <a href="https://huggingface.co/spaces/heyandy-ai/andy"><img alt="Try the 75-second story in your browser" src="https://img.shields.io/badge/%E2%96%B6%20Try%20it-the%2075--second%20story-ffcf5c?style=for-the-badge&labelColor=12241d"></a>
-  <!-- On November 4, the video: <a href="VIDEO_URL"><img alt="Watch the 3-minute video" src="https://img.shields.io/badge/%E2%96%B6%20Watch-the%203--minute%20video-ffcf5c?style=for-the-badge&labelColor=12241d"></a> -->
+  <a href="https://youtu.be/kwCDD4w2_UM"><img alt="Watch the 3-minute video" src="https://img.shields.io/badge/%E2%96%B6%20Watch-the%203--minute%20video-ffcf5c?style=for-the-badge&labelColor=12241d"></a>
   <a href="#try-it-in-your-browser-and-in-fifteen-languages"><img alt="Andy speaks fifteen languages" src="https://img.shields.io/badge/Speaks-15%20languages-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="#why-its-different"><img alt="Every model Andy runs is Meta's" src="https://img.shields.io/badge/Every%20model-Meta's%20(11)-1e5f4a?style=for-the-badge&labelColor=12241d"></a>
   <a href="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml"><img alt="Tests: every push, the TV page in a real browser too" src="https://github.com/AndyDM9/heyandy-meta/actions/workflows/tests.yml/badge.svg"></a>
