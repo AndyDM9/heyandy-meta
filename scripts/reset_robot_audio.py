@@ -9,13 +9,40 @@ did (the camera and motors are separate devices and aren't touched). preflight.p
 
     uv run python scripts/reset_robot_audio.py      # about 40 s: stops Andy and the daemon, resets, starts them again
 
-Only the device's USB reset and the services; no sound is recorded. The direction is read 20 times to check it answers.
+November 4 (the morning of filming): the array went faint nine times, and this USB reset cured it for less each time,
+because the board is powered from the USB cable and the chip's signal processing kept its state through a USB reset
+and even the robot's power switch. What cured it was the chip's own REBOOT (XVF3800, through the daemon's audio
+config API), so that comes first here, then the USB reset as before. Only the device's resets and the services; no
+sound is recorded. The direction is read 20 times to check it answers.
 """
+import json
 import subprocess
 import sys
 import time
+import urllib.request
 
 VENDOR, PRODUCT = 0x38FB, 0x1001  # Pollen Robotics, Reachy Mini Audio
+DAEMON = "http://127.0.0.1:8000"
+
+
+def reboot_request(daemon: str = DAEMON) -> urllib.request.Request:
+    """The array's own REBOOT, written through the robot's daemon: XMOS's XVF3800 "reboots the chip and resets all
+    parameters to default". November 4: nine USB resets and two power cycles left the array faint (a voice reaching it
+    at normal loudness but garbled, the room near-silent, the gain pinned), because the board is powered from the USB
+    cable and its signal processing kept its state; this reset it, and Andy heard again within minutes."""
+    body = json.dumps({"config": [{"name": "REBOOT", "values": [1]}], "verify": False}).encode()
+    return urllib.request.Request(f"{daemon}/api/audio/config/apply", data=body,
+                                  headers={"Content-Type": "application/json"}, method="POST")
+
+
+def reboot_chip(daemon: str = DAEMON, opener=urllib.request.urlopen) -> bool:
+    """Ask the daemon (while it runs) to reboot the array's chip. False if the daemon isn't up to pass it on."""
+    try:
+        with opener(reboot_request(daemon), timeout=10) as r:
+            return bool(json.load(r).get("applied"))
+    except Exception as e:  # noqa: BLE001 - no daemon, or a device that won't take it: the USB reset still follows
+        print(f"the chip's own reboot couldn't be asked for ({type(e).__name__}): USB reset only", flush=True)
+        return False
 
 
 def direction_reads(n: int = 20) -> int:
@@ -43,9 +70,11 @@ def systemctl(*args: str) -> None:
 def main() -> None:
     import usb.core
 
+    if reboot_chip():  # first, through the daemon while it runs: the chip's processing starts over
+        print("the array's chip rebooted (its processing and parameters start over)", flush=True)
     systemctl("stop", "heyandy-app")
     systemctl("stop", "heyandy-robot")
-    time.sleep(2)
+    time.sleep(4)  # the chip comes back on USB in about a second; the daemon lets go of it
     dev = usb.core.find(idVendor=VENDOR, idProduct=PRODUCT)
     if dev is None:
         sys.exit("No Reachy Mini Audio on USB: is the robot plugged in and powered? Then: "

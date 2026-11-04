@@ -92,14 +92,14 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   stream ever opened, local or remote, since October 30; the privacy audits record what Andy itself
   sends, not who could have connected. Now it listens on this computer only and the relay is off
   (`scripts/robot_daemon.py`), and preflight fails if a port listens wider.
-- **Its microphone array has gone faint four times** (the morning of November 3, and three times the morning of
-  November 4, each of the last three within two minutes of Andy speaking): the sound it hears fell to about a tenth or
-  less, with no USB error in the kernel's log and nothing changed that we could find. The array's own gain control is
-  not the fault: set back by hand through the robot's daemon, the gain held while the raw signal stayed near zero, so
-  the capture path inside the device collapses. Andy then answers nothing until the array's USB is reset
-  (`scripts/reset_robot_audio.py`, under a minute; Andy restarts with it). Preflight fails on it and names the reset,
-  and a watch catches it within a few sounds; Andy doesn't yet say so on its TV, where a false alarm would be in
-  shot. The cause isn't found; a direct USB port and a lower speaker level are the next things to try.
+- **Its microphone array's processing can get stuck** (the morning of November 3, and nine times the morning of
+  November 4, each reset holding for less): a voice still reaches it at normal loudness but comes out garbled, the room
+  near-silent, the array's gain pinned; Andy then hears its name in nothing. Not the microphones, not the USB link, not
+  the speaker level, not Andy's code (each tested that morning). The board is powered from the USB cable, so a USB
+  reset and the robot's power switch left the chip's processing as it was; what cured it was the chip's own REBOOT,
+  through the robot's daemon, which `scripts/reset_robot_audio.py` now does first (under a minute; Andy restarts with
+  it). Preflight fails on the faint state and names the reset, and a watch catches it within a few sounds; Andy
+  doesn't yet say so on its TV, where a false alarm would be in shot.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it
