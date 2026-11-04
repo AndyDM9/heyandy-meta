@@ -106,7 +106,7 @@ pointed at the thing 10 of 12 times, a median 2.5 degrees off; hidden, "not foun
 **1.1 degrees** off, 2.2 at worst, and **7.8 s** a find, from a typed request to the point. Said aloud: from the words to
 Andy's spoken answer, 10.9 to 11.6 s (the dress rehearsal), the video's shots on the robot.
 *Search, simulated* (rooms generated from a seed, the robot's own camera model): with look-alikes described, a fixed
-sweep of views pointed at the wrong one 20 times in 100, **Glimmer's plan 18 of 20, 2 wrong**; things behind the
+sweep of views pointed at the wrong one 15 times in 100, **Glimmer's plan 18 of 20, 2 wrong**; things behind the
 robot, **Glimmer 20 of 20 in 4.6 looks** (camera views).
 *The agent* (12 multi-part requests, scored on what the robot did): **Muse Spark 12 of 12, Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests with the real models, every outgoing request recorded): **no camera picture

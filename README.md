@@ -227,7 +227,7 @@ Measured on the robot and in the demo, none of it what we expected, and what And
 |---|---|---|
 | On the robot, judged by a person | each thing put in five places on our desk (or hidden), one evening: **13 of 15** right. Out where it could be seen, **10 of 12** pointed at, a median **2.5°** off the middle of the view (the cup and the glasses 8 of 8, the keys 2 of 4: twice the sweep never saw them, and Andy said so; the cause, the camera's autofocus, found and fixed that night, [research §70](docs/research.md#70-the-cameras-autofocus-was-hiding-the-keys-november-1-about-10-pm)); hidden, **3 of 3** "not found"; **never** a point at something else | [`physical-fixed-20261101-2115.json`](evals/results/physical-fixed-20261101-2115.json) |
 | On the robot, alone in the room | **250 of 253** unattended searches ended in a point since the aim fix (the run before it: 3 of 4; of the misses since, two were the keys on Nov 1, one the glasses taken off the desk); on the final code (the camera's focus held, each pixel's true ray, the head read back after its dip, each frame encoded once for all its names), **18 of 18**, a median **1.1°** off the middle of the view, **2.2° at worst**, none re-aimed, **7.8 s** a find (that evening, before any of it: 4.8°, 13.5 s) | [`unattended-*`](evals/results) |
-| Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 80 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
+| Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 85 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
 | Several things at once | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
 | Privacy, a day of 21 requests | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |
 | The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
@@ -626,18 +626,21 @@ the search when the person gives a hint: Muse Glimmer on this computer, or Muse 
 
 | Room | Fixed sweep (100 each) | Glimmer plans (20 each) | Muse Spark plans (20 each) |
 |---|---|---|---|
-| The thing in front | 96 found, 0 wrong | **20**, 0 wrong | 19, 0 wrong |
-| Behind the robot, with a hint | 92, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.6 looks | **20**, 0 wrong, 3.8 looks |
-| A picture of it on the TV too | 94, 0 wrong | **20**, 0 wrong | **20**, 0 wrong |
+| The thing in front | 100 found, 0 wrong | **20**, 0 wrong | 19, 0 wrong |
+| Behind the robot, with a hint | 97, 0 wrong, 7.1 looks | **20**, 0 wrong, 4.6 looks | **20**, 0 wrong, 3.8 looks |
+| A picture of it on the TV too | 100, 0 wrong | **20**, 0 wrong | **20**, 0 wrong |
 | Not there at all | 100 said so | 20 said so | 20 said so |
-| Two look-alikes, "the blue one" | 80, **20 wrong** | **18**, 2 wrong | **18**, 2 wrong |
+| Two look-alikes, "the blue one" | 85, **15 wrong** | **18**, 2 wrong | **18**, 2 wrong |
 | Planning time (model only; not counting "not there") | none | 9 to 12 s | **2 to 4 s** |
 
 Pointing error (median, with 1.5 degrees of assumed head noise): about 1.7 degrees, inside the 6 degree target. Every
 column was rerun on October 30 on the final code, and Glimmer's again on October 31 after the search tools' colour
 fixes, with the same results, and both once more on November 1 on the final code (Glimmer 20, 20, 20, 20 and 18;
 Muse Spark 19, 20, 20, 20 and 18, one more look-alike wrong than before (2), planning about twice as fast; a look now counts the check after pointing; Glimmer runs without its
-drafter, so it plans more slowly; the October 28 runs are kept as `*-oct28.json`). Two rounds of fixes came from this scorecard, and the earlier runs are
+drafter, so it plans more slowly; the October 28 runs are kept as `*-oct28.json`). The fixed sweep again on November 3, on the code
+that will be filmed: 100, 97, 100, 100 and 85 (October 30: 96, 92, 94, 100 and 80, kept as `sim-fixed-oct30.json`; the
+same seeded rooms and the same camera and noise model, so the difference is the search's fixes since; run twice, the
+same both times: `uv run python -m evals.sim --trials 100`). Two rounds of fixes came from this scorecard, and the earlier runs are
 kept:
 - **October 27 (no repeat looks; compare points at once):** Spark went from 12 look-alikes and 14 TV cases to 16 and 20;
   Glimmer's look-alikes went from 20 to 17 (`*-before-tool-fixes.json`).

@@ -313,7 +313,7 @@ FIGURES = [
     Figure("1.3 times too wide", "research.md §33", quote="1.3 times too wide"),
     Figure("9.6 s sooner", "research.md §50", quote="The answer comes about 9.6 s sooner"),
     # simulated search and the agents
-    Figure("pointed at the wrong one 20 times in 100", "sim-fixed",
+    Figure("pointed at the wrong one 15 times in 100", "sim-fixed",
            lambda: f"pointed at the wrong one {sim('sim-fixed.json', 'described')['false_finds']} times in {sim('sim-fixed.json', 'described')['trials']}"),
     Figure("Glimmer's plan 18 of 20, 2 wrong", "sim-glimmer",
            lambda: "Glimmer's plan {correct} of {trials}, {false_finds} wrong".format(**sim("sim-glimmer.json", "described"))),
@@ -321,7 +321,7 @@ FIGURES = [
            lambda: "Muse Spark {correct} of {trials}, {false_finds} wrong".format(**sim("sim-spark.json", "described"))),
     Figure("Glimmer 20 of 20 in 4.6 looks", "sim-glimmer",
            lambda: "Glimmer {correct} of {trials} in {looks_mean} looks".format(**sim("sim-glimmer.json", "behind"))),
-    Figure("fixed sweep 92 of 100 in 7.1", "sim-fixed",
+    Figure("fixed sweep 97 of 100 in 7.1", "sim-fixed",
            lambda: "fixed sweep {correct} of {trials} in {looks_mean}".format(**sim("sim-fixed.json", "behind"))),
     Figure("Muse Spark 12 of 12, Glimmer offline 12 of 12", "agent-spark, agent-glimmer",
            lambda: "Muse Spark {0[right]} of {0[requests]}, Glimmer offline {1[right]} of {1[requests]}".format(*agents())),

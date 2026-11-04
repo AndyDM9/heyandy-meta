@@ -2537,3 +2537,10 @@ Found and fixed, each with a test:
   the name is on each), and checks the TV opened under the hood. On the way: the hood stayed on the TV for 90 s
   whatever came next, so a take started straight after it would have been filmed with the hood page instead of its
   own turn. The next request now ends it (`screen/state.py` `new_turn`); the page goes back within a second.
+- **A judge can rerun the numbers and get them** (November 3, evening). From a fresh clone, the results page's command
+  for the simulated search (`evals.sim`) ran 30 rooms each, not the 100 its result was from, so it gave other numbers;
+  the page now says `--trials 100` (and `--trials 20` for the planners), as the eval's own docstring does. Run with 100,
+  twice, the same both times, on tonight's code: 100, 97, 100, 100 and 85, against October 30's 96, 92, 94, 100 and
+  80 (the same seeded rooms, the same camera and noise model, so the difference is the search's fixes since). The new
+  run is `sim-fixed.json`; October 30's is kept as `sim-fixed-oct30.json`. The planners' columns (Glimmer, Muse Spark)
+  stay at November 1: rerunning them is twenty minutes of GPU 0, the card on the riser, the night before filming.
