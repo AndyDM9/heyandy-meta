@@ -101,3 +101,48 @@ def test_the_settings_list_on_andys_tv_switches_it(tmp_path):
     finally:
         server.shutdown()
     assert len(names) == 15 and "한국어" in names and "English" in names
+
+
+def test_a_tv_page_left_open_when_andy_restarts_still_switches_it():
+    """November 4: the key is new each time the TV starts. A page left open was refused, and its menu closed as if it
+    had worked, so the choice seemed not to work the first time."""
+    playwright = pytest.importorskip("playwright.sync_api")
+    first, port = tv(lambda to: None)
+    asked, done = [], threading.Event()
+    with playwright.sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:  # noqa: BLE001 - no browser here: skip
+            first.shutdown()
+            pytest.skip(f"no Chromium for Playwright: {e}")
+        pg = browser.new_page(viewport={"width": 1920, "height": 1080})
+        pg.goto(f"http://127.0.0.1:{port}/")
+        first.shutdown()
+        first.server_close()
+        again = serve(ScreenState(), port=port, on_language=lambda to: (asked.append(to), done.set()), languages=tuple(LANGUAGES))
+        try:
+            pg.click("#gear")
+            pg.click("#m-langs")
+            pg.click("#m-langlist button[lang=ko]")
+            assert done.wait(3) and asked == ["ko"]
+            pg.wait_for_selector("#menu", state="hidden", timeout=3000)
+            browser.close()
+        finally:
+            again.shutdown()
+
+
+def test_the_tv_says_so_at_once_even_while_a_turn_is_running(tmp_path):
+    from tests.test_app import andy
+
+    a, _, _ = andy(tmp_path=tmp_path)
+    a.translator = type("T", (), {"spoken": lambda self, text, *rest: text})()
+    a.lock.acquire()
+    try:
+        t = threading.Thread(target=a.language_from_tv, args=("ko",), daemon=True)
+        t.start()
+        t.join(0.2)
+        assert t.is_alive() and LANGUAGES["ko"].native in a.screen.snapshot()["notice"]
+    finally:
+        a.lock.release()
+    t.join(5)
+    assert a.language == "ko"

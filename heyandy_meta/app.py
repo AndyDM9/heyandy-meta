@@ -1059,6 +1059,7 @@ class Andy:
     def language_from_tv(self, to: str) -> None:
         """The TV's settings: a language chosen from its list (screen/server.py, from the TV's own page only). As
         "Andy, speak Korean" does: hearing, voice and the TV switch, it's remembered, and Andy says so, in it."""
+        self.screen.notice(LANGUAGES[to].native or "English")  # at once: a turn may be running, and the TV has the choice
         with self.lock:  # after any turn running now, never in the middle of one
             words = self.set_language(to)
             if words:

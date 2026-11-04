@@ -215,7 +215,7 @@ def test_from_another_language_only_back_to_english():
 
     andy = Listening("es")
     ears = Ears("andi dove sono", "andy dove sono i miei occhiali")  # Italian? or Spanish misheard: not worth the risk
-    ears.out["spa_Latn"] = ears.out.pop("eng_Latn"); ears.language = "spa_Latn"
+    ears.out["spa_Latn"] = ears.out["eng_Latn"]; ears.language = "spa_Latn"
     VoiceLoop(andy)._which_language("andi dove sono", None, ears)
     assert andy.switched == []
     ears.out["auto"] = "andy where are my glasses"
@@ -262,8 +262,8 @@ def test_in_mandarin_andy_speak_english_said_in_english_brings_english_back():
     ears.language = "cmn_Hans"
     ears.out["eng_Latn"] = "andy speak english"
     text = VoiceLoop(andy)._which_language("安迪 斯皮克 英格利", None, ears)
-    assert text == "andy speak english" and ears.asked[-1] == "eng_Latn"  # heard again in English, for the turn
-    assert andy.switched == []  # the turn's own "speak English" switches, and says so once (on the robot: said twice)
+    assert ears.asked == ["eng_Latn"]  # listened for in English first, in any other language
+    assert text == "" and andy.switched == ["en"]  # switched here, said once: no turn follows to lose it or say it twice
 
 
 def test_after_a_find_an_english_no_no_never_switches_language():

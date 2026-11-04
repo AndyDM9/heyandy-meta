@@ -636,3 +636,56 @@ def test_hey_andy_as_speech_to_text_writes_it_is_a_call(said, rest):
 def test_and_without_hey_is_still_everyday_speech(said):
     a = Andy()
     assert VoiceLoop(a).heard(said) is None and a.heard == []
+
+
+class _Hearing:
+    """Told a language, writes what it wrote for the founder's takes on November 4."""
+    language = "rus_Cyrl"
+
+    def __init__(self, english, auto="", told="энди спик энглишна"):
+        self.english, self.auto, self.told = english, auto, told
+
+    def transcribe(self, audio, language=None):
+        return {"eng_Latn": self.english, "auto": self.auto}.get(language, self.told)
+
+
+class _Speaking:
+    def __init__(self, language="ru"):
+        self.language, self.switched = language, []
+        self.body = type("B", (), {})()
+
+    asr_language = "rus_Cyrl"
+
+    def notice_language(self, code):
+        self.switched.append(code)
+        self.language = code
+
+
+@pytest.mark.parametrize("heard", ["and day speak english now", "hey angel speak english now", "hey andy speak english",
+                                   "andy, can you speak english please", "hey engine switch to english"])
+def test_in_another_language_the_way_back_to_english_always_works(heard):
+    """The founder's takes: "Andy, speak English" in Russian, heard in Cyrillic, then heard again with the name lost,
+    was dropped as not for Andy (1 of 4 lost; Hindi and Ukrainian, in Andy's own voice, every time)."""
+    andy = _Speaking()
+    loop = VoiceLoop(andy)
+    assert loop._which_language("энди спик энглишна", np.zeros(8), _Hearing(heard)) == ""
+    assert andy.switched == ["en"] and loop.listening()  # and what's said next needs no name
+
+
+@pytest.mark.parametrize("heard", ["they speak english at the hotel", "i can't speak english very well", "do you speak english",
+                                   "my daughter is learning to speak english", "the people here speak english"])
+def test_talk_about_english_doesnt_switch_andy_back(heard):
+    andy = _Speaking()
+    loop = VoiceLoop(andy)
+    assert loop._which_language("они говорят", np.zeros(8), _Hearing(heard, told="они говорят")) == "они говорят"
+    assert andy.switched == []
+
+
+def test_called_in_another_language_what_is_heard_next_isnt_dropped():
+    """Heard again in the new language, the name can be lost: Andy was called all the same, follow-ups used up or not."""
+    andy = _Speaking("en")
+    loop = VoiceLoop(andy)
+    loop.follow_ups_left = 0
+    hearing = _Hearing("", auto="安迪我的眼镜在哪里", told="and the war dejan jin zai nali")
+    loop._which_language("andy war dejan jin zai nali", np.zeros(8), hearing)
+    assert andy.switched == ["zh"] and loop.listening()

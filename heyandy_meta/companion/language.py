@@ -235,7 +235,9 @@ class Translator:
 
 
 NAMES = {"english": "en", "spanish": "es", **{row[0].lower(): code for code, row in MORE.items()},
-         "mandarin": "zh", "filipino": "tl"}
+         "mandarin": "zh", "filipino": "tl",
+         # how the hearing wrote these names, asked in English (November 4)
+         "corian": "ko", "henry": "hi", "to go log": "tl"}
 LANGUAGE = re.compile(r"(?<!not )(?<!n't )(?<!never )(?<!to )(?<!can )(?<!cannot )\b(?:speak|talk|answer|reply)"
                       r"(?: to me)?(?: in)? (?P<a>" + "|".join(NAMES) + r")\b|"
                       r"(?<!no )\bh[aá]bla(?:me)?(?: en)? (?P<b>español|espanol|inglés|ingles)\b|"
@@ -316,6 +318,24 @@ def asked_for(text: str) -> str | None:
         return None
     word = next(g for g in m.group("a", "b", "c", "d", "e", "f") if g).lower()
     return "es" if word.startswith("esp") else "en" if word.startswith("ingl") else NAMES[word]
+
+
+NOT_A_CALL = {"i", "we", "you", "they", "he", "she", "it", "people", "who", "my", "your", "his", "her", "our", "their", "the", "to",
+              "do", "does", "did", "should", "must", "can", "can't", "cannot", "don't", "doesn't", "didn't", "not", "never", "no"}
+ASKING = re.compile(r"\b(?:please|(?:can|could|would|will) you)\b", re.I)
+
+
+def asks_for_english(text: str) -> bool:
+    """"Hey Andy, speak English", as heard in English however the name came out ("and day speak English now", "hey engine
+    speak English"): the whole of what was said, at most a misheard name around it. Never "they speak English here"."""
+    text = (text or "").strip()
+    if not LANGUAGE.search(text):  # "hey engine, switch to English": some forms are the whole request, so past the name
+        text = re.sub(r"^\W*(?:hey|hi|ok|okay)\W+\w+\W+", "", text, flags=re.I)
+    m = LANGUAGE.search(text)
+    if not m or asked_for(text) != "en":
+        return False
+    before = ASKING.sub(" ", text[:m.start()]).lower().replace(",", " ").split()
+    return len(before) <= 3 and not NOT_A_CALL.intersection(before) and len(text[m.end():].split()) <= 2
 
 
 # The TV's one-word labels mean nothing alone, and Glimmer guessed wrong without this ("away" as "leave", "Morning" as

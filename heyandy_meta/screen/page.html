@@ -786,7 +786,18 @@
   $("m-hood").onclick = () => { location.href = hoodUrl(); };
   $("m-help").onclick = () => { helpUntil = Date.now() + 60000; menu(false); $("help").hidden = false; };
   // Andy's own TV only (the page carries its settings key): its language, chosen from a list, as "Andy, speak Spanish"
-  const SETTINGS_KEY = document.querySelector('meta[name="andy-settings"]')?.content || "";
+  let SETTINGS_KEY = document.querySelector('meta[name="andy-settings"]')?.content || "";
+  async function askLanguage(code) {
+    const ask = () => fetch("/language", { method: "POST", headers: { "Content-Type": "application/json" },
+                                           body: JSON.stringify({ to: code, token: SETTINGS_KEY }) });
+    let answer = await ask();
+    if (answer.status === 403) {  // Andy restarted since this page loaded, and its key is new: read it from the page as served now
+      const served = await (await fetch(location.pathname, { cache: "no-store" })).text();
+      SETTINGS_KEY = served.match(/name="andy-settings" content="([^"]*)"/)?.[1] || SETTINGS_KEY;
+      answer = await ask();
+    }
+    return answer.ok;
+  }
   if (SETTINGS_KEY && !window.HEYANDY_STATIC) {
     $("m-langs").hidden = false;
     $("m-langs").onclick = () => {
@@ -797,10 +808,13 @@
         const b = el("button", ASK_LANGS[code]); b.type = "button"; b.lang = code;
         b.setAttribute("aria-pressed", String(code === (LANG || "en")));
         b.onclick = async () => {
-          try {
-            await fetch("/language", { method: "POST", headers: { "Content-Type": "application/json" },
-                                       body: JSON.stringify({ to: code, token: SETTINGS_KEY }) });
-          } catch (e) { console.error(e); }
+          let reached = false;
+          try { reached = await askLanguage(code); } catch (e) { console.error(e); }
+          if (!reached) {  // said, and the menu stays open: never closed as if it had worked
+            $("m-lang").dataset.lang = "";
+            $("m-lang").replaceChildren("That didn't reach Andy. Try again, or say ", el("b", "“Hey Andy, speak English”"), ".");
+            return;
+          }
           list.hidden = true; $("m-langs").setAttribute("aria-expanded", "false"); menu(false);
         };
         return b;

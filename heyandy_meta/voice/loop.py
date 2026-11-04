@@ -255,11 +255,24 @@ class VoiceLoop:
         says so (by hand, in it), and hears the words again in it. A request Andy understood is never asked again, and
         speech that isn't for Andy, in any language, is still dropped (it's only ever heard, never kept)."""
         from ..companion.intents import parse
-        from ..companion.language import ANDY, LANGUAGES, asked_for, heard_in
+        from ..companion.language import ANDY, LANGUAGES, asked_for, asks_for_english, heard_in
 
         andy = self.andy
         if not hasattr(andy, "notice_language"):
             return text
+        if getattr(andy, "language", "en") != "en":
+            # The way back to English must always work. Told Russian, the hearing writes "Andy, speak English" in Cyrillic
+            # or with the name lost, and it was dropped or misunderstood (the founder's takes, November 4: 1 of 4). So in
+            # any other language, this one request is listened for in English too.
+            started = time.monotonic()
+            english = voice.transcribe(utterance, language="eng_Latn")
+            self._again = (started, time.monotonic())
+            if asks_for_english(english):
+                self.awake_until = self._clock() + self.follow_up_s
+                self.follow_ups_left = max(self.follow_ups_left, self.follow_ups)
+                andy.notice_language("en")
+                voice.language = getattr(andy, "asr_language", "eng_Latn")
+                return ""  # said and done: no turn follows
         hey_only = getattr(andy, "hey_only", False)  # "Answer only to Hey Andy": a plain "Andy" may be a person
         wake, later = (HEY_WAKE, HEY_LATER) if hey_only else (WAKE, LATER)
         called = wake.match(text) or next(reversed(list(later.finditer(text))), None)
@@ -267,8 +280,8 @@ class VoiceLoop:
             return text  # not for Andy
         current = getattr(andy, "language", "en")
         rest = text[called.end():] if called else text
-        if current == "en" and parse(rest).kind not in ("chat", "world"):
-            return text  # understood: English it is
+        if current == "en" and (parse(rest).kind not in ("chat", "world") or asked_for(rest)):
+            return text  # understood: English it is ("speak Korean" included: heard again, its English can read as Hindi)
         started = time.monotonic()
         other = voice.transcribe(utterance, language="auto")
         self._again = (started, time.monotonic())
@@ -295,6 +308,7 @@ class VoiceLoop:
             # Portuguese) is too easy to get wrong; "Andy, speak Korean" still switches, asked
             return text
         self.awake_until = self._clock() + self.follow_up_s  # it was called: what follows the name counts
+        self.follow_ups_left = max(self.follow_ups_left, 1)  # even if hearing it again loses the name ("and day speak ...")
         if asked_for(back) == code:  # "Andy, speak English" itself: the turn switches and says so, once (not twice)
             voice.language = LANGUAGES[code].asr
             return voice.transcribe(utterance)
