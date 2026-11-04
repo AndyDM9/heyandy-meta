@@ -45,6 +45,11 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
        (the release check's "keys in the history" line, which looks for a key's value, not its name: the docs name
        MODEL_API_KEY often). Never rewrite the history: its
        dates show the work was done during the event.
+       Done November 3, 23:10, over all 349 commits: no file from `docs/private/` or `film/` and no photo was ever
+       committed (the files since removed are Andy Finder's build leftovers and two superseded result files, numbers
+       only); none of the other entry's names, its partners', the robot design's or the age words in any commit
+       message or change (the one age word is inside a cited source's web address, which the public-text test allows);
+       no key's value. On November 4, look only at the commits after `5926882`.
 4. [ ] Make the repository public (GitHub, AndyDM9/heyandy-meta; its About already links the Space, with topics):
        `gh repo edit AndyDM9/heyandy-meta --visibility public --accept-visibility-change-consequences` (gh 2.93 refuses
        a visibility change without the second flag; checked November 3), and
