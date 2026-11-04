@@ -812,7 +812,8 @@ Apache-2.0, for this repository's own code. **The models keep their own licences
 DINOv2, V-JEPA 2 (MIT) and Omnilingual ASR as published by Meta; Llama Guard 3 and Llama Prompt Guard 2 under the Llama 3.1 and Llama 4
 Community Licenses (**Built with Llama**); SeamlessM4T v2 and MMS-TTS, Andy's voice, under CC-BY-NC 4.0, so this is a
 non-commercial demonstration and a product would need a voice licensed for commercial use. The web page in
-`docs/images/sample-web.jpg` is Wikipedia's "Banana bread" (CC BY-SA 4.0). The HeyAndy name and logo (the face and the HeyAndy lettering on the TV page) are HeyAndy, Inc.'s
+`docs/images/sample-web.jpg` is a picture of Wikipedia's ["Banana bread"](https://en.wikipedia.org/wiki/Banana_bread)
+by Wikipedia contributors, under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), and stays under it. The HeyAndy name and logo (the face and the HeyAndy lettering on the TV page) are HeyAndy, Inc.'s
 marks (HEYANDY™, a pending US trademark application) and aren't licensed under Apache-2.0. `meta-sam-parser`, a dependency, is under Meta's SAM License.
 **In the public demo**, Meta's wav2vec 2.0 (`facebook/wav2vec2-base-960h`, Apache-2.0, in Xenova's ONNX form) and
 DINOv2 run in the visitor's browser with transformers.js (Apache-2.0); the phone code is qrcode-generator (MIT); the

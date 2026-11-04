@@ -46,7 +46,7 @@ it searches (what its camera sees, every candidate outlined by SAM 3.1), what it
 target its point landed, and how far away it is), your own mug told from another, the cup game (every cup's path
 through the shuffle), going out, Andy in Spanish and in Mandarin (type into Ask Andy in any of its fifteen languages, and the TV answers in it; or tap 🎙 and say it in English: Meta's wav2vec 2.0 hears you, in your browser), a web page Andy opened, an answer with sources, a picture, what it remembers, the day's privacy
 ("what did you send to the cloud today?"), its promises ("what won't you do?", each with the day's receipts), and "What
-can I ask?". Type "I fell and I can't get up" or a health question, and the demo shows what Andy says to it. The web page in "On the web" is Wikipedia's (CC BY-SA 4.0).
+can I ask?". Type "I fell and I can't get up" or a health question, and the demo shows what Andy says to it. The web page in "On the web" is a picture of Wikipedia's "Banana bread" (credited below).
 Nothing you do here reaches anyone else.
 
 In a real home, pictures and voice never leave the house: SAM 3.1, Muse Glimmer and the speech models run on the
@@ -55,6 +55,6 @@ screenshots of that web page).
 
 **Licences:** this page's code is Apache-2.0 (HeyAndy, Inc.; the HeyAndy name and face are its marks). In your browser:
 Meta's DINOv2 and wav2vec 2.0 (Apache-2.0), with transformers.js (Apache-2.0); fonts: Atkinson Hyperlegible (SIL OFL,
-`fonts/OFL.txt`); the cups: The Met's Open Access (CC0, `eyes/CREDITS.txt`); the web page: Wikipedia (CC BY-SA 4.0). On
+`fonts/OFL.txt`); the cups: The Met's Open Access (CC0, `eyes/CREDITS.txt`); the web page: Wikipedia's ["Banana bread"](https://en.wikipedia.org/wiki/Banana_bread) by Wikipedia contributors ([CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)). On
 the robot, Andy also runs Llama Guard 3 and Llama Prompt Guard 2: **Built with Llama**. The models keep their own
 licences (github.com/AndyDM9/heyandy-meta, "Licence").
