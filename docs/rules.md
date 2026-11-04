@@ -120,6 +120,23 @@ what it was recorded with; the results page has every run's file). The project's
 with Meta's models; nothing calls it Meta's or "HeyAndy x Meta" (the package's one-line description did, until
 November 3).
 
+The morning of November 4 (read at 8:30 AM ET, read-only), two answers by the organizers in #questions:
+
+> **Editing after submitting:** "You can edit your submission until the deadline, Wed Nov 4 at 9:00 PM ET, so you can
+> add the demo link to the project description before then. Once the deadline passes, no further edits are allowed."
+> ("Can I make changes to submission details", 3:49 AM ET)
+
+> **What the video is:** "Show only the project demo. The 3-minute video should show the working product you built
+> during the event, not slides. Open it with one line stating what existed before the event and what you built this
+> week, then show the end-to-end flow with live Meta model calls visible and briefly how they're used. No intro or
+> pitch is required." (the same thread, 4:04 AM ET)
+
+**Ours:** the form goes in as soon as the video is up, with nothing left in brackets, and anything that changes after
+that (the X post's link, a later take) is an edit before 9:00 PM ET. The video is the storyboard in `docs/demo-script.md`:
+the title card's one line on what existed before (a Reachy Mini; our own earlier object-finding prototype), then the
+robot's takes with the TV in shot, where the "Meta's models, live" strip names each model as it works, and "how did you
+do that?" opens the card that says how; no pitch, and the end card is one line.
+
 ## Prizes (section 9)
 
 **Startups:** $250K, $150K, $75K, $50K, $25K.

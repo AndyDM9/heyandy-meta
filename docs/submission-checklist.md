@@ -81,7 +81,9 @@ in the submission answering a visitor who isn't signed in, and the Space exactly
 6. [ ] Submit: the project's name ("Andy, by HeyAndy": no "Meta" in it, the organizers' answer of November 3), the team's name (HeyAndy, Inc.), the representative (the founder), everyone who worked on it, the repository, the video, the X post's link, the Space,
        about 2,000 words on what it is and what's new (`docs/submission.md`; its header says what goes first if the form
        limits length): fill its [brackets], the video's link;
-       nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`).
+       nothing goes in with a bracket), and the open-weights note (`docs/open-weights.md`). The organizers (November 4,
+       3:49 AM): a submission can be edited until 9:00 PM ET, so send it as soon as the video is up and edit in what
+       comes after (the X post's link); after 9:00 PM nothing can change.
 7. [ ] Publish Andy Finder (0.3.0: "Ring it" works with nothing set up; finds with the focus held, the true ray and its own aim check) to the Reachy Mini app store (Community prize; it links to this repository, so after step 4):
        `hf repo create andy-finder --repo-type space --space_sdk static` under the founder's account, then
        `hf upload <account>/andy-finder apps/andy_finder . --repo-type space --exclude "*.egg-info/*" --exclude "**/__pycache__/*"`
