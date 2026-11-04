@@ -73,7 +73,7 @@ NOT_THINGS = {"kids", "children", "child", "baby", "dog", "cat", "husband", "wif
 # filming (app.py film): "we're filming", "take two" (a clap to sync to), "cut", "that's a wrap"
 FILM_ON = re.compile(r"\b(?:we'?re|we are|i'?m|i am) (?:about to |going to )?(?:start )?filming\b|\b(?:start|turn on) filming(?: mode)?\b|\bfilming mode\b", re.I)
 TAKE = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?(?:take (?P<n>one|two|three|four|five|six|seven|eight|nine|ten|\d{1,2})|next take|new take)\b(?:\W+(?:and )?action)?\W*$", re.I)
-CUT = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?cut\W*$", re.I)
+CUT = re.compile(r"^\W*(?:(?:hey |oye )?andy\W+)?(?:and )?(?:cut|cat)\W*$", re.I)  # "cat": "cut" as the recogniser writes it for some voices
 FILM_OFF = re.compile(r"\bthat'?s a wrap\b|\b(?:stop|done|finished|end) filming\b|\bwe'?re done filming\b|\bfilming (?:is )?over\b", re.I)
 # "show me under the hood": the TV's /hood page (screen/hood.py)
 HOOD = re.compile(r"\bunder the hood\b|\bhow (?:did|do) you (?:do|find) (?:that|it)\b|\bshow me (?:the|your) (?:timings|workings|insides)\b|"

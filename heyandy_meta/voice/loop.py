@@ -25,7 +25,21 @@ PAUSE = r"[\s,.!?，、。！？]*"
 WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + CALL + PAUSE, re.I)
 # "Hey Andy" as speech-to-text also writes it: "hey and how are you", "hey any where are my glasses" (November 4: short
 # sentences at a good level, nearest word "and"). Alone "and" is everyday speech, but nobody starts a sentence "hey and".
-HEY_HEARD = re.compile(r"^\W*hey[\s,]+(?:and|any|end|sandy|candy)\b" + PAUSE, re.I)
+HEY_HEARD = re.compile(r"^\W*hey[\s,]+(\w+)\b" + PAUSE, re.I)
+HEARD_ALIKE = 0.66  # "wendy" 0.67, "indy" 0.75, "and" and "any" 0.86, "sandy" 0.89; "andrew" 0.6 and "buddy" 0.44 aren't
+
+
+def _hey_heard(text: str):
+    """"Hey" and then a word near enough to Andy's name, at the very start: a call, whatever the recogniser wrote."""
+    from difflib import SequenceMatcher
+
+    m = HEY_HEARD.match(text)
+    if not m:
+        return None
+    word = m.group(1).lower()
+    return m if word == "end" or SequenceMatcher(None, word, "andy").ratio() >= HEARD_ALIKE else None
+
+
 # The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.
 LATER = re.compile(r"(?:\b(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + NAME + r"\b|" + NATIVE + r")" + PAUSE + r"(?=\S)", re.I)
 # "Answer only to 'Hey Andy'" (a home with someone called Andy): the greeting is needed, plain "Andy" is a person
@@ -122,9 +136,9 @@ class VoiceLoop:
         if _looping(text):
             return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
         if getattr(self.andy, "hey_only", False):  # only "Hey Andy" (or "Oye Andy"): plain "Andy" may be a person
-            called = HEY_WAKE.match(text) or HEY_HEARD.match(text) or next(reversed(list(HEY_LATER.finditer(text))), None)
+            called = HEY_WAKE.match(text) or _hey_heard(text) or next(reversed(list(HEY_LATER.finditer(text))), None)
         else:
-            called = (WAKE.match(text) or HEY_HEARD.match(text) or _soft_wake(text)
+            called = (WAKE.match(text) or _hey_heard(text) or _soft_wake(text)
                       or next(reversed(list(LATER.finditer(text))), None))
         urgent = crisis(text) or emergency(text)  # within the window these are always heard, follow-ups used up or not
         # while filming, the director's cues are heard without the name: "take two", "cut", "that's a wrap". Called only
