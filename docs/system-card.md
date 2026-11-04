@@ -92,14 +92,14 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   stream ever opened, local or remote, since October 30; the privacy audits record what Andy itself
   sends, not who could have connected. Now it listens on this computer only and the relay is off
   (`scripts/robot_daemon.py`), and preflight fails if a port listens wider.
-- **Its microphone array's processing can get stuck** (the morning of November 3, and nine times the morning of
-  November 4, each reset holding for less): a voice still reaches it at normal loudness but comes out garbled, the room
-  near-silent, the array's gain pinned; Andy then hears its name in nothing. Not the microphones, not the USB link, not
-  the speaker level, not Andy's code (each tested that morning). The board is powered from the USB cable, so a USB
-  reset and the robot's power switch left the chip's processing as it was; what cured it was the chip's own REBOOT,
-  through the robot's daemon, which `scripts/reset_robot_audio.py` now does first (under a minute; Andy restarts with
-  it). Preflight fails on the faint state and names the reset, and a watch catches it within a few sounds; Andy
-  doesn't yet say so on its TV, where a false alarm would be in shot.
+- **Until November 4, three faults in Andy's own hearing looked like failing microphones.** The noise level it learns
+  from the room could fall but never climb, so after a moment of near-silence the room itself counted as speech and
+  every stretch ran the full eight seconds; words the recogniser wrote from near-silence counted as the room talking,
+  which closed the follow-ups after each answer; and "Hey Andy" written "hey and" was let go unless a clear request
+  followed. All three are fixed, with tests. On the way we reset the array's USB and rebooted its chip many times, and
+  each seemed to help only because it restarted Andy; `scripts/reset_robot_audio.py` still does both. A near-silent
+  sound is now never sent to the recogniser, so a voice that never gets as loud as a normal one isn't heard. The array's
+  own gain falls low after loud speech and climbs slowly; preflight fails if the sound stays faint.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it

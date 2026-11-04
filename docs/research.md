@@ -2597,3 +2597,16 @@ Found and fixed, each with a test:
   only the robot on it. For filming: a direct port if the cable goes through anything, the speaker a notch lower, and
   the watch's faster mark (five near-silent sounds, forty seconds after an answer; replayed on the morning's journal:
   the faint stretch flagged, the healthy, the just-answered and the night's quiet not).
+- **It wasn't the microphones: three faults in Andy's own hearing** (November 4, late morning; numbers from the journal
+  only). All morning Andy seemed to go deaf, and everything tried on the hardware seemed to help for a while: USB
+  resets, power cycles, another port, the computer restarted, the chip rebooted. Each of those also restarted Andy, and
+  that was what helped. First, `Endpointer` learned the room's noise only while quiet, so its floor could fall and never
+  climb: taken to 0.001 by a moment of near-silence, the room's own noise counted as speech, nothing was quiet again, and
+  stretches ran the full 8 s (none in most hours until November 3, then hundreds an hour). Now the quietest moment of the last
+  4 s is the room. Second, the recogniser writes words from near-silence (62 from 8 s of quiet); they counted as the room
+  talking, which closed the follow-ups after every answer ("he can not have continuous conversations"), and kept GPU 1 at
+  94% with the microphone generator waiting on it. Now a stretch that never peaks at 0.05 isn't sent to it (GPU 1 went to
+  0% at rest) and doesn't count. Third, "Hey Andy" written "hey and" was let go unless a clear request followed, and "how
+  are you" isn't one; a sentence starting "hey and" or "hey any" is a call now. Also found: my 10:00 test of the raw
+  microphones switched one channel only, so it proved nothing; a "room level" of 0.001 is just a quiet room through the
+  array's noise suppression with its gain low, not a fault, so the "faint" rule in preflight may fire on a healthy array.

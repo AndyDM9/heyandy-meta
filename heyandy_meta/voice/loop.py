@@ -23,6 +23,9 @@ NATIVE = r"(?:安迪|安蒂|앤디|엔디|энди|енді|енди|آندي|أ
 CALL = r"(?:(?:" + NAME + r"|and he|and they)\b|" + NATIVE + r")"
 PAUSE = r"[\s,.!?，、。！？]*"
 WAKE = re.compile(r"^\W*(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + CALL + PAUSE, re.I)
+# "Hey Andy" as speech-to-text also writes it: "hey and how are you", "hey any where are my glasses" (November 4: short
+# sentences at a good level, nearest word "and"). Alone "and" is everyday speech, but nobody starts a sentence "hey and".
+HEY_HEARD = re.compile(r"^\W*hey[\s,]+(?:and|any|end|sandy|candy)\b" + PAUSE, re.I)
 # The name later on, when the room ran the words together ("... so anyway. Andy, how are you"): what follows it.
 LATER = re.compile(r"(?:\b(?:(?:hey|hi|hello|ok|okay|oye|hola)\s+)?" + NAME + r"\b|" + NATIVE + r")" + PAUSE + r"(?=\S)", re.I)
 # "Answer only to 'Hey Andy'" (a home with someone called Andy): the greeting is needed, plain "Andy" is a person
@@ -119,9 +122,10 @@ class VoiceLoop:
         if _looping(text):
             return None  # speech-to-text going round in circles on noise ("the state of the state of ...")
         if getattr(self.andy, "hey_only", False):  # only "Hey Andy" (or "Oye Andy"): plain "Andy" may be a person
-            called = HEY_WAKE.match(text) or next(reversed(list(HEY_LATER.finditer(text))), None)
+            called = HEY_WAKE.match(text) or HEY_HEARD.match(text) or next(reversed(list(HEY_LATER.finditer(text))), None)
         else:
-            called = WAKE.match(text) or _soft_wake(text) or next(reversed(list(LATER.finditer(text))), None)
+            called = (WAKE.match(text) or HEY_HEARD.match(text) or _soft_wake(text)
+                      or next(reversed(list(LATER.finditer(text))), None))
         urgent = crisis(text) or emergency(text)  # within the window these are always heard, follow-ups used up or not
         # while filming, the director's cues are heard without the name: "take two", "cut", "that's a wrap". Called only
         # once, at the start, a later "take two" was let go if the room had talked (the clap the edit lines up on gone)
