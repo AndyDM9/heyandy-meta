@@ -440,9 +440,12 @@ def test_the_front_door_speaks_the_visitors_language_and_lets_them_choose_anothe
         page.add_init_script(init)
         page.goto(base)
         page.wait_for_selector("#welcome .langbtn", timeout=10000)
+        opened = page.evaluate("""() => [document.querySelector('#welcome .langbtn').textContent, document.querySelector('#welcome .tip').textContent,
+                                        STORY.find(c => c[2] === 'Your language')[0], localStorage.getItem('andy-lang')]""")  # a Korean browser: English
+        page.click("#welcome .langbtn")
+        page.click("#w-langs button[lang=ko]")
         korean = page.evaluate("""() => [document.querySelector('#welcome .langbtn').textContent, document.querySelector('#welcome .bubble q').textContent,
-                                        document.querySelector('#welcome .hear').getAttribute('aria-label'), document.querySelector('#welcome .tip').textContent,
-                                        STORY.find(c => c[2] === 'Your language')[0]]""")
+                                        document.querySelector('#welcome .hear').getAttribute('aria-label'), STORY.find(c => c[2] === 'Your language')[0]]""")
         page.click("#welcome .langbtn")
         listed = page.eval_on_selector_all("#w-langs button", "els => els.map(e => [e.lang, e.childNodes[0].textContent, e.getAttribute('aria-pressed')])")
         flags = page.evaluate("/[\\u{1F1E6}-\\u{1F1FF}]/u.test(document.getElementById('w-langs').textContent)")
@@ -464,7 +467,8 @@ def test_the_front_door_speaks_the_visitors_language_and_lets_them_choose_anothe
         english.context.close()
     finally:
         server.shutdown()
-    assert korean == ["한국어", "내 안경 어디 있어?", "Hear Andy introduce itself, in 한국어", "Andy speaks 한국어 too: tap Andy to hear it", "in-ko"]
+    assert opened == ["English", "Tap Andy to hear its own voice, in the bubble's language", "mandarin", None]
+    assert korean == ["한국어", "내 안경 어디 있어?", "Hear Andy introduce itself, in 한국어", "in-ko"]
     assert len(listed) == 15 and ["ko", "한국어", "true"] in listed and ["uk", "Українська", "false"] in listed and not flags
     assert still_open == [True, True]
     assert french == ["Français", "Où sont mes lunettes ?", "fr", "in-fr"] and remembered == "Français"

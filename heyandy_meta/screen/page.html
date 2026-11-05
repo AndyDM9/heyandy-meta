@@ -934,7 +934,7 @@
   // browser's own; English a press away, and the measurements under each chapter stay as measured, in English.
   const NARRATION_IN = window.HEYANDY_NARRATION_IN || {};
   let tellIn = "en", toldChoice = null;  // the story's language now; the visitor's own pick in the story, this visit
-  const storyLang = () => { const want = toldChoice || chosenLang || visitorLanguage(); return NARRATION_IN[want] ? want : "en"; };
+  const storyLang = () => { const want = toldChoice || chosenLang || "en"; return NARRATION_IN[want] ? want : "en"; };
   const told = (at) => (tellIn !== "en" && NARRATION_IN[tellIn]?.[STORY[at][2]]) || (NARRATION && NARRATION[STORY[at][2]]);
   const chapterSeconds = (at) => Math.max(STORY[at][1], narrate && told(at) ? told(at).seconds + 0.9 : 0);
   function hush() { if (telling) { telling.pause(); telling = null; } }
@@ -980,7 +980,7 @@
       voice.classList.add("voice"); voice.setAttribute("aria-pressed", String(narrate));
     }
     tellIn = storyLang();
-    const mine = toldChoice && toldChoice !== "en" ? toldChoice : (() => { const w = chosenLang || visitorLanguage(); return NARRATION_IN[w] ? w : "en"; })();
+    const mine = toldChoice && toldChoice !== "en" ? toldChoice : (() => { const w = chosenLang || "en"; return NARRATION_IN[w] ? w : "en"; })();
     if (mine !== "en") {  // the story in the visitor's language, or in English: a press either way, under its words
       const swap = el("button"); swap.className = "tongue";
       swap.onclick = () => { tellIn = toldChoice = tellIn === "en" ? mine : "en"; go(story.at); story.tongue.focus({ preventScroll: true }); };
@@ -1123,14 +1123,7 @@
   const LANG_CODES = ["en", "es", "zh", "tl", "vi", "ko", "ru", "ar", "hi", "pt", "fr", "it", "pl", "de", "uk"];
   const LANG_ENGLISH = { es: "Spanish", zh: "Mandarin", tl: "Tagalog", vi: "Vietnamese", ko: "Korean", ru: "Russian", ar: "Arabic",
                          hi: "Hindi", pt: "Portuguese", fr: "French", it: "Italian", pl: "Polish", de: "German", uk: "Ukrainian" };
-  function visitorLanguage() {  // the first of the browser's own languages that Andy speaks (never guessed from a place)
-    for (const l of navigator.languages || [navigator.language || "en"]) {
-      const p = String(l || "").toLowerCase().split("-")[0], code = p === "fil" ? "tl" : p;
-      if (LANG_CODES.includes(code)) return code;
-    }
-    return "en";
-  }
-  let chosenLang = null;
+  let chosenLang = null;  // English for every visitor until they choose another, whatever their browser's language
   try { chosenLang = localStorage.getItem("andy-lang"); } catch (e) { /* a private window: this visit only */ }
   if (!LANG_CODES.includes(chosenLang)) chosenLang = null;
   function storyIn(code) {  // the story's "Your language" chapter: the TV in the visitor's language (Mandarin for English)
@@ -1195,8 +1188,6 @@
     } else if (voices) { talk.append(face); andy.append(talk, bubble); }
     else andy.append(face, bubble);
     if (voices) andy.append(el("p", "Tap Andy to hear its own voice, in the bubble's language", "tip"));
-    const greet = !chosenLang && visitorLanguage() !== "en" && voices;  // the browser speaks one of Andy's languages
-    if (greet) andy.querySelector(".tip").textContent = `Andy speaks ${ASK_LANGS[visitorLanguage()]} too: tap Andy to hear it`;
     inner.append(pitch, andy);
     if (window.HEYANDY_FIGURES) {
       const proof = el("ul", null, "proof"); proof.setAttribute("aria-label", "Measured");
@@ -1209,7 +1200,7 @@
     document.body.append(w); document.body.classList.add("welcoming");
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches, eyes = face.querySelector(".eyes"), timers = [];
     w.tabIndex = -1;  // focus starts in the front door (Tab reaches its first button), with no ring on a mouse's first look
-    let i = 0, current = "en", cycle = 0, playing = null, fixed = chosenLang || (visitorLanguage() !== "en" ? visitorLanguage() : null);
+    let i = 0, current = "en", cycle = 0, playing = null, fixed = chosenLang;
     const swap = () => { if (!still) { bubble.classList.remove("swap"); void bubble.offsetWidth; bubble.classList.add("swap"); } };
     const name = (code) => (voices && voices[code] ? code : "en");
     const label = () => { const n = ASK_LANGS[name(current)] || "English";
@@ -2422,7 +2413,7 @@
       const q = new URLSearchParams(location.search);
       if (q.get("ask")) ask(q.get("ask"));  // a shared link that asks: ?ask=I'm ringing my phone
       else if (!chosen && !q.has("explore") && scenes.includes("room")) {
-        storyIn(chosenLang || visitorLanguage());  // its "Your language" chapter in the visitor's
+        storyIn(chosenLang || "en");  // its "Your language" chapter in the visitor's
         if (q.has("story")) startStory(); else welcome();
       }
       else demoBar();

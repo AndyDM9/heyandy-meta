@@ -43,7 +43,7 @@ START = datetime(2026, 11, 4, 10, 30)  # the page's clock: the TV's day and time
 HOLD_S = 2.5  # the end card stays this long after Andy's closing words
 MOST_S = 300.0  # a story that hasn't ended by then has gone wrong
 CREDIT = ("Try it yourself", "huggingface.co/spaces/heyandy-ai/andy")
-# The browser's language for each of Andy's: whatever else on the page follows the visitor's language follows the film's.
+# The browser's language for each of Andy's: dates and the like follow the film's; the page's own language is chosen below.
 LOCALES = {"en": "en-US", "es": "es-ES", "fr": "fr-FR", "de": "de-DE", "it": "it-IT", "pt": "pt-BR", "zh": "zh-CN",
            "ja": "ja-JP", "ko": "ko-KR", "hi": "hi-IN", "ar": "ar-SA", "ru": "ru-RU", "uk": "uk-UA", "vi": "vi-VN",
            "tl": "fil-PH"}
@@ -117,6 +117,7 @@ def draw(url: str, frame, lang: str = "en", shape: str = "wide", fps: int = FPS,
                                           locale=LOCALES.get(lang, "en-US"))
             page = context.new_page()
             page.on("pageerror", lambda e: errors.append(str(e)))
+            page.add_init_script(f"try {{ localStorage.setItem('andy-lang', {json.dumps(lang)}); }} catch (e) {{}}")  # as a visitor chooses it
             page.clock.install(time=START)
             page.add_init_script(PAGE)
             if init:

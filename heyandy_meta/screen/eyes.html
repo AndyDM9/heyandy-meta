@@ -649,16 +649,11 @@
   // yours" comes here). The steps are the ones above, unchanged: only how they're shown, and what follows each.
   const CHIPS = ["mug", "keys", "glasses", "phone", "wallet", "remote", "cup", "bottle"];
   // Andy's own voice at find mode's moments, the robot's own words by hand in the visitor's language (the one chosen on
-  // the front door, else the browser's): the shutter, the sweep starting, the find. The words shown as Andy says them.
+  // the front door, else English): the shutter, the sweep starting, the find. The words shown as Andy says them.
   const VOICE = window.EYES_VOICE || null, PAIRS = new Set(["keys", "glasses", "scissors", "headphones", "earrings", "earphones"]);
   const voiceLang = (() => {
     let chosen = null; try { chosen = localStorage.getItem("andy-lang"); } catch (e) { /* this visit only */ }
-    if (VOICE && chosen && VOICE[chosen]) return chosen;
-    for (const l of navigator.languages || [navigator.language || "en"]) {
-      const c = String(l || "").toLowerCase().split("-")[0], code = c === "fil" ? "tl" : c;
-      if (VOICE && VOICE[code]) return code;
-    }
-    return "en";
+    return VOICE && chosen && VOICE[chosen] ? chosen : "en";
   })();
   let saying = null, saysTimer = 0;
   function andySays(moment) {
