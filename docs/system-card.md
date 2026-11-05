@@ -111,6 +111,12 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
   answered when a turn ends, so nothing urgent is dropped. Andy's own voice and the clip's sound, played to speech-to-text
   135 times, didn't reproduce it, and the words aren't kept, so the cause isn't proven. Better a wrong offer of help than
   a missed one, so the rule stands.
+- **It can change language by mistake:** on the evening of November 4, Andy's TV was found in Arabic, which nobody had chosen. Its
+  saved language had last changed at 7:35 PM, during the only turn it took in over an hour, and was English again from 8:22 PM.
+  The words aren't kept and language changes aren't logged, so the cause isn't proven. The likely path is the one that lets it be
+  called in another language: when it hears its name but doesn't understand the rest, it listens again with no language set, and
+  two letters of another alphabet are enough for it to switch. "Hey Andy, speak English" or the TV's settings bring it back. The
+  public demo, and a fresh copy of this code, start in English.
 - **Where it's been measured:** one desk, one home, one robot.
 
 ## Operating it
