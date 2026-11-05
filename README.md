@@ -36,7 +36,7 @@ Built on Meta's models for people who live at home, starting with older adults, 
 - **Who it's for.** A quarter of Americans 65 and older live alone
   ([Pew, 2025](https://www.pewresearch.org/short-reads/2025/12/04/a-smaller-share-of-older-us-adults-live-alone-today-than-in-1990/));
   Andy finds what goes missing.
-- **Finds and points.** "Where are my glasses?" SAM 3.1 finds them, Andy points: *13 of 15 right*, person-judged.
+- **Finds and points.** "Where are my glasses?" SAM 3.1 finds them, Andy points: *13 of 15 right*, judged by our founder.
 - **In an emergency, your phone.** "I fell": "please call 911 right away. I'll find your phone." Then it points.
 - **Fifteen languages, every model Meta's.** It can answer in the language it's called in, hearing and voice included (in Andy's synthetic voice, the right one 31 times in 42, a wrong one never).
 - **Pictures stay home.** Camera and microphone reach only models on the computer beside it; unplug the network, it carries on.
@@ -64,7 +64,7 @@ with what it's for, what it isn't, and where it falls short: [Andy's system card
 | **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once (made-up shuffles so far) |
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Andy's fourteen other languages |
 | **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
-| **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
+| **V-JEPA 2** (open weights) | GPU 1 | Meant to notice a watched thing put down or picked up (so far tried only on empty clips) |
 | **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; fifteen languages |
 | **DINOv2** (open weights) | GPU 1, and in your browser on the public demo | Knows the person's own things by sight |
 | **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | Crisis words and health advice, in what's said and in a model's conversation, web and agent answers; reads each web page before Muse Spark's computer use sees it |
@@ -180,7 +180,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 - **It moves, and checks itself.** SAM 3.1's mask becomes the head's angle; after pointing, Andy's own camera measures
   where the point landed and corrects it. Andy even measured its own lens to do that well.
 - **It knows where things are, not just what they are.** MapAnything gives every find a distance and the room a
-  shape; V-JEPA 2, Meta's video world model, notices a watched thing being put down.
+  shape; V-JEPA 2, Meta's video world model, is there to notice a watched thing being put down (so far tried only on empty clips).
 - **It speaks your language.** Fifteen of them, from Spanish to Mandarin, all on Meta's models in the house; called
   in one, it notices and answers in it. Saying it's an AI and the crisis reply are written by hand in each.
 - **Private by design.** The camera and microphone reach only Meta's open models on the computer beside the robot;
@@ -218,7 +218,7 @@ Measured on the robot and in the demo, none of it what we expected, and what And
 | On the robot, judged by our founder | each thing put in five places on our desk (or hidden), one evening, before the final fixes: **13 of 15** right. Out where it could be seen, **10 of 12** pointed at, a median **2.5°** off the middle of the view (the cup and the glasses 8 of 8, the keys 2 of 4: twice the sweep never saw them, and Andy said so; the cause, the camera's autofocus, found and fixed that night, [research §70](docs/research.md#70-the-cameras-autofocus-was-hiding-the-keys-november-1-about-10-pm)); hidden, **3 of 3** "not found"; **never** a point at something else | [`physical-fixed-20261101-2115.json`](evals/results/physical-fixed-20261101-2115.json) |
 | On the robot, alone in the room | **250 of 253** unattended searches ended in a point since the aim fix (the run before it: 3 of 4; of the misses since, two were the keys on Nov 1, one the glasses taken off the desk); on the final code (the camera's focus held, each pixel's true ray, the head read back after its dip, each frame encoded once for all its names), **18 of 18**, a median **1.1°** off the middle of the view, **2.2° at worst**, none re-aimed, **7.8 s** a find (that evening, before any of it: 4.8°, 13.5 s) | [`unattended-*`](evals/results) |
 | Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, and the fixed sweep also 18 on those same 20 rooms (85 of 100 over all its rooms; simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
-| Several things at once (a simulated room, real models planning) | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
+| Several things at once (a simulated room, real models planning, after fixes on those 12) | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
 | Privacy, a day of 21 requests (a simulated room, the real cloud models) | **0** camera pictures reached the cloud; 40 of 43 pieces sent were on its turn's receipt word for word, the other 3 being the person's words inside Andy's own instructions | [`privacy-audit.json`](evals/results/privacy-audit.json) |
 | The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
 | It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |

@@ -52,7 +52,7 @@ keeps what it sees and hears in the house.
 - **Meta's models, live.** The TV shows a find's model calls as they happen, and times each turn stage by stage: the timing showed the
   answer waiting for the point, so Andy now answers while pointing, 9.6 s sooner on the same first-turn search.
 - **It remembers, and doesn't give up.** What you tell it ("my passport is in the top drawer"); a missed search becomes
-  a promise, and when the thing turns up Andy points and says so, unprompted. **V-JEPA 2** notices a thing put down (not yet tried with a person).
+  a promise, and when the thing turns up Andy points and says so, unprompted. **V-JEPA 2** is there to notice a thing put down (so far tried only on empty clips).
 - **"I'm ringing my phone"** turns Andy to the ringing; **"help me reach it"** talks a hand onto the thing ("toward
   you, and right") for someone who can't see well (not yet with a real hand).
 - **And:** several requests at once (an agent); reminders in person; the weather radar on the TV (Muse Spark's
@@ -65,7 +65,7 @@ keeps what it sees and hears in the house.
 | **SAM 3.1** (open weights) | GPU 1, beside the robot | Finds things and the person; **Object Multiplex** tracks every cup at once (made-up shuffles so far) |
 | **Muse Glimmer 30B** (open weights, llama.cpp) | GPU 0 | Conversation; plans searches offline; checks pictures; translates Andy's fourteen other languages |
 | **MapAnything** (open weights) | GPU 1 | How far a found thing is; the room in 3D from five looks |
-| **V-JEPA 2** (open weights) | GPU 1 | Notices a watched thing put down or picked up (not yet tried with a person) |
+| **V-JEPA 2** (open weights) | GPU 1 | Meant to notice a watched thing put down or picked up (so far tried only on empty clips) |
 | **Omnilingual ASR**, **SeamlessM4T v2** (open weights) | GPU 1, GPU 0 | Hears the person; Andy's voice; fifteen languages |
 | **DINOv2** (open weights) | GPU 1; and in the visitor's browser on the public demo | Knows the person's own things by sight |
 | **Llama Guard 3 8B**, **Llama Prompt Guard 2** (open weights) | GPU 1 | A second crisis check, and reads a model's conversation, web and agent answers for health advice; reads each web page before Muse Spark's computer use sees it |
@@ -111,7 +111,7 @@ pointed at the thing 10 of 12 times, a median 2.5 degrees off; hidden, "not foun
 Andy's spoken answer, 10.9 to 11.6 s (the dress rehearsal), the video's shots on the robot.
 *Search, simulated* (rooms generated from a seed, the robot's own camera model): with look-alikes described, a fixed
 sweep of views pointed at the wrong one 15 times in 100, **Glimmer's plan 18 of 20, 2 wrong**; things behind the
-robot, **Glimmer 20 of 20 in 4.6 looks** (camera views). On those same 20 rooms the sweep also got 18 of 20 described, and 20 of 20 behind the robot in 7.0 looks, faster overall (13.9 s against 20.5 s).
+robot, told so, **Glimmer 20 of 20 in 4.6 looks** (camera views). On those same 20 rooms the sweep also got 18 of 20 described, and 20 of 20 behind the robot in 7.0 looks, faster overall (13.9 s against 20.5 s), though it isn't told where.
 *The agent* (12 multi-part requests in a simulated room, real models planning, scored on what the body did, after fixes on those 12): **Muse Spark 12 of 12, Glimmer offline 12 of 12**.
 *The privacy audit* (a day of 21 requests in a simulated room with the real cloud models, every request from Andy's Python code recorded): **no camera picture
 reached the cloud** (24 taken); **40 of 43 pieces sent were on its turn's receipt word for word**, the other 3 being the person's words inside Andy's own instructions; its one crisis sentence reached no model.
@@ -141,7 +141,7 @@ with today's receipts on the TV. Speech that isn't for Andy is dropped, never ke
   Its pictures go to Meta's API, so it's for rooms you're happy to share; the whole Andy keeps them home.
 - **The whole Andy** runs on two 24 GB GPUs today so pictures and voice stay home. Measured at rest: 40.5 GB, of which
   the language model (Muse Glimmer) is 17.6 GB and everything else (seeing, hearing, the voice, the guards, how far)
-  22.9 GB, one card's worth. Next, one box: those on one card, and a smaller language model beside them. Kept on,
+  22.9 GB, one card's worth. Next, one box: smaller language and guard models (not yet measured). Kept on,
   the two cards drew 188.1 W ($24.92 a month at the U.S. average price), mostly GPU 1 never resting: Andy was hearing
   its own breathing motors, found from the sounds' times alone. It now rests when nobody's there (research §89).
 - **Who it's for, and what comes before a price:** people who live on their own at home, and the family who would set

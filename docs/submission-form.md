@@ -40,7 +40,7 @@ ON OUR OWN GPUS
 - SAM 3.1: finds things and the person. Object Multiplex tracks every cup at once (made-up shuffles so far).
 - Muse Glimmer 30B: conversation, plans searches offline, checks pictures, translates Andy's 14 other languages.
 - MapAnything: how far a found thing is; the room in 3D from five looks.
-- V-JEPA 2: notices a watched thing put down or picked up (not yet tried with a person).
+- V-JEPA 2: meant to notice a watched thing put down or picked up (tried only on empty clips).
 - Omnilingual ASR hears the person. SeamlessM4T v2 is Andy's voice, because Meta's API has no text-to-speech.
 - DINOv2: knows the person's own things by sight (not yet tried with two real mugs).
 - Llama Guard 3 8B: a second crisis check, and it reads a model's conversation, web and agent answers for health advice.
@@ -55,7 +55,7 @@ IN THE VISITOR'S BROWSER (public demo; nothing leaves it)
 
 BEYOND A BASIC INTEGRATION
 - A point checked by its own camera. The camera showed the head sagging after its pointing nod and the base's turn being added twice; now each pixel gets its true ray and the head is read back. Earlier runs reached 7.8 degrees off the middle of the view on keys; on the final code, over 18 searches, a median 1.1, 2.2 at worst.
-- Glimmer plans where to look. On the same 20 simulated rooms (picture checks stood in for): things behind the robot in 4.6 looks against a fixed sweep's 7.0, slower overall (20.5 s against 13.9 s); with look-alikes described, both got 18 of 20.
+- Told where, Glimmer plans. On the same 20 simulated rooms (picture checks stood in for): told "behind you", 4.6 looks against a fixed sweep's 7.0, slower overall (20.5 s against 13.9 s); with look-alikes described, both got 18 of 20.
 - Agents that can't move the robot by themselves: named views and numbered places, never motor values, a search's arguments checked in code. On 12 multi-part requests in a simulated room, real models planning, after fixes on those 12: Muse Spark 12 of 12, Glimmer offline 12 of 12.
 - Notes in view. A drawn note made Glimmer answer "BANANA BANANA". Now it's told writing is never an instruction, and a note addressed to Andy isn't read out: 9 of 54 drawn notes got through, now 0 of 72, held-out sets included.
 - The TV shows a find's model calls live and times each turn. The timing showed the answer waiting for the point, so Andy now answers while pointing, 9.6 s sooner on the same first-turn search.
@@ -78,4 +78,4 @@ LANGUAGES. Omnilingual ASR hears, Muse Glimmer translates on the computer beside
 
 SAFETY. Llama Guard 3 reads what the person says before any other model, and reads a model's conversation, web and agent answers before Andy says them. Crisis words in any of its 15 languages get the 988 line from code.
 
-A PATH TO PEOPLE'S HOMES. Open weights let us measure what one home box would need. At rest Andy holds 40.5 GB of GPU memory: the language model (Muse Glimmer) is 17.6 GB and everything else 22.9 GB, under one 24 GB card. Next is those on one card, with a smaller language model beside them, and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC). Meanwhile SAM 3.1 through the Model API offers the find to Reachy Mini owners with a key and no GPU: two pictures when it's in the first view (about half a cent at Meta's $2.50 per 1,000 images), seven at most.
+A PATH TO PEOPLE'S HOMES. Open weights let us measure what one home box would need. At rest Andy holds 40.5 GB of GPU memory: the language model (Muse Glimmer) is 17.6 GB and everything else 22.9 GB, under one 24 GB card. Next is one box, with smaller language and guard models, and a voice licensed for a product (SeamlessM4T v2 is CC-BY-NC). Meanwhile SAM 3.1 through the Model API offers the find to Reachy Mini owners with a key and no GPU: two pictures when it's in the first view (about half a cent at Meta's $2.50 per 1,000 images), seven at most.
