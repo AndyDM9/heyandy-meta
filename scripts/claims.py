@@ -121,6 +121,19 @@ def sim(name: str, kind: str) -> dict:
     return summary(name)[kind]
 
 
+def same_rooms() -> str:
+    """The fixed sweep on only the rooms Muse Glimmer was given, so the two compare fairly."""
+    def sweep(kind: str) -> list[dict]:
+        seeds = {t["seed"] for t in _load("sim-glimmer.json")["trials"] if t["scenario"] == kind}
+        return [t for t in _load("sim-fixed.json")["trials"] if t["scenario"] == kind and t["seed"] in seeds]
+
+    described, behind = sweep("described"), sweep("behind")
+    seconds = round(sum(t["model_s"] + t["robot_s"] for t in behind) / len(behind), 1)
+    return (f"On those same {len(described)} rooms the sweep also got {sum(t['correct'] for t in described)} of {len(described)} described, "
+            f"and {sum(t['correct'] for t in behind)} of {len(behind)} behind the robot in {sum(t['looks'] for t in behind) / len(behind):.1f} looks, "
+            f"faster overall ({seconds} s against {sim('sim-glimmer.json', 'behind')['seconds_mean']} s)")
+
+
 def rehearsal_find() -> str:
     """The uncut find and the offline one, from the newest full dress rehearsal in which both pointed: a search that
     didn't find the thing isn't a find's time (November 3's keys, not seen where they lay, 32.3 s)."""
@@ -287,7 +300,7 @@ FIGURES = [
     Figure("250 of 253 unattended searches", "unattended-* since the aim fix", unattended_since_fix),
     Figure("the final code a median 1.1 degrees off, 2.2 at worst", "unattended-20261101-2300",
            lambda: f"the final code a median {final_code()['aim_deg_median']} degrees off, {final_code()['aim_deg_worst']} at worst"),
-    Figure("7.8 s a find", "unattended-20261101-2300", lambda: f"{final_code()['seconds_median']} s a find"),
+    Figure("7.8 s for the search alone", "unattended-20261101-2300", lambda: f"{final_code()['seconds_median']} s for the search alone"),
     Figure("over 18 searches, a median 1.1 degrees and 2.2 at worst", "unattended-20261101-2300",
            lambda: f"over {final_code()['trials']} searches, a median {final_code()['aim_deg_median']} degrees and "
                    f"{final_code()['aim_deg_worst']} at worst"),
@@ -322,6 +335,8 @@ FIGURES = [
            lambda: "Muse Spark {correct} of {trials}, {false_finds} wrong".format(**sim("sim-spark.json", "described"))),
     Figure("Glimmer 20 of 20 in 4.6 looks", "sim-glimmer",
            lambda: "Glimmer {correct} of {trials} in {looks_mean} looks".format(**sim("sim-glimmer.json", "behind"))),
+    Figure("On those same 20 rooms the sweep also got 18 of 20 described, and 20 of 20 behind the robot in 7.0 looks, faster overall (13.9 s against 20.5 s)",
+           "sim-fixed, sim-glimmer (the same rooms)", same_rooms),
     Figure("fixed sweep 97 of 100 in 7.1", "sim-fixed",
            lambda: "fixed sweep {correct} of {trials} in {looks_mean}".format(**sim("sim-fixed.json", "behind"))),
     Figure("Muse Spark 12 of 12, Glimmer offline 12 of 12", "agent-spark, agent-glimmer",
@@ -335,10 +350,10 @@ FIGURES = [
            + f" reached the cloud ({privacy()['camera_pictures_taken']} taken)"),
     Figure("0 of 24 camera pictures reached the cloud", "privacy-audit",
            lambda: f"{privacy()['camera_pictures_to_cloud']} of {privacy()['camera_pictures_taken']} camera pictures reached the cloud"),
-    Figure("every word sent was on its turn's receipt", "privacy-audit",
-           lambda: "every word sent was on its turn's receipt" if not privacy()["words_not_on_receipt"] else "words NOT on a receipt"),
-    Figure("every word sent was on its receipt", "privacy-audit",
-           lambda: "every word sent was on its receipt" if not privacy()["words_not_on_receipt"] else "words NOT on a receipt"),
+    Figure("40 of 43 pieces sent were on its turn's receipt word for word", "privacy-audit",
+           lambda: f"{privacy()['pieces_on_receipt']} of {privacy()['pieces']} pieces sent were on its turn's receipt word for word"),
+    Figure("40 of 43 pieces sent were on its receipt word for word", "privacy-audit",
+           lambda: f"{privacy()['pieces_on_receipt']} of {privacy()['pieces']} pieces sent were on its receipt word for word"),
     Figure("crisis words reached no model", "privacy-audit",
            lambda: "crisis words reached no model" if not privacy()["crisis_words_to"] else "crisis words reached a model"),
     # languages
@@ -348,10 +363,10 @@ FIGURES = [
     Figure("36 of 41 and 89 of 104", "spanish-spoken, languages (latest)",
            lambda: f"{summary('spanish-spoken.json')['right']} of {summary('spanish-spoken.json')['requests']} and "
                    f"{languages()['spoken right']} of {languages()['requests']}"),
-    Figure("104 of 104 written requests in thirteen more languages reach the right ability, 89 of 104 spoken",
+    Figure("104 of 104 written requests in thirteen more languages reach the right ability, 89 of 104 in Andy's synthetic voice",
            "languages (latest)",
            lambda: (f"{languages()['written right']} of {languages()['requests']} written requests in thirteen more "
-                    f"languages reach the right ability, {languages()['spoken right']} of {languages()['requests']} spoken")),
+                    f"languages reach the right ability, {languages()['spoken right']} of {languages()['requests']} in Andy's synthetic voice")),
     Figure("Andy switched 31 times in 42, never wrongly", "hear-language (latest)",
            lambda: "Andy switched {0} times in {1}, {2}".format(
                summary(newest("hear-language"))["switched to the right language"],

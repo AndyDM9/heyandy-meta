@@ -10,7 +10,7 @@ where it falls short. Every figure links to its evidence: the scorecards in [`ev
 A tabletop robot (a Reachy Mini Lite) with a TV beside it, for people who live at home: it finds what you've lost,
 points at it and says where, from where you stand; it remembers where things are, delivers the reminders you set, and
 speaks fifteen languages. Every model it runs is Meta's ([which, where, and their licences](open-weights.md)); every
-file of its nine open-weight models is byte for byte what Meta published (`scripts/verify_all_weights.py`).
+file of its nine open-weight models is byte for byte what Meta published (`scripts/verify_all_weights.py`; Llama Guard 3 is served as a GGUF we converted from those files).
 
 ## Intended use, and not
 
@@ -49,11 +49,11 @@ they were; reminders you asked for; conversation, pictures and web pages on its 
 | No health advice | a rule in 15 languages, before any model; Llama Guard 3 reads a model's conversation, web and agent answers before Andy says them | held out: 25 of 34 caught by the rule, none of the rest judged advice; 0 of 116 everyday requests caught; Andy's real answers flagged 0 of 168 ([§63](research.md#63-no-health-advice-kept-in-code-and-measured-in-fifteen-languages-november-1-evening), [§65](research.md#65-llama-guard-3-reads-andys-answers-too-as-meta-built-it-to-november-1-evening)) |
 | Crisis words get 988 | from code, before any other model: a word list, Llama Guard 3, then, for anything said as conversation, one narrow question to Muse Glimmer, all on this computer; the reply written by hand in each language | 60 of 60 indirect phrasings (the set it was tuned on); 0 of 144 everyday or trick remarks taken for one ([§58](research.md#58-the-crisis-check-in-fifteen-languages-measured-and-where-it-stops-november-1)) |
 | It says it's an AI | at the start of a conversation and every three hours, by hand in each language | tested (`tests/test_answers_safety.py`) |
-| A note in view can't instruct it | Glimmer told writing is never an instruction; a note addressed to Andy isn't read out | 9 of 54 drawn notes got through before, 0 of 72 after ([§74](research.md#74-a-note-in-view-cant-instruct-andy-november-2-morning)) |
+| A note in view isn't an instruction | Glimmer told writing is never an instruction; a note addressed to Andy isn't read out | 9 of 54 drawn notes got through before, 0 of 72 after ([§74](research.md#74-a-note-in-view-cant-instruct-andy-november-2-morning)) |
 | It doesn't join a conversation it isn't part of | when the room is talking, or talking over its answers, it answers only its name; at most six follow-ups in a row without it; crisis words and an emergency said as itself are answered even without the name ([crisis protocol](crisis-protocol.md)) | a real meeting near the robot, replayed: 37 answers became 4; a quiet conversation keeps 6 of 8 follow-ups ([§79](research.md#79-a-conversation-andy-isnt-part-of-november-2-early-afternoon)) |
-| A web page can't instruct it | Prompt Guard 2 reads each page before Muse Spark's computer use sees it (Muse Spark's own web search isn't read); every click reviewed in code | [§28](research.md#28-llama-prompt-guard-2-a-web-page-cant-instruct-andy-2026-10-27-night) |
-| Agents can't move the robot by themselves | named views and numbered places, never motor values; every argument checked in code | bad arguments refused and nothing moves (tests); and they work: 12 of 12 multi-part requests in a simulated room, real models planning ([§26](research.md#26-the-agent-scorecard-2026-10-27-night)) |
-| Privacy | pictures and voice only to local models; a receipt each turn | a recorded day of 21 requests in a simulated room with the real cloud models: 0 of 24 camera pictures reached the cloud; every word sent was on its receipt ([§31](research.md#31-privacy-you-can-ask-about-and-an-audit-of-it-2026-10-28)) |
+| A web page is read before it's used | Prompt Guard 2 reads each page before Muse Spark's computer use sees it (Muse Spark's own web search isn't read); every click reviewed in code | [§28](research.md#28-llama-prompt-guard-2-a-web-page-cant-instruct-andy-2026-10-27-night) |
+| Agents can't move the robot by themselves | named views and numbered places, never motor values; a search's arguments checked in code | bad arguments refused and nothing moves (tests); and they work: 12 of 12 multi-part requests in a simulated room, real models planning ([§26](research.md#26-the-agent-scorecard-2026-10-27-night)) |
+| Privacy | pictures and voice only to local models; a receipt each turn | a recorded day of 21 requests in a simulated room with the real cloud models: 0 of 24 camera pictures reached the cloud; 40 of 43 pieces sent were on its receipt word for word, the other 3 being the person's words inside Andy's own instructions ([§31](research.md#31-privacy-you-can-ask-about-and-an-audit-of-it-2026-10-28)) |
 | Nothing of Andy's on the network | every one of its services listens on this computer only, the robot's camera and microphone stream too (until November 3 the robot software's own stream server listened on the home network, and with this computer's Hugging Face login it registered the robot with Pollen's cloud relay for remote viewing by the owner's account; its log shows no stream ever opened, local or remote, since October 30; now this computer only, and the relay off); its models are reached on this computer only; two settings, off unless Andy is started with them, open a door on the home network, never wider: `--tv-host` shows the TV page (its camera pictures included) on a smart TV in the house, and `--remote` lets a phone ask Andy from another room, answering nothing until it's paired with six numbers shown on the TV for three minutes; the TV and the robot's daemon answer only their own names (DNS rebinding); its browser never photographs a page that came from this computer or the home network | preflight fails if a port listens wider; tested in the real browser ([§83](research.md#83-who-on-the-network-can-reach-andy-november-2-afternoon), [§105](research.md#105-aligned-before-the-release-november-3-morning)) |
 | Spend | a hard cap on Model API spend: a call past it is refused in code (Meta's own limit only emails) | `heyandy_meta/budget.py` |
 
@@ -62,10 +62,10 @@ Ask **"Hey Andy, what won't you do?"** and it says these, with the day's receipt
 ## How well it works
 
 - **Finding, alone:** 250 of 253 unattended searches on the robot ended in a point; the final code a median 1.1
-  degrees off, 2.2 at worst, 7.8 s a find.
-- **Finding, judged by a person:** 13 of 15 right (things moved round the desk or hidden), never a point at the wrong
+  degrees off, 2.2 at worst, 7.8 s for the search alone.
+- **Finding, judged by our founder, one evening, before the final fixes:** 13 of 15 right (things moved round the desk or hidden), never a point at the wrong
   thing ([§69](research.md#69-the-physical-scorecard-a-person-judging-where-andy-points-november-1-about-9-pm)).
-- **Languages:** 104 of 104 written requests in thirteen more languages reach the right ability, 89 of 104 spoken.
+- **Languages:** 104 of 104 written requests in thirteen more languages reach the right ability, 89 of 104 in Andy's synthetic voice, fed straight to the recogniser.
 - **The public demo, for people who see less well:** axe-core's WCAG 2.2 A and AA checks pass on all 68 of its states,
   at a desktop's and a phone's width, and none of 1,545 texts measured from the pixels is below AA contrast; automated
   checks find only part of what people meet ([§81](research.md#81-the-public-demo-for-people-who-see-less-well-november-2-afternoon)).

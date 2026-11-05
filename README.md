@@ -38,20 +38,20 @@ Built on Meta's models for people who live at home, starting with older adults, 
   Andy finds what goes missing.
 - **Finds and points.** "Where are my glasses?" SAM 3.1 finds them, Andy points: *13 of 15 right*, person-judged.
 - **In an emergency, your phone.** "I fell": "please call 911 right away. I'll find your phone." Then it points.
-- **Fifteen languages, every model Meta's.** It answers in the language it's called in, hearing and voice included.
+- **Fifteen languages, every model Meta's.** It can answer in the language it's called in, hearing and voice included (in Andy's synthetic voice, the right one 31 times in 42, a wrong one never).
 - **Pictures stay home.** Camera and microphone reach only models on the computer beside it; unplug the network, it carries on.
 
-**Try it now, no robot:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) (Andy's own TV, its scenes
-recorded on the robot, and Andy's eyes, live on your things) · **Run it yourself:** two commands on a laptop
+**Try it now, no robot:** [the public demo](https://huggingface.co/spaces/heyandy-ai/andy) (Andy's own TV, on drawn sample
+scenes, and Andy's eyes, live on your things) · **Run it yourself:** two commands on a laptop
 ([Run it](#run-it)), or [with your own Meta Model API key](#with-your-own-meta-model-api-key) · **The details:** [measured on the robot](#proof), and [what it does](#the-details-what-it-does).
 
-**Andy gives no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
+**Andy is built to give no health advice:** no medical, medication or mental-health advice, interpretations or recommendations.
 It finds things, remembers where they are, and delivers the reminders the person set. That's kept in code, not asked
 of a model: a health question the rule catches, in any of its fifteen languages, gets Andy's own fixed words ("your doctor or
 pharmacist can; I can remind you to call them"), and no model answers it; one it misses reaches a model told never to
 advise, with Llama Guard 3 reading its answer first ([the limits](#what-doesnt-work-yet)). Someone who says they've fallen hears
 "please call 911 right away. I'll find your phone", and Andy finds it and points at it (on the robot, 16.5 to 27.1 s from
-the words). It can't call anyone and doesn't watch for falls. It says it's an AI, and anyone who mentions a crisis gets the 988 line from code
+the words). It can't call anyone and doesn't watch for falls. It says it's an AI, and crisis words get the 988 line from code
 ([docs/crisis-protocol.md](docs/crisis-protocol.md)). Ask it **"Hey Andy, what won't you do?"** and it says so, with
 today's receipts on its TV: no camera picture has left the house, how many health questions got its own words, how
 many sentences Llama Guard 3 read before Andy said them, every word sent to the cloud. **All of it on one page,
@@ -169,7 +169,7 @@ SeamlessM4T v2 speaks it; saying it's an AI, the crisis reply and Andy's short l
 speak your language:** called in one of them, Andy notices, says so in it and answers (Andy's own voice in fourteen
 languages: the right one 31 times in 42, a wrong one never, and English never switched;
 [`hear-language-20261101-1605.json`](evals/results/hear-language-20261101-1605.json)). Of 104
-everyday requests in the thirteen newest, **100 reached the right ability written, 85 said aloud and heard back** on the
+everyday requests in the thirteen newest, **100 reached the right ability written, 85 in Andy's synthetic voice, fed straight to the recogniser,** on the
 first run; with the rules that run showed were missing, run again: **104 and 89** ([`languages-20261101-1548.json`](evals/results/languages-20261101-1548.json)). Type
 into the demo's Ask Andy in any of them and its TV answers in that language.
 
@@ -184,7 +184,7 @@ into the demo's Ask Andy in any of them and its TV answers in that language.
 - **It speaks your language.** Fifteen of them, from Spanish to Mandarin, all on Meta's models in the house; called
   in one, it notices and answers in it. Saying it's an AI and the crisis reply are written by hand in each.
 - **Private by design.** The camera and microphone reach only Meta's open models on the computer beside the robot;
-  every word that goes to the cloud is shown on the TV's receipt. Unplug the network and Andy carries on.
+  what goes to the cloud is shown on the TV's receipt. Unplug the network and Andy carries on.
 - **It keeps its promises in code, with Meta's guard on both sides.** A health question the rule catches gets Andy's own words in
   fifteen languages, never a model's answer; Llama Guard 3 reads what's said for crisis words and a model's answers
   for health advice; "I fell" gets 911 and the phone found. Ask it "what won't you do?" and it shows the
@@ -215,11 +215,11 @@ Measured on the robot and in the demo, none of it what we expected, and what And
 
 | | Measured | |
 |---|---|---|
-| On the robot, judged by a person | each thing put in five places on our desk (or hidden), one evening: **13 of 15** right. Out where it could be seen, **10 of 12** pointed at, a median **2.5°** off the middle of the view (the cup and the glasses 8 of 8, the keys 2 of 4: twice the sweep never saw them, and Andy said so; the cause, the camera's autofocus, found and fixed that night, [research §70](docs/research.md#70-the-cameras-autofocus-was-hiding-the-keys-november-1-about-10-pm)); hidden, **3 of 3** "not found"; **never** a point at something else | [`physical-fixed-20261101-2115.json`](evals/results/physical-fixed-20261101-2115.json) |
+| On the robot, judged by our founder | each thing put in five places on our desk (or hidden), one evening, before the final fixes: **13 of 15** right. Out where it could be seen, **10 of 12** pointed at, a median **2.5°** off the middle of the view (the cup and the glasses 8 of 8, the keys 2 of 4: twice the sweep never saw them, and Andy said so; the cause, the camera's autofocus, found and fixed that night, [research §70](docs/research.md#70-the-cameras-autofocus-was-hiding-the-keys-november-1-about-10-pm)); hidden, **3 of 3** "not found"; **never** a point at something else | [`physical-fixed-20261101-2115.json`](evals/results/physical-fixed-20261101-2115.json) |
 | On the robot, alone in the room | **250 of 253** unattended searches ended in a point since the aim fix (the run before it: 3 of 4; of the misses since, two were the keys on Nov 1, one the glasses taken off the desk); on the final code (the camera's focus held, each pixel's true ray, the head read back after its dip, each frame encoded once for all its names), **18 of 18**, a median **1.1°** off the middle of the view, **2.2° at worst**, none re-aimed, **7.8 s** a find (that evening, before any of it: 4.8°, 13.5 s) | [`unattended-*`](evals/results) |
-| Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, the fixed sweep 85 of 100 (simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
+| Look-alikes, described ("the blue one") | Glimmer's plan **18 of 20**, and the fixed sweep also 18 on those same 20 rooms (85 of 100 over all its rooms; simulated); on the robot, "the red cup" with only a blue one there: **no point, 4 of 4** | [`sim-glimmer.json`](evals/results/sim-glimmer.json), [research §35](docs/research.md#35-typed-to-andy-on-the-robot-2026-10-31) |
 | Several things at once (a simulated room, real models planning) | **12 of 12** with Muse Spark, **12 of 12** offline with Muse Glimmer | [`agent-spark.json`](evals/results/agent-spark.json) |
-| Privacy, a day of 21 requests (a simulated room, the real cloud models) | **0** camera pictures reached the cloud; every word sent was on its turn's receipt | [`privacy-audit.json`](evals/results/privacy-audit.json) |
+| Privacy, a day of 21 requests (a simulated room, the real cloud models) | **0** camera pictures reached the cloud; 40 of 43 pieces sent were on its turn's receipt word for word, the other 3 being the person's words inside Andy's own instructions | [`privacy-audit.json`](evals/results/privacy-audit.json) |
 | The room in 3D | looks agree to a median **0.9°**; scan to scan within **1° and 8 cm** | [`room-20261031-1129.json`](evals/results/room-20261031-1129.json) |
 | It doesn't give up | told a watch was lost, one look-again **found it, pointed 4.1° off and said so**, unprompted; nothing said of a wallet that wasn't there | [`lost-20261031-1653.json`](evals/results/lost-20261031-1653.json) |
 | By its ring | **6 of 6** ringings turned to from three starts, within **20°**; a spoken sentence **never** taken for one; Andy Finder's "Ring it", 4 runs: the ringing monitor found twice, and twice "I can hear it, but I can't see it" for a phone that wasn't in view | [`sound-20261031-1856.json`](evals/results/sound-20261031-1856.json), [`finder-ring-*`](evals/results) |
@@ -500,7 +500,7 @@ uv run python -m heyandy_meta     # try: what's the capital of France? / find th
 uv run python scripts/smoke_model_api.py --image a_public_photo.jpg --query mug   # and SAM 3.1 through the API, on your own photo; a few cents
 ```
 Muse Spark then answers conversation, plans described searches and requests with several parts, and answers from the
-web; Muse Image draws. The words each turn sends are on the TV's receipt, and spend stops at a hard cap of $140.
+web; Muse Image draws. Llama Guard 3 and the other local models run on the robot computer, below. The words each turn sends are on the TV's receipt, and spend stops at a hard cap of $140.
 
 **On the robot computer, everything comes from this repository** (Ubuntu, two 24 GB GPUs with CUDA, the Reachy Mini Lite
 on USB; the steps download Meta's open weights from their public pages, so accept the gated ones on Hugging Face first:
