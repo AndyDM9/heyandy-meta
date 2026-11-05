@@ -996,7 +996,7 @@
   function clip(on) {  // the robot, filmed (--clip): over the TV for its chapter, gone after
     document.getElementById("clip")?.remove();
     if (!on || !window.HEYANDY_CLIP) return;
-    const box = el("div"); box.id = "clip";
+    const box = el("div"); box.id = "clip"; box.setAttribute("role", "region"); box.setAttribute("aria-label", "Andy on the table, filmed");
     const v = el("video"); v.src = window.HEYANDY_CLIP; v.muted = v.autoplay = v.playsInline = true; v.loop = true;
     v.setAttribute("aria-label", "Andy on the table, filmed");
     box.append(v, el("div", window.HEYANDY_CLIP_CAPTION || "Filmed on the robot · uncut · 1× speed", "badge"));
